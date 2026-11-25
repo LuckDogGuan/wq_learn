@@ -147,6 +147,26 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
         ],
     },
     {
+        "campaign_id": "USA_FORUM_SENTIMENT_VEC_NORM",
+        "region": "USA",
+        "universe": "TOP3000",
+        "dataset_id": "forum_sentiment",
+        "queue_type": "NORMAL",
+        "field_type": "VECTOR",
+        "default_neut": "REVERSION_AND_MOMENTUM",
+        "alt_neuts": ["CROWDING", "SUBINDUSTRY", "INDUSTRY"],
+        "fields": [
+            "finance_term_weighting_score",
+            "afinn_lexicon_sentiment_score",
+            "text_classification_f_score",
+            "vader_compound_sentiment_score",
+            "vader_mean_sentiment_value",
+            "loughran_mcdonald_sentiment_score",
+            "filtered_word_total_count",
+            "average_character_count_text",
+        ],
+    },
+    {
         "campaign_id": "GLB_M239_SHORT_NORM",
         "region": "GLB",
         "universe": "TOP3000",
@@ -694,11 +714,13 @@ def run_ra_production_loop(
     *,
     regions: Optional[list[str]] = None,
     max_slots: int = 4,
+    max_per_region: int = 2,
+    post_stagger_sec: float = 2.0,
     batch_size: int = 8,
     simulation_mode: str = "FULL",
-    daily_target: int = 3000,
+    daily_target: int = 4500,
     max_batches: Optional[int] = None,
-    sleep_between_batches_sec: float = 2.0,
+    sleep_between_batches_sec: float = 1.0,
     only_free_alpha0: bool = False,
     round_robin_waves: int = 1,
     early_stop_min_sims: int = 48,
@@ -706,12 +728,21 @@ def run_ra_production_loop(
     include_stage23_refiner: bool = True,
     pruning_config: PruningConfig = PruningConfig(),
 ) -> dict[str, Any]:
-    """Run low-memory D1 RA production simulation loop with wave concurrency & positive-Sharpe auto early-stop."""
+    """Run low-memory D1 RA continuous rolling multi-region pipeline (zero wave barrier, 2-4 concurrent threads)."""
     ledger = LedgerStore()
     quota = QuotaTracker(ledger)
     auth = BrainAuthSession(quota_observer=quota.observe_response)
     bl = BlacklistRegistry(ledger)
-    runner = SimRunner(auth, ledger, quota, blacklist_registry=bl, max_slots=max_slots, poll_interval_sec=4.0)
+    runner = SimRunner(
+        auth,
+        ledger,
+        quota,
+        blacklist_registry=bl,
+        max_slots=max_slots,
+        max_per_region=max_per_region,
+        post_stagger_sec=post_stagger_sec,
+        poll_interval_sec=4.0,
+    )
     evaluator = D1RAEvaluator()
 
     selected_campaigns = list(CURATED_RA_D1_CAMPAIGNS)
@@ -767,20 +798,48 @@ def run_ra_production_loop(
     early_stopped_keys: set[tuple[str, str]] = set()
 
     print(
-        f"[RA-DAEMON] Started D1-Only RA runner | regions={regions or 'HIGH_BASE_ALL'} | specs={len(specs)} | "
-        f"slots={max_slots} | mode={simulation_mode} | daily_target={daily_target} | "
-        f"rr_waves={round_robin_waves} | early_stop_sims={early_stop_min_sims}",
+        f"[RA-DAEMON] Started Continuous Rolling D1-Only RA runner | regions={regions or 'HIGH_BASE_ALL'} | specs={len(specs)} | "
+        f"slots={max_slots} (max_per_region={max_per_region}) | batch={batch_size} | stagger={post_stagger_sec}s | "
+        f"mode={simulation_mode} | daily_target={daily_target} | early_stop_sims={early_stop_min_sims}",
         flush=True,
     )
 
     try:
+        # Interleave single batches across regions (EUR, USA, EUR, USA...) so continuous pool
+        # always maintains 2 EUR + 2 USA = 4 simultaneous 8-alpha threads with ZERO wave-barrier idle time!
+        by_reg_q: dict[str, deque[dict[str, Any]]] = {}
+        reg_cycle: list[str] = []
+        for s in specs:
+            r = str(s["region"]).upper()
+            if r not in by_reg_q:
+                by_reg_q[r] = deque()
+                reg_cycle.append(r)
+            by_reg_q[r].append(s)
+
+        interleaved_specs: list[dict[str, Any]] = []
+        active_r = deque(reg_cycle)
+        while active_r:
+            r = active_r.popleft()
+            if by_reg_q[r]:
+                interleaved_specs.append(by_reg_q[r].popleft())
+            if by_reg_q[r]:
+                active_r.append(r)
+
+        # Process in rolling super-windows of 16 specs (up to 128 alphas) so early-stop & daily-target
+        # stay responsive while eliminating wave barriers completely!
+        window_size = max(8, max_slots * 4)
         idx = 0
-        while idx < len(specs):
+        while idx < len(interleaved_specs):
             est_day = current_est_platform_date()
             day_stats = ledger.compute_daily_summary(est_day)
             day_done = int(day_stats.get("full_valid_completed_count", 0)) + int(day_stats.get("quick_screened_count", 0))
-            if day_done >= daily_target:
-                print(f"[RA-DAEMON] Daily target reached ({day_done}/{daily_target}) on EST {est_day}; sleeping 300s.", flush=True)
+            last_rem = quota.last_snapshot.remaining_val if (quota.last_snapshot and quota.last_snapshot.endpoint == "/simulations") else None
+            if day_done >= daily_target or (last_rem is not None and last_rem <= 80):
+                print(
+                    f"[RA-DAEMON] Daily target/safety cap reached (day_done={day_done}/{daily_target}, "
+                    f"api_rem={last_rem}) on EST {est_day}; sleeping 300s.",
+                    flush=True,
+                )
                 if max_batches is not None:
                     break
                 time.sleep(300)
@@ -789,112 +848,113 @@ def run_ra_production_loop(
             if max_batches is not None and batches_executed >= max_batches:
                 break
 
-            first = specs[idx]
-            reg = first["region"]
-            ds = str(first.get("dataset_id") or "")
-            ds_key = (reg.upper(), ds)
-
-            if ds_key in early_stopped_keys:
+            prepared_window: list[dict[str, Any]] = []
+            while idx < len(interleaved_specs) and len(prepared_window) < window_size:
+                if max_batches is not None and (batches_executed + len(prepared_window)) >= max_batches:
+                    break
+                spec = interleaved_specs[idx]
                 idx += 1
-                continue
-
-            stop_now, ds_stats = should_early_stop_dataset(
-                ledger,
-                region=reg,
-                dataset_id=ds,
-                min_completed=early_stop_min_sims,
-                min_pos_sharpe=early_stop_min_pos_sharpe,
-            )
-            if stop_now:
-                early_stopped_keys.add(ds_key)
-                print(
-                    f"[EARLY-STOP] Demoting weak direction {reg}/{ds}: "
-                    f"completed={ds_stats['completed']} pos_hits(sh>={early_stop_min_pos_sharpe})={ds_stats['hits_08']} "
-                    f"max_pos_sh={ds_stats['max_pos_sh']} -> pivoting to next dataset/market!",
-                    flush=True,
+                reg = str(spec["region"]).upper()
+                ds = str(spec.get("dataset_id") or "")
+                ds_key = (reg, ds)
+                if ds_key in early_stopped_keys:
+                    continue
+                stop_now, ds_stats = should_early_stop_dataset(
+                    ledger,
+                    region=reg,
+                    dataset_id=ds,
+                    min_completed=early_stop_min_sims,
+                    min_pos_sharpe=early_stop_min_pos_sharpe,
                 )
-                idx += 1
-                continue
-
-            weight = runner.slot_weight_for_region(reg)
-            wave_specs_cap = max(1, max_slots // weight)
-            wave_tasks: list[dict[str, Any]] = []
-            wave_batch_ids: list[str] = []
-
-            while (
-                idx < len(specs)
-                and len(wave_batch_ids) < wave_specs_cap
-                and specs[idx]["region"] == reg
-                and str(specs[idx].get("dataset_id") or "") == ds
-            ):
-                spec = specs[idx]
-                idx += 1
+                if stop_now:
+                    early_stopped_keys.add(ds_key)
+                    print(
+                        f"[EARLY-STOP] Demoting weak direction {reg}/{ds}: "
+                        f"completed={ds_stats['completed']} pos_hits(sh>={early_stop_min_pos_sharpe})={ds_stats['hits_08']} "
+                        f"max_pos_sh={ds_stats['max_pos_sh']} -> pivoting to next dataset/market!",
+                        flush=True,
+                    )
+                    continue
                 bid, runnable, _ = runner.prepare_batch_tasks(
                     spec,
                     simulation_mode=simulation_mode,
                     field_alpha_counts=alpha0_map if spec["queue_type"] == "UNUSED_ALPHA0" else None,
                 )
                 if runnable:
-                    wave_tasks.extend(runnable)
-                    wave_batch_ids.append(bid)
+                    prepared_window.append({"batch_id": bid, "region": reg, "dataset_id": ds, "tasks": runnable})
 
-            if not wave_tasks:
+            if not prepared_window:
                 continue
 
-            wave_id = f"WAVE-{reg}-{ds[:10]}-{batches_executed + 1:04d}"
-            t0 = time.monotonic()
-            res = runner.run_prepared_tasks(wave_id, wave_tasks, batch_size=batch_size)
-            elapsed = round(time.monotonic() - t0, 1)
-            for bid in wave_batch_ids:
-                ledger.update_batch_progress(bid, "DONE")
+            completed_in_win = 0
+            touched_regions: set[str] = set()
 
-            batches_executed += len(wave_batch_ids)
-            total_completed += res["completed"]
+            def _should_stop_now() -> bool:
+                if max_batches is not None and batches_executed >= max_batches:
+                    return True
+                rem_snap = quota.last_snapshot
+                if rem_snap and rem_snap.endpoint == "/simulations" and rem_snap.remaining_val is not None and rem_snap.remaining_val <= 80:
+                    return True
+                return (day_done + completed_in_win) >= daily_target
 
-            placeholders = ",".join("?" for _ in wave_batch_ids)
-            rows = ledger._conn.execute(
-                f"SELECT task_id, alpha_id, dataset_id, sharpe, fitness, turnover, margin, returns, checks_json "
-                f"FROM sim_tasks WHERE batch_id IN ({placeholders}) AND status IN ('COMPLETED_FULL','COMPLETED_QUICK')",
-                tuple(wave_batch_ids),
-            ).fetchall()
-            for r in rows:
-                checks = json.loads(r["checks_json"]) if r["checks_json"] else []
-                ev = evaluator.evaluate(
-                    str(r["alpha_id"] or r["task_id"]),
-                    region=reg,
-                    delay=1,
-                    sharpe=r["sharpe"],
-                    fitness=r["fitness"],
-                    turnover=r["turnover"],
-                    margin=r["margin"],
-                    returns=r["returns"],
-                    is_checks=checks,
+            def _on_done(bid: str, reg: str, n_items: int, res: dict[str, int], elapsed: float) -> None:
+                nonlocal batches_executed, total_completed, gate1_hits, gate3_hits, completed_in_win
+                batches_executed += 1
+                total_completed += res["completed"]
+                completed_in_win += res["completed"]
+                touched_regions.add(reg)
+                rows = ledger._conn.execute(
+                    "SELECT task_id, alpha_id, dataset_id, sharpe, fitness, turnover, margin, returns, checks_json "
+                    "FROM sim_tasks WHERE batch_id=? AND status IN ('COMPLETED_FULL','COMPLETED_QUICK')",
+                    (bid,),
+                ).fetchall()
+                for r in rows:
+                    checks = json.loads(r["checks_json"]) if r["checks_json"] else []
+                    ev = evaluator.evaluate(
+                        str(r["alpha_id"] or r["task_id"]),
+                        region=reg,
+                        delay=1,
+                        sharpe=r["sharpe"],
+                        fitness=r["fitness"],
+                        turnover=r["turnover"],
+                        margin=r["margin"],
+                        returns=r["returns"],
+                        is_checks=checks,
+                    )
+                    if ev.gate_status in ("GATE3_TIER1_PASS", "GATE4_CANDIDATE_FOR_MANUAL_REVIEW"):
+                        gate3_hits += 1
+                        print(
+                            f"  [POOL_S GATE3_PASS!] {reg}/{r['dataset_id']} alpha={r['alpha_id']} "
+                            f"Sh={r['sharpe']} Fit={r['fitness']} M={ev.margin_bp}bp",
+                            flush=True,
+                        )
+                    elif ev.gate_status in ("GATE2_IMPROVING", "GATE1_POOL_SH08"):
+                        gate1_hits += 1
+                        print(
+                            f"  [POOL_A/B SEED] {reg}/{r['dataset_id']} alpha={r['alpha_id']} "
+                            f"Sh={r['sharpe']} Fit={r['fitness']} M={ev.margin_bp}bp",
+                            flush=True,
+                        )
+                rem_val = quota.last_snapshot.remaining_val if (quota.last_snapshot and quota.last_snapshot.endpoint == "/simulations") else "?"
+                print(
+                    f"[RA-ROLL] {bid} ({reg} x{n_items} in {elapsed}s): done={res['completed']} unobs={res['unobserved']} | "
+                    f"day_est={day_done + completed_in_win}/{daily_target} api_rem={rem_val} | g1={gate1_hits} g3={gate3_hits}",
+                    flush=True,
                 )
-                if ev.gate_status in ("GATE3_TIER1_PASS", "GATE4_CANDIDATE_FOR_MANUAL_REVIEW"):
-                    gate3_hits += 1
-                    print(
-                        f"  [POOL_S GATE3_PASS!] {reg}/{r['dataset_id']} alpha={r['alpha_id']} "
-                        f"Sh={r['sharpe']} Fit={r['fitness']} M={ev.margin_bp}bp",
-                        flush=True,
-                    )
-                elif ev.gate_status in ("GATE2_IMPROVING", "GATE1_POOL_SH08"):
-                    gate1_hits += 1
-                    print(
-                        f"  [POOL_A/B SEED] {reg}/{r['dataset_id']} alpha={r['alpha_id']} "
-                        f"Sh={r['sharpe']} Fit={r['fitness']} M={ev.margin_bp}bp",
-                        flush=True,
-                    )
+                if batches_executed % 4 == 0:
+                    export_funnel_snapshot(ledger, reg, pruning_config=pruning_config)
 
-            export_funnel_snapshot(ledger, reg, pruning_config=pruning_config)
-            print(
-                f"[RA-DAEMON] {wave_id} ({len(wave_batch_ids)}x{batch_size} in {elapsed}s): "
-                f"done={res['completed']} unobs={res['unobserved']} | day_total={day_done + res['completed']}/{daily_target} "
-                f"| gate1={gate1_hits} gate3={gate3_hits}",
-                flush=True,
+            runner.run_continuous_rolling_batches(
+                prepared_window,
+                batch_size=batch_size,
+                should_stop=_should_stop_now,
+                on_batch_complete=_on_done,
             )
-            del rows, wave_tasks
+            for tr in sorted(touched_regions):
+                export_funnel_snapshot(ledger, tr, pruning_config=pruning_config)
             gc.collect()
-            time.sleep(sleep_between_batches_sec)
+            if sleep_between_batches_sec > 0:
+                time.sleep(sleep_between_batches_sec)
 
         return {
             "batches_executed": batches_executed,
@@ -915,10 +975,12 @@ def main(argv: Optional[list[str]] = None) -> int:
         default=",".join(HIGH_BASE_MULTI_MARKET_ORDER),
         help="Comma-separated ordered region(s); default high-Base institutional heavyweights first",
     )
-    p.add_argument("--slots", type=int, default=4)
-    p.add_argument("--batch-size", type=int, default=8)
+    p.add_argument("--slots", type=int, default=4, help="Global concurrent multi-sim threads (2-4 recommended; max 8)")
+    p.add_argument("--max-per-region", type=int, default=2, help="Max concurrent multi-sim threads per region (e.g. 2 EUR + 2 USA = 4 total)")
+    p.add_argument("--post-stagger", type=float, default=2.0, help="Min seconds between POST /simulations across threads to prevent burst 429")
+    p.add_argument("--batch-size", type=int, default=8, help="Children per multi-sim (Gold max=8)")
     p.add_argument("--mode", default="FULL", choices=["FULL", "QUICK"])
-    p.add_argument("--daily-target", type=int, default=3000)
+    p.add_argument("--daily-target", type=int, default=4500)
     p.add_argument("--max-batches", type=int, default=None)
     p.add_argument("--only-free-alpha0", action="store_true")
     p.add_argument("--round-robin-waves", type=int, default=1, help="Waves per campaign before rotating to next market (0=sequential)")
@@ -940,6 +1002,8 @@ def main(argv: Optional[list[str]] = None) -> int:
         res = run_ra_production_loop(
             regions=reg_list,
             max_slots=args.slots,
+            max_per_region=args.max_per_region,
+            post_stagger_sec=args.post_stagger,
             batch_size=args.batch_size,
             simulation_mode=args.mode,
             daily_target=args.daily_target,

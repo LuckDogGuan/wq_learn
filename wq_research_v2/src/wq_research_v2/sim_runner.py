@@ -23,13 +23,21 @@ from wq_research_v2.quota_tracker import QuotaTracker, current_est_platform_date
 
 
 class WeightedSlotSemaphore:
-    """Thread-safe weighted semaphore so GLB atomically consumes 2 slots without deadlock."""
+    """Thread-safe global + per-region weighted semaphore.
 
-    def __init__(self, max_slots: int = 8) -> None:
+    Enforces:
+    - Global concurrent slot cap (`max_slots`, e.g. 4; GLB atomically consumes weight=2)
+    - Per-region concurrent slot cap (`max_per_region`, e.g. 2) so 2 EUR + 2 USA = 4 threads
+      run smoothly in parallel without triggering single-region concurrency 429s!
+    """
+
+    def __init__(self, max_slots: int = 8, *, max_per_region: Optional[int] = None) -> None:
         if max_slots < 2:
             raise ValueError("max_slots must be >= 2 to support GLB 2-slot batches")
         self.max_slots = int(max_slots)
+        self.max_per_region = int(max_per_region) if max_per_region is not None and max_per_region > 0 else self.max_slots
         self._available = int(max_slots)
+        self._region_in_flight: dict[str, int] = {}
         self._cond = threading.Condition()
 
     @property
@@ -37,13 +45,28 @@ class WeightedSlotSemaphore:
         with self._cond:
             return self._available
 
-    def acquire(self, weight: int = 1, timeout: Optional[float] = None) -> bool:
+    def region_in_flight(self, region: str) -> int:
+        with self._cond:
+            return int(self._region_in_flight.get(str(region).upper(), 0))
+
+    def _can_acquire_locked(self, weight: int, region: Optional[str]) -> bool:
+        if self._available < weight:
+            return False
+        if region:
+            reg = str(region).upper()
+            reg_cap = max(weight, self.max_per_region)
+            if self._region_in_flight.get(reg, 0) + weight > reg_cap:
+                return False
+        return True
+
+    def acquire(self, weight: int = 1, timeout: Optional[float] = None, *, region: Optional[str] = None) -> bool:
         w = int(weight)
         if w < 1 or w > self.max_slots:
             raise ValueError(f"Invalid slot weight {w} for max_slots={self.max_slots}")
         deadline = (time.monotonic() + timeout) if timeout is not None else None
+        reg = str(region).upper() if region else None
         with self._cond:
-            while self._available < w:
+            while not self._can_acquire_locked(w, reg):
                 if deadline is not None:
                     rem = deadline - time.monotonic()
                     if rem <= 0:
@@ -52,17 +75,38 @@ class WeightedSlotSemaphore:
                 else:
                     self._cond.wait()
             self._available -= w
+            if reg:
+                self._region_in_flight[reg] = self._region_in_flight.get(reg, 0) + w
             return True
 
-    def release(self, weight: int = 1) -> None:
+    def try_acquire(self, weight: int = 1, *, region: Optional[str] = None) -> bool:
+        w = int(weight)
+        reg = str(region).upper() if region else None
         with self._cond:
-            self._available = min(self.max_slots, self._available + int(weight))
+            if not self._can_acquire_locked(w, reg):
+                return False
+            self._available -= w
+            if reg:
+                self._region_in_flight[reg] = self._region_in_flight.get(reg, 0) + w
+            return True
+
+    def release(self, weight: int = 1, *, region: Optional[str] = None) -> None:
+        w = int(weight)
+        reg = str(region).upper() if region else None
+        with self._cond:
+            self._available = min(self.max_slots, self._available + w)
+            if reg:
+                cur = self._region_in_flight.get(reg, 0) - w
+                if cur <= 0:
+                    self._region_in_flight.pop(reg, None)
+                else:
+                    self._region_in_flight[reg] = cur
             self._cond.notify_all()
 
 
 def pack_multisim_batches(items: list[dict[str, Any]], batch_size: int = 8) -> list[list[dict[str, Any]]]:
-    """Pack items into batches of 2..10, rebalancing a trailing 1-item tail when possible."""
-    bs = max(2, min(10, int(batch_size)))
+    """Pack items into batches of 2..8 (Gold multi-sim ceiling), rebalancing a trailing 1-item tail when possible."""
+    bs = max(2, min(8, int(batch_size)))
     if not items:
         return []
     if len(items) <= bs:
@@ -110,6 +154,9 @@ class SimRunner:
         validator: Optional[ExprValidator] = None,
         blacklist_registry: Any = None,
         max_slots: int = 4,
+        max_per_region: Optional[int] = 2,
+        post_stagger_sec: float = 2.0,
+        max_post_429_retries: int = 2,
         poll_interval_sec: float = 5.0,
         poll_timeout_sec: float = 900.0,
     ) -> None:
@@ -119,7 +166,12 @@ class SimRunner:
         self.validator = validator or ExprValidator()
         self.blacklist = blacklist_registry
         self.max_slots = max(2, min(8, int(max_slots)))
-        self.semaphore = WeightedSlotSemaphore(self.max_slots)
+        self.max_per_region = int(max_per_region) if max_per_region is not None and max_per_region > 0 else self.max_slots
+        self.post_stagger_sec = max(0.0, float(post_stagger_sec))
+        self.max_post_429_retries = max(0, int(max_post_429_retries))
+        self.semaphore = WeightedSlotSemaphore(self.max_slots, max_per_region=self.max_per_region)
+        self._post_lock = threading.Lock()
+        self._last_post_monotonic = 0.0
         self.poll_interval_sec = float(poll_interval_sec)
         self.poll_timeout_sec = float(poll_timeout_sec)
 
@@ -274,10 +326,37 @@ class SimRunner:
         self.ledger.update_batch_progress(batch_id, "DONE")
         return summary
 
-    def _run_chunk(self, batch_id: str, chunk: list[dict[str, Any]], weight: int) -> dict[str, int]:
-        self.semaphore.acquire(weight=weight)
+    def _pace_post_submission(self) -> None:
+        """Enforce global POST /simulations pacing so concurrent threads never collide on the same second."""
+        if self.post_stagger_sec <= 0:
+            return
+        with self._post_lock:
+            now = time.monotonic()
+            wait = (self._last_post_monotonic + self.post_stagger_sec) - now
+            if wait > 0:
+                time.sleep(wait)
+            self._last_post_monotonic = time.monotonic()
+
+    def _run_chunk(
+        self,
+        batch_id: str,
+        chunk: list[dict[str, Any]],
+        weight: int,
+        *,
+        already_acquired: bool = False,
+    ) -> dict[str, int]:
+        region = str(chunk[0]["region"]).upper() if chunk else ""
+        if not already_acquired:
+            self.semaphore.acquire(weight=weight, region=region)
+        slot_released = False
+
+        def _release_slot_once() -> None:
+            nonlocal slot_released
+            if not slot_released:
+                self.semaphore.release(weight=weight, region=region)
+                slot_released = True
+
         try:
-            self.quota.wait_if_circuit_open()
             payloads = [
                 build_sim_payload(
                     t["expression"],
@@ -287,42 +366,72 @@ class SimRunner:
                 for t in chunk
             ]
             body: Any = payloads if len(payloads) > 1 else payloads[0]
-            now_utc = datetime.datetime.now(datetime.timezone.utc).isoformat()
-            for t in chunk:
-                t["status"] = "SUBMITTED"
-                t["submitted_at_utc"] = now_utc
-                self.ledger.upsert_sim_task(t)
 
-            try:
-                resp = self.client.post("/simulations", json=body, timeout=45)
-            except Exception as exc:
-                return self._reconcile_once_chunk(chunk, None, f"POST exception: {type(exc).__name__}")
+            resp = None
+            for attempt in range(self.max_post_429_retries + 1):
+                self.quota.wait_if_circuit_open()
+                self._pace_post_submission()
+                now_utc = datetime.datetime.now(datetime.timezone.utc).isoformat()
+                for t in chunk:
+                    t["status"] = "SUBMITTED"
+                    t["submitted_at_utc"] = now_utc
+                    self.ledger.upsert_sim_task(t)
 
-            if resp.status_code not in (200, 201):
-                return self._reconcile_once_chunk(chunk, None, f"POST HTTP {resp.status_code}")
+                try:
+                    resp = self.client.post("/simulations", json=body, timeout=45)
+                except Exception as exc:
+                    _release_slot_once()
+                    return self._reconcile_once_chunk(chunk, None, f"POST exception: {type(exc).__name__}")
+
+                if resp.status_code == 429 and attempt < self.max_post_429_retries:
+                    # HTTP 429 on POST /simulations rejects BEFORE creation (zero quota spent, no Location).
+                    # Release slot temporarily during cooldown so other regions/finishing polls stay smooth.
+                    _release_slot_once()
+                    retry_hdr = resp.headers.get("Retry-After") or resp.headers.get("retry-after")
+                    try:
+                        backoff = float(retry_hdr) if retry_hdr else (15.0 * (attempt + 1))
+                    except ValueError:
+                        backoff = 15.0 * (attempt + 1)
+                    time.sleep(max(3.0, min(backoff, 60.0)))
+                    self.semaphore.acquire(weight=weight, region=region)
+                    slot_released = False
+                    continue
+                break
+
+            if resp is None or resp.status_code not in (200, 201):
+                code = resp.status_code if resp is not None else "NONE"
+                _release_slot_once()
+                return self._reconcile_once_chunk(chunk, None, f"POST HTTP {code}")
 
             progress_url = resp.headers.get("Location") or resp.headers.get("location")
             self.ledger.update_batch_progress(batch_id, "RUNNING", progress_url=progress_url)
             if not progress_url:
+                _release_slot_once()
                 return self._reconcile_once_chunk(chunk, None, "Missing Location header")
 
-            return self._poll_progress(chunk, progress_url)
+            # Poll simulation until server finishes, then IMMEDIATELY release the simulation slot
+            # BEFORE fetching 8x2 child alpha metadata payloads -> maximizes slot utilization!
+            poll_res = self._poll_progress_raw(chunk, progress_url)
+            _release_slot_once()
+            if poll_res["kind"] == "DONE":
+                return self._ingest_completed_progress(chunk, poll_res["data"])
+            return self._reconcile_once_chunk(chunk, progress_url, poll_res["reason"])
         finally:
-            self.semaphore.release(weight=weight)
+            _release_slot_once()
 
-    def _poll_progress(self, chunk: list[dict[str, Any]], progress_url: str) -> dict[str, int]:
+    def _poll_progress_raw(self, chunk: list[dict[str, Any]], progress_url: str) -> dict[str, Any]:
         deadline = time.monotonic() + self.poll_timeout_sec
         while time.monotonic() < deadline:
             try:
                 resp = self.client.get(progress_url, timeout=30)
             except Exception as exc:
-                return self._reconcile_once_chunk(chunk, progress_url, f"Poll exception: {type(exc).__name__}")
+                return {"kind": "FAIL", "reason": f"Poll exception: {type(exc).__name__}"}
 
             if resp.status_code == 429:
                 self.quota.wait_if_circuit_open()
                 continue
             if resp.status_code >= 500:
-                return self._reconcile_once_chunk(chunk, progress_url, f"Poll HTTP {resp.status_code}")
+                return {"kind": "FAIL", "reason": f"Poll HTTP {resp.status_code}"}
 
             retry_after = resp.headers.get("Retry-After") or resp.headers.get("retry-after")
             if retry_after:
@@ -336,10 +445,31 @@ class SimRunner:
             data = resp.json() if (resp.text or "").strip() else {}
             status = str(data.get("status", "")).upper()
             if status in ("COMPLETE", "WARNING", "ERROR") or data.get("alpha") or data.get("children"):
-                return self._ingest_completed_progress(chunk, data)
+                return {"kind": "DONE", "data": data}
             time.sleep(self.poll_interval_sec)
 
-        return self._reconcile_once_chunk(chunk, progress_url, "Poll timeout")
+        return {"kind": "FAIL", "reason": "Poll timeout"}
+
+    def _poll_progress(self, chunk: list[dict[str, Any]], progress_url: str) -> dict[str, int]:
+        poll_res = self._poll_progress_raw(chunk, progress_url)
+        if poll_res["kind"] == "DONE":
+            return self._ingest_completed_progress(chunk, poll_res["data"])
+        return self._reconcile_once_chunk(chunk, progress_url, poll_res["reason"])
+
+    def _fetch_child_alpha_id(self, child_id: str) -> Optional[str]:
+        try:
+            cresp = self.client.get(f"/simulations/{child_id}", timeout=30)
+            cdata = cresp.json() if cresp.status_code == 200 and (cresp.text or "").strip() else {}
+            return cdata.get("alpha")
+        except Exception:
+            return None
+
+    def _fetch_alpha_payload(self, aid: str) -> Optional[dict[str, Any]]:
+        try:
+            aresp = self.client.get(f"/alphas/{aid}", timeout=30)
+            return aresp.json() if aresp.status_code == 200 else {}
+        except Exception:
+            return None
 
     def _ingest_completed_progress(self, chunk: list[dict[str, Any]], data: dict[str, Any]) -> dict[str, int]:
         completed = unobserved = errors = 0
@@ -347,15 +477,18 @@ class SimRunner:
         alpha_ids: list[Optional[str]] = []
 
         if isinstance(children, list) and len(chunk) > 1:
-            for child_id in children:
-                try:
-                    cresp = self.client.get(f"/simulations/{child_id}", timeout=30)
-                    cdata = cresp.json() if cresp.status_code == 200 and (cresp.text or "").strip() else {}
-                    alpha_ids.append(cdata.get("alpha"))
-                except Exception:
-                    alpha_ids.append(None)
+            with ThreadPoolExecutor(max_workers=min(4, max(1, len(children)))) as fetch_pool:
+                alpha_ids = list(fetch_pool.map(self._fetch_child_alpha_id, children))
         else:
             alpha_ids.append(data.get("alpha"))
+
+        valid_pairs = [(idx, alpha_ids[idx]) for idx in range(len(chunk)) if idx < len(alpha_ids) and alpha_ids[idx]]
+        alpha_payloads: dict[int, Optional[dict[str, Any]]] = {}
+        if valid_pairs:
+            with ThreadPoolExecutor(max_workers=min(4, len(valid_pairs))) as meta_pool:
+                futs = {meta_pool.submit(self._fetch_alpha_payload, aid): idx for idx, aid in valid_pairs}
+                for fut in as_completed(futs):
+                    alpha_payloads[futs[fut]] = fut.result()
 
         for idx, t in enumerate(chunk):
             aid = alpha_ids[idx] if idx < len(alpha_ids) else None
@@ -363,11 +496,9 @@ class SimRunner:
                 self.ledger.mark_reconcile_failed_unobserved(t["task_id"], "Missing child alpha_id")
                 unobserved += 1
                 continue
-            try:
-                aresp = self.client.get(f"/alphas/{aid}", timeout=30)
-                adata = aresp.json() if aresp.status_code == 200 else {}
-            except Exception as exc:
-                self.ledger.mark_reconcile_failed_unobserved(t["task_id"], f"Alpha fetch error: {type(exc).__name__}")
+            adata = alpha_payloads.get(idx)
+            if adata is None:
+                self.ledger.mark_reconcile_failed_unobserved(t["task_id"], "Alpha fetch error")
                 unobserved += 1
                 continue
 
@@ -396,6 +527,78 @@ class SimRunner:
             completed += 1
 
         return {"completed": completed, "unobserved": unobserved, "errors": errors}
+
+    def run_continuous_rolling_batches(
+        self,
+        prepared_batches: list[dict[str, Any]],
+        *,
+        batch_size: int = 8,
+        should_stop: Optional[Any] = None,
+        on_batch_complete: Optional[Any] = None,
+    ) -> dict[str, int]:
+        """Zero-barrier continuous rolling multi-region pipeline.
+
+        Instead of waiting for all 4 slots in a wave to finish before launching the next wave,
+        keeps all `max_slots` (up to `max_per_region` per region) continuously saturated across
+        mixed regions (e.g. 2 EUR + 2 USA = 4 concurrent 8-alpha Multi-Sims).
+        """
+        pending_queue: list[tuple[str, str, int, list[dict[str, Any]]]] = []
+        for pb in prepared_batches:
+            bid = str(pb["batch_id"])
+            reg = str(pb["region"]).upper()
+            w = self.slot_weight_for_region(reg)
+            for chunk in pack_multisim_batches(pb["tasks"], batch_size=batch_size):
+                pending_queue.append((bid, reg, w, chunk))
+
+        summary = {"batches_done": 0, "completed": 0, "unobserved": 0, "errors": 0}
+        if not pending_queue:
+            return summary
+
+        active_futs: dict[Any, tuple[str, str, int, float]] = {}
+        with ThreadPoolExecutor(max_workers=self.max_slots) as pool:
+            while pending_queue or active_futs:
+                # 1. Fill every available global + per-region slot without waiting for slow stragglers!
+                if pending_queue and not (should_stop and should_stop()):
+                    dispatched = True
+                    while dispatched and pending_queue:
+                        dispatched = False
+                        for i, (bid, reg, w, chunk) in enumerate(pending_queue):
+                            if self.semaphore.try_acquire(weight=w, region=reg):
+                                pending_queue.pop(i)
+                                fut = pool.submit(self._run_chunk, bid, chunk, w, already_acquired=True)
+                                active_futs[fut] = (bid, reg, len(chunk), time.monotonic())
+                                dispatched = True
+                                break
+
+                if not active_futs:
+                    if should_stop and should_stop():
+                        break
+                    # Avoid spin if remaining items exceed capacity (shouldn't happen)
+                    time.sleep(0.5)
+                    continue
+
+                # 2. Wait only until the FIRST active simulation finishes, then immediately refill!
+                done_set = set()
+                for fut in as_completed(list(active_futs.keys())):
+                    done_set.add(fut)
+                    break
+
+                for fut in done_set:
+                    bid, reg, n_items, t0 = active_futs.pop(fut)
+                    elapsed = round(time.monotonic() - t0, 1)
+                    try:
+                        res = fut.result()
+                    except Exception:
+                        res = {"completed": 0, "unobserved": n_items, "errors": 1}
+                    self.ledger.update_batch_progress(bid, "DONE")
+                    summary["batches_done"] += 1
+                    summary["completed"] += res["completed"]
+                    summary["unobserved"] += res["unobserved"]
+                    summary["errors"] += res["errors"]
+                    if on_batch_complete is not None:
+                        on_batch_complete(bid, reg, n_items, res, elapsed)
+
+        return summary
 
     def _reconcile_once_chunk(
         self,

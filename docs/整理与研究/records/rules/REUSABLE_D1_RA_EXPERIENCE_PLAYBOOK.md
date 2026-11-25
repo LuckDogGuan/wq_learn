@@ -61,7 +61,10 @@
 
 ## 5. 每日可跑规模与工程防踩坑记录
 
-- **官方平台吞吐实测（`GET /users/self/activities/simulations`）**：账号历史累计 **`295,206`** 次，9–10 月双月 **`56,476`** 次（日均约 **`925`** 次，峰值日可达 `2,000–3,000` 次）；今日（`2026-11-25`）新引擎 4 槽 × 8 Multi-Sim 已稳定拉升至 **日 `1,766+` 次有效 `FULL`**（单波 `32` 条在常规中性化下仅耗时 `140–210s`，按 24 小时理论吞吐约 **`3,500–4,500` 条 FULL/天**，当前设 `--daily-target 3000` 安全限流）。
+- **官方平台吞吐与 4,500/天 连续流水线架构**：
+  - 官方 `GET /users/self/activities/simulations` 与 `POST /simulations` 响应头实证：Gold 账号日上限 **`5,000`** 次（`Alphas=0` 免额字段不扣减此额度），单次 Multi-Sim 上限 **`8` 条子表达式**。
+  - **为何旧版仅跑 `1,300/天`（四大瓶颈已根治）**：① 波次屏障等待最慢任务导致其余槽位空等；② 同地区 4 线程同毫秒抢发 `POST` 触发突发 `429` 且直接丢弃未建任务；③ 跑完后串行拉取 16 次子结果期间未释放槽位；④ 旧上限设 `3,000`。
+  - **新版连续滚动跨地区流水线（`sim_runner.py` + `daemon_ra_runner.py`）**：① **跨地区并行混跑**（`--slots 4 --max-per-region 2`：`2` 线程 `EUR` + `2` 线程 `USA` = `4` 线程 × `8` 槽常驻满载）；② **零波次屏障**（任一线程完成即秒补下一批）；③ **全局 `2.0s` `POST` 错峰锁 + 创建前 `429` 冷却重试（最多 2 次）**；④ **模拟完成即秒释槽位 + 4 线程并行拉取子结果**；⑤ 目标提升至 **`--daily-target 4500`**（并在 `X-RateLimit-Remaining <= 80` 自动安全停泊）。按实测延迟（`USA 140s`, `EUR 177s`）稳定吞吐 **`~450–650 FULL/小时`**，可在 **~7–8 小时内稳健跑满 `4,500/天`**。
 - **两大逻辑 Bug 实录与永久根治**：
   1. **重启 `DEDUP_SKIPPED` 覆盖 `COMPLETED_FULL` Bug（已根治）**：旧版 `upsert_sim_task` 使用 `INSERT OR REPLACE`，服务重启跑同 `batch_id` 时将已完成的 `COMPLETED_FULL` 行覆盖成 `DEDUP_SKIPPED`（Alpha 仍在 BRAIN 平台完好保存，但本地台账统计变小）。现已在 `ledger_store.py` 与 `sim_runner.py` 加入不可变保护并配单测，永不再发。
   2. **`EUR/TOP2500` 批量 `STATISTICAL`/`FAST`/`SLOW_AND_FAST` 600s 超时引发 429 Bug（已根治）**：Stage-1 宽筛停用 `STATISTICAL/FAST/SLOW_AND_FAST`，`poll_timeout_sec` 升至 `900s`，主力降 PC 优先使用高效且不超时的 **`CROWDING` + `REVERSION_AND_MOMENTUM`**。
