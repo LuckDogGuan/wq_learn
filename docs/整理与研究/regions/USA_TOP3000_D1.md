@@ -43,3 +43,7 @@
 - **2026-11-25 19:16（1 小时定时检查 #1 · `USA / price_signal_dl` 稳居全场头号真 Alpha 矿脉！）**：
   - 累计完成 `64` 条即收获 **`8` 条纯正向 `POOL_B` 种子**（对称验真，非成本假象！）：`xAl6KWkp` (`Sh=+1.10, 2Y=+1.85, Mgn=+26.42bp`)、`N1K03xae` (`Sh=+1.10, 2Y=+1.84, Mgn=+24.91bp`)、`gJrAY2bM` (`Sh=+1.06, 2Y=+1.99, TO=2.66%, Mgn=+33.40bp`!)、`j2VE57mo` (`+0.89`)、`1YG9qMQR` (`+0.87`)、`np6J1r2a` (`+0.87`)、`xAl6KZYw` (`+0.84`)。
   - **加码方向**：已将 `USA` 置顶为全队列第 1 顺位，新增 `USA_PRICEDL_NORMVOL_FREE`（5 个实盘核验 `Alphas=0` `normalized_volume_indicator_1/2/3/5/6`）与 `USA_PRICEDL_TREND_VOL_NORM`（`raw_trend_indicator_0..6` + 跨子族量价双支 `min(rank(vol), rank(trend))`），主冲 `Sharpe > 1.58`！
+
+- **2026-11-25 20:16（1 小时定时检查 #2 · 新增 `option_horizon_decomp` 免额期权偏度/期限矿脉！）**：
+  - `USA / price_signal_dl` 累计 `128` 条收获 `10` 条 `POOL_B`（最高 `Sh=+1.10, 2Y=+1.99, Mgn=+33.4bp`），单字段天花板暂卡在 `1.10`；需补入更高毛 Alpha 矿脉破 `1.58`！
+  - **新增核心矿脉**：经 `cnhkmcp` 实盘核验 **`option_horizon_decomp`**（`option 1.3×`, 本账号 **`0` OS**, `cov=96.7–98.4%`, `dCov=0.9507`）含 **8 个纯 `Alphas=0` 免额 MATRIX**（`put_call_open_interest_ratio_*`、`put_call_volume_ratio_*`、`implied_volatility_*`）+ 4 个免额期限结构价差（借鉴历史 `Sh=2.22, Fit=2.58, Mgn=27bp` 的期权 IV 骨架），已置顶第 2 顺位开跑！

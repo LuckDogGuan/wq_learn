@@ -11,3 +11,6 @@
 - **2026-11-25 17:45（30 分钟巡检 #1 · `analyst10` 有信号但出现 300s 轮询超时观测）**：
   - `GLB / TOP3000 / analyst10`（Wave #1 `2×8` 耗时 `304.7s`）：完成 `8` 条、另 `8` 条落 `RESULTS_UNOBSERVED`（GLB 3000 多国大池单批 `FULL` 接近 300s 轮询上限，后续需把 GLB 轮询上限放宽至 `600s` 并只对账不重发）。
   - 已完成 8 条中即出现 `MPgOZYZ8`（`anl10_entfy1_pred_surps_v1_6484`, `Sh=-0.80` → 正向约 `+0.80`）与 `1YGePNKW`（`Sh=+0.69, TO=9.1%`），验证 `analyst10` 存在真实盈利意外正向信号，值得继续推进 `2→3` 冲塔。
+
+- **2026-11-25 20:16（1 小时定时检查 #2 · 接入 WDS 三大高产矿脉 `model239` + `sentiment26` + `analyst15`）**：
+  - `GLB / analyst10` 与 `fundamental44` 完成 `35` 条（最高 `+0.80` / `+0.78`）。现补入 WDS 实证最高社区 Sharpe 矿脉：**`model239`**（融券拥挤度，`cov=92–98%`, `aCnt=1–4`, WDS `COUNTRY Sh=1.117`）、**`sentiment26`**（`cov=100%`, `sentiment 1.3×`, `0 OS`）与 **`analyst15`**（`cov=97–98%`, 冲 `2→3` 达标塔），与 `v4` 1 算子/对称模板联跑。

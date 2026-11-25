@@ -32,7 +32,13 @@ def test_all_curated_ra_d1_campaign_specs_pass_static_validator() -> None:
                 alpha0_map[f] = 0
             for _, expr in camp.get("custom_base_exprs") or []:
                 for tok in expr.replace("(", " ").replace(")", " ").replace(",", " ").split():
-                    if tok.startswith(("oth496_", "raw_volume_indicator_")):
+                    if tok.startswith((
+                        "oth496_",
+                        "raw_volume_indicator_",
+                        "normalized_volume_indicator_",
+                        "put_call_",
+                        "implied_volatility_",
+                    )):
                         alpha0_map[tok] = 0
 
     validator = ExprValidator()

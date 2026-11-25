@@ -83,3 +83,7 @@
     3. 同步在 `daemon_ra_runner.py` 植入**自动数据集早停（连续 2 波 `0` 条 `|Sh|≥0.80` 自动切下一集）**与**高 Base 多市场轮巡（`EUR → USA → GLB → ASI → CHN → DEU(analyst93/fnd6) → HKG → KOR → GBR → AMR → IND`）**。
 
 - **2026-11-25 19:16（1 小时定时检查 #1）**：`DEU / analyst93` 完成 `38` 条 `0` 命中（最高 `+0.55`），已主动跳过避免浪费额度，DEU 直切低换手财报比率 **`fundamental6`** 与 **`other250`**。
+
+- **2026-11-25 20:16（1 小时定时检查 #2 · `fundamental6` ROA 抓获 `|Sh|=1.05, Margin=59.8bp`！）**：
+  - `DEU / fundamental6` 首波 `32` 条中 **`YPlrXprq`**（`reverse(rank(ts_mean(ROA, 22)))`）录得 **`Sh=-1.05, Fit=-0.81, TO=2.50%, Margin=-59.82bp`** → 说明**正向 `ROA` 即 `+1.05, Fit +0.81, Margin +59.82bp`**（因旧 `v3` 模板缺正向水平模板而未测正向！）。
+  - **动作**：升级 `v4` 模板补回正向 `group_zscore(ts_mean(x,22), subindustry)` 与 1 算子 `group_zscore(x, industry)` + 新增 `ROA×GP/AT` 与 `ROA×CF/AT` 双支组合；同步止损 `DEU/other250`（`0/32`, 最高 `+0.35`）。

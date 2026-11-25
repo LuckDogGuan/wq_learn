@@ -36,3 +36,7 @@
 - **2026-11-25 17:45（30 分钟巡检 #1 · `news_sentiment_dl` 首波偏弱，静待 `price_signal_dl` 波次）**：
   - `EUR / TOP2500 / news_sentiment_dl`（`Alphas=0` 免额，Wave #1 `32` FULL 耗时 `165.0s`）：`0` 条 `|Sh| ≥ 0.80`，最高仅 `+0.42` / 最低 `-0.40`，`avg_mgn = -0.16bp`，信号偏弱。
   - **方向判断**：无需中途打断服务，等待 Pass 2 对 `EUR / price_signal_dl`（`cov=100%` MATRIX，同系列已在 USA 首波打出 `Sh=1.10 / 2Y=1.84 / Mgn=24.9bp`）进行实盘验证；若 `EUR / news_sentiment_dl` 满 48 条仍无起色，守护进程将自动早停该数据集。
+
+- **2026-11-25 20:16（1 小时定时检查 #2 · 重大方向升级至 `model25` 历史冠军矿脉！）**：
+  - `EUR / price_signal_dl` 完成 `68` 条，产出 `4` 条 `POOL_B`（最高 `Jj3wRw7j Sh=+0.90`），但单集天花板偏低。
+  - **深度诊断与换轨**：对照 [guangzhou_history_postmortem.md](../records/experiments/guangzhou_history_postmortem.md)，EUR 历史产出 `Sh 2.37–3.26, Fit 2.77, Margin 29.8bp` 的真正核心矿脉是 **`model25`**（`model 1.3×`, 本账号 **`0` OS**）配 1 算子直出 `group_zscore(x, industry)`！现已实时核验 `value_momentum_region_percentile`、`operating_efficiency_component_percentile`、`exclusions_component_percentile`、`regional/mid/long/global_momentum_percentile`（`cov=89–100%`, `dCov=1.0`, `aCnt=5–21`），置顶全队列第 1 顺位并升级 `v4` 4 组完全对称模板（含 1 算子 `group_zscore(x, industry)`）。
