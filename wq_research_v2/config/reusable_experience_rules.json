@@ -8,7 +8,9 @@
     "canonical_dual_branch": "min(rank(expr_A), rank(expr_B)) / reverse(min(...))",
     "auto_submit_forbidden": true,
     "sc_local_safe_lt": 0.68,
+    "sc_alias_and_useful_lt": 0.65,
     "pc_remote_hard_lt": 0.70,
+    "passing_candidate_ranking_priority": ["margin_bp_desc", "sharpe_desc", "fitness_desc"],
     "ra_thresholds_standard": {
       "sharpe_gt": 1.58,
       "fitness_gt": 1.0,
@@ -136,8 +138,10 @@
     {"id": "S3PC-VNEUT-CI", "side": "ADMIN_ORIGINAL", "author": "WL13229+ZS59763", "formula": "if_else(rank(adv20) > {cut}, vector_neut(group_zscore({a}, group_cartesian_product(country, industry)), rank({b})), 0)", "purpose": "Orthogonalize signal against crowding/returns (9qGvelwo PC=0.6146; gJrA5OlJ Sh=2.21, PC=0.6433)"}
   ],
   "tagging_state_machine": {
-    "SC_PASS": "All platform hard checks PASS (0 FAIL) AND local 92-OS SC < 0.68, ONLY remote PC >= 0.70 -> mark SC_PASS and queue for dedicated PC-crushing optimization.",
-    "Useful": "All platform hard checks PASS (0 FAIL) AND local 92-OS SC < 0.68 AND intra-pool pairwise SC < 0.68 AND remote PC < 0.70 -> request user confirmation to apply Useful tag (NEVER auto-submit).",
+    "alias_rule": "Any alpha passing ALL RA hard checks (0 FAIL) AND local SC < 0.65 MUST receive alias `name = 'SC 0.xxx PC 0.xxx'`.",
+    "margin_preference": "When all RA + SC + PC conditions pass, strictly prefer HIGHER margin (bp) first (both in orthogonal subset selection and final Useful ranking).",
+    "SC_PASS": "All platform hard checks PASS (0 FAIL) AND local 92-OS SC < 0.65, ONLY remote PC >= 0.70 -> apply tag `SC_PASS` + alias `SC 0.xxx PC 0.xxx` and queue for dedicated PC-crushing optimization.",
+    "Useful": "All platform hard checks PASS (0 FAIL) AND local 92-OS SC < 0.65 AND intra-pool pairwise SC < 0.68 AND remote PC < 0.70 -> apply tag `Useful` + alias `SC 0.xxx PC 0.xxx` (ranked by Margin DESC; NEVER auto-submit).",
     "SC_IS_HIGHT": "Local or remote SC >= 0.70 -> terminal high-SC marker.",
     "PC_IS_HIGHT": "Unrescuable high PC (>= 0.85 after PC-crushing stack) -> terminal high-PC marker."
   },

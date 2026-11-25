@@ -19,6 +19,28 @@ SC_PASS_TAG = "SC_PASS"
 SC_HIGH_TAG = "SC_IS_HIGHT"
 PC_HIGH_TAG = "PC_IS_HIGHT"
 TERMINAL_HIGH_TAGS = {SC_HIGH_TAG, PC_HIGH_TAG}
+SC_ALIAS_MAX_THRESHOLD = 0.65
+
+
+def format_sc_pc_alias(sc_val: Optional[float], pc_val: Optional[float]) -> Optional[str]:
+    """Format standardized BRAIN alpha alias `SC 0.xxx PC 0.xxx` (user-mandated format)."""
+    if sc_val is None and pc_val is None:
+        return None
+    sc_str = f"{float(sc_val):.3f}" if sc_val is not None else "NA"
+    pc_str = f"{float(pc_val):.3f}" if pc_val is not None else "NA"
+    return f"SC {sc_str} PC {pc_str}"
+
+
+def sort_passing_candidates_margin_first(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Among fully passing RA candidates, prioritize HIGHER margin (bp) first, then Sharpe & Fitness."""
+    return sorted(
+        candidates,
+        key=lambda c: (
+            -(float(c["margin_bp"]) if c.get("margin_bp") is not None else -1e9),
+            -(float(c["sharpe"]) if c.get("sharpe") is not None else -1e9),
+            -(float(c["fitness"]) if c.get("fitness") is not None else -1e9),
+        ),
+    )
 
 
 def compute_merged_tags(
@@ -154,9 +176,10 @@ def apply_alpha_tag(
     alpha_id: str,
     target_tag: str = USEFUL_TAG,
     *,
+    alias_name: Optional[str] = None,
     confirm_apply: bool = False,
 ) -> dict[str, Any]:
-    """Inspect current tags and apply `target_tag` (e.g. `Useful`) only if `confirm_apply=True`.
+    """Inspect current tags/name and apply `target_tag` (+ optional `alias_name` like `SC 0.xxx PC 0.xxx`) only if `confirm_apply=True`.
 
     Never modifies description/color/category; never calls `/submit`.
     """
@@ -169,17 +192,28 @@ def apply_alpha_tag(
         }
     meta = resp.json() or {}
     existing = [str(t) for t in (meta.get("tags") or [])]
-    merged, changed = compute_merged_tags(existing, target_tag)
+    existing_name = meta.get("name")
+    merged, tags_changed = compute_merged_tags(existing, target_tag)
+    clean_alias = alias_name.strip() if isinstance(alias_name, str) and alias_name.strip() else None
+    name_changed = clean_alias is not None and clean_alias != existing_name
 
-    if not changed:
+    if not tags_changed and not name_changed:
         return {
             "alpha_id": alpha_id,
             "applied": False,
             "dry_run": not confirm_apply,
             "existing_tags": existing,
             "merged_tags": merged,
+            "existing_name": existing_name,
+            "target_name": clean_alias,
             "reason": "ALREADY_UP_TO_DATE",
         }
+
+    payload: dict[str, Any] = {}
+    if tags_changed:
+        payload["tags"] = merged
+    if name_changed:
+        payload["name"] = clean_alias
 
     if not confirm_apply:
         return {
@@ -188,13 +222,16 @@ def apply_alpha_tag(
             "dry_run": True,
             "existing_tags": existing,
             "merged_tags": merged,
+            "existing_name": existing_name,
+            "target_name": clean_alias,
+            "payload": payload,
             "reason": "DRY_RUN_ONLY (pass --confirm-apply to execute PATCH)",
         }
 
     patch_resp = client.patch(
         f"/alphas/{alpha_id}",
         explicit_user_confirmed=True,
-        json={"tags": merged},
+        json=payload,
         timeout=30,
     )
     ok = 200 <= patch_resp.status_code < 300
@@ -205,5 +242,7 @@ def apply_alpha_tag(
         "http_status": patch_resp.status_code,
         "existing_tags": existing,
         "merged_tags": merged,
+        "existing_name": existing_name,
+        "target_name": clean_alias,
         "reason": "OK" if ok else f"PATCH HTTP {patch_resp.status_code}",
     }

@@ -550,7 +550,7 @@ def build_eur_pc_pass_finisher_s3r3_specs() -> list[dict[str, Any]]:
     for tag, neut, dec, trunc in fin_grid:
         specs.append(
             _pack_items_into_spec(
-                batch_id=f"S3-r3-EUR-FINA-{tag}",
+                batch_id=f"S3-r3b-EUR-FINA-{tag}",
                 campaign_id="S3_EUR_PC_PASS_FINISHER",
                 hypothesis_id="HYP-S3-EUR-FIN-0FAIL-PC-LT068",
                 region="EUR",
@@ -573,7 +573,7 @@ def build_eur_pc_pass_finisher_s3r3_specs() -> list[dict[str, Any]]:
         )
         specs.append(
             _pack_items_into_spec(
-                batch_id=f"S3-r3-EUR-FINB-{tag}",
+                batch_id=f"S3-r3b-EUR-FINB-{tag}",
                 campaign_id="S3_EUR_PC_PASS_FINISHER",
                 hypothesis_id="HYP-S3-EUR-FINB-0FAIL-PC-LT068",
                 region="EUR",
@@ -631,7 +631,7 @@ def build_usa_pricedl_single_axis_s3r3_specs() -> list[dict[str, Any]]:
     ]:
         specs.append(
             _pack_items_into_spec(
-                batch_id=f"S3-r3-USA-1AX-{tag}",
+                batch_id=f"S3-r3b-USA-1AX-{tag}",
                 campaign_id="S3_USA_PSD_SINGLE_AXIS",
                 hypothesis_id="HYP-S3-USA-PSD-1AX-160-PC-LT068",
                 region="USA",

@@ -15,6 +15,8 @@ from wq_research_v2.tagger import (
     SC_PASS_TAG,
     USEFUL_TAG,
     compute_merged_tags,
+    format_sc_pc_alias,
+    sort_passing_candidates_margin_first,
 )
 
 
@@ -168,3 +170,16 @@ def test_sc_pass_tag_transitions() -> None:
     # Marking PC_IS_HIGHT keeps SC_PASS intact while stripping Useful
     tags4, changed4 = compute_merged_tags([USEFUL_TAG, SC_PASS_TAG], PC_HIGH_TAG)
     assert changed4 and tags4 == [SC_PASS_TAG, PC_HIGH_TAG]
+
+
+def test_sc_pc_alias_format_and_margin_first_ranking() -> None:
+    assert format_sc_pc_alias(0.36, 0.7816) == "SC 0.360 PC 0.782"
+    assert format_sc_pc_alias(0.2691, 0.6599) == "SC 0.269 PC 0.660"
+    assert format_sc_pc_alias(None, None) is None
+
+    ranked = sort_passing_candidates_margin_first([
+        {"alpha_id": "A_LOW_MGN", "margin_bp": 12.0, "sharpe": 2.4, "fitness": 2.0},
+        {"alpha_id": "B_HIGH_MGN", "margin_bp": 35.4, "sharpe": 1.9, "fitness": 1.5},
+        {"alpha_id": "C_MID_MGN", "margin_bp": 18.6, "sharpe": 2.5, "fitness": 2.3},
+    ])
+    assert [x["alpha_id"] for x in ranked] == ["B_HIGH_MGN", "C_MID_MGN", "A_LOW_MGN"]

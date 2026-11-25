@@ -76,11 +76,12 @@ def build_parser() -> argparse.ArgumentParser:
     p_pc.add_argument("--alpha-ids", required=True)
     p_pc.add_argument("--region", default="GBR")
 
-    # tag (Guangzhou-style Useful / SC_PASS / SC_IS_HIGHT / PC_IS_HIGHT tagging; dry-run by default)
-    p_tag = sub.add_parser("tag", help="Preview or apply Useful/SC_PASS/SC_IS_HIGHT/PC_IS_HIGHT tag (dry-run by default)")
+    # tag (Guangzhou-style Useful / SC_PASS / SC_IS_HIGHT / PC_IS_HIGHT tagging + optional SC/PC alias; dry-run by default)
+    p_tag = sub.add_parser("tag", help="Preview or apply Useful/SC_PASS/SC_IS_HIGHT/PC_IS_HIGHT tag & alias (dry-run by default)")
     p_tag.add_argument("action", choices=["apply"])
     p_tag.add_argument("--alpha-ids", required=True)
     p_tag.add_argument("--tag", default=USEFUL_TAG, choices=["Useful", "SC_PASS", "SC_IS_HIGHT", "PC_IS_HIGHT"])
+    p_tag.add_argument("--name", default=None, help="Optional alpha alias (e.g. 'SC 0.360 PC 0.782')")
     p_tag.add_argument("--confirm-apply", action="store_true", help="Explicit confirmation required to send PATCH")
 
     # ablate
@@ -257,7 +258,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         if args.cmd == "tag":
             ids = _parse_csv(args.alpha_ids)
             out = [
-                apply_alpha_tag(auth, aid, args.tag, confirm_apply=bool(args.confirm_apply))
+                apply_alpha_tag(auth, aid, args.tag, alias_name=args.name, confirm_apply=bool(args.confirm_apply))
                 for aid in ids
             ]
             print(json.dumps(out, indent=2, ensure_ascii=False))
