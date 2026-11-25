@@ -75,99 +75,100 @@ def _pack_items_into_spec(
 
 
 def build_eur_model25_stage3_subuniverse_rescue_specs() -> list[dict[str, Any]]:
-    """Stage-3 rescue for EUR/model25 (Sh=1.70..3.16, 2Y=1.79..2.27, Mgn=23..60bp, ONLY fail=LOW_SUB_UNIVERSE_SHARPE)."""
+    """Stage-3 rescue for EUR/TOP2500/model25 (Sh=1.70..3.16, 2Y=1.79..2.27, Mgn=23..60bp, ONLY fail=LOW_SUB_UNIVERSE_SHARPE).
+
+    Empirical Wave #1 lesson: EUR/TOP1200 alone dropped Sharpe 3.16->1.26, whereas EUR/TOP2500 keeps full 3.16
+    and already gets Sub-Uni=1.29. Therefore STAY on EUR/TOP2500 and rescue Sub-Universe via:
+      - ATOM size-bucket normalization & large-cap gating using model25's own Total Assets (mdl25_bsv421_5v)
+      - Nested country x industry/subindustry grouping + mild decay {0,2,4,6} & truncation {0.04,0.06,0.08}
+      - Mild signed_power(0.5/0.75) + ATOM dual-branch min(rank(val_mom), rank(op_eff/exclusions))
+    """
     specs: list[dict[str, Any]] = []
     vm = "ts_backfill(value_momentum_region_percentile, 21)"
     oe = "ts_backfill(operating_efficiency_component_percentile, 21)"
     ex = "ts_backfill(exclusions_component_percentile, 21)"
     rm = "ts_backfill(regional_momentum_percentile, 21)"
+    # model25 Total Assets (live-verified cov=62.8%, dCov=1.0) -> keeps 100% single-dataset ATOM!
+    m25_at = "ts_backfill(mdl25_bsv421_5v, 126)"
 
-    # 8 clean 4:4 Sub-Universe rescue expressions (nested country x industry/subindustry, signed_power, ATOM dual-branch)
-    expr_defs: list[tuple[str, str, str, str]] = [
-        ("S3-ADM-01-ci-vm", "ADMIN_ORIGINAL", "WL13229", f"group_zscore({vm}, group_cartesian_product(country, industry))"),
-        ("S3-ADM-02-cs-vm-m10", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(ts_mean({vm}, 10), group_cartesian_product(country, subindustry))"),
-        ("S3-ADM-03-ci-oe", "ADMIN_ORIGINAL", "WL13229", f"group_zscore({oe}, group_cartesian_product(country, industry))"),
-        ("S3-ADM-04-dual-vm-oe", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(min(rank({vm}), rank({oe})), industry)"),
-        ("S3-TOP-01-sp05-vm", "TOP100_2026Q4", "SZ83096", f"signed_power(group_zscore({vm}, industry), 0.5)"),
-        ("S3-TOP-02-sp075-vm-ci", "TOP100_2026Q4", "SZ83096", f"signed_power(group_zscore({vm}, group_cartesian_product(country, industry)), 0.75)"),
-        ("S3-TOP-03-rank-vm-ci", "TOP100_2026Q4", "SZ83096", f"group_rank(ts_decay_linear({vm}, 5), group_cartesian_product(country, industry))"),
-        ("S3-TOP-04-dual-vm-ex", "TOP100_2026Q4", "ZS59763", f"group_zscore(min(rank({vm}), rank({ex})), group_cartesian_product(country, industry))"),
+    # Pack A: Pure ATOM EUR/TOP2500 Sub-Universe rescue (size-gated + nested country*industry + dual-branch)
+    expr_defs_a: list[tuple[str, str, str, str]] = [
+        ("S3-ADM-01-atom-gate30-vm", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank({m25_at}) > 0.3, group_zscore({vm}, industry), 0)"),
+        ("S3-ADM-02-atom-gate45-vm", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank({m25_at}) > 0.45, group_zscore({vm}, industry), 0)"),
+        ("S3-ADM-03-atom-bkt-vm", "ADMIN_ORIGINAL", "WL13229", f"group_zscore({vm}, bucket(rank({m25_at}), range=\"0.2,1,0.2\"))"),
+        ("S3-ADM-04-ci-vm-m10", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(ts_mean({vm}, 10), group_cartesian_product(country, industry))"),
+        ("S3-TOP-01-sp05-vm-ind", "TOP100_2026Q4", "SZ83096", f"signed_power(group_zscore({vm}, industry), 0.5)"),
+        ("S3-TOP-02-atom-gate35-vm-m22", "TOP100_2026Q4", "SZ83096", f"if_else(rank({m25_at}) > 0.35, group_zscore(ts_mean({vm}, 22), subindustry), 0)"),
+        ("S3-TOP-03-dual-vm-oe-gate30", "TOP100_2026Q4", "ZS59763", f"if_else(rank({m25_at}) > 0.3, group_zscore(min(rank({vm}), rank({oe})), industry), 0)"),
+        ("S3-TOP-04-dual-vm-ex-ci", "TOP100_2026Q4", "ZS59763", f"group_zscore(min(rank({vm}), rank({ex})), group_cartesian_product(country, industry))"),
     ]
 
-    # Sweep mild settings: Universe (TOP1200 & TOP800 & TOP2500), Neut (INDUSTRY/SUBINDUSTRY/COUNTRY/RAM), mild decay & truncation
-    setting_grid: list[tuple[str, str, str, int, float]] = [
-        ("u1200_ind_d0_t04", "TOP1200", "INDUSTRY", 0, 0.04),
-        ("u1200_sub_d2_t06", "TOP1200", "SUBINDUSTRY", 2, 0.06),
-        ("u1200_cty_d4_t06", "TOP1200", "COUNTRY", 4, 0.06),
-        ("u1200_ram_d2_t04", "TOP1200", "REVERSION_AND_MOMENTUM", 2, 0.04),
-        ("u800_ind_d0_t04", "TOP800", "INDUSTRY", 0, 0.04),
-        ("u800_sub_d4_t06", "TOP800", "SUBINDUSTRY", 4, 0.06),
-        ("u2500_sub_d2_t06", "TOP2500", "SUBINDUSTRY", 2, 0.06),
-        ("u2500_cty_d4_t08", "TOP2500", "COUNTRY", 4, 0.08),
-        ("u2500_ram_d6_t06", "TOP2500", "REVERSION_AND_MOMENTUM", 6, 0.06),
-        ("u2500_mkt_d4_t06", "TOP2500", "MARKET", 4, 0.06),
+    # Pack B: PV1 adv20 / cap liquidity-bucket & large-cap gate + op_eff combinations on EUR/TOP2500
+    expr_defs_b: list[tuple[str, str, str, str]] = [
+        ("S3-ADM-05-adv-gate35-vm", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_zscore({vm}, industry), 0)"),
+        ("S3-ADM-06-adv-gate50-vm", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.5, group_zscore({vm}, industry), 0)"),
+        ("S3-ADM-07-adv-bkt-vm", "ADMIN_ORIGINAL", "WL13229", f"group_zscore({vm}, bucket(rank(adv20), range=\"0.2,1,0.2\"))"),
+        ("S3-ADM-08-adv-gate35-oe", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_zscore({oe}, industry), 0)"),
+        ("S3-TOP-05-adv-gate40-vm-m22", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.4, group_zscore(ts_mean({vm}, 22), subindustry), 0)"),
+        ("S3-TOP-06-adv-gate35-dual-vmoe", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.35, group_zscore(min(rank({vm}), rank({oe})), industry), 0)"),
+        ("S3-TOP-07-adv-gate35-vm-ci", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.35, group_zscore({vm}, group_cartesian_product(country, industry)), 0)"),
+        ("S3-TOP-08-adv-gate35-vm-rm", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.35, group_zscore(min(rank({vm}), rank({rm})), industry), 0)"),
     ]
 
-    for tag, uni, neut, dec, trunc in setting_grid:
-        items = [
-            {
-                "expression": expr,
-                "template_id": f"{tid}_{uni}_{neut}_d{dec}",
-                "source_side": side,
-                "author_id": auth,
-                "dataset_id": "model25",
-                "primary_field_id": "value_momentum_region_percentile",
-            }
-            for tid, side, auth, expr in expr_defs
-        ]
+    setting_grid: list[tuple[str, str, int, float]] = [
+        ("u2500_ind_d0_t04", "INDUSTRY", 0, 0.04),
+        ("u2500_sub_d2_t06", "SUBINDUSTRY", 2, 0.06),
+        ("u2500_cty_d2_t06", "COUNTRY", 2, 0.06),
+        ("u2500_ram_d4_t06", "REVERSION_AND_MOMENTUM", 4, 0.06),
+        ("u2500_mkt_d4_t08", "MARKET", 4, 0.08),
+        ("u2500_ind_d6_t06", "INDUSTRY", 6, 0.06),
+    ]
+
+    for tag, neut, dec, trunc in setting_grid:
         specs.append(
             _pack_items_into_spec(
-                batch_id=f"S3-{REFINER_VER}-EUR-M25-{tag}",
+                batch_id=f"S3-{REFINER_VER}b-EUR-M25A-{tag}",
                 campaign_id="S3_EUR_M25_SUBRESCUE",
-                hypothesis_id="HYP-S3-EUR-M25-SUBRESCUE",
+                hypothesis_id="HYP-S3-EUR-M25-TOP2500-ATOM-SUBRESCUE",
                 region="EUR",
-                universe=uni,
+                universe="TOP2500",
                 dataset_id="model25",
                 queue_type="NORMAL",
-                settings=_make_settings("EUR", uni, neut, decay=dec, truncation=trunc),
-                items=items,
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=[
+                    {
+                        "expression": expr,
+                        "template_id": f"{tid}_TOP2500_{neut}_d{dec}",
+                        "source_side": side,
+                        "author_id": auth,
+                        "dataset_id": "model25",
+                        "primary_field_id": "value_momentum_region_percentile",
+                    }
+                    for tid, side, auth, expr in expr_defs_a
+                ],
             )
         )
-
-    # Also add a clean 2nd pack focusing on operating_efficiency & regional_momentum combinations (lower PC!)
-    expr_defs_2: list[tuple[str, str, str, str]] = [
-        ("S3-ADM-05-oe-ind", "ADMIN_ORIGINAL", "WL13229", f"group_zscore({oe}, industry)"),
-        ("S3-ADM-06-oe-ci-m10", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(ts_mean({oe}, 10), group_cartesian_product(country, industry))"),
-        ("S3-ADM-07-dual-oe-rm", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(min(rank({oe}), rank({rm})), industry)"),
-        ("S3-ADM-08-dual-vm-rm", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(min(rank({vm}), rank({rm})), group_cartesian_product(country, industry))"),
-        ("S3-TOP-05-sp05-oe", "TOP100_2026Q4", "SZ83096", f"signed_power(group_zscore({oe}, industry), 0.5)"),
-        ("S3-TOP-06-sp075-oe-ci", "TOP100_2026Q4", "SZ83096", f"signed_power(group_zscore({oe}, group_cartesian_product(country, industry)), 0.75)"),
-        ("S3-TOP-07-hump-vm-ci", "TOP100_2026Q4", "ZS59763", f"hump(group_zscore({vm}, group_cartesian_product(country, industry)), hump=0.01)"),
-        ("S3-TOP-08-grank-oe-ci", "TOP100_2026Q4", "LD22811", f"group_rank({oe}, group_cartesian_product(country, industry))"),
-    ]
-    for tag, uni, neut, dec, trunc in setting_grid[:6]:
-        items = [
-            {
-                "expression": expr,
-                "template_id": f"{tid}_{uni}_{neut}_d{dec}",
-                "source_side": side,
-                "author_id": auth,
-                "dataset_id": "model25",
-                "primary_field_id": "operating_efficiency_component_percentile",
-            }
-            for tid, side, auth, expr in expr_defs_2
-        ]
         specs.append(
             _pack_items_into_spec(
-                batch_id=f"S3-{REFINER_VER}-EUR-M25B-{tag}",
+                batch_id=f"S3-{REFINER_VER}b-EUR-M25B-{tag}",
                 campaign_id="S3_EUR_M25_SUBRESCUE",
-                hypothesis_id="HYP-S3-EUR-M25-OE-LOWPC",
+                hypothesis_id="HYP-S3-EUR-M25-TOP2500-ADV-SUBRESCUE",
                 region="EUR",
-                universe=uni,
+                universe="TOP2500",
                 dataset_id="model25",
                 queue_type="NORMAL",
-                settings=_make_settings("EUR", uni, neut, decay=dec, truncation=trunc),
-                items=items,
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=[
+                    {
+                        "expression": expr,
+                        "template_id": f"{tid}_TOP2500_{neut}_d{dec}",
+                        "source_side": side,
+                        "author_id": auth,
+                        "dataset_id": "model25",
+                        "primary_field_id": "value_momentum_region_percentile",
+                    }
+                    for tid, side, auth, expr in expr_defs_b
+                ],
             )
         )
     return specs

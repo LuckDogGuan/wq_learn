@@ -47,3 +47,7 @@
   - **`np6JW77q`**：`operating_efficiency_component_percentile` → **`Sharpe = +1.85, 2Y = +1.79, Fit = +1.25, TO = 2.80%, Margin = +40.73bp`** — **仅差 1 项 `LOW_SUB_UNIVERSE_SHARPE (0.75)`**！
   - **`kq87KjPK`**：`operating_efficiency_component_percentile` → **`Sharpe = +1.70, 2Y = +1.85, Fit = +1.03, TO = 1.74%, Margin = +52.92bp`** — **仅差 1 项 `LOW_SUB_UNIVERSE_SHARPE (0.64)`**！
   - **立即启动 Stage-3 Sub-Universe 专项解救（[stage23_refiner.py](../../../wq_research_v2/src/wq_research_v2/stage23_refiner.py)）**：采用嵌套分组 `group_cartesian_product(country, industry/subindustry)` + 宇宙切换 `EUR/TOP1200` / `EUR/TOP800` + 小幅参数微调（`decay ∈ {0,2,4,6}`、`truncation ∈ {0.04,0.06,0.08}`、`signed_power 0.5/0.75`）+ `val_mom × op_eff` ATOM 双支，直取 `0 FAIL` 可打 `Useful` 候选！
+
+- **2026-11-25 21:16（`TOP1200` 对比实证 & 切换专注 `EUR + USA` 双方向独占运行）**：
+  - Stage-3 首波实测：`EUR / TOP1200 / model25` 将 `value_momentum_region_percentile` Sharpe 从 `3.16` 降至 `1.26`（`vRYq23qw`, `2Y=0.85`），证明**核心超额仍在 `TOP2500` 中大盘+次优盘结构中，不宜直接切小宇宙 `TOP1200`**！
+  - **立即精准修正**：停掉 `TOP1200/TOP800`，回归 **`EUR / TOP2500`**，在 `TOP2500` 内直接采用 **单数据集 ATOM 总资产大盘门控/分桶**（`mdl25_bsv421_5v`: `if_else(rank(...)>0.3/0.45, ...)` 与 `bucket(rank(...), range="0.2,1,0.2")`）+ **`adv20` 流动性大盘门控** + 轻参数微调（`decay ∈ {0,2,4,6}`、`truncation ∈ {0.04,0.06,0.08}`），专攻把 `Sub-Universe Sharpe` 从 `1.29` 推过门槛实现 **`0 FAIL` `POOL_S`**！同时广州服务已热切换至 **`--region EUR,USA` 专注 2 方向独占模式**。
