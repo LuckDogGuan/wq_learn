@@ -1,15 +1,15 @@
 # WorldQuant BRAIN D1 RA 批次复盘与阶段漏斗总账（自动生成）
 
-- **生成时间 (UTC)**：`2026-11-25T20:35:36.362694+00:00`
-- **总批次数**：`474`（等级分布：`{'BEST': 31, 'GOOD': 19, 'NORMAL': 201, 'BAD': 138, 'TIMEOUT_BUG': 85}`）
-- **全库阶段过关统计**：有效完成 `2635` · 未观测 `663` · **一阶段 (`Sh≥0.80`) 过 `404` 个** · **二阶段 (`Sh≥1.25`) 过 `232` 个** · **三阶段 (`Sh≥1.58 & Fit≥1.0`) 过 `103` 个**（已核 0-FAIL `42` 个）
+- **生成时间 (UTC)**：`2026-11-25T22:35:21.375285+00:00`
+- **总批次数**：`559`（等级分布：`{'BEST': 32, 'GOOD': 24, 'NORMAL': 253, 'BAD': 162, 'TIMEOUT_BUG': 88}`）
+- **全库阶段过关统计**：有效完成 `3131` · 未观测 `687` · **一阶段 (`Sh≥0.80`) 过 `459` 个** · **二阶段 (`Sh≥1.25`) 过 `254` 个** · **三阶段 (`Sh≥1.58 & Fit≥1.0`) 过 `105` 个**（已核 0-FAIL `42` 个）
 
 ## 1. 分地区阶段漏斗统计
 
 | 地区 | 完成数 | 未观测 | 一阶段过 (`≥0.80`) | 二阶段过 (`≥1.25`) | 三阶段过 (`≥1.58 & Fit≥1`) | 已核 0-FAIL |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
-| **USA** | 880 | 96 | 91 | 10 | 0 | 0 |
-| **EUR** | 764 | 480 | 295 | 222 | 103 | 42 |
+| **USA** | 1200 | 160 | 102 | 10 | 0 | 0 |
+| **EUR** | 940 | 440 | 339 | 244 | 105 | 42 |
 | **DEU** | 430 | 8 | 2 | 0 | 0 | 0 |
 | **ASI** | 104 | 7 | 11 | 0 | 0 | 0 |
 | **KOR** | 98 | 16 | 0 | 0 | 0 | 0 |
@@ -66,16 +66,16 @@
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-05-evision_factor_4-CROWDING` | EUR/`ai_equity_alpha` | `analyst_forecast_revision_factor_4` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-05-evision_factor_4-REVERSION_AND_MOMENTUM` | EUR/`ai_equity_alpha` | `analyst_forecast_revision_factor_4` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-06-opinion_metric_7-CROWDING` | EUR/`ai_equity_alpha` | `analyst_opinion_metric_7` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
+| **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-06-opinion_metric_7-REVERSION_AND_MOMENTUM` | EUR/`ai_equity_alpha` | `analyst_opinion_metric_7` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.15 for 240s) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-07-yst_view_score_2-CROWDING` | EUR/`ai_equity_alpha` | `analyst_view_score_2` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-00-ntration_rank_d1-REVERSION_AND_MOMENTUM` | EUR/`model238` | `regional_peer_investment_concentration_rank_d1` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-01-lignment_rank_d1-CROWDING` | EUR/`model238` | `global_screening_factor_alignment_rank_d1` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.15 for 240s) |
+| **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-07-yst_view_score_2-REVERSION_AND_MOMENTUM` | EUR/`ai_equity_alpha` | `analyst_view_score_2` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.15 for 240s) |
+| **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-DUAL-REVERSION_AND_MOMENTUM-00` | EUR/`ai_equity_alpha` | `analyst_opinion_metric` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll HTTP 500) |
+| **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-01-lignment_rank_d1-CROWDING` | EUR/`model238` | `global_screening_factor_alignment_rank_d1` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-01-lignment_rank_d1-STATISTICAL` | EUR/`model238` | `global_screening_factor_alignment_rank_d1` | `STATISTICAL|d=0|tr=0.04` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Unobserved after 1 reconcile: Poll timeout) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-02-eference_rank_d1-CROWDING` | EUR/`model238` | `regional_change_in_preference_rank_d1` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-02-eference_rank_d1-STATISTICAL` | EUR/`model238` | `regional_change_in_preference_rank_d1` | `STATISTICAL|d=0|tr=0.04` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Unobserved after 1 reconcile: Poll timeout) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-03-eference_rank_d1-REVERSION_AND_MOMENTUM` | EUR/`model238` | `regional_institutional_preference_rank_d1` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-03-eference_rank_d1-STATISTICAL` | EUR/`model238` | `regional_institutional_preference_rank_d1` | `STATISTICAL|d=0|tr=0.04` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Unobserved after 1 reconcile: Poll timeout) |
 
-## 4. 全批次精简台账（展示前 120 / 474 批）
+## 4. 全批次精简台账（展示前 120 / 559 批）
 
 | 等级 | 地区 | 数据集 | 主字段 | 模板 | 配置 | 完成/未观测 | S1/S2/S3 | Max Sh | Avg Mgn |
 | :-: | :-: | --- | --- | --- | --- | :-: | :-: | :-: | :-: |

@@ -88,3 +88,11 @@
   - **头号正交核弹诞生：`EUR / model238` `88G9Kk9o`**：`group_zscore(ts_backfill(regional_change_in_preference_rank_d1, 21), industry)`（`RAM d=0`）直出 **`Sh = 1.76, 2Y = PASS, 本地 SC = 0.1876, 远程 PC = 0.6075, 与 RR5QjWYz 相关性仅 0.2054`**，仅缺 `Fitness(0.60)` 与 `Sub-Uni(0.43)`！
   - **坏批次复盘与精准纠偏**：`S3-r4-EUR-M238` 与 `S3-r4-EUR-OPEFF` 因直接硬切 `adv20 > 0.40/0.45` 导致信号掉至 `0.71/0.83` → 新上线严格单轴 **`S3-r5-EUR-88G-*`**（严禁硬切 `adv20 > 0.40`，在 `RAM` 下采用轻衰减 `d={2,4,6}` + `ts_decay_linear(3/5)` + `hump(0.01)` + 轻门控 `adv20 > 0.20/0.30` 及原池 `TOP1200/TOP800` 对照），直冲第 2 条正交 `Useful`！
   - **工程与数据集换血**：实证 `EUR` 2 并发叠加 `VECTOR` 集 `ai_equity_alpha` 导致 `58%` 后端 `Sim ERROR`/停滞（而 `USA` 零 `Sim ERROR` 且完成率 `88–100%`！）→ 立即淘汰 `EUR/ai_equity_alpha`，引入纯 `MATRIX` 机构大集 **`EUR/model77`**（S&P Capital IQ Alpha Factors, `dCov=1.00`）与 **`EUR/other455`**（`other 1.5×` 最高塔倍率, `cov=97.1%`），并上线 **`--region-caps EUR:1,USA:3`**（EUR 单槽稳健零抖动 + USA 三槽高速满载）+ 修复空体 `HTTP 200` 僵尸漏删边界。
+
+- **2026-11-26 06:40（2 小时定时审计 #4 · `EUR / model77` 首波 48 条直接爆矿！全员天然正交 `RR5QjWYz` + 19–25bp 高 Margin！）**：
+  - **重大新矿脉大爆发（`EUR / TOP2500 / model77` S&P Capital IQ Alpha Factors，仅跑 `48` FULL 即出 `2` 条 `POOL_S` + `3` 条 `Sh ≥ 1.65`）**：
+    - **`1YGbzOlz`**（`mdl177_qvm_ev_qvaeur_alt`, `RAM d=0`）：**`Sh = 1.80, 2Y = 2.49, Fit = 1.25, TO = 6.2%, Mgn = 19.30bp, SC = 0.345, 与 RR5QjWYz 相关仅 0.583 (< 0.68 正交!), PC = 0.850`** — 仅差 1 项 `Sub-Uni(0.53)` + 压 PC！
+    - **`N1KmRLLE`**（`mdl177_qvm_ev_qvaeur_alt m22`, `RAM d=0`）：**`Sh = 1.65, 2Y = 2.45, Fit = 1.01, TO = 3.7%, Mgn = 25.29bp, SC = 0.336, corr(RR5) = 0.540, PC = 0.813`** — 仅差 1 项 `Sub-Uni(0.45)` + 压 PC！
+    - **`gJrO9RbK`**（`mdl177_emm_fc_rev3y2_alt` 3M FY2 EPS 修正, `RAM d=0`）：**`Sh = 1.66, Fit = 0.91, SC = 0.149, corr(RR5) = 0.135（几乎零相关!）, 远程 PC = 0.6976（原生态已破 < 0.70!）`**！
+  - **`model238` 复盘**：`S3-r5-EUR-88G` 将 `88G9Kk9o` 推至 **`78GbxbA1`（`Sh=1.73, 2Y=2.21, Fit=0.99, SC=0.346, corr=0.250, PC=0.721`）**，但 `TOP1200` 骤降至 `0.43` 证实其纯单集难过 `Sub-Uni`，本轮将其作为正交减 PC 辅支融入 `S3-r6-EUR-M77`！
+  - **立即置顶第 1 顺位**：上线 **`S3-r6-EUR-M77-*`**（复刻 `RR5QjWYz` 冠军公式：`country*industry + adv20(0.35/0.40/0.45) + qvm × emm/balshtrank/roe/model238 + signed_power + CROWDING/RAM`），同步追加 `EUR_M77_CAPIQ_V2_NORM`（8 个精选 `qvm/emm/dvm` 字段）并淘汰死集 `EUR / other455`（`24 FULL, max=0.36`）。

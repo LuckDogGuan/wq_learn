@@ -71,3 +71,12 @@
   - **本轮满槽换血升级（`--region-caps EUR:1,USA:3`）**：淘汰 `model68` 与 `forward_beta_risk`，接入两大实盘核验 **100% 纯 `MATRIX`** 蓝海大集，供 `USA` 3 并发槽高速满载运行：
     1. **`USA / other580`**（Standardized Daily ETF Holdings，**`other 1.4×, 0 OS`**，8 个核心 `MATRIX` 字段**全部 `Alphas=0` 免额**、`cov=90.8%–100%`）；
     2. **`USA / pv_tech_indicators`**（Price Volume Technical Indicators，**`model 1.3×, 0 OS`**，**`val=6.0`**, `cov=100%`, `aCnt=1`）。
+
+- **2026-11-26 06:40（2 小时定时审计 #4 · 吞吐飙升至 `320 FULL/小时`（0 次 `429`）+ 全面切换美股 StarMine 机构三大王牌 `model28/model31/model30`！）**：
+  - **近 2 小时吞吐与结果复盘**：`EUR:1 + USA:3` 落地后 `USA` 劲增 **`+320 FULL`（累计 `1,200`）** 且 **0 次 `429`、0 次 `Sim ERROR`**，全库单小时冲破 **`320 FULL/hr`**（日完成已至 **`3,131 / 4,500`**，剩余额度 `2,119 / 5,000`）。
+    - `USA / pv_tech_indicators`（`264 FULL`）：出 `11` 条 S1 种子，最高 **`j2VR1R5Q`（`price_reversal_index`, `Sh=1.22, 2Y=2.75, SC=0.439, PC=0.720`）** → 上线 `S2-r6-USA-PVTECH` 降换手精修；
+    - `USA / other580`（`48 FULL` 免额）：`0` 命中（`max=0.56`），已自动止损下线。
+  - **美股全面换装机构级 StarMine 三大王牌（纯 `MATRIX`，960+ 满仓队列供 3 槽全速狂飙至 4,500/天）**：
+    1. **`USA / model28`（StarMine Structural Credit Risk）**：**8 个纯 `MATRIX` 全部 `Alphas=0` 免额**（`cov=96.4–98.8%, dCov=1.00`，含违约距离/资产漂移/违约概率行业分位）；
+    2. **`USA / model31`（StarMine Earnings Quality）**：美股版 `model25` 孪生矿脉，精选 8 个低拥挤 `MATRIX`（`cov=89–95%, aCnt=3..9`）；
+    3. **`USA / model30`（StarMine SmartEstimate EPS Surprise）**：机构盈利预期差（`MATRIX, dCov=1.00, aCnt=12..41`）。
