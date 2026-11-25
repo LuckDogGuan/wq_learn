@@ -37,31 +37,31 @@
         },
         {
           "stage_id": "RA-S2",
-          "title": "阶段 2 · 简单基线放量回测（找 Sharpe > 0.8 苗子）",
-          "inputs": ["RA-S1 干净字段队列", "5:5 方法池（去 42 缺陷模板）", "Gold 81 算子静态校验器"],
+          "title": "阶段 2 · 初筛找苗子（>=0.80）+ 剪枝去重 + 轻参数微调拉至 1.3–1.4",
+          "inputs": ["RA-S1 干净字段队列", "5:5 方法池（v4 4组正负对称模板）", "Gold 81 算子静态校验器"],
           "actions": [
-            "固定 delay=1、decay=0、单一推荐中性化，跑 1 字段 + 1-2 算子极简基线（每批 8 条 Multi-Sim）",
-            "广州服务器后台稳定跑批（低内存流式落盘 SQLite WAL，遇 429 自动退避，绝不盲重发）",
-            "自动秒杀：厂字型 PnL（<8 有效年或连续平直 >=220 天）、无持仓、Returns<=0",
-            "自动翻号：IS Sharpe < -1.2 自动加 reverse(...) 复测"
+            "第 1 轮广筛（decay=0，1–3 算子极简对称模板）筛出正向 Sharpe >= 0.80 的 POOL_B 种子；直跑 FULL（实测 QUICK 仅快 8% 且丢 rn_sharpe）",
+            "自动相似种子剪枝（seed_pruner.py）：按可调参数 jaccard_max=0.78、max_per_field=2、max_per_dataset=6 及 (dSh<=0.06, dTO<=0.02) 剔除同质克隆种子，保留最优代表加速推理，原始结果仍全量留库不丢弃",
+            "第 2 轮轻参数与结构爬坡（stage23_refiner.py）：对剪枝后的 POOL_B 种子做小幅参数调整（decay in {0,2,4,6}、truncation in {0.04,0.06,0.08}、窗口微调、中性化轮换、signed_power 0.5/0.75/1.25、hump 及同集双支 min(rank,rank)），目标稳步拉升至 Sharpe 1.25–1.45+（POOL_A），不强求一步跳至 1.6+",
+            "严格正向早停（满 48 条且正向 >=0.80 命中率 <2% 且无 >=1.25 即早停，免疫 CHN 融券双负假象）"
           ],
-          "exit_gate": "IS Sharpe > 0.8 且 2Y 健康 -> 进入阶段 3 种子池",
+          "exit_gate": "剪枝后 POOL_A 种子达 Sharpe >= 1.25（目标 1.3–1.4+）且 2Y 为正 -> 晋级阶段 3 冲刺 1.6+",
           "hypotheses_to_optimize": [
-            "猜想 H2-1：1-3 个算子的极简基线比广州旧版复杂爬山树（动辄 8+ 算子与 12000 天衰减）更容易过 2Y 与低 PC",
-            "猜想 H2-2：先跑 QUICK 粗筛（或验证 QUICK 速度收益）再 FULL 精跑，可在同等时间把有效吞吐拉升 2-3 倍"
+            "猜想 H2-1：1–3 算子极简对称基线 + 轻参数阶梯（0.8 -> 1.3-1.4 -> 1.6+）显著降低跳步过拟合与无效爬山",
+            "猜想 H2-2：每轮剪枝去掉 Jaccard >= 0.78 / 同字段冗余克隆种子，可将有效推进速度提升 2–3 倍"
           ],
-          "proposal_for_next_iteration": "通过今日 T0 校准批（2x8）实测 QUICK vs FULL 提速比与 Margin 字段完整性，再决定阶段 2 是否全量切 QUICK。"
+          "proposal_for_next_iteration": "通过 --prune-jaccard / --prune-max-per-field / --prune-max-per-dataset 与 decay/truncation 轻调参数，持续按地区独立优化晋级效率。"
         },
         {
           "stage_id": "RA-S3",
-          "title": "阶段 3 · 单变量逐项打磨至 RA 达标（绝不混改）",
-          "inputs": ["RA-S2 过关种子（Sharpe > 0.8）"],
+          "title": "阶段 3 · 单轴瓶颈精修冲刺 1.60+（0 FAIL 达标）",
+          "inputs": ["RA-S2 剪枝晋级种子（POOL_A: Sharpe 1.25–1.45+，及直出高 Sharpe 仅差单项的强种子）"],
           "actions": [
-            "每轮只改 1 个变量，遵循广州实证高胜率顺序：先看 2Y Sharpe >= 1.58 -> 再救 Sub-Universe（subindustry/country*industry/市值分桶）-> 再调换手与衰减窗（严禁 >252 极端窗、严禁 lambda_max>1）",
+            "每轮只改 1 个关键瓶颈轴：先保 2Y Sharpe >= 1.58 -> 再救 Sub-Universe（嵌套 group_cartesian_product(country, industry/subindustry)、宇宙切 TOP1200/TOP800、signed_power 0.5/0.75）-> 再轻调 decay/truncation/Margin",
             "双强融合统一用表达式级 min(rank(expr_A), rank(expr_B)) 或 reverse(min(...))（永久禁用 +/*/trade_when）",
-            "达标前执行冗余算子瘦身（压低 OpCount < 6）与 [0,1,3,5,10,20] Decay 稳定性核验"
+            "达标前执行冗余算子瘦身（压低 OpCount < 6）与小步 Decay 稳定性核验"
           ],
-          "exit_gate": "非 CHN: Sh>1.58, Fit>1.0, 2Y>1.58, 1%<TO<70%, Weight<10%, SubUni PASS (ATOM豁免IS Ladder); CHN: Sh>=2.08, Ret>=8%, Robust>=40%",
+          "exit_gate": "非 CHN: Sh>=1.58–1.60+, Fit>1.0, 2Y>1.58, 1%<TO<70%, Weight<10%, SubUni PASS (0 FAIL); CHN: Sh>=2.08, Ret>=8%, Robust>=40%",
           "hypotheses_to_optimize": [
             "猜想 H3-1：2Y 先行（先修 LOW_2Y_SHARPE 再修其它项）能砍掉广州历史 49% 的无效爬山浪费（近 400 次中 197 次死于 2Y）",
             "猜想 H3-2：广州实证 Stage-2 三大冠军算子（group_zscore/group_rank/group_neutralize by subindustry，93%-100% 改善率）作为首选固定第一步"

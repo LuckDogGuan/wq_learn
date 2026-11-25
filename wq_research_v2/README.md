@@ -37,8 +37,8 @@ python -m wq_research_v2 pc check --alpha-ids KPVlkqwE,2rG8ZR8Z
 python -m wq_research_v2 tag apply --alpha-ids 2rG8ZR8Z,1YGknEYQ --tag Useful
 python -m wq_research_v2 tag apply --alpha-ids 2rG8ZR8Z,1YGknEYQ --tag Useful --confirm-apply
 
-# 8. 高 Base 多市场 D1 RA 守护进程（默认按 EUR,USA,GLB,ASI,CHN,DEU,HKG,KOR,GBR,AMR,IND 轮巡 + 48 条无命中自动早停）
-python -u -m wq_research_v2.daemon_ra_runner --region EUR,USA,GLB,ASI,CHN,DEU,HKG,KOR,GBR,AMR,IND --slots 4 --batch-size 8 --mode FULL --daily-target 3000 --round-robin-waves 1 --early-stop-sims 48 --loop
+# 8. 高 Base 多市场 D1 RA 守护进程（含 Stage-2 轻参数 1.3-1.4 爬坡 + Stage-3 1.6+ 精修 + 相似种子剪枝 + 正向早停）
+python -u -m wq_research_v2.daemon_ra_runner --region EUR,USA,GLB,ASI,DEU,HKG,KOR --slots 4 --batch-size 8 --mode FULL --daily-target 3000 --round-robin-waves 1 --early-stop-sims 48 --prune-jaccard 0.78 --prune-max-per-field 2 --prune-max-per-dataset 6 --loop
 
 # 9. 只读审计广州服务器实时进展（30 分钟巡检脚本）
 Get-Content -Raw scripts/ops/check_guangzhou_v2.py | ssh guangzhou "/root/miniconda3/bin/python -"

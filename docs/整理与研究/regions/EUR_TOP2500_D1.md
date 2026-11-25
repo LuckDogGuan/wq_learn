@@ -40,3 +40,10 @@
 - **2026-11-25 20:16（1 小时定时检查 #2 · 重大方向升级至 `model25` 历史冠军矿脉！）**：
   - `EUR / price_signal_dl` 完成 `68` 条，产出 `4` 条 `POOL_B`（最高 `Jj3wRw7j Sh=+0.90`），但单集天花板偏低。
   - **深度诊断与换轨**：对照 [guangzhou_history_postmortem.md](../records/experiments/guangzhou_history_postmortem.md)，EUR 历史产出 `Sh 2.37–3.26, Fit 2.77, Margin 29.8bp` 的真正核心矿脉是 **`model25`**（`model 1.3×`, 本账号 **`0` OS**）配 1 算子直出 `group_zscore(x, industry)`！现已实时核验 `value_momentum_region_percentile`、`operating_efficiency_component_percentile`、`exclusions_component_percentile`、`regional/mid/long/global_momentum_percentile`（`cov=89–100%`, `dCov=1.0`, `aCnt=5–21`），置顶全队列第 1 顺位并升级 `v4` 4 组完全对称模板（含 1 算子 `group_zscore(x, industry)`）。
+
+- **2026-11-25 21:05（大爆发！`EUR / model25` 单波 32 条直出 5 条 `POOL_S`，最高 `Sharpe = +3.16, Fit = +3.24`！）**：
+  - **`legq0aml`**：`group_zscore(value_momentum_region_percentile, industry)` → **`Sharpe = +3.16, 2Y = +2.27, Fit = +3.24, Ret = 13.18%, TO = 11.09%, Margin = +23.78bp`** — **仅差 1 项 `LOW_SUB_UNIVERSE_SHARPE (1.29)`**！
+  - **`6XG8EML5`**：`group_zscore(ts_mean(value_momentum_region_percentile, 22), subindustry)` → **`Sharpe = +2.66, 2Y = +2.07, Fit = +2.31, TO = 3.13%, Margin = +60.53bp`** — **仅差 1 项 `LOW_SUB_UNIVERSE_SHARPE (1.04)`**！
+  - **`np6JW77q`**：`operating_efficiency_component_percentile` → **`Sharpe = +1.85, 2Y = +1.79, Fit = +1.25, TO = 2.80%, Margin = +40.73bp`** — **仅差 1 项 `LOW_SUB_UNIVERSE_SHARPE (0.75)`**！
+  - **`kq87KjPK`**：`operating_efficiency_component_percentile` → **`Sharpe = +1.70, 2Y = +1.85, Fit = +1.03, TO = 1.74%, Margin = +52.92bp`** — **仅差 1 项 `LOW_SUB_UNIVERSE_SHARPE (0.64)`**！
+  - **立即启动 Stage-3 Sub-Universe 专项解救（[stage23_refiner.py](../../../wq_research_v2/src/wq_research_v2/stage23_refiner.py)）**：采用嵌套分组 `group_cartesian_product(country, industry/subindustry)` + 宇宙切换 `EUR/TOP1200` / `EUR/TOP800` + 小幅参数微调（`decay ∈ {0,2,4,6}`、`truncation ∈ {0.04,0.06,0.08}`、`signed_power 0.5/0.75`）+ `val_mom × op_eff` ATOM 双支，直取 `0 FAIL` 可打 `Useful` 候选！

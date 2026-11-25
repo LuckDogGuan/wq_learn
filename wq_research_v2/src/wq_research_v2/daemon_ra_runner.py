@@ -33,7 +33,9 @@ from wq_research_v2.blacklist_registry import BlacklistRegistry
 from wq_research_v2.ledger_store import LedgerStore
 from wq_research_v2.quota_tracker import QuotaTracker, current_est_platform_date
 from wq_research_v2.ra_evaluator import D1RAEvaluator
+from wq_research_v2.seed_pruner import PruningConfig, prune_similar_seeds
 from wq_research_v2.sim_runner import SimRunner
+from wq_research_v2.stage23_refiner import build_all_stage23_refiner_specs
 
 # Default high-Base institutional-alpha-first D1 exploration order (every region tracked independently!)
 HIGH_BASE_MULTI_MARKET_ORDER: list[str] = [
@@ -597,8 +599,13 @@ def should_early_stop_dataset(
     return False, stats
 
 
-def export_funnel_snapshot(ledger: LedgerStore, region: str) -> Path:
-    """Persist non-destructive per-region tiered funnel snapshot so zero good alphas are ever lost."""
+def export_funnel_snapshot(
+    ledger: LedgerStore,
+    region: str,
+    *,
+    pruning_config: PruningConfig = PruningConfig(),
+) -> Path:
+    """Persist non-destructive per-region tiered funnel snapshot + pruned Stage-2/3 seed queue."""
     from wq_research_v2.config_loader import DATA_DIR
 
     reg = region.upper()
@@ -606,7 +613,7 @@ def export_funnel_snapshot(ledger: LedgerStore, region: str) -> Path:
         dict(r)
         for r in ledger._conn.execute(
             """
-            SELECT task_id, batch_id, dataset_id, primary_field_id, template_id, source_side,
+            SELECT task_id, batch_id, region, dataset_id, primary_field_id, template_id, source_side,
                    alpha_id, expression, sharpe, fitness, turnover, margin, returns, sharpe_2y, status
             FROM sim_tasks
             WHERE region=? AND status IN ('COMPLETED_FULL','COMPLETED_QUICK')
@@ -617,7 +624,7 @@ def export_funnel_snapshot(ledger: LedgerStore, region: str) -> Path:
     ]
     pools: dict[str, list[dict[str, Any]]] = {
         "POOL_S_SH158_FIT1": [],
-        "POOL_A_NEAR_SH135": [],
+        "POOL_A_NEAR_SH125": [],
         "POOL_B_SEED_SH080": [],
         "POOL_FLIP_SH_LT_NEG120": [],
     }
@@ -628,12 +635,16 @@ def export_funnel_snapshot(ledger: LedgerStore, region: str) -> Path:
             continue
         if sh > 1.58 and (fit or 0) > 1.0:
             pools["POOL_S_SH158_FIT1"].append(r)
-        elif sh >= 1.35:
-            pools["POOL_A_NEAR_SH135"].append(r)
+        elif sh >= 1.25:
+            pools["POOL_A_NEAR_SH125"].append(r)
         elif sh > 0.80:
             pools["POOL_B_SEED_SH080"].append(r)
         elif sh < -1.20:
             pools["POOL_FLIP_SH_LT_NEG120"].append(r)
+
+    pruned_s, dropped_s = prune_similar_seeds(pools["POOL_S_SH158_FIT1"], config=pruning_config)
+    pruned_a, dropped_a = prune_similar_seeds(pools["POOL_A_NEAR_SH125"], config=pruning_config)
+    pruned_b, dropped_b = prune_similar_seeds(pools["POOL_B_SEED_SH080"], config=pruning_config)
 
     out_path = DATA_DIR / "exports" / f"{reg.lower()}_ra_funnel_latest.json"
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -642,9 +653,20 @@ def export_funnel_snapshot(ledger: LedgerStore, region: str) -> Path:
         "delay": 1,
         "total_completed": len(rows),
         "counts": {k: len(v) for k, v in pools.items()},
-        "top_pool_s": pools["POOL_S_SH158_FIT1"][:50],
-        "top_pool_a": pools["POOL_A_NEAR_SH135"][:50],
-        "top_pool_b": pools["POOL_B_SEED_SH080"][:50],
+        "pruning_config": {
+            "jaccard_max": pruning_config.jaccard_max,
+            "max_per_field": pruning_config.max_per_field,
+            "max_per_dataset": pruning_config.max_per_dataset,
+        },
+        "pruned_counts": {
+            "POOL_S_PRUNED": len(pruned_s),
+            "POOL_A_PRUNED": len(pruned_a),
+            "POOL_B_PRUNED": len(pruned_b),
+            "total_similar_pruned": len(dropped_s) + len(dropped_a) + len(dropped_b),
+        },
+        "top_pool_s": pruned_s[:50],
+        "top_pool_a": pruned_a[:50],
+        "top_pool_b": pruned_b[:50],
         "top_pool_flip": pools["POOL_FLIP_SH_LT_NEG120"][:50],
     }
     out_path.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -664,6 +686,8 @@ def run_ra_production_loop(
     round_robin_waves: int = 1,
     early_stop_min_sims: int = 48,
     early_stop_min_pos_sharpe: float = 0.80,
+    include_stage23_refiner: bool = True,
+    pruning_config: PruningConfig = PruningConfig(),
 ) -> dict[str, Any]:
     """Run low-memory D1 RA production simulation loop with wave concurrency & positive-Sharpe auto early-stop."""
     ledger = LedgerStore()
@@ -674,20 +698,34 @@ def run_ra_production_loop(
     evaluator = D1RAEvaluator()
 
     selected_campaigns = list(CURATED_RA_D1_CAMPAIGNS)
+    ordered_regs = [r.strip().upper() for r in regions if r.strip()] if regions else list(HIGH_BASE_MULTI_MARKET_ORDER)
+    reg_rank = {r: i for i, r in enumerate(ordered_regs)}
     if regions:
-        ordered_regs = [r.strip().upper() for r in regions if r.strip()]
-        reg_rank = {r: i for i, r in enumerate(ordered_regs)}
         selected_campaigns = [c for c in selected_campaigns if c["region"].upper() in reg_rank]
         selected_campaigns.sort(key=lambda c: reg_rank[c["region"].upper()])
 
-    specs = build_ra_campaign_specs(campaigns=selected_campaigns)
+    stage1_specs = build_ra_campaign_specs(campaigns=selected_campaigns)
+    refiner_specs: list[dict[str, Any]] = []
+    if include_stage23_refiner:
+        refiner_specs = [
+            s for s in build_all_stage23_refiner_specs()
+            if (not regions) or (str(s["region"]).upper() in reg_rank)
+        ]
+
+    # Put Stage-2/3 targeted refinement specs FIRST so proven winners climb 1.0->1.3-1.4->1.6+ immediately!
+    specs = refiner_specs + stage1_specs
     if only_free_alpha0:
         specs = [s for s in specs if s.get("queue_type") == "UNUSED_ALPHA0"]
     if round_robin_waves > 0:
         specs = interleave_specs_by_campaign_waves(specs, max_slots=max_slots, waves_per_turn=round_robin_waves)
 
-    # Build alpha0 map for validation (handles both fields and custom_base_exprs)
-    alpha0_map: dict[str, int] = {}
+    # Build alpha0 map for validation (handles fields, custom_base_exprs, and Stage-2/3 free refiner specs)
+    alpha0_map: dict[str, int] = {
+        "raw_volume_indicator_6": 0,
+        "raw_volume_indicator_3": 0,
+        "raw_volume_indicator_5": 0,
+        "normalized_volume_indicator_2": 0,
+    }
     for camp in CURATED_RA_D1_CAMPAIGNS:
         if camp["queue_type"] == "UNUSED_ALPHA0":
             for f in camp.get("fields") or []:
@@ -830,7 +868,7 @@ def run_ra_production_loop(
                         flush=True,
                     )
 
-            export_funnel_snapshot(ledger, reg)
+            export_funnel_snapshot(ledger, reg, pruning_config=pruning_config)
             print(
                 f"[RA-DAEMON] {wave_id} ({len(wave_batch_ids)}x{batch_size} in {elapsed}s): "
                 f"done={res['completed']} unobs={res['unobserved']} | day_total={day_done + res['completed']}/{daily_target} "
@@ -869,10 +907,18 @@ def main(argv: Optional[list[str]] = None) -> int:
     p.add_argument("--round-robin-waves", type=int, default=1, help="Waves per campaign before rotating to next market (0=sequential)")
     p.add_argument("--early-stop-sims", type=int, default=48, help="Min completed sims before auto-stopping a dead dataset (0=disable)")
     p.add_argument("--early-stop-sharpe", type=float, default=0.80, help="Min POSITIVE Sharpe threshold for early-stop hit detection")
+    p.add_argument("--prune-jaccard", type=float, default=0.78, help="Max token Jaccard similarity before pruning redundant seeds")
+    p.add_argument("--prune-max-per-field", type=int, default=2, help="Max promoted seeds kept per (region, dataset, field)")
+    p.add_argument("--prune-max-per-dataset", type=int, default=6, help="Max promoted seeds kept per (region, dataset)")
     p.add_argument("--loop", action="store_true", help="Continuously loop across EST platform days")
     args = p.parse_args(argv)
 
     reg_list = [r.strip().upper() for r in str(args.region).split(",") if r.strip()]
+    p_cfg = PruningConfig(
+        jaccard_max=args.prune_jaccard,
+        max_per_field=args.prune_max_per_field,
+        max_per_dataset=args.prune_max_per_dataset,
+    )
     while True:
         res = run_ra_production_loop(
             regions=reg_list,
@@ -885,6 +931,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             round_robin_waves=args.round_robin_waves,
             early_stop_min_sims=args.early_stop_sims,
             early_stop_min_pos_sharpe=args.early_stop_sharpe,
+            pruning_config=p_cfg,
         )
         print("[RA-DAEMON] Pass finished:", json.dumps(res), flush=True)
         if not args.loop or args.max_batches is not None:
