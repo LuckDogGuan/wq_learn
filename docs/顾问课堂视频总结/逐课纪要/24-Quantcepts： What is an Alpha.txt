@@ -1,0 +1,20 @@
+Quantcepts｜What is an Alpha
+原片 Quantcepts.tar::Quantcepts/Quantcepts： What is an Alpha.mkv
+对应转录 ../原始转录/24-Quantcepts： What is an Alpha.txt
+
+课程概览
+这段短课单独讲解 Alpha、Universe 与多空方向。完整合辑另见 19。
+
+小结
+1. 讲师把 Alpha 定义为预测未来价格变化的数学模型。在给定 Universe 中，模型对每只股票给出一个值，组成可以随时间更新的向量。
+2. 符号对应多空方向，幅度用于确定相对的资金分配。Universe 是实际覆盖的股票集合，视频以按流动性选出的美国股票作示意。
+3. 研究从一个对市场低效的可检验假设出发，再把它应用到明确的股票池。写表达式前先说清楚预期方向和信号适用对象。
+
+时间戳回看
+- 00:00:03　Alpha 与预测向量。
+- 00:00:16　Universe 例子和每日变化。
+- 00:00:28　方向、幅度及资金分配。
+- 00:00:41　从市场低效假设到股票池。
+
+原始转录
+../原始转录/24-Quantcepts： What is an Alpha.txt

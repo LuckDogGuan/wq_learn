@@ -1,0 +1,13 @@
+Quantcepts： Types of Alpha Ideas
+原片 Quantcepts.tar::Quantcepts/Quantcepts： Types of Alpha Ideas.mkv
+时长 00:01:34.521
+转录 whisper，共 8 段。
+
+[00:00:02.930–00:00:11.930] Alphas are fueled by variety of ideas, each distinct in the pattern it can identify and the results it forecasts.
+[00:00:11.930–00:00:23.930] Some ideas include reversion. The hypothesis is that if something increases today, it will fall tomorrow and if something decreases today, it will increase tomorrow.
+[00:00:23.930–00:00:35.930] This something can be anything, price, volume, correlation between two things or the other indicators or variables that you think of while developing your alpha.
+[00:00:35.930–00:00:47.930] Another idea category is momentum. Assume that stocks which have performed well in the past will continue to perform well, while the stocks that have performed poorly will continue to do so.
+[00:00:47.930–00:00:56.930] Seasonality is based on the idea that certain months, quarters or years may influence the price of a security.
+[00:00:56.930–00:01:04.930] Lead lag relationships assume that the prices of certain stocks lead and other lag behind.
+[00:01:04.930–00:01:12.930] For example, an improvement in an industrial company might later lead to an improvement in its suppliers.
+[00:01:12.930–00:01:29.930] Indexed rebalancing is another idea category. When a stock is added to an index like the S&P 500, indexed funds purchased by the funds tracking the index can increase its price and can be predicted.

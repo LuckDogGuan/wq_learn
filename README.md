@@ -41,6 +41,7 @@ python -m wq_research_v2 pc check --alpha-ids KPVlkqwE,2rG8ZR8Z
 | `docs/整理与研究/` | 唯一战略总计划（`00`–`09`）、四阶段流程 JSON/HTML（`workflow/`）、分地区档案（`regions/`）与节点记录（`records/`） | 是 |
 | `docs/official_guides/` | 高确定性官方总结、SPC API、官方术语表、`wqapi.hualabtech.com` 全量 API/算子目录、课件与笔记 | 是 |
 | `docs/memory/` | 高确定性实证复盘（黑名单登记表、USA D1 复盘、Master 指南、224/RA 审计） | 是 |
+| `docs/顾问课堂视频总结/` | 53 段顾问课堂视频整理（原始转录、逐课纪要与 6 份主题知识） | 是 |
 | `reference/` | **永久只读参考库**：`2026Q4` 前百榜单、254 管理员原创、264 前百精华与审计账本 | 是 |
 | `config/standards/` | RA / PPA 本地标准与禁用字段 JSON | 是 |
 | `legacy_core/` | 冻结只读历史 `Core/`（含硬保护 `runtime_data/`）与旧管线参考 | 源码是 / `runtime_data` 否 |

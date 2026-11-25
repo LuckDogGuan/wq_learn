@@ -1,0 +1,17 @@
+Quantcepts｜What is Market-Neutral Investing
+原片 Quantcepts.tar::Quantcepts/Quantcepts： What is Market-Neutral Investing.mkv
+对应转录 ../原始转录/25-Quantcepts： What is Market-Neutral Investing.txt
+
+课程概览
+这段短课用等金额多头与空头说明市场中性投资的直觉，以及收益如何来自两边的相对表现。
+
+小结
+1. 讲师对预期上涨股票做多，对预期下跌股票做空，并安排等金额多空。即使多头下跌，若空头收益超过多头损失，组合仍可能盈利。
+2. 多头先买入，价格上涨后有盈利。空头先借入卖出，再买回归还，卖出价与回补价的差额是收益来源之一。课堂示意关注净资金敞口，实际研究的行业、市场因子暴露和成本还需检验。
+
+时间戳回看
+- 00:00:02　等金额多空与相对收益。
+- 00:00:27　做多、借券卖出和回补。
+
+原始转录
+../原始转录/25-Quantcepts： What is Market-Neutral Investing.txt
