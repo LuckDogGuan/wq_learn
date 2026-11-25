@@ -1,0 +1,7 @@
+interface:
+  display_name: "PPA Screening"
+  short_description: "通用 PPA Alpha 只读筛选与审计输出"
+  default_prompt: "Use $ppa-screening to run a read-only PPA Alpha screening with fixed rule precedence, stage counts, field Dataset lineage, and flexible audit outputs."
+
+policy:
+  allow_implicit_invocation: true

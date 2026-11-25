@@ -1,0 +1,21 @@
+{
+  "config_type": "PPA_FORBIDDEN_FIELD_RULES",
+  "version": 1,
+  "forbidden_field_rules": {
+    "PV1": {
+      "dataset_id": "pv1",
+      "rule": "all_non_support_fields",
+      "forbidden_fields": ["cap", "close", "returns", "volume"],
+      "support_field_exception": ["country", "industry", "subindustry", "currency", "market", "sector", "exchange"],
+      "known_support_fields_in_live_evidence": ["subindustry"],
+      "note": "PV1 的 cap、close、returns、volume 是已核对到的普通字段，禁止使用；字段来源为 pv1 的 support field 只有在平台字段证据完整且全部为 support field 时例外。forbidden_fields 是已知字段清单，不替代 Dataset 归属检查。"
+    },
+    "MODEL110": {
+      "dataset_id": "model110",
+      "rule": "field_id_prefix",
+      "forbidden_prefixes": ["mdl110_"],
+      "support_field_exception": [],
+      "note": "任何 field ID 以 mdl110_ 开头都视为 MODEL110，平台 Dataset 元数据缺失时也拒绝。"
+    }
+  }
+}

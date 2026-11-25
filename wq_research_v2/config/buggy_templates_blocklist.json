@@ -1,0 +1,23 @@
+{
+  "description": "Quarantined 42 static-defect patterns from legacy 224 template catalog + structural rules.",
+  "markdown_prefix_regex": "^\\s*(?:\\(\\d+\\)|\\d+\\.)\\s*-",
+  "market_constant_calls": [
+    "group_mean",
+    "group_count",
+    "group_std_dev",
+    "group_sum",
+    "group_max",
+    "group_min"
+  ],
+  "domain_sensitive_ops": ["log", "sqrt", "inverse"],
+  "max_ts_backfill_window": 504,
+  "max_ts_product_window": 60,
+  "blocked_normalized_expressions": [
+    "2.-ts_rank(ts_std_dev({field},66),252)",
+    "(1)-rank(ts_mean({field},5))*ts_std_dev({field},20)",
+    "(3)-1*(ts_rank({field},5)-ts_rank({field},60))",
+    "ts_backfill(ts_backfill({field},120),120)",
+    "group_neutralize(group_zscore({field},industry),industry)",
+    "ts_backfill({field},1200)"
+  ]
+}

@@ -1,0 +1,100 @@
+# ==============================================================================
+# Unified Root .gitignore for WorldQuant Brain Workspace
+# Complies with experience_profile.md Git & security rules:
+#   - Never commit credentials, cookies/JWTs, runtime databases, or large binaries
+# ==============================================================================
+
+# --- Secrets, Credentials & Tokens ---
+Password/
+**/Password/
+*credentials*.json
+*secret*
+.env
+.env.*
+*.key
+*.pem
+brain.txt
+scratch_jwt.json
+**/config.yaml
+
+# --- Protected Runtime Data, v2 Data, Databases & Serialized Caches ---
+**/runtime_data/
+data/*
+!data/.gitkeep
+!data/README.md
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.pickle
+*.pkl
+*.parquet
+*.feather
+*.h5
+*.hdf5
+*.npz
+*.npy
+
+# --- Binary, Media, Archives, Spreadsheets & Large Exports ---
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.bmp
+*.ico
+*.tif
+*.tiff
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.tar
+*.gz
+*.tgz
+*.bz2
+*.xz
+*.zip
+*.7z
+*.rar
+*.pdf
+*.xlsx
+*.xls
+*.xlsm
+*.csv
+*.exe
+*.dll
+*.so
+*.dylib
+*.whl
+*.msi
+
+# --- Python / Node / Tooling / IDE Caches & Logs ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.gitnexus/
+.venv/
+venv/
+node_modules/
+**/node_modules/
+*.log
+*.log.*
+*.jsonl
+logs/
+**/logs/
+scratch/
+**/scratch/
+tmp/
+*.tmp
+.DS_Store
+Thumbs.db
+
+# --- Standalone Browser Extension Bundle (contains 35+ MB data snapshots) ---
+WebDataScope-*/

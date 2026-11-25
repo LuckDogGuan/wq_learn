@@ -1,0 +1,79 @@
+{
+  "account_level": "GOLD",
+  "verified_date": "2026-11-25",
+  "forbidden_operators_decision_3": ["add", "multiply", "trade_when"],
+  "forbidden_binary_symbols": ["+", "*"],
+  "missing_at_gold_level": [
+    "ts_median",
+    "left_tail",
+    "right_tail",
+    "generalized_rank",
+    "hump_decay",
+    "ts_decay_exp_window"
+  ],
+  "free_tiebreaker_and_pp_operators": ["ts_backfill", "group_backfill"],
+  "allowed_operators_gold_81": [
+    "abs", "and", "arc_cos", "arc_sin", "arc_tan", "bucket", "clamp",
+    "days_from_last_change", "densify", "divide", "equal", "exp", "floor",
+    "fraction", "greater", "greater_equal", "group_backfill", "group_cartesian_product",
+    "group_count", "group_max", "group_mean", "group_median", "group_min",
+    "group_neutralize", "group_rank", "group_scale", "group_std_dev", "group_sum",
+    "group_zscore", "hump", "if_else", "inverse", "is_nan", "keep", "kth_element",
+    "last_diff_value", "less", "less_equal", "log", "max", "min", "nan_mask",
+    "nan_out", "not", "not_equal", "or", "pasteurize", "power", "purify",
+    "quantile", "rank", "replace", "reverse", "round", "round_down", "s_log_1p",
+    "scale", "sign", "signed_power", "sqrt", "subtract", "tail", "tanh",
+    "to_nan", "ts_arg_max", "ts_arg_min", "ts_av_diff", "ts_backfill",
+    "ts_corr", "ts_count_nans", "ts_covariance", "ts_decay_linear", "ts_delay",
+    "ts_delta", "ts_ir", "ts_kurtosis", "ts_max", "ts_max_diff", "ts_mean",
+    "ts_min", "ts_min_diff", "ts_moment", "ts_product", "ts_quantile",
+    "ts_rank", "ts_regression", "ts_returns", "ts_scale", "ts_skewness",
+    "ts_std_dev", "ts_step", "ts_sum", "ts_target_tvr_decay",
+    "ts_target_tvr_delta_limit", "ts_target_tvr_hump", "ts_zscore",
+    "vec_avg", "vec_choose", "vec_count", "vec_ir", "vec_kurtosis",
+    "vec_max", "vec_min", "vec_norm", "vec_percentage", "vec_powersum",
+    "vec_range", "vec_skewness", "vec_stddev", "vec_sum", "vector_neut",
+    "vector_proj", "winsorize", "zscore"
+  ],
+  "allowed_pv1_alpha0_helpers": [
+    "currency", "country", "exchange", "sector", "industry",
+    "subindustry", "market", "split", "adjfactor"
+  ],
+  "group_constants": [
+    "market", "sector", "industry", "subindustry", "country",
+    "exchange", "currency", "true", "false", "nan", "inf"
+  ],
+  "valid_neutralizations": {
+    "standard_11": [
+      "NONE", "REVERSION_AND_MOMENTUM", "STATISTICAL", "CROWDING",
+      "FAST", "SLOW", "MARKET", "SECTOR", "INDUSTRY", "SUBINDUSTRY", "SLOW_AND_FAST"
+    ],
+    "multi_country_extra": ["COUNTRY"],
+    "amr_only_7": [
+      "NONE", "STATISTICAL", "MARKET", "SECTOR", "INDUSTRY", "SUBINDUSTRY", "COUNTRY"
+    ],
+    "aliases_forbidden": {
+      "RAM": "REVERSION_AND_MOMENTUM"
+    }
+  },
+  "trap_field_patterns": [
+    "^anl93_.*_analyst$",
+    "^anl10_.*_flag_.*$",
+    "^mdl307_cusip$",
+    "^mdl307_.*_name$",
+    ".*_currency_code.*$",
+    "^fnd6_.*_curcd$",
+    "^adjusted_bias_return$",
+    "^oth715_cni_inindcode$"
+  ],
+  "blacklisted_datasets": {
+    "global_jx79797": ["earnings5", "model194", "option1"],
+    "recent_2y_missing_jx14975": {
+      "GLB": ["fundamental45", "macro27", "other169"],
+      "EUR": ["other169", "socialmedia39"],
+      "ASI": ["analyst37", "broker1", "fundamental30", "other36", "other428", "shortinterest38", "fundamental109", "insiders5", "other315", "other534"],
+      "USA": ["macro27", "pv48", "socialmedia4", "fundamental65", "institutions20", "model230", "other359", "other696"]
+    }
+  },
+  "known_fake_vector_datasets": ["earnings4", "model109", "model135", "behavioral_signals"]
+}

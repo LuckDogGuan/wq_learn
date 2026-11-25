@@ -1,0 +1,3422 @@
+{
+  "summary": {
+    "directory": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates",
+    "template_functions": 224,
+    "module_files": 8,
+    "registered": 224,
+    "missing_or_extra_functions": [],
+    "all_checks_pass": true,
+    "files": [
+      {
+        "filename": "cross_sectional.py",
+        "category": "截面排序与非线性变换",
+        "count": 36,
+        "sha256": "6ee062e0515a89cb4873bb69eaf907837d72502b278b3a74738a0e68d71fb3df"
+      },
+      {
+        "filename": "event_recency.py",
+        "category": "事件频率与距今时间",
+        "count": 10,
+        "sha256": "f330155462d05764c0d5b516b67fc20d7634a378b487c9c67834adaee2e2b6cf"
+      },
+      {
+        "filename": "group_relative.py",
+        "category": "组内比较与中性化",
+        "count": 62,
+        "sha256": "43cedbb99843331e269da69077df7f705cb3672e1aa9e26db07e5f6e70021637"
+      },
+      {
+        "filename": "preprocessing.py",
+        "category": "缺失值与异常值处理",
+        "count": 5,
+        "sha256": "96da750429961637a87028862b7c2aaed8e848324e38e57e604a6c023c91ff14"
+      },
+      {
+        "filename": "smoothing.py",
+        "category": "时序平滑与加权",
+        "count": 35,
+        "sha256": "864761bb83ea8bebdaaa90f83074f3e93a8c2c3ec4e3897d08730fd931975a7a"
+      },
+      {
+        "filename": "time_series_position.py",
+        "category": "时序排名与区间位置",
+        "count": 14,
+        "sha256": "e016cb6d8a13976b330758d3da6bf209394c374d70287a3cd9dfe539db9805f3"
+      },
+      {
+        "filename": "time_series_risk.py",
+        "category": "波动与风险调整",
+        "count": 40,
+        "sha256": "e5e3c2cc33bc25a0868b7ce150dc8667fb930f67102e6bc017622107d3a638fc"
+      },
+      {
+        "filename": "trend_change.py",
+        "category": "趋势变化与反转",
+        "count": 22,
+        "sha256": "69e43d19528ee1da685605c2d0c564c8e0ac88a3ec0ea5c8f5de6fba5eea0eb1"
+      }
+    ]
+  },
+  "templates": [
+    {
+      "template_id": "admin.catalog.078e2390484905e8",
+      "function": "information_ratio",
+      "signature": "(field, d=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 3,
+      "formula": "ts_ir({field},20)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.25a99e1965cb2b0d",
+      "function": "time_series_zscore",
+      "signature": "(field, d=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 17,
+      "formula": "ts_zscore({field}, 252)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.4d85042c2a9984de",
+      "function": "abs_transform",
+      "signature": "(field, d1=252, d2=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 31,
+      "formula": "abs(ts_mean({field},252)/ts_std_dev({field},252))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.f1b6274ef52c9cb6",
+      "function": "ts_std_dev_transform",
+      "signature": "(field, d1=20, d2=1)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 45,
+      "formula": "ts_std_dev({field}/ts_delay({field}, 1)-1,20)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.011f691eb30d4f07",
+      "function": "ts_zscore_transform",
+      "signature": "(field, d1=30, d2=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 59,
+      "formula": "ts_zscore(rank(ts_delta({field}, 5)), 30) * -1",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.1e9d189bf282f7c0",
+      "function": "ts_zscore_transform_1e9d189b",
+      "signature": "(field, d1=20, d2=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 73,
+      "formula": "ts_zscore(rank(ts_delta({field}, 5)), 20)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.2d67ac5ab50962df",
+      "function": "ts_rank_transform",
+      "signature": "(field, d1=252, d2=66)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 87,
+      "formula": "2.-ts_rank(ts_std_dev({field}, 66), 252)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.62b3e3de800ec86c",
+      "function": "ts_std_dev_transform_62b3e3de",
+      "signature": "(field, d=21)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 101,
+      "formula": "ts_std_dev({field}, 21) * sqrt(252)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.8e1de8303b0e3410",
+      "function": "ts_zscore_transform_8e1de830",
+      "signature": "(field, d1=252, d2=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 115,
+      "formula": "ts_zscore(ts_delta({field}, 252), 252)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.921283dc7cfcc9ed",
+      "function": "rank_transform_921283dc",
+      "signature": "(field, d1=20, d2=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 129,
+      "formula": "(1)-rank(ts_mean({field}, 5)) * ts_std_dev({field}, 20)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.978316a1c66d6ef9",
+      "function": "rank_transform_978316a1",
+      "signature": "(field, d=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 143,
+      "formula": "rank(ts_std_dev({field}, 20))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.b69141b59d398690",
+      "function": "rank_transform_b69141b5",
+      "signature": "(field, d1=60, d2=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 157,
+      "formula": "-rank(ts_zscore(ts_delta({field},5),60))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.bb8d1af25cad1e49",
+      "function": "ts_zscore_transform_bb8d1af2",
+      "signature": "(field, d1=10, d2=1)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 171,
+      "formula": "ts_zscore(ts_delta({field}, 1), 10) * -1",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.dbfc1baaad9be7ec",
+      "function": "ts_rank_transform_dbfc1baa",
+      "signature": "(field, d1=20, d2=20, d3=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 185,
+      "formula": "ts_rank({field}, 20) * ts_std_dev(ts_delta({field}, 5), 20)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.07b71f36b9fcd093",
+      "function": "ts_mean_transform_07b71f36",
+      "signature": "(field, d1=21, d2=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 199,
+      "formula": "ts_mean(ts_zscore({field}, 252), 21)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.1f6acfc7759649a6",
+      "function": "rank_transform_1f6acfc7",
+      "signature": "(field, d=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 213,
+      "formula": "rank(-ts_std_dev({field}, 20))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.402ed00c72e33541",
+      "function": "ts_delta_transform_402ed00c",
+      "signature": "(field, d1=252, d2=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 227,
+      "formula": "ts_delta(ts_zscore({field}, 252), 252)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.6e00da3a170bb184",
+      "function": "ts_kurtosis_transform",
+      "signature": "(field, d=60)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 241,
+      "formula": "ts_kurtosis({field}, 60)-3",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.78e60961a9077eb0",
+      "function": "ts_std_dev_transform_78e60961",
+      "signature": "(field, d=130)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 255,
+      "formula": "ts_std_dev({field},130)<0.3",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.84f9f5d2016807fc",
+      "function": "ts_mean_transform_84f9f5d2",
+      "signature": "(field, d1=126, d2=126)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 269,
+      "formula": "(ts_mean({field}, 126) / ts_std_dev({field}, 126))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.ac7b74e821c80964",
+      "function": "rank_transform_ac7b74e8",
+      "signature": "(field, d1=252, d2=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 283,
+      "formula": "rank(ts_delta(ts_zscore({field}, 252), 252))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.b9808ec3ac6d9e29",
+      "function": "ts_decay_linear_transform",
+      "signature": "(field, d1=22, d2=132, d3=66)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 297,
+      "formula": "ts_decay_linear(ts_zscore(ts_backfill({field}, 66), 132), 22)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.c56519808471417e",
+      "function": "ts_zscore_transform_c5651980",
+      "signature": "(field, d1=252, d2=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 311,
+      "formula": "ts_zscore(ts_backfill({field},252), 252)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.e7c7ead2d22cef3f",
+      "function": "ts_std_dev_transform_e7c7ead2",
+      "signature": "(field, d=130)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 325,
+      "formula": "ts_std_dev({field},130)>0.7",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.0465301f9e63b453",
+      "function": "ts_std_dev_transform_0465301f",
+      "signature": "(field, d=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 339,
+      "formula": "ts_std_dev({field}, 5) != 0",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.08f5ca92b13346d9",
+      "function": "ts_mean_transform_08f5ca92",
+      "signature": "(field, d1=20, d2=60)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 353,
+      "formula": "ts_mean({field}, 20) / (ts_std_dev({field}, 60) + 0.001)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.0bf43417f737d521",
+      "function": "ts_std_dev_transform_0bf43417",
+      "signature": "(field, d1=21, d2=21)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 367,
+      "formula": "ts_std_dev({field},21)/ts_mean({field},21)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.20917c4733dfe7d9",
+      "function": "ts_sum_transform",
+      "signature": "(field, d1=120, d2=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 381,
+      "formula": "-ts_sum(ts_zscore({field}, 5), 120)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.271deb2bf79167b9",
+      "function": "ts_std_dev_transform_271deb2b",
+      "signature": "(field, d=10)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 395,
+      "formula": "(1 - ts_std_dev({field}, 10))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.347f94e6e247fabf",
+      "function": "ts_zscore_transform_347f94e6",
+      "signature": "(field, d=250)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 409,
+      "formula": "ts_zscore(rank({field}), 250)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.35d973c4051540d5",
+      "function": "ts_zscore_transform_35d973c4",
+      "signature": "(field, d1=252, d2=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 423,
+      "formula": "ts_zscore(ts_quantile({field}, 252), 252)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.46d7fc9f7cda5d91",
+      "function": "ts_zscore_transform_46d7fc9f",
+      "signature": "(field, d1=20, d2=20, d3=1)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 437,
+      "formula": "ts_zscore(ts_sum({field} - ts_delay({field}, 1), 20), 20)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.5b12f64fbbabbcec",
+      "function": "zscore_transform_5b12f64f",
+      "signature": "(field, d1=5, d2=60)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 451,
+      "formula": "zscore(ts_delta(rank(ts_zscore({field},60)),5))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.6ade08c03b378dfe",
+      "function": "ts_std_dev_transform_6ade08c0",
+      "signature": "(field, d1=126, d2=126)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 465,
+      "formula": "({field} - ts_mean({field}, 126)) / ts_std_dev({field}, 126)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.91115548ebeb3f05",
+      "function": "rank_transform_91115548",
+      "signature": "(field, d=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 479,
+      "formula": "rank({field}) - rank(ts_std_dev({field}, 20))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.92429b1f76de8de5",
+      "function": "rank_transform_92429b1f",
+      "signature": "(field, d=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 493,
+      "formula": "rank(ts_zscore({field}, 5))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.a389cdc522c961c1",
+      "function": "rolling_volatility",
+      "signature": "(field, d=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 507,
+      "formula": "ts_std_dev({field}, 20)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.e21690170a49fb6b",
+      "function": "ts_delta_transform_e2169017",
+      "signature": "(field, d1=5, d2=22)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 521,
+      "formula": "ts_delta({field}, 5) > ts_std_dev({field}, 22)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.e2c718f2d0db94f4",
+      "function": "ts_zscore_transform_e2c718f2",
+      "signature": "(field, d1=250, d2=60)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 535,
+      "formula": "ts_zscore(ts_mean({field}, 60), 250)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.eab90082fecf4355",
+      "function": "rank_transform_eab90082",
+      "signature": "(field, d1=9, d2=504)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_risk.py",
+      "line": 549,
+      "formula": "rank(ts_decay_linear(ts_zscore({field}, 504), 9))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.08f5a7f630a8b8db",
+      "function": "ts_arg_max_transform",
+      "signature": "(field, d=150)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\event_recency.py",
+      "line": 3,
+      "formula": "185*(65-ts_arg_max({field},150))/150",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.5fd725e4231d5ed7",
+      "function": "ts_arg_min_transform",
+      "signature": "(field, d=150)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\event_recency.py",
+      "line": 17,
+      "formula": "185*(65-ts_arg_min({field},150))/150",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.24cbc202ff537b5b",
+      "function": "ts_count_nans_transform",
+      "signature": "(field, d1=20, d2=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\event_recency.py",
+      "line": 31,
+      "formula": "-ts_count_nans(ts_backfill({field}, 5), 20)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.90ad590da6401d62",
+      "function": "ts_arg_min",
+      "signature": "(field, d=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\event_recency.py",
+      "line": 45,
+      "formula": "ts_arg_min({field},252)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.c404884ba84bead3",
+      "function": "ts_arg_min_transform_c404884b",
+      "signature": "(field, d=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\event_recency.py",
+      "line": 59,
+      "formula": "ts_arg_min(scale({field},longscale=1,shortscale=0),252)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.d81add19de48fd2a",
+      "function": "days_from_last_change",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\event_recency.py",
+      "line": 73,
+      "formula": "days_from_last_change({field})",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.fc41f73c064d673d",
+      "function": "pasteurize_transform",
+      "signature": "(field, d=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\event_recency.py",
+      "line": 87,
+      "formula": "pasteurize(ts_arg_min({field},252))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.7e423cb43af8430c",
+      "function": "ts_arg_min_transform_7e423cb4",
+      "signature": "(field, d=25)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\event_recency.py",
+      "line": 101,
+      "formula": "(25 - ts_arg_min({field}, 25))/25*100",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.885965bbd681af4d",
+      "function": "ts_arg_max_transform_885965bb",
+      "signature": "(field, d=25)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\event_recency.py",
+      "line": 115,
+      "formula": "(25 - ts_arg_max({field}, 25))/25*100",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.6e28564444cc3e83",
+      "function": "ts_arg_max_transform_6e285644",
+      "signature": "(field, d1=22, d2=22)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\event_recency.py",
+      "line": 129,
+      "formula": "ts_arg_max({field}, 22) - ts_arg_min({field}, 22)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.1d33b0f5f49bf145",
+      "function": "ts_mean_transform",
+      "signature": "(field, d1=28, d2=60)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 3,
+      "formula": "ts_mean({field},28)<2.7*ts_mean({field},60)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.e9f07db33de028a3",
+      "function": "ts_mean_transform_e9f07db3",
+      "signature": "(field, d=504)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 17,
+      "formula": "-ts_mean({field},504)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.3ddf50f0f6db5179",
+      "function": "rank_transform_3ddf50f0",
+      "signature": "(field, d=25)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 31,
+      "formula": "rank(ts_mean(log({field}), 25))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.6548eba5b164900b",
+      "function": "ts_mean_transform_6548eba5",
+      "signature": "(field, d=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 45,
+      "formula": "ts_mean({field}, 252) > 100",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.aad2bf5b9f764fcd",
+      "function": "ts_product_transform_aad2bf5b",
+      "signature": "(field, d=250)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 59,
+      "formula": "ts_product({field}+1,250)-1",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.6d7bc44da7d773d3",
+      "function": "ts_product",
+      "signature": "(field, d=22)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 73,
+      "formula": "ts_product(1+{field},22)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.9e63e81d44c2c71c",
+      "function": "ts_product_9e63e81d",
+      "signature": "(field, d=3)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 87,
+      "formula": "ts_product({field}, 3)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.ae1c7b226f3f8b8d",
+      "function": "ts_sum",
+      "signature": "(field, d=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 101,
+      "formula": "ts_sum({field},252)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.bf47dcfb335bafaf",
+      "function": "ts_product_transform_bf47dcfb",
+      "signature": "(field, d=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 115,
+      "formula": "ts_product(1 + {field}, 20) - 1",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.daa199f9fd84af8d",
+      "function": "ts_mean_transform_daa199f9",
+      "signature": "(field, d1=126, d2=80)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 129,
+      "formula": "ts_mean(ts_backfill({field},80),126)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.fb92e53bac86bb3e",
+      "function": "abs_transform_fb92e53b",
+      "signature": "(field, d1=20, d2=60)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 143,
+      "formula": "abs(ts_mean({field},20)/ts_mean({field},60)-1)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.fd5b4f3b720a968e",
+      "function": "log_transform",
+      "signature": "(field, d1=44, d2=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 157,
+      "formula": "log(ts_mean({field}, 44)) - log(ts_mean({field}, 20))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.19bc8bcf95e470a4",
+      "function": "rank_transform_19bc8bcf",
+      "signature": "(field, d=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 171,
+      "formula": "rank(ts_decay_linear({field}, 5))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.1b016199c1feb309",
+      "function": "ts_mean_transform_1b016199",
+      "signature": "(field, d1=5, d2=10)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 185,
+      "formula": "ts_mean({field}, 5) - ts_mean({field}, 10)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.2a64b13ebeeeaf96",
+      "function": "rank_transform_2a64b13e",
+      "signature": "(field, d=60)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 199,
+      "formula": "rank(ts_sum({field}, 60))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.2e2670f291281c93",
+      "function": "rank_transform_2e2670f2",
+      "signature": "(field, d=22)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 213,
+      "formula": "rank(ts_product(1+{field}, 22) - 1)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.33528af61acb862b",
+      "function": "rank_transform_33528af6",
+      "signature": "(field, d=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 227,
+      "formula": "rank(ts_mean({field}, 20))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.338282a17ffeefe6",
+      "function": "ts_mean_transform_338282a1",
+      "signature": "(field, d=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 241,
+      "formula": "{field} - ts_mean({field}, 20)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.3870d31af4e9921c",
+      "function": "rank_transform_3870d31a",
+      "signature": "(field, d1=5, d2=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 255,
+      "formula": "rank(ts_decay_linear(ts_backfill({field}, 20), 5))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.533608b0a6d94dda",
+      "function": "ts_mean_transform_533608b0",
+      "signature": "(field, d=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 269,
+      "formula": "ts_mean(rank({field}), 5)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.589c57b3b2e81921",
+      "function": "zscore_transform",
+      "signature": "(field, d=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 283,
+      "formula": "zscore({field}) - ts_mean(zscore({field}), 20)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.5b0868482126352f",
+      "function": "rank_transform_5b086848",
+      "signature": "(field, d=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 297,
+      "formula": "rank({field}) - ts_mean(rank({field}),5)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.60133bcef05a77ce",
+      "function": "rank_transform_60133bce",
+      "signature": "(field, d=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 311,
+      "formula": "rank(-ts_sum({field},5))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.72897ecb231c2982",
+      "function": "ts_decay_linear_transform_72897ecb",
+      "signature": "(field, d1=5, d2=60)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 325,
+      "formula": "ts_decay_linear(ts_backfill({field}, 60), 5)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.7b8f904f4b7f84ef",
+      "function": "rank_transform_7b8f904f",
+      "signature": "(field, d=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 339,
+      "formula": "rank(ts_mean({field}, 20)) >= 0.20",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.976f4cf56209964c",
+      "function": "ts_mean_transform_976f4cf5",
+      "signature": "(field, d1=20, d2=1)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 353,
+      "formula": "ts_mean({field}/ts_delay({field},1)-1,20)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.c4cefbed8b7a198e",
+      "function": "ts_sum_transform_c4cefbed",
+      "signature": "(field, d1=20, d2=60)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 367,
+      "formula": "ts_sum({field}, 20) - ts_sum({field}, 60)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.c9e24297a35c4a45",
+      "function": "rank_transform_c9e24297",
+      "signature": "(field, d1=5, d2=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 381,
+      "formula": "rank(ts_mean({field}, 5) - ts_mean({field}, 20))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.cc7ae197c41f34d2",
+      "function": "rank_transform_cc7ae197",
+      "signature": "(field, d=10)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 395,
+      "formula": "rank(ts_sum({field} > 5, 10))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.cf38bf10b735fb1d",
+      "function": "rank_transform_cf38bf10",
+      "signature": "(field, d1=22, d2=22)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 409,
+      "formula": "rank(ts_mean({field}, 22) - ts_delay({field}, 22))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.d46c2df1ad86352e",
+      "function": "ts_mean_transform_d46c2df1",
+      "signature": "(field, d=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 423,
+      "formula": "{field} > ts_mean({field}, 20) * 1.5",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.d6855faf105ab478",
+      "function": "log_transform_d6855faf",
+      "signature": "(field, d=21)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 437,
+      "formula": "log(ts_mean({field}, 21))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.d9c03b495fc0adf4",
+      "function": "ts_decay_linear",
+      "signature": "(field, d=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 451,
+      "formula": "ts_decay_linear({field}, 20)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.db6d99b196cb7c21",
+      "function": "ts_mean_transform_db6d99b1",
+      "signature": "(field, d=22)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 465,
+      "formula": "{field} / ts_mean({field}, 22)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.e92359cb9f4a9fc7",
+      "function": "rank_transform_e92359cb",
+      "signature": "(field, d=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\smoothing.py",
+      "line": 479,
+      "formula": "rank({field} / ts_mean({field}, 20))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.3e31ccaa44da4394",
+      "function": "time_series_rank",
+      "signature": "(field, d=60)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_position.py",
+      "line": 3,
+      "formula": "ts_rank({field}, 60)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.3f552d78bb2845a2",
+      "function": "rank_transform",
+      "signature": "(field, d=100)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_position.py",
+      "line": 17,
+      "formula": "rank(ts_rank({field}, 100))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.edfc15957e6d8a6e",
+      "function": "ts_quantile",
+      "signature": "(field, d=80)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_position.py",
+      "line": 31,
+      "formula": "ts_quantile({field},80)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.edb19fdad84fd35c",
+      "function": "ts_rank_transform_edb19fda",
+      "signature": "(field, d1=5, d2=60)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_position.py",
+      "line": 45,
+      "formula": "(3)-1 * (ts_rank({field}, 5) - ts_rank({field}, 60))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.4e0d9be33552b1ec",
+      "function": "ts_rank_transform_4e0d9be3",
+      "signature": "(field, d1=126, d2=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_position.py",
+      "line": 59,
+      "formula": "ts_rank({field}, 126) * 0.4 + ts_rank({field}, 252) * 0.6",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.2a4ceb070e600ecb",
+      "function": "ts_rank_transform_2a4ceb07",
+      "signature": "(field, d1=5, d2=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_position.py",
+      "line": 73,
+      "formula": "ts_rank({field}, 5) - ts_rank({field}, 20)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.2f89d15e1aa9b409",
+      "function": "ts_mean_transform_2f89d15e",
+      "signature": "(field, d1=3, d2=10)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_position.py",
+      "line": 87,
+      "formula": "ts_mean(ts_rank({field}, 10), 3)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.3a855abd7c8584ba",
+      "function": "rank_transform_3a855abd",
+      "signature": "(field, d1=5, d2=1)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_position.py",
+      "line": 101,
+      "formula": "rank(-ts_rank(ts_delta({field}, 1), 5))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.6a2b240a68aae7cd",
+      "function": "ts_scale",
+      "signature": "(field, d=66)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_position.py",
+      "line": 115,
+      "formula": "ts_scale({field},66)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.9956015a36ca00c1",
+      "function": "ts_decay_linear_transform_9956015a",
+      "signature": "(field, d1=63, d2=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_position.py",
+      "line": 129,
+      "formula": "ts_decay_linear(ts_rank({field}, 252), 63)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.c2d9cb6415d03a68",
+      "function": "ts_scale_transform",
+      "signature": "(field, d=660)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_position.py",
+      "line": 143,
+      "formula": "ts_scale(rank({field}), 660)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.d54fa3ca12090f9e",
+      "function": "ts_rank_transform_d54fa3ca",
+      "signature": "(field, d1=252, d2=6)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_position.py",
+      "line": 157,
+      "formula": "ts_rank(ts_mean({field}, 6), 252) - 0.5",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.de05f01449066924",
+      "function": "ts_backfill_transform",
+      "signature": "(field, d1=3, d2=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_position.py",
+      "line": 171,
+      "formula": "ts_backfill(ts_rank({field}, 5), 3)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.ea7a5eb895a16f6e",
+      "function": "ts_rank_transform_ea7a5eb8",
+      "signature": "(field, d1=10, d2=5, d3=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\time_series_position.py",
+      "line": 185,
+      "formula": "ts_rank(ts_delta(ts_mean({field}, 5), 5), 10)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.67f904a55f58bef4",
+      "function": "scale_transform",
+      "signature": "(field, d=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 3,
+      "formula": "scale(rank(ts_av_diff({field},252)))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.cd14b36577bbd39c",
+      "function": "quantile_transform",
+      "signature": "(field, d=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 17,
+      "formula": "quantile(rank(ts_av_diff({field},252)))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.e2254b045c01130c",
+      "function": "ts_delta_transform",
+      "signature": "(field, d=3)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 31,
+      "formula": "-ts_delta({field},3)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.508f467b3f0331c5",
+      "function": "ts_delta_transform_508f467b",
+      "signature": "(field, d=4)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 45,
+      "formula": "ts_delta({field}, 4) > 0.1",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.04a6e8c0517e98db",
+      "function": "rank_transform_04a6e8c0",
+      "signature": "(field, d=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 59,
+      "formula": "rank(ts_delta({field}, 5))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.7091c26469bfc4a0",
+      "function": "rank_transform_7091c264",
+      "signature": "(field, d1=5, d2=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 73,
+      "formula": "-ts_delta({field},5)-rank(ts_delta({field},5))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.918543c1d44708fa",
+      "function": "ts_product_transform_918543c1",
+      "signature": "(field, d1=122, d2=22)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 87,
+      "formula": "ts_product({field}, 122) + ts_delta({field}, 22)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.a1c2126ca09eff3c",
+      "function": "ts_returns",
+      "signature": "(field, d=1)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 101,
+      "formula": "ts_returns({field}, 1)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.e8bf34404148c2d4",
+      "function": "hump_transform",
+      "signature": "(field, d=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 115,
+      "formula": "hump(-ts_delta({field}, 5), hump=0.01)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.15046bd5cc815da8",
+      "function": "rank_transform_15046bd5",
+      "signature": "(field, d=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 129,
+      "formula": "rank(ts_returns({field}, 20))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.2859ed31e32d9933",
+      "function": "rank_transform_2859ed31",
+      "signature": "(field, d1=5, d2=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 143,
+      "formula": "rank(ts_delta(ts_mean({field}, 5), 5))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.496f9e9d23f8a846",
+      "function": "ts_decay_linear_transform_496f9e9d",
+      "signature": "(field, d1=10, d2=22)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 157,
+      "formula": "ts_decay_linear(rank(ts_delta({field}, 22)), 10)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.5a6ebebc0826f636",
+      "function": "ts_delta_transform_5a6ebebc",
+      "signature": "(field, d1=5, d2=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 171,
+      "formula": "ts_delta(ts_mean({field}, 5), 5)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.6a3ff7a7276eb0f6",
+      "function": "ts_decay_linear_transform_6a3ff7a7",
+      "signature": "(field, d1=5, d2=1)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 185,
+      "formula": "ts_decay_linear(ts_delta({field},1),5)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.7e55e25728e3c86f",
+      "function": "ts_delta_transform_7e55e257",
+      "signature": "(field, d1=5, d2=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 199,
+      "formula": "ts_delta({field}, 5) / ts_delay({field}, 5)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.81651b1f435809ab",
+      "function": "ts_delta_transform_81651b1f",
+      "signature": "(field, d=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 213,
+      "formula": "ts_delta({field}, 5) / {field}",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.abc311a07ddacfb5",
+      "function": "rank_transform_abc311a0",
+      "signature": "(field, d=10)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 227,
+      "formula": "rank(ts_av_diff({field}, 10))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.bb455e1cbf8c4e9b",
+      "function": "rank_transform_bb455e1c",
+      "signature": "(field, d=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 241,
+      "formula": "rank(-ts_delta({field},5))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.bf64e4f7df68830e",
+      "function": "ts_delta_transform_bf64e4f7",
+      "signature": "(field, d1=5, d2=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 255,
+      "formula": "ts_delta(ts_delta({field}, 5), 5)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.cc364e2c68e45f79",
+      "function": "rank_transform_cc364e2c",
+      "signature": "(field, d1=5, d2=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 269,
+      "formula": "rank(ts_delta(ts_backfill({field}, 20), 5))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.e99dac58762fe3d6",
+      "function": "average_difference",
+      "signature": "(field, d=50)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 283,
+      "formula": "ts_av_diff({field}, 50)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.f9804c949ead271b",
+      "function": "ts_delta_transform_f9804c94",
+      "signature": "(field, d1=10, d2=5, d3=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\trend_change.py",
+      "line": 297,
+      "formula": "ts_mean({field}, 5) / ts_mean({field}, 20) * ts_delta({field}, 10)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.6d45ce1b692bca90",
+      "function": "within_group_zscore",
+      "signature": "(field, group='sector')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 3,
+      "formula": "group_zscore({field},sector)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.829bd31f8bf03c42",
+      "function": "group_mean",
+      "signature": "(field, group='market')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 17,
+      "formula": "group_mean({field},1,market)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.f4ea125ae146da28",
+      "function": "scale_transform_f4ea125a",
+      "signature": "(field, d=504, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 31,
+      "formula": "scale(group_neutralize(ts_av_diff({field},504),subindustry))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.ff73b6d6e9d3713a",
+      "function": "quantile_transform_ff73b6d6",
+      "signature": "(field, d=252, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 45,
+      "formula": "quantile(group_neutralize(ts_av_diff({field},252),subindustry))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.15c3fed1b5a7fe97",
+      "function": "ts_product_transform",
+      "signature": "(field, d=250, group='market')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 59,
+      "formula": "ts_product(1+group_mean({field},1,market),250)-1",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.3518a881e1223972",
+      "function": "ts_zscore_transform_3518a881",
+      "signature": "(field, d1=30, d2=3, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 73,
+      "formula": "ts_zscore(group_neutralize(ts_delta({field}, 3), industry), 30) * -1",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.3d773bbce9f5fb8d",
+      "function": "group_rank_transform",
+      "signature": "(field, d=66, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 87,
+      "formula": "group_rank(ts_backfill({field}, 66), industry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.48d3754fa477d65c",
+      "function": "group_zscore_transform",
+      "signature": "(field, d=5, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 101,
+      "formula": "group_zscore(ts_delta({field}, 5), industry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.4fc603eca09c27d7",
+      "function": "group_mean_transform",
+      "signature": "(field, group='exchange')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 115,
+      "formula": "group_mean({field}, 1 , densify(exchange))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.5deb740763be054d",
+      "function": "group_rank_transform_5deb7407",
+      "signature": "(field, d1=60, d2=60, group='sector')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 129,
+      "formula": "group_rank(ts_quantile(ts_backfill({field}, 60), 60), densify(sector))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.6a03b7ede8cd7e7c",
+      "function": "group_rank_transform_6a03b7ed",
+      "signature": "(field, d1=60, d2=5, group='sector')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 143,
+      "formula": "group_rank(ts_zscore(ts_delta({field}, 5), 60), sector)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.7c3ddd81b6e966a1",
+      "function": "group_neutralize_transform",
+      "signature": "(field, d=5, group='sector')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 157,
+      "formula": "group_neutralize(rank(ts_backfill({field}, 5)), sector)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.8f97d7b4db20cac1",
+      "function": "group_zscore_transform_8f97d7b4",
+      "signature": "(field, d1=20, d2=2, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 171,
+      "formula": "group_zscore(ts_zscore(ts_delta({field}, 2), 20), industry) * -1",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.977fd958136db55c",
+      "function": "group_neutralize_transform_977fd958",
+      "signature": "(field, d1=252, d2=1, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 185,
+      "formula": "group_neutralize(rank(ts_rank(-ts_delta({field}, 1), 252)), subindustry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.ac0a4ad104cc6e63",
+      "function": "group_rank_transform_ac0a4ad1",
+      "signature": "(field, d1=20, d2=20, group='sector')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 199,
+      "formula": "group_rank(ts_rank(ts_delta({field}, 20), 20), sector)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.bc29fee0a723ee48",
+      "function": "group_rank_transform_bc29fee0",
+      "signature": "(field, d1=22, d2=120, group='market')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 213,
+      "formula": "group_rank(ts_arg_max(ts_backfill({field}, 120), 22),densify(market))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.e918b3905d29a78c",
+      "function": "group_count",
+      "signature": "(field, group='market')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 227,
+      "formula": "group_count({field}, market)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.f65371a4690a9262",
+      "function": "ts_rank_transform_f65371a4",
+      "signature": "(field, d=10, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 241,
+      "formula": "ts_rank(group_neutralize({field}, industry), 10)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.181ee1451874a033",
+      "function": "group_neutralize_transform_181ee145",
+      "signature": "(field, d1=60, d2=5, group='sector')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 255,
+      "formula": "group_neutralize(ts_rank(ts_delta({field}, 5), 60), densify(sector))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.18c3ee043da23e99",
+      "function": "group_sum_transform",
+      "signature": "(field, group='market')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 269,
+      "formula": "{field}/group_sum({field},market)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.29fb904d1fa5211f",
+      "function": "group_rank_transform_29fb904d",
+      "signature": "(field, d=5, group='market')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 283,
+      "formula": "group_rank(-ts_delta({field}, 5), market)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.3b002527d4296814",
+      "function": "group_rank_transform_3b002527",
+      "signature": "(field, d1=132, d2=66, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 297,
+      "formula": "group_rank(ts_zscore(ts_backfill({field}, 66), 132), subindustry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.3e38dfd4df5c56b4",
+      "function": "group_mean_transform_3e38dfd4",
+      "signature": "(field, group='market')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 311,
+      "formula": "{field} - group_mean({field},1,market)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.82cf1239ad79bcfd",
+      "function": "group_neutralize_transform_82cf1239",
+      "signature": "(field, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 325,
+      "formula": "group_neutralize(zscore({field}), industry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.9118cb42b80ef01a",
+      "function": "group_neutralize_transform_9118cb42",
+      "signature": "(field, d1=60, d2=20, group='sector')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 339,
+      "formula": "group_neutralize(ts_rank(ts_mean({field}, 20), 60), densify(sector))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.987be298b9f7cbc8",
+      "function": "rank_transform_987be298",
+      "signature": "(field, group='country')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 353,
+      "formula": "rank(group_mean({field}, 1, country))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.9c25dd6913b0cd15",
+      "function": "group_rank_transform_9c25dd69",
+      "signature": "(field, d=240, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 367,
+      "formula": "group_rank(ts_scale({field}, 240), industry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.ad967f9ce732c34f",
+      "function": "group_neutralize_transform_ad967f9c",
+      "signature": "(field, group1='country', group2='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 381,
+      "formula": "group_neutralize({field}, group_cartesian_product(country, industry))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.b43b2a2f7306d1cc",
+      "function": "group_backfill_transform",
+      "signature": "(field, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 395,
+      "formula": "-group_backfill({field}, subindustry, 126, std = 4.0)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.026c9d4962919908",
+      "function": "group_rank_transform_026c9d49",
+      "signature": "(field, d=20, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 409,
+      "formula": "group_rank(ts_delta({field}, 20), industry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.083babe84c644b32",
+      "function": "ts_zscore_transform_083babe8",
+      "signature": "(field, d1=63, d2=63, group='sector')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 423,
+      "formula": "ts_zscore({field}, 63) - ts_zscore(group_neutralize({field}, sector), 63)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.0d7aa64ca33d8309",
+      "function": "group_neutralize_transform_0d7aa64c",
+      "signature": "(field, d=10, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 437,
+      "formula": "group_neutralize(rank({field})/ts_std_dev({field}, 10),industry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.1a65b86be62b7cdc",
+      "function": "group_neutralize_transform_1a65b86b",
+      "signature": "(field, d1=63, d2=21, d3=10, group='sector')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 451,
+      "formula": "group_neutralize(ts_rank(ts_rank({field}, 21) * ts_std_dev({field}, 10), 63), sector)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.1aafdef3c1c0cead",
+      "function": "group_neutralize_transform_1aafdef3",
+      "signature": "(field, d=20, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 465,
+      "formula": "group_neutralize(ts_zscore({field}, 20), industry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.26b7770003e7f67a",
+      "function": "group_rank_transform_26b77700",
+      "signature": "(field, d=20, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 479,
+      "formula": "group_rank(ts_mean({field}, 20), industry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.27038cd424c17de9",
+      "function": "group_rank_transform_27038cd4",
+      "signature": "(field, d=5, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 493,
+      "formula": "group_rank(ts_sum({field}, 5), subindustry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.35d997f31b1d3b2f",
+      "function": "group_std_dev",
+      "signature": "(field, group='market')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 507,
+      "formula": "group_std_dev({field}, market)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.3a0d64cc91eb21bc",
+      "function": "group_neutralize_transform_3a0d64cc",
+      "signature": "(field, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 521,
+      "formula": "group_neutralize(rank({field}), industry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.3a5a5d561a547479",
+      "function": "group_zscore_transform_3a5a5d56",
+      "signature": "(field, d1=66, d2=22, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 535,
+      "formula": "group_zscore(ts_zscore(ts_delta({field}, 22), 66), subindustry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.484e8e140e4c63ca",
+      "function": "group_rank_transform_484e8e14",
+      "signature": "(field, d1=120, d2=120, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 549,
+      "formula": "group_rank(ts_backfill(ts_backfill({field}, 120), 120), subindustry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.486dea3a8955475b",
+      "function": "group_count_transform",
+      "signature": "(field, group='market')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 563,
+      "formula": "group_count({field}, densify(market))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.4cba4fe9f9fa93af",
+      "function": "group_rank_transform_4cba4fe9",
+      "signature": "(field, d=63, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 577,
+      "formula": "group_rank(ts_zscore({field}, 63), subindustry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.7a5fb1191d6172ba",
+      "function": "within_group_rank",
+      "signature": "(field, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 591,
+      "formula": "group_rank({field}, subindustry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.857d7c54c7cd0155",
+      "function": "group_rank_transform_857d7c54",
+      "signature": "(field, d=20, group='country')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 605,
+      "formula": "group_rank(ts_mean({field},20),country)>0.03",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.90dd328112854f99",
+      "function": "ts_delay_transform_90dd3281",
+      "signature": "(field, d1=20, d2=20, group='market')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 619,
+      "formula": "ts_delay(ts_mean({field}-group_mean({field},1,market),20),20)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.90f13264baf0f1fd",
+      "function": "group_rank_transform_90f13264",
+      "signature": "(field, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 633,
+      "formula": "group_rank({field}, densify(subindustry))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.98806ef0d73b3a42",
+      "function": "rank_transform_98806ef0",
+      "signature": "(field, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 647,
+      "formula": "rank(group_rank({field}, industry))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.98ab1a0dc9f607b6",
+      "function": "group_zscore_transform_98ab1a0d",
+      "signature": "(field, d1=66, d2=5, d3=22, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 661,
+      "formula": "group_zscore(ts_zscore(ts_mean({field}, 5) - ts_mean({field}, 22), 66), industry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.992a3726f07a002c",
+      "function": "group_neutralize_transform_992a3726",
+      "signature": "(field, d=21, group='sector')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 675,
+      "formula": "group_neutralize(ts_rank({field}, 21), sector)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.9dbfb149114b1868",
+      "function": "group_zscore_transform_9dbfb149",
+      "signature": "(field, d1=5, d2=126, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 689,
+      "formula": "group_zscore(ts_mean(ts_rank({field},126),5),subindustry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.a323df1a154a3669",
+      "function": "ts_mean_transform_a323df1a",
+      "signature": "(field, d=5, group='market')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 703,
+      "formula": "ts_mean({field}-group_mean({field},1,market),5)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.a65fab7cf9f15c1d",
+      "function": "group_rank_transform_a65fab7c",
+      "signature": "(field, d1=40, d2=10, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 717,
+      "formula": "group_rank(ts_rank(ts_mean({field}, 10), 40), subindustry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.af80a3d86052bff1",
+      "function": "group_rank_transform_af80a3d8",
+      "signature": "(field, d=10, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 731,
+      "formula": "group_rank(ts_decay_linear({field}, 10), subindustry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.b52bf47837f9df38",
+      "function": "group_rank_transform_b52bf478",
+      "signature": "(field, d=20, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 745,
+      "formula": "group_rank(ts_rank({field}, 20), industry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.bdfe840cb8421769",
+      "function": "rank_transform_bdfe840c",
+      "signature": "(field, d=5, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 759,
+      "formula": "rank(group_neutralize(ts_mean({field}, 5), industry))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.d5a918734056cc0d",
+      "function": "group_rank_transform_d5a91873",
+      "signature": "(field, d1=252, d2=120, d3=120, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 773,
+      "formula": "-group_rank(ts_delta(ts_backfill(ts_backfill({field}, 120), 120), 252), industry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.da9212ca780efab0",
+      "function": "min_transform",
+      "signature": "(field, d=66, group='sector')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 787,
+      "formula": "min(group_rank({field}, sector), rank(ts_delta({field}, 66)))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.e3fa541ba2c827d9",
+      "function": "group_zscore_transform_e3fa541b",
+      "signature": "(field, d=2, group='sector')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 801,
+      "formula": "group_zscore(-ts_delta({field}, 2), sector)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.e5c480d54fdd4d16",
+      "function": "group_rank_transform_e5c480d5",
+      "signature": "(field, d=60, group='sector')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 815,
+      "formula": "group_rank(ts_std_dev({field},60),sector)>0.7",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.ebbad5ec9f47a11b",
+      "function": "group_rank_transform_ebbad5ec",
+      "signature": "(field, d1=126, d2=120, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 829,
+      "formula": "group_rank(ts_quantile(-ts_backfill({field}, 120), 126), subindustry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.f7bc659155753576",
+      "function": "group_neutralization",
+      "signature": "(field, group='subindustry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 843,
+      "formula": "group_neutralize({field}, subindustry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.fe3b6dc2204a475a",
+      "function": "group_neutralize_transform_fe3b6dc2",
+      "signature": "(field, group='industry')",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\group_relative.py",
+      "line": 857,
+      "formula": "group_neutralize(group_zscore({field}, industry), industry)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.812d50a27bad3873",
+      "function": "ts_backfill",
+      "signature": "(field, d=1200)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\preprocessing.py",
+      "line": 3,
+      "formula": "ts_backfill({field},1200)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.4f4ac14a6961d3bc",
+      "function": "hump_transform_4f4ac14a",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\preprocessing.py",
+      "line": 17,
+      "formula": "hump(rank({field}), hump=0.01)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.913e24dabb702c9b",
+      "function": "rank_transform_913e24da",
+      "signature": "(field, d=66)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\preprocessing.py",
+      "line": 31,
+      "formula": "rank(ts_backfill({field}, 66))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.d18837cde767a196",
+      "function": "rank_transform_d18837cd",
+      "signature": "(field, d=20)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\preprocessing.py",
+      "line": 45,
+      "formula": "rank(-ts_backfill({field},20))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.f37cf5455b3c6ceb",
+      "function": "ts_backfill_transform_f37cf545",
+      "signature": "(field, d1=66, d2=120)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\preprocessing.py",
+      "line": 59,
+      "formula": "ts_backfill(ts_backfill({field}, 120), 66)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.acc17dcc23d62536",
+      "function": "cross_sectional_rank",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 3,
+      "formula": "rank({field})",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.c16b95512285c994",
+      "function": "scale_transform_c16b9551",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 17,
+      "formula": "scale(quantile({field}))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.0a43374f428eab4f",
+      "function": "rank_transform_0a43374f",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 31,
+      "formula": "0.65 * rank(-{field})",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.6aaf4730f3d51ae1",
+      "function": "ts_max_diff_transform",
+      "signature": "(field, d=252)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 45,
+      "formula": "ts_max_diff(scale({field},longscale=1,shortscale=0),252)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.7d8a8a9d4aeabdb6",
+      "function": "last_diff_value",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 59,
+      "formula": "last_diff_value({field}, 5)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.bde7ba8d9e2e5a46",
+      "function": "ts_delay_transform",
+      "signature": "(field, d=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 73,
+      "formula": "{field} / ts_delay({field}, 5)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.40e0fc605dcb3147",
+      "function": "quantile",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 87,
+      "formula": "quantile({field})",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.42429575fc80b0cc",
+      "function": "ts_delay_transform_42429575",
+      "signature": "(field, d=1)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 101,
+      "formula": "{field} /ts_delay({field},1)-1",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.4b1b453de0d0a55c",
+      "function": "sqrt",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 115,
+      "formula": "sqrt({field})",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.5b135c7d5d658d4b",
+      "function": "pasteurize",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 129,
+      "formula": "pasteurize({field})",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.5bdde2b0901f5468",
+      "function": "rank_transform_5bdde2b0",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 143,
+      "formula": "rank({field})>0.7",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.75007fe58e0a4369",
+      "function": "zscore",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 157,
+      "formula": "zscore({field})",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.7d899f431dc53345",
+      "function": "rank_transform_7d899f43",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 171,
+      "formula": "rank({field}) < 0.4",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.969db6e6eb9293fc",
+      "function": "inverse",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 185,
+      "formula": "inverse({field})",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.dce17f367c5f5b92",
+      "function": "scale",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 199,
+      "formula": "scale({field}, scale=1, longscale=1, shortscale=1)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.df9ee72494dfaeb1",
+      "function": "ts_delay_transform_df9ee724",
+      "signature": "(field, d=1)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 213,
+      "formula": "{field} - ts_delay({field},1)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.ec2678d1000f0c08",
+      "function": "scale_ec2678d1",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 227,
+      "formula": "scale({field})",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.f2d4e34d895ab905",
+      "function": "rank_transform_f2d4e34d",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 241,
+      "formula": "(rank({field})-0.5)*2",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.10569464d0e52df0",
+      "function": "rank_transform_10569464",
+      "signature": "(field, d=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 255,
+      "formula": "rank(ts_delay({field},5))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.3cdaafd796ded422",
+      "function": "rank_transform_3cdaafd7",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 269,
+      "formula": "(-1 * rank({field}))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.3e65a29dc86086a0",
+      "function": "normalize",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 283,
+      "formula": "normalize({field})",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.4a4fadf37fbf3e80",
+      "function": "cross_sectional_rank_4a4fadf3",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 297,
+      "formula": "rank(-{field})",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.5ee09e6396309acf",
+      "function": "abs",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 311,
+      "formula": "abs({field})",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.63e3248bd40188aa",
+      "function": "rank_transform_63e3248b",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 325,
+      "formula": "rank(abs({field}))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.64b9570ebabe0382",
+      "function": "abs_transform_64b9570e",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 339,
+      "formula": "abs({field})>=0.1",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.6bd9f132540bc052",
+      "function": "max_transform",
+      "signature": "(field, d1=1, d2=2, d3=3, d4=4)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 353,
+      "formula": "max({field}, ts_delay({field}, 1), ts_delay({field}, 2), ts_delay({field}, 3), ts_delay({field}, 4))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.7902a72244bb0c48",
+      "function": "rank_transform_7902a722",
+      "signature": "(field, d=1)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 367,
+      "formula": "rank({field} - ts_delay({field}, 1))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.83bdfe902b5071d7",
+      "function": "rank_transform_83bdfe90",
+      "signature": "(field, d=1)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 381,
+      "formula": "rank({field}) - rank(ts_delay({field}, 1))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.8cf6da5eaca76386",
+      "function": "sign_transform",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 395,
+      "formula": "-sign({field})",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.916baf05aac2cbee",
+      "function": "ts_delay_transform_916baf05",
+      "signature": "(field, d=1)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 409,
+      "formula": "({field} == ts_delay({field},1))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.9fc2b549dbd45fc7",
+      "function": "abs_transform_9fc2b549",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 423,
+      "formula": "abs({field}) > 1",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.a4a84157b0fe7d1c",
+      "function": "ts_delay_transform_a4a84157",
+      "signature": "(field, d=5)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 437,
+      "formula": "-({field}-ts_delay({field},5))/{field}",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.c7b708fdc921fcd2",
+      "function": "ts_delay",
+      "signature": "(field, d=200)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 451,
+      "formula": "ts_delay({field}, 200)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.da7c4db8c65ffaae",
+      "function": "log",
+      "signature": "(field)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 465,
+      "formula": "log({field})",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.dd0ab1924189ab82",
+      "function": "ts_delay_transform_dd0ab192",
+      "signature": "(field, d=1)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 479,
+      "formula": "(1-{field})*ts_delay(1-{field},1)",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    },
+    {
+      "template_id": "admin.catalog.e4c1d3e42b4a1bec",
+      "function": "log_transform_e4c1d3e4",
+      "signature": "(field, d=1)",
+      "path": "D:\\code\\WorldQuant Brain\\goal\\代码\\优化代码\\Core\\factor\\templates\\callable_templates\\cross_sectional.py",
+      "line": 493,
+      "formula": "log({field}/ts_delay({field},1))",
+      "status": "UNVALIDATED",
+      "checks": {
+        "formula_matches": true,
+        "syntax_valid": true,
+        "registered": true,
+        "documented": true
+      }
+    }
+  ]
+}

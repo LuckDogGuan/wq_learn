@@ -1,0 +1,146 @@
+排名
+
+用户ID
+
+当前等级
+
+
+达成等级
+
+
+最终等级
+
+
+标签
+
+
+国家/地区
+
+
+Equals
+
+Contains
+
+Contains
+
+Contains
+
+Contains
+
+Contains
+
+Contains
+
+Equals
+
+Contains
+
+Contains
+
+Contains
+
+Contains
+
+Contains
+
+Contains
+▶1	BN67375	GRANDMASTER	grandmaster	grandmaster		KE
+▶2	RS70387	EXPERT	grandmaster	grandmaster		IN
+▶3	DN16452	GRANDMASTER	grandmaster	grandmaster		VN
+▶4	ES81271	GRANDMASTER	grandmaster	grandmaster		CN
+▶5	DM27600	EXPERT	grandmaster	grandmaster		KE
+▶6	CR35762	MASTER	grandmaster	grandmaster		CN
+▶7	MY62952	MASTER	grandmaster	grandmaster		CN
+▶8	NP65801	GRANDMASTER	grandmaster	grandmaster		IN
+▶9	JL71699	MASTER	grandmaster	grandmaster		CN
+▶10	TD94100	GRANDMASTER	grandmaster	grandmaster		VN
+▶11	SP89971	GRANDMASTER	grandmaster	grandmaster		TW
+▶12	JR23144	GRANDMASTER	grandmaster	grandmaster		CN
+▶13	LD22811	GRANDMASTER	grandmaster	grandmaster		CN
+▶14	EP20063	EXPERT	grandmaster	grandmaster		CN
+▶15	JX79797	GRANDMASTER	grandmaster	grandmaster		CN
+▶16	XH32267	EXPERT	grandmaster	grandmaster		CN
+▶17	FD69320	GRANDMASTER	grandmaster	grandmaster		CN
+▶18	WX89624	GRANDMASTER	grandmaster	grandmaster		CN
+▶19	LD33850	EXPERT	grandmaster	grandmaster		CN
+▶20	CY99553	GOLD	grandmaster	grandmaster		CN
+▶21	LV57140	GOLD	grandmaster	grandmaster		VN
+▶22	DW54206	GOLD	grandmaster	grandmaster		MY
+▶23	HO41126	MASTER	master	master		KE
+▶24	CA42779	MASTER	master	master		KE
+▶25	MO25461	MASTER	master	master		KE
+▶26	EN41519	MASTER	master	master		KE
+▶27	PO51191	MASTER	master	master		KE
+▶28	NA11329	MASTER	master	master		KE
+▶29	BK35905	MASTER	master	master		KE
+▶30	FM47631	MASTER	master	master		KE
+▶31	ZZ26913	EXPERT	master	master		CN
+▶32	ZS59763	GRANDMASTER	master	master		CN
+▶33	BM29781	MASTER	master	master		KE
+▶34	GM28308	MASTER	master	master		KE
+▶35	YW82626	GRANDMASTER	master	master		TW
+▶36	SV11672	EXPERT	master	master		IN
+▶37	ME83843	MASTER	master	master		KE
+▶38	HC86622	MASTER	master	master		KE
+▶39	QP72475	GRANDMASTER	master	master		CN
+▶40	JN96079	MASTER	master	master		KE
+▶41	RB90992	MASTER	master	master		IN
+▶42	XW23690	GRANDMASTER	master	master		CN
+▶43	NL58442	MASTER	master	master		VN
+▶44	EM99983	MASTER	master	master		KE
+▶45	RM49262	GRANDMASTER	master	master		CN
+▶46	BA51127	MASTER	master	master		CN
+▶47	SZ83096	GRANDMASTER	master	master		CN
+▶48	EM39360	MASTER	master	master		KE
+▶49	KK97497	EXPERT	master	master		IN
+▶50	SC23342	GRANDMASTER	master	master		CN
+▶51	ZH87224	EXPERT	master	master		CN
+▶52	DK94923	EXPERT	master	master		VN
+▶53	SC73595	MASTER	master	master		IN
+▶54	VC95113	MASTER	master	master		VN
+▶55	SW82574	MASTER	master	master		KE
+▶56	CT48231	GRANDMASTER	master	master		VN
+▶57	SM63503	MASTER	master	master		CN
+▶58	ML38868	EXPERT	master	master		CN
+▶59	XJ80376	MASTER	master	master		CN
+▶60	JN65269	EXPERT	master	master		KE
+▶61	RM79380	MASTER	master	master		KE
+▶62	EM84951	MASTER	master	master		KE
+▶63	AM60509	MASTER	master	master		IN
+▶64	YZ97204	MASTER	master	master		CN
+▶65	QL47372	GRANDMASTER	master	master		CN
+▶66	YX23928	MASTER	master	master		CN
+▶67	JL20733	MASTER	master	master		KE
+▶68	SD81732	MASTER	master	master		CN
+▶69	MG56546	EXPERT	master	master		KE
+▶70	JW89289	MASTER	master	master		CN
+▶71	SC77987	GRANDMASTER	master	master		CN
+▶72	JL11546	MASTER	master	master		CN
+▶73	WX64154	MASTER	master	master		CN
+▶74	YL58219	GRANDMASTER	master	master		CN
+▶75	JG15244	MASTER	master	master		CN
+▶76	LH80116	MASTER	master	master		VN
+▶77	SY90356	MASTER	master	master		CN
+▶78	SJ65808	GRANDMASTER	master	master		CN
+▶79	LW67640	GRANDMASTER	master	master		CN
+▶80	ZZ10277	MASTER	master	master		CN
+▶81	WD51302	EXPERT	master	master		KE
+▶82	AJ39409	EXPERT	master	master		CN
+▶83	XX42289	MASTER	master	master		CN
+▶84	WT73952	MASTER	master	master		CN
+▶85	DG12900	MASTER	master	master		KE
+▶86	LU53797	GRANDMASTER	master	master		CN
+▶87	KZ79256	GRANDMASTER	master	master		CN
+▶88	HZ55211	GOLD	master	master		CN
+▶89	MY27687	MASTER	master	master		CN
+▶90	LL49894	MASTER	master	master		CN
+▶91	JL16510	GRANDMASTER	master	master		CN
+▶92	TT72336	MASTER	master	master		VN
+▶93	MY49971	GRANDMASTER	master	master		CN
+▶94	HY90970	GRANDMASTER	master	master		IN
+▶95	JZ61289	MASTER	master	master		CN
+▶96	XZ69776	MASTER	master	master		CN
+▶97	QQ68782	GRANDMASTER	master	master		CN
+▶98	KK61864	GOLD	master	master		IN
+▶99	ZZ74958	GRANDMASTER	master	master		CN
+▶100	JX14975	MASTER	master	master		CN

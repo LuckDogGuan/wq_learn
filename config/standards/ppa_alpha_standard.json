@@ -1,0 +1,35 @@
+{
+  "standard": "PPA",
+  "_comment": "通用 Power Pool Alpha 标准；动态地区和赛季条件见 PPA 范围/ 最新文件。",
+  "scope": {
+    "directory": "PPA 范围/",
+    "file": "运行时读取最新文件",
+    "selection": "按文件修改时间选择最新范围文件",
+    "note": "地区、日期、Delay、Universe、Neutralization 和禁止数据集均以该文件为准。"
+  },
+  "entry_requirements": {
+    "sharpe_min": 1.0,
+    "operators_max": 8,
+    "unique_data_fields_max_excluding_support_fields": 3,
+    "support_fields": ["country", "industry", "subindustry", "currency", "market", "sector", "exchange"],
+    "turnover": {"min": 0.01, "max": 0.70, "inclusive": true},
+    "power_pool_self_correlation_max": 0.5,
+    "high_correlation_exception": "相关性超过 0.5 时，Sharpe 需比最相关策略高至少 10%。"
+  },
+  "not_applicable": [
+    "Prod Correlation",
+    "非 Power Pool 自有 Alpha 的 Self-Correlation",
+    "Fitness threshold",
+    "IS Ladder"
+  ],
+  "other": {
+    "daily_submission_quota": 4,
+    "monthly_award": "同一类别至少 10 个 Power Pool Alpha。",
+    "description": "必须遵循 Power Pool Alpha Description 规则，否则可能失去奖项资格。",
+    "historical_tag": "曾标记为 Power Pool 的 Alpha，即使取消标记，仍计入相关性池。"
+  },
+  "source": {
+    "title": "【PPA】alpha的标准",
+    "url": "https://support.worldquantbrain.com/hc/zh-cn/community/posts/33099181447447--PPA-alpha%E7%9A%84%E6%A0%87%E5%87%86"
+  }
+}

@@ -1,0 +1,92 @@
+# 4. 可视化：字段质量散点分布图 (覆盖率 vs 偏度)
+import numpy as np
+
+def classify_field(row):
+    cov = row['AvgCoverage']
+    skew = abs(row['AvgSkewness'])
+    pos_ratio = row['PositiveRatio']
+    dataset = str(row['Dataset']).lower()
+    
+    # 动态阈值判定：区分高密度矿区与稀疏矿区
+    is_sparse = any(kw in dataset for kw in ['news', 'sentiment', 'options', 'social', 'event'])
+    
+    # 设置对应的覆盖率门槛
+    if is_sparse:
+        t1_cov, t2_cov, t3_cov = 0.3, 0.15, 0.05
+    else:
+        t1_cov, t2_cov, t3_cov = 0.9, 0.8, 0.5
+        
+    # 判断是否为极端单边数据 (例如全是1或全是非0)
+    is_extreme_ratio = (pos_ratio < 0.01) or (pos_ratio > 0.99)
+    
+    # Tier 1 在稀疏数据中可能由于 0 值过多导致偏度较高，因此放宽偏度要求
+    t1_skew = 0.5 if is_sparse else 0.2
+    t2_skew = 1.0 if is_sparse else 0.5
+    
+    if cov >= t1_cov and skew <= t1_skew and not is_extreme_ratio:
+        return 'Tier 1 (黄金因子)'
+    elif cov >= t2_cov and skew <= t2_skew and not is_extreme_ratio:
+        return 'Tier 2 (白银因子)'
+    elif cov >= t3_cov:
+        return 'Tier 3 (需重度清洗)'
+    else:
+        return 'Tier 4 (垃圾/极低覆盖)'
+
+if len(df) > 0:
+    plot_df = df.copy()
+    # 评级分类
+    plot_df['QualityTier'] = plot_df.apply(classify_field, axis=1)
+    
+    # 打印评级推荐表
+    tier1_df = plot_df[plot_df['QualityTier'] == 'Tier 1 (黄金因子)']
+    tier2_df = plot_df[plot_df['QualityTier'] == 'Tier 2 (白银因子)']
+    
+    print(f"🌟 发现 {len(tier1_df)} 个【Tier 1 黄金因子】 (高密度区Cov>0.9, 稀疏区Cov>0.3)")
+    if len(tier1_df) > 0:
+        display(tier1_df.head(10))
+        
+    print(f"✨ 发现 {len(tier2_df)} 个【Tier 2 白银因子】 (高密度区Cov>0.8, 稀疏区Cov>0.15)")
+    if len(tier2_df) > 0:
+        display(tier2_df.head(10))
+
+    plt.figure(figsize=(14, 8))
+    sns.set_theme(style="whitegrid")
+    # 必须在 set_theme 之后重新设置字体，否则会被 seaborn 覆盖
+    plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'Arial Unicode MS', 'sans-serif']
+    plt.rcParams['axes.unicode_minus'] = False
+    
+    # 加一点点随机扰动以看清密度
+    plot_df['JitteredSkewness'] = plot_df['AvgSkewness'] + np.random.normal(0, 0.015, size=len(plot_df))
+    
+    # 为不同的 Tier 定义高对比度、极其醒目的颜色
+    tier_palette = {
+        'Tier 1 (黄金因子)': '#FF0055',   # 亮骚粉/玫红 (极其醒目)
+        'Tier 2 (白银因子)': '#0088FF',   # 亮蓝色
+        'Tier 3 (需重度清洗)': '#FFAA00', # 橙色
+        'Tier 4 (垃圾/极低覆盖)': '#999999'  # 灰色，融入背景
+    }
+    
+    # 根据评级画散点图
+    scatter = sns.scatterplot(
+        data=plot_df.sort_values('QualityTier', ascending=False), # 让金银色在上层
+        x="JitteredSkewness", 
+        y="AvgCoverage", 
+        hue="QualityTier", 
+        palette=tier_palette, 
+        size="AvgCoverage",       
+        sizes=(20, 120),          
+        alpha=0.85,               # 提高不透明度，让颜色更实、更饱满
+        edgecolor='black',
+        linewidth=0.5
+    )
+    
+    plt.axvline(0, color='red', linestyle='dashed', alpha=0.8, label='Zero Skewness (Ideal)')
+    plt.axhline(0.8, color='green', linestyle='dashed', alpha=0.8, label='80% Coverage')
+    
+    plt.title(f"Field Quality Radar\n(Theme: {TARGET_THEME} | Region: {TARGET_REGION} | Universe: {TARGET_UNIVERSE})", fontsize=16)
+    plt.xlabel("Average Skewness (Jittered for visibility) - Closer to 0 is more normal", fontsize=12)
+    plt.ylabel("Average Coverage Ratio", fontsize=12)
+    
+    plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., title="因子质量评级")
+    plt.tight_layout()
+    plt.show()

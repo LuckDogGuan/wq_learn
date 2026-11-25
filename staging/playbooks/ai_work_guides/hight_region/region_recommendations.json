@@ -1,0 +1,129 @@
+{
+  "_CROSS_REGION_RULES": {
+    "description": "跨地区通用规律：判断一条经验能否换 Region 复用",
+    "source": "论坛热帖：【2个月提交220个RA经验分享】(LC97552, 11赞)",
+    "rules": [
+      {"category": "纯数学/物理规律", "rule": "单位匹配铁律、abs 制造单边暴露、log 修复右偏数据", "is_universal": "能", "type": "通用", "note": "任意 Region 直接复用"},
+      {"category": "工程方法论", "rule": "先诊断后优化、权重优先于结构、PC 查重时机", "is_universal": "能", "type": "通用", "note": "跨 Region 适用，效果幅度略有差异"},
+      {"category": "算子特性", "rule": "ts_rank 提 Sharpe 必升 TV、VECTOR 数据加 ts_backfill", "is_universal": "能", "type": "通用", "note": "算子本质决定，不受 Region 影响"},
+      {"category": "中性化选择 (Neutralization)", "rule": "subindustry 降 PC", "is_universal": "不能", "type": "条件依赖", "note": "在 MEA/IND 成立，在 EUR/IND PV 反向，必须分 Region 验证"},
+      {"category": "参数甜点 (Parameters)", "rule": "decay=2 保 2Y, trunc=0.16, ts_zscore 160d", "is_universal": "不能", "type": "地区专属", "note": "具体数值禁止外推"},
+      {"category": "字段发现 (Data Fields)", "rule": "fnd72 营收, mdl110_growth, nws48_ssc", "is_universal": "不能", "type": "地区专属", "note": "受区域市场结构影响，禁止直接外推"},
+      {"category": "Universe 迁移", "rule": "同 Region 换 Universe (L0.5 级别)", "is_universal": "能", "type": "通用", "note": "同市场结构下影响小，直接试"},
+      {"category": "Universe 迁移", "rule": "跨 Region 换 Universe (L4 级别)", "is_universal": "不能", "type": "地区专属", "note": "ME A TOP400 的经验不能直接用到 USA TOP3000"}
+    ]
+  },
+  "USA": {
+    "recommended_universes": ["TOP3000", "TOP2000", "TOP1000", "TOP500"],
+    "avoid_universes": ["ILLIQUID", "micro-cap"],
+    "recommended_datasets": {
+      "news": ["news12 (Source: WL13229, 44赞)"],
+      "sentiment": ["sentiment27 (Source: 论坛共识)", "sentiment53 (Source: 论坛共识)"],
+      "fundamental": ["fundamental10 (Source: 论坛共识)", "fundamental31 (Source: 论坛共识)"],
+      "price_volume": ["pv1 (Source: 论坛共识)", "pv106 (Source: 论坛共识)"],
+      "analyst": ["analyst4 (Source: 论坛共识)", "analyst69 (Source: 论坛共识)"],
+      "model": ["model53 (Source: 论坛共识)"]
+    },
+    "advisor_notes": "USA 是高度成熟有效的市场。强烈建议使用长周期时间窗口（如 250, 500 天）。根据论坛高赞贴推荐，新闻类 (News) 和情绪类 (Sentiment) 数据在 USA 表现极佳，比如 'USA D1 TOP3000 NEWS12___part5'。"
+  },
+  "EUR": {
+    "recommended_universes": ["TOP2500", "TOP1200", "TOPCS1600", "TOP800"],
+    "avoid_universes": ["TOP400", "ILLIQUID_MINVOL1M"],
+    "recommended_datasets": {
+      "fundamental": ["fundamental31 (Source: 台湾第一等顾问力荐)"],
+      "analyst": ["analyst69 (Source: LW23768, 5赞)", "anl4_adz_ebit (Source: LC97552)"],
+      "price_volume": ["pv1", "pv106"],
+      "other": ["other466 (Source: YW82626)"],
+      "model": ["model31 (Source: LC97552)", "model30 (Source: LC97552)"]
+    },
+    "advisor_notes": "EUR 区域不拥挤，sector 中性化通常已足够，滥用 subindustry 反而可能降 PC (参考 LC97552)。强烈推荐 fundamental31 和 analyst69 数据集。易出现个股权重集中导致 Sub-universe Sharpe 失败，外层必须使用 truncate(..., 0.01) 进行截断防爆。"
+  },
+  "GLB": {
+    "recommended_universes": ["TOP3000", "MINVOL1M"],
+    "avoid_universes": ["全市场裸扫"],
+    "recommended_datasets": {
+      "analyst": ["anl14_part1 (Source: WL13229, 44赞)", "anl11 (Source: WL13229, 44赞)"],
+      "price_volume": ["pv1 (Source: 论坛通用)"],
+      "model": ["model53 (Source: 论坛通用)", "model77 (Source: 论坛通用)"]
+    },
+    "advisor_notes": "全球大区异质性极强。必须使用双重中性化：group_neutralize(group_neutralize(x, industry), country)。论坛高赞推荐 Analyst 类别：'GLB D1 TOP3000 ANL14_part1' 和 'ANL11'。"
+  },
+  "ASI": {
+    "recommended_universes": ["TOP3000", "MINVOL1M", "TOP2000"],
+    "avoid_universes": ["ILLIQUID"],
+    "recommended_datasets": {
+      "price_volume": ["pv1 (Source: 论坛通用)"],
+      "analyst": ["analyst4 (Source: 论坛通用)", "analyst69 (Source: 论坛通用)"],
+      "model": ["model53 (Source: 论坛通用)"],
+      "fundamental": ["ebit/assets (Source: LC97552, 11赞)"]
+    },
+    "advisor_notes": "ASI 大区对换手率（Turnover）容忍度极低，超过 0.3 很难在实盘存活。优先选用预处理较好的 Analyst 或 Model 分类。根据 LC97552，ASI 的 252d 是黄金窗口，22d/66d 无信号，且 ebit/assets 基本面比率是区域性有效字段。建议叠加 ts_smooth 进行平滑降换手。"
+  },
+  "IND": {
+    "recommended_universes": ["TOP500", "TOP200"],
+    "avoid_universes": ["TOP3000", "TOP2000"],
+    "recommended_datasets": {
+      "analyst": ["analyst4 (Source: DA98440, 94赞)", "analyst69 (Source: DA98440, 94赞)"],
+      "price_volume": ["close reversal (Source: LC97552, 11赞)"],
+      "sentiment": ["sentiment27 (Source: ZX58901, 18赞)"],
+      "fundamental": ["fnd17 (Source: LC97552, 11赞)"],
+      "news": ["nws48_ssc (Source: LC97552, 11赞)"]
+    },
+    "advisor_notes": "流动性极差，必须缩减 Universe 范围至 TOP500 以内。根据论坛 94 赞热帖，IND 区域极为推荐 Analyst 数据集，最高有 2.9 倍积分加成。注意：IND 行业集中度高，fundamental 用细粒度 (subindustry) 更优，但 PV 反而用粗粒度 (sector) 更好 (参考 LC97552)。对于 FND17，最佳 trunc 为 0.10-0.16。"
+  },
+  "CHN": {
+    "recommended_universes": ["TOP3000", "TOP2000", "TOP2000U"],
+    "avoid_universes": [],
+    "recommended_datasets": {
+      "fundamental": ["ebit/assets (Source: MH33574, 63赞)", "income/equity (Source: MH33574, 63赞)"],
+      "model": ["model53 (Source: 论坛共识)", "model100 (Source: 论坛共识)"],
+      "sentiment": ["sentiment27 (Source: 论坛共识)", "sentiment53 (Source: 论坛共识)"],
+      "price_volume": ["pv1 (Source: 论坛通用)"],
+      "analyst": ["analyst4 (Source: 论坛通用)"]
+    },
+    "advisor_notes": "短周期窗口（d1=20）探雷效果最佳。由于量价赛道极度内卷，建议多尝试偏门情绪/财报数据。论坛豆包高赞推荐 Fundamental 类别比率法：如 ebit/assets 等比值。"
+  },
+  "JPN": {
+    "recommended_universes": ["TOP1600", "TOP1200"],
+    "avoid_universes": [],
+    "recommended_datasets": {
+      "fundamental": ["fundamental10 (Source: 论坛通用)"],
+      "analyst": ["analyst4 (Source: 论坛通用)", "analyst69 (Source: 论坛通用)"],
+      "price_volume": ["pv1 (Source: 论坛通用)"],
+      "model": ["model53 (Source: 论坛通用)"]
+    },
+    "advisor_notes": "日本市场容量极大。推荐保持主流的 Industry 或 Subindustry 中性化，Fundamental (基本面) 与 Analyst (分析师预期) 类别在此区域效果拔群。"
+  },
+  "HKG": {
+    "recommended_universes": ["TOP800", "TOP500"],
+    "avoid_universes": ["TOP3000"],
+    "recommended_datasets": {
+      "model": ["mdl110_growth (Source: LC97552, 11赞)"],
+      "analyst": ["analyst4 (Source: 论坛通用)", "analyst69 (Source: 论坛通用)"],
+      "price_volume": ["pv1 (Source: 论坛通用)"],
+      "fundamental": ["fundamental31 (Source: 论坛通用)"]
+    },
+    "advisor_notes": "港股市场受流动性限制，建议将 Universe 限制在 TOP800 以内。根据 LC97552：HKG 三分量加法 (EARNINGS+PV+Volume) 需要高 decay (decay=7) 才能降 TV，并且 IS Sharpe trunc 甜点在 0.16。"
+  },
+  "KOR": {
+    "recommended_universes": ["TOP600"],
+    "avoid_universes": ["TOP2000"],
+    "recommended_datasets": {
+      "price_volume": ["pv103 (Source: LC97552, 11赞)"],
+      "analyst": ["analyst4 (Source: 论坛通用)"],
+      "model": ["model53 (Source: 论坛通用)"],
+      "fundamental": ["fundamental31 (Source: 论坛通用)"]
+    },
+    "advisor_notes": "韩国市场属于小众且池子有限的市场。锁定 TOP600。根据 LC97552，KOR PV 数据 ts_zscore 的黄金窗口是 160d。且 PV103 的系数极度敏感 (coefficient=0.0003 是孤峰，偏差万分之一就会崩溃，切勿盲目外推)。"
+  },
+  "MEA": {
+    "recommended_universes": ["TOP400"],
+    "avoid_universes": ["TOP3000", "TOP2000"],
+    "recommended_datasets": {
+      "fundamental": ["fnd72 (Source: LC97552, 11赞)"],
+      "analyst": ["mean/close 比率 (Source: LC97552, 11赞)"],
+      "price_volume": ["pv1 (Source: 论坛通用)"]
+    },
+    "advisor_notes": "中东非洲 (MEA) 池子极小。根据 LC97552，MEA 使用 ANALYST (mean/close 比率) 配合 subindustry 中性化效果极好 (PC<0.7, SH=1.84)，因为市场拥挤需要更细分组。同时 FND72 是此区域的极佳发现，但属地区专属，勿外推至 USA。"
+  }
+}

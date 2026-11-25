@@ -1,0 +1,68 @@
+{
+  "standard": "RA",
+  "_comment": "当前 REGULAR Alpha goal 标准，来源为 alpha_mining_usa_regular.md。",
+  "scope": {
+    "instrument_type": "EQUITY",
+    "region": "EUR",
+    "delay": 1,
+    "type": "REGULAR",
+    "max_trade": "OFF",
+    "note": "Universe 需使用合法 EUR Universe；每个 Alpha 只使用一个 dataset_id。"
+  },
+  "base_gates": {
+    "sharpe_min": 1.58,
+    "fitness_min": 1.0,
+    "sharpe_2y_min": 1.6,
+    "margin_bp_min": 10,
+    "turnover": {
+      "min": 0.05,
+      "max": 0.30,
+      "strict": true
+    },
+    "operators_max": 5,
+    "unique_fields": {
+      "min": 1,
+      "max": 2
+    },
+    "unsubmitted_required": true
+  },
+  "construction": {
+    "forbidden_operators": [
+      "trade_when",
+      "add",
+      "multiply"
+    ],
+    "one_dataset_per_alpha": true,
+    "target_count": 10,
+    "target_note": "目标 Alpha 应来自不同 dataset_id 和不同策略风格。"
+  },
+  "robustness": {
+    "decay_tests": [
+      0,
+      3,
+      6
+    ],
+    "base_neutralization": "NONE",
+    "risk_neutralization": "Sharpe > 1、Fitness > 0.7、Margin > 10bp",
+    "required": [
+      "yearly stats",
+      "2Y metrics",
+      "PnL continuity",
+      "coverage",
+      "drawdown",
+      "long/short counts"
+    ]
+  },
+  "correlation": {
+    "production_abs_max": 0.7,
+    "candidate_pair_abs_max": 0.4,
+    "minimum_common_observations": 252,
+    "submission_check_required": true
+  },
+  "operation": {
+    "automatic_submit": false,
+    "manual_submission": true,
+    "is_is_not_os": true,
+    "stop_after_ready_to_submit_count": 10
+  }
+}

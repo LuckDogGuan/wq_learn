@@ -1,0 +1,96 @@
+{
+  "scope": "DELAY_1_ONLY",
+  "delay_locked": 1,
+  "verified_date": "2026-11-25",
+  "regular_d1": {
+    "non_chn": {
+      "sharpe_gt": 1.58,
+      "fitness_gt": 1.0,
+      "turnover_gt": 0.01,
+      "turnover_lt": 0.70,
+      "max_single_weight_lt": 0.10,
+      "usa_os_mandatory_weight_lt": 0.08,
+      "sc_hard_lt": 0.70,
+      "sc_local_safe_le": 0.68,
+      "pc_hard_lt": 0.70,
+      "corr_sharpe_boost_exception": 0.10
+    },
+    "chn": {
+      "sharpe_ge": 2.08,
+      "fitness_ge": 1.0,
+      "returns_ge": 0.08,
+      "robust_universe_retain_ge": 0.40,
+      "turnover_gt": 0.01,
+      "turnover_lt": 0.70
+    },
+    "asi_extra": {
+      "robust_universe_retain_ge": 0.90,
+      "prefer_max_trade": "ON",
+      "ic_sharpe_ratio_if_off_gt": 0.70
+    },
+    "investability_regions": ["ASI", "JPN", "HKG", "TWN", "KOR"],
+    "max_position_regions": ["USA", "ASI", "EUR"],
+    "is_ladder_d1": {
+      "fail_threshold": 1.59,
+      "low_turnover_cutoff": 0.30,
+      "low_turnover_pass_multiplier": 0.85,
+      "pass_by_years": {
+        "2": 2.38,
+        "3": 2.38,
+        "4": 2.38,
+        "5": 2.38,
+        "6": 2.22,
+        "7": 2.06,
+        "8": 1.90,
+        "9": 1.74,
+        "10": 1.59
+      }
+    },
+    "atom_single_dataset": {
+      "skips_is_ladder": true,
+      "live_2y_sharpe_limit": 1.58,
+      "allowed_group_fields": ["country", "exchange", "market", "sector", "industry", "subindustry"],
+      "forbidden_atom_breaking_ops": ["inst_pnl", "convert"]
+    }
+  },
+  "power_pool_d1": {
+    "sharpe_ge": 1.0,
+    "max_counted_operators": 8,
+    "free_operators": ["ts_backfill", "group_backfill"],
+    "max_distinct_fields": 3,
+    "excluded_group_fields": ["country", "industry", "subindustry", "currency", "market", "sector", "exchange"],
+    "ppac_lt": 0.50,
+    "min_description_chars": 100,
+    "quota_exempt_combos": ["POWER_POOL_ATOM", "POWER_POOL_REGULAR"]
+  },
+  "stage_gates": {
+    "gate0_min_active_years": 8,
+    "gate0_max_flat_pnl_streak_days": 200,
+    "gate1_sharpe_gt": 0.80,
+    "gate1_auto_flip_sharpe_lt": -1.20,
+    "stage0_probe_min_samples": 24,
+    "stage0_probe_max_samples": 40,
+    "stage0_dead_max_abs_sharpe": 0.60,
+    "stage1_blacklist_min_valid_samples": 200
+  },
+  "regional_margin_floor_decimal": {
+    "USA": 0.0005,
+    "GLB": 0.0009,
+    "EUR": 0.0010,
+    "GBR": 0.0010,
+    "DEU": 0.0010,
+    "AMR": 0.0010,
+    "HKG": 0.0010,
+    "JPN": 0.0010,
+    "KOR": 0.0010,
+    "ASI": 0.0015,
+    "IND": 0.0015,
+    "CHN": 0.0020
+  },
+  "sub_universe_ratios": {
+    "ASI_MINVOL1M": 0.295,
+    "USA_ILLIQUID_MINVOL1M": 0.410,
+    "EUR_ILLIQUID_MINVOL1M": 0.355,
+    "default_top_factor": 0.75
+  }
+}

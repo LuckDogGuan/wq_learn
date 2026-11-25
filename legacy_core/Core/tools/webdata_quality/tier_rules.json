@@ -1,0 +1,56 @@
+{
+  "recent_slots": 3,
+  "first_year": 2012,
+  "good_field_tiers": ["T1", "T2"],
+  "sparse_categories": [
+    "news",
+    "sentiment",
+    "socialmedia",
+    "insiders",
+    "earnings",
+    "option",
+    "shortinterest",
+    "imbalance"
+  ],
+  "category_aliases": {
+    "search_interest": "other",
+    "earningscall_sentiment": "other"
+  },
+  "risk_thresholds": {
+    "one_sided": 0.99,
+    "skewed": 2.0,
+    "thick_tailed": 5.0
+  },
+  "field_tiers": {
+    "regular": {
+      "T1": {
+        "coverage_recent_mean": 0.90,
+        "coverage_recent_min": 0.80,
+        "abs_skew_recent_mean": 0.50
+      },
+      "T2": {
+        "coverage_recent_mean": 0.80,
+        "coverage_recent_min": 0.50,
+        "abs_skew_recent_mean": 1.00
+      },
+      "T3": {
+        "coverage_recent_mean": 0.50
+      }
+    },
+    "sparse": {
+      "T1": {
+        "coverage_recent_mean": 0.30,
+        "coverage_recent_min": 0.10,
+        "abs_skew_recent_mean": 1.00
+      },
+      "T2": {
+        "coverage_recent_mean": 0.15,
+        "coverage_recent_min": 0.05,
+        "abs_skew_recent_mean": 2.00
+      },
+      "T3": {
+        "coverage_recent_mean": 0.05
+      }
+    }
+  }
+}

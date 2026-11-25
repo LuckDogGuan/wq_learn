@@ -1,0 +1,89 @@
+# Reference Extract: HTTP 429 Rate-Limit Retry Logic from wqb-share-03/tools/Core/api/client.py
+# Source deleted during Phase 1A workspace cleanup (Goal Core is the sole master copy).
+#
+# SECURITY / NETWORKING WARNING:
+# The original Share Core BrainClient.__init__ contained INSECURE / NON-PORTABLE settings
+# that were INTENTIONALLY STRIPPED from this reference:
+#   - REMOVED: hardcoded local proxy {"http": "http://127.0.0.1:7897", "https": "http://127.0.0.1:7897"}
+#   - REMOVED: self.session.verify = False + urllib3.disable_warnings(InsecureRequestWarning)
+# Do NOT reintroduce verify=False or hardcoded localhost proxies into Goal Core.
+# Configure proxy via environment variables (HTTP_PROXY / HTTPS_PROXY) and keep TLS verification enabled.
+
+import math
+import time
+
+DEFAULT_RATE_LIMIT_WAITS = (3.0, 10.0, 25.0, 45.0, 60.0, 60.0)
+RATE_LIMIT_HEADER_KEYS = (
+    "retry-after",
+    "Retry-After",
+    "ratelimit-reset",
+    "RateLimit-Reset",
+    "X-RateLimit-Reset",
+)
+
+
+def compute_429_wait_seconds(response, rate_limit_count, rate_limit_waits=None, deadline=None):
+    """Return wait seconds for an HTTP 429 response, or None if retries/deadline exhausted.
+
+    Extracted from Share Core BrainClient.request() (lines 178-204).
+    Note: `requests.Response.headers` is case-insensitive, so checking
+    ('Retry-After', 'RateLimit-Reset', 'X-RateLimit-Reset') is equivalent,
+    kept here in original order for faithful reference.
+    """
+    waits = (
+        tuple(max(0.0, float(v)) for v in rate_limit_waits)
+        if rate_limit_waits is not None
+        else DEFAULT_RATE_LIMIT_WAITS
+    )
+    if rate_limit_count >= len(waits):
+        return None
+
+    default_wait = waits[rate_limit_count]
+    header_wait = None
+    for hk in RATE_LIMIT_HEADER_KEYS:
+        if hk in response.headers:
+            try:
+                val = float(response.headers[hk])
+                if math.isfinite(val) and val > 0:
+                    header_wait = val
+                    break
+            except (TypeError, ValueError):
+                pass
+
+    wait = max(default_wait, header_wait if header_wait is not None else default_wait)
+    if not math.isfinite(wait):
+        return None
+    if deadline is not None and wait >= deadline - time.monotonic():
+        return None
+    return wait
+
+
+# Original inline loop fragment from BrainClient.request() (lines 178-204):
+#
+# if response.status_code == 429:
+#     self.request_metrics['http_429'] += 1
+#     waits = rate_limit_waits if rate_limit_waits is not None else (3.0, 10.0, 25.0, 45.0, 60.0, 60.0)
+#     if rate_limit_count >= len(waits):
+#         return response
+#     default_wait = waits[rate_limit_count]
+#     header_wait = None
+#     for hk in ('retry-after', 'Retry-After', 'ratelimit-reset', 'RateLimit-Reset', 'X-RateLimit-Reset'):
+#         if hk in response.headers:
+#             try:
+#                 val = float(response.headers[hk])
+#                 if math.isfinite(val) and val > 0:
+#                     header_wait = val
+#                     break
+#             except (TypeError, ValueError):
+#                 pass
+#     wait = max(default_wait, header_wait if header_wait is not None else default_wait)
+#     if not math.isfinite(wait) or (deadline is not None and wait >= deadline - time.monotonic()):
+#         return response
+#     rate_limit_count += 1
+#     print(
+#         f"[{method}] endpoint={self._endpoint_label(url)} error=HTTP429 "
+#         f"retry={rate_limit_count}/{len(waits)} wait={wait:g}s",
+#         flush=True
+#     )
+#     time.sleep(wait)
+#     continue

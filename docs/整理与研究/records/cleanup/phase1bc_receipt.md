@@ -1,0 +1,233 @@
+# Phase 1B/1C 二次深度瘦身与统一仓库重组回执
+
+> 执行时间：2026-11-25（遵循用户批准的 `plan_phase1b_and_v2.md` 方案 A）。
+
+## 1. 体量对比
+- **执行前（Phase 1A 后）**：`8,000` 文件，`1955.84 MB`（`1.910 GB`）
+- **执行后（Phase 1B/1C 后）**：`2,687` 文件，`1392.84 MB`（`1.360 GB`）
+- **净清理**：`-5,314` 文件，`-563.00 MB`（另清理空目录 `38` 个）
+- **扣除不可动 `runtime_data/`（1,532 文件 / 1,308.09 MB）后活跃规模**：`1,155` 文件，`84.76 MB`
+
+## 2. 硬保护资产迁移前后 SHA-256 校验（6/6 ALL_INTACT）
+| 资产 | 现行路径 | 文件数 | 字节数 | 聚合 SHA-256 | 状态 |
+| --- | --- | ---: | ---: | --- | :---: |
+| `runtime_data` | `legacy_core\Core\runtime_data` | 1532 | 1,371,626,709 B | `63dea901828e66bd...` | **INTACT** |
+| `password` | `Password\config.yaml` | 1 | 332 B | `ac16d46cb035212c...` | **INTACT** |
+| `topuser_2026q4` | `reference\benchmarks\TopUser_2026Q4.txt` | 1 | 4,624 B | `434f4a16a4429d3a...` | **INTACT** |
+| `admin_wl13229` | `reference\forum\admin_posts\WL13229` | 192 | 14,935,240 B | `a1beec7dfbc8aefd...` | **INTACT** |
+| `admin_kh94146` | `reference\forum\admin_posts\KH94146` | 62 | 1,076,109 B | `ddce11ea59c86f44...` | **INTACT** |
+| `top100_posts` | `reference\forum\top100_2026Q4` | 264 | 3,602,502 B | `87a808ba8926c71e...` | **INTACT** |
+
+## 3. 新旧路径映射（全部原子移动）
+- MOVE `goal\Password` -> `Password`
+- MOVE `goal\不同阿尔法标准` -> `config\standards`
+- MOVE `TopUser\2026Q4.txt` -> `reference\benchmarks\TopUser_2026Q4.txt`
+- MOVE `管理员论坛爬取资料\WL13229\自己发布的帖子` -> `reference\forum\admin_posts\WL13229`
+- MOVE `管理员论坛爬取资料\KH94146\自己发布的帖子` -> `reference\forum\admin_posts\KH94146`
+- MOVE `管理员论坛爬取资料\Top100_2026Q4_精选` -> `reference\forum\top100_2026Q4`
+- MOVE `管理员论坛爬取资料\模板\20261012_管理员模板审计\标题筛选与来源清单.json` -> `reference\forum\audit\标题筛选与来源清单.json`
+- MOVE `alpha info\BRAIN-官方文档核心总结.md` -> `docs\official_guides\BRAIN-官方文档核心总结.md`
+- MOVE `alpha info\BRAIN-Alpha表达式与高价值数据集核心指引.md` -> `docs\official_guides\BRAIN-Alpha表达式与高价值数据集核心指引.md`
+- MOVE `alpha info\量化进阶与收入倍增指南.md` -> `docs\official_guides\量化进阶与收入倍增指南.md`
+- MOVE `wqb-share-03\课件.md` -> `docs\official_guides\5_skill_workflow_courseware.md`
+- MOVE `goal\book\57286-寻找Alpha：量化交易策略\distilled_alpha.md` -> `docs\official_guides\finding_alphas_notes.md`
+- MOVE `goal\spc\SPC_SUBMISSIONS_API_REFERENCE.md` -> `docs\official_guides\SPC_SUBMISSIONS_API_REFERENCE.md`
+- MOVE `goal\总结\优化复盘_20260802` -> `docs\memory\empirical_reviews\优化复盘_20260802`
+- MOVE `goal\总结\Master_Optimization_Guide.md` -> `docs\memory\empirical_reviews\Master_Optimization_Guide.md`
+- MOVE `goal\总结\EUR批量模拟_优化与重试总结.md` -> `docs\memory\empirical_reviews\EUR批量模拟_优化与重试总结.md`
+- MOVE `goal\总结\active\20261012_224模板服务器结果\README.md` -> `docs\memory\empirical_reviews\20261012_224模板服务器结果_README.md`
+- MOVE `goal\总结\active\20261012_RA_admin_templates\README.md` -> `docs\memory\empirical_reviews\20261012_RA_admin_templates_README.md`
+- MOVE `goal\代码\优化代码\Core` -> `legacy_core\Core`
+- MOVE `goal\代码\优化代码\爬山代码` -> `legacy_core\pipelines\hill_climbing`
+- MOVE `goal\代码\优化代码\区分RA并标记` -> `legacy_core\pipelines\ra_screening`
+- MOVE `goal\代码\优化代码\区分PPA并标记` -> `legacy_core\pipelines\ppa_screening`
+- MOVE `goal\spc` -> `legacy_core\pipelines\spc`
+- MOVE `wqb-share-03\tools\alpha_optimizer.py` -> `scripts\tools\alpha_optimizer.py`
+- MOVE `wqb-share-03\tools\corr_map.py` -> `scripts\tools\corr_map.py`
+- MOVE `wqb-share-03\tools\enhanced_seed_filter.py` -> `scripts\tools\enhanced_seed_filter.py`
+- MOVE `wqb-share-03\tools\eval_alphas.py` -> `scripts\tools\eval_alphas.py`
+- MOVE `wqb-share-03\tools\harvest_multisim.py` -> `scripts\tools\harvest_multisim.py`
+- MOVE `wqb-share-03\tools\poll_corr.py` -> `scripts\tools\poll_corr.py`
+- MOVE `wqb-share-03\tools\poll_prod_final.py` -> `scripts\tools\poll_prod_final.py`
+- MOVE `wqb-share-03\tools\resim_os_regular_as_region_agnostic.py` -> `scripts\tools\resim_os_regular_as_region_agnostic.py`
+- MOVE `wqb-share-03\tools\robust_check.py` -> `scripts\tools\robust_check.py`
+- MOVE `wqb-share-03\tools\summarize_batch.py` -> `scripts\tools\summarize_batch.py`
+- MOVE `wqb-share-03\tools\webdata_unexploited_analytics.py` -> `scripts\tools\webdata_unexploited_analytics.py`
+- MOVE `goal\代码\优化代码\区分是否有提交` -> `scripts\ops\区分是否有提交`
+- MOVE `goal\代码\优化代码\取消Tag` -> `scripts\ops\取消Tag`
+- MOVE `goal\代码\优化代码\定时提交因子` -> `scripts\ops\定时提交因子`
+- MOVE `goal\代码\优化代码\提交因子` -> `scripts\ops\提交因子`
+- MOVE `goal\代码\优化代码\隐藏差因子` -> `scripts\ops\隐藏差因子`
+- MOVE `管理员论坛爬取资料\advisor_zendesk_map.json` -> `scripts\forum_crawl\advisor_zendesk_map.json`
+- MOVE `管理员论坛爬取资料\user_rank.md` -> `scripts\forum_crawl\user_rank.md`
+- MOVE `管理员论坛爬取资料\reorganize.py` -> `scripts\forum_crawl\reorganize.py`
+- MOVE `管理员论坛爬取资料\run_admin_crawl.py` -> `scripts\forum_crawl\run_admin_crawl.py`
+- MOVE `goal\testFile\core_regression` -> `tests\core_regression`
+- MOVE `goal\testFile\extract_fields.py` -> `tests\unit\extract_fields.py`
+- MOVE `goal\testFile\hill_climbing_log_replay.py` -> `tests\unit\hill_climbing_log_replay.py`
+- MOVE `goal\testFile\test_admin_catalog.py` -> `tests\unit\test_admin_catalog.py`
+- MOVE `goal\testFile\test_admin_templates.py` -> `tests\unit\test_admin_templates.py`
+- MOVE `goal\testFile\test_alpha_fetch_filters.py` -> `tests\unit\test_alpha_fetch_filters.py`
+- MOVE `goal\testFile\test_alpha_machine_multisim.py` -> `tests\unit\test_alpha_machine_multisim.py`
+- MOVE `goal\testFile\test_callable_forum_templates.py` -> `tests\unit\test_callable_forum_templates.py`
+- MOVE `goal\testFile\test_field_combination_pool.py` -> `tests\unit\test_field_combination_pool.py`
+- MOVE `goal\testFile\test_filter_ppa_local_ppac.py` -> `tests\unit\test_filter_ppa_local_ppac.py`
+- MOVE `goal\testFile\test_hill_admin_rotation.py` -> `tests\unit\test_hill_admin_rotation.py`
+- MOVE `goal\testFile\test_hill_climbing_budget.py` -> `tests\unit\test_hill_climbing_budget.py`
+- MOVE `goal\testFile\test_hill_climbing_log_replay.py` -> `tests\unit\test_hill_climbing_log_replay.py`
+- MOVE `goal\testFile\test_hill_climbing_pruning_io.py` -> `tests\unit\test_hill_climbing_pruning_io.py`
+- MOVE `goal\testFile\test_hill_climbing_resilience.py` -> `tests\unit\test_hill_climbing_resilience.py`
+- MOVE `goal\testFile\test_hill_climbing_scoring.py` -> `tests\unit\test_hill_climbing_scoring.py`
+- MOVE `goal\testFile\test_hill_climbing_source.py` -> `tests\unit\test_hill_climbing_source.py`
+- MOVE `goal\testFile\test_hill_climbing_stage_network_plan.py` -> `tests\unit\test_hill_climbing_stage_network_plan.py`
+- MOVE `goal\testFile\test_pc_correlation.py` -> `tests\unit\test_pc_correlation.py`
+- MOVE `goal\testFile\test_ra_daily_runtime.py` -> `tests\unit\test_ra_daily_runtime.py`
+- MOVE `goal\testFile\test_ra_empty_snapshot.py` -> `tests\unit\test_ra_empty_snapshot.py`
+- MOVE `goal\testFile\test_ra_v6_recovery.py` -> `tests\unit\test_ra_v6_recovery.py`
+- MOVE `goal\testFile\test_schedule_submit.py` -> `tests\unit\test_schedule_submit.py`
+- MOVE `goal\testFile\test_sc_pyramid_refresh.py` -> `tests\unit\test_sc_pyramid_refresh.py`
+- MOVE `goal\testFile\test_spc_maintenance.py` -> `tests\unit\test_spc_maintenance.py`
+- MOVE `goal\testFile\test_submit_verified.py` -> `tests\unit\test_submit_verified.py`
+- MOVE `goal\testFile\test_template_usage.py` -> `tests\unit\test_template_usage.py`
+- MOVE `goal\testFile\test_webdata_quality.py` -> `tests\unit\test_webdata_quality.py`
+- MOVE `wqb-share-03\tests\test_webdata_quality.py` -> `tests\unit\test_webdata_quality_share.py`
+- MOVE `goal\模板` -> `staging\templates\category_guides`
+- MOVE `alpha info\Alpha模板精华总结(1).md` -> `staging\templates\alpha_info_legacy\Alpha模板精华总结(1).md`
+- MOVE `alpha info\alpha优化工作流1(1).md` -> `staging\templates\alpha_info_legacy\alpha优化工作流1(1).md`
+- MOVE `wqb-share-03\factor\templates\unused` -> `staging\templates\unused_operators`
+- MOVE `wqb-share-03\doc\总结` -> `staging\playbooks\share03_summaries`
+- MOVE `Ai_Work\guides` -> `staging\playbooks\ai_work_guides`
+- MOVE `goal\Goal commd` -> `staging\playbooks\goal_prompts`
+- MOVE `goal\因子提升` -> `staging\playbooks\factor_improvement`
+- MOVE `wqb-share-03\doc\多臂老虎机_挖掘总结Skill` -> `staging\experiments\mab_skill`
+- MOVE `wqb-share-03\src` -> `staging\experiments\mab_src`
+- MOVE `goal\代码\ppa_screening_v2\select_scope.py` -> `staging\experiments\select_scope.py`
+- MOVE `goal\代码\优化代码\3_二季度挖矿思路经验总结` -> `staging\experiments\q2_mining_summary`
+- MOVE `goal\代码\优化代码\3_WebDataScope字段深度洞察` -> `staging\analysis_tools\wds_insights`
+- MOVE `goal\代码\优化代码\2_数据集可视化分析` -> `staging\analysis_tools\dataset_viz`
+- MOVE `goal\代码\优化代码\检测稳定性` -> `staging\analysis_tools\stability_check`
+- MOVE `goal\代码\优化代码\论坛代码` -> `staging\analysis_tools\forum_ppa_legacy`
+- MOVE `goal\AGENTS.md` -> `docs\memory\legacy_goal_AGENTS.md`
+
+## 4. 已删除低价值/重复项摘要（共 1417 批，-5,314 文件 / -563.00 MB）
+- DELETE `goal\代码\优化代码\区分PPA并标记\output` (103 files, 137.93 MB)
+- DELETE `goal\代码\优化代码\Core\factor\templates\forum_catalog\full_scan_fragments.json` (1 files, 63.18 MB)
+- DELETE `goal\代码\优化代码\Core\factor\templates\forum_catalog\quarantined\full_scan_excluded.json` (1 files, 69.92 MB)
+- DELETE `goal\代码\优化代码\Core\tools\webdata_quality\output` (43 files, 49.11 MB)
+- DELETE `goal\代码\优化代码\Core\tools\webdata_quality\webdata_quality_output_20260904_122919` (18 files, 2.86 MB)
+- DELETE `goal\代码\优化代码\Core\tools\webdata_quality\testFile` (3 files, 0.00 MB)
+- DELETE `goal\代码\优化代码\区分RA并标记\cache` (7 files, 27.72 MB)
+- DELETE `goal\代码\优化代码\区分RA并标记\output` (42 files, 8.66 MB)
+- DELETE `goal\代码\优化代码\区分RA并标记\archive` (2 files, 0.03 MB)
+- DELETE `goal\DateFields` (4 files, 13.79 MB)
+- DELETE `goal\代码\优化代码\论坛代码\ppa_screening_v2\output` (9 files, 0.40 MB)
+- DELETE `goal\代码\优化代码\论坛代码\ppa_screening_v2\deu_miner\deu_miner_state.db` (1 files, 6.55 MB)
+- DELETE `goal\spc\log\20261012_204911` (87 files, 5.66 MB)
+- DELETE `管理员论坛爬取资料\crawl.log` (1 files, 4.67 MB)
+- DELETE `goal\代码\优化代码\3_WebDataScope字段深度洞察\exports` (46 files, 4.56 MB)
+- DELETE `goal\book\57286-寻找Alpha：量化交易策略\寻找Alpha：量化交易策略.pdf` (1 files, 30.51 MB)
+- DELETE `goal\book\57286-寻找Alpha：量化交易策略\extract.py` (1 files, 0.00 MB)
+- DELETE `goal\book\57286-寻找Alpha：量化交易策略\免责声明.txt` (1 files, 0.00 MB)
+- DELETE `goal\代码\优化代码\Core\notebooks` (3 files, 3.99 MB)
+- DELETE `goal\代码\优化代码\Core\tools\manual` (8 files, 0.01 MB)
+- DELETE `goal\代码\优化代码\Core\test\catalog.db` (1 files, 0.00 MB)
+- DELETE `goal\代码\优化代码\Core\tests\test_dummy.db` (1 files, 0.01 MB)
+- DELETE `goal\代码\优化代码\Core\test\logs` (1 files, 0.36 MB)
+- DELETE `goal\代码\优化代码\123阶` (27 files, 1.83 MB)
+- DELETE `goal\代码\优化代码\testFile` (18 files, 0.06 MB)
+- DELETE `goal\代码\优化代码\一键OS分配` (2 files, 0.05 MB)
+- DELETE `goal\代码\优化代码\缘分一道桥` (2 files, 0.01 MB)
+- DELETE `goal\代码\优化代码\自动化SA` (1 files, 0.05 MB)
+- DELETE `goal\代码\优化代码\PPA遗传优化` (1 files, 0.01 MB)
+- DELETE `goal\代码\优化代码\隐藏差因子\cache` (17 files, 0.45 MB)
+- DELETE `goal\代码\优化代码\隐藏差因子\Alpha Machine.ipynb` (1 files, 0.01 MB)
+- DELETE `goal\代码\优化代码\隐藏差因子\global_ops.py` (1 files, 0.02 MB)
+- DELETE `goal\代码\优化代码\隐藏差因子\machine_lib.py` (1 files, 0.03 MB)
+- DELETE `goal\代码\优化代码\爬山代码\原版全自动爬山算法.py` (1 files, 0.13 MB)
+- DELETE `goal\代码\优化代码\区分RA并标记\filter_ra_alphas.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\优化代码\区分RA并标记\filter_ra_alphas_v2.py` (1 files, 0.02 MB)
+- DELETE `goal\代码\优化代码\区分RA并标记\filter_ra_alphas_v3.py` (1 files, 0.03 MB)
+- DELETE `goal\代码\优化代码\区分RA并标记\filter_ra_alphas_v4.py` (1 files, 0.02 MB)
+- DELETE `goal\skills` (22 files, 0.15 MB)
+- DELETE `goal\temp_names.txt` (1 files, 0.00 MB)
+- DELETE `goal\hill_climbing_v4.7` (1 files, 0.00 MB)
+- DELETE `goal\.agents` (0 files, 0.00 MB)
+- DELETE `alpha info\123阶` (2 files, 0.04 MB)
+- DELETE `alpha info\原版全自动爬山算法.py` (1 files, 0.13 MB)
+- DELETE `alpha info\一键检验稳定性.ipynb` (1 files, 0.18 MB)
+- DELETE `alpha info\wqb-skills.zip` (1 files, 0.14 MB)
+- DELETE `message_images` (1 files, 0.07 MB)
+- DELETE `因子提升` (1 files, 0.00 MB)
+- DELETE `过程` (2 files, 0.00 MB)
+- DELETE `pyrightconfig.json` (1 files, 0.00 MB)
+- DELETE `.claude` (2 files, 0.00 MB)
+- DELETE `.vscode` (0 files, 0.00 MB)
+- DELETE `docs\adr` (1 files, 0.00 MB)
+- DELETE `wqb-share-03\doc\多臂老虎机_挖掘总结Skill\scripts\webdata_quality` (58 files, 3.50 MB)
+- DELETE `wqb-share-03\doc\总结\09_全量数据深度分析_USA与GLB与CHN市场.md` (1 files, 0.01 MB)
+- DELETE `goal\book\57286-寻找Alpha：量化交易策略\读书派（www.dushupai.com）.url` (1 files, 0.00 MB)
+- DELETE `goal\代码\优化代码\Core\factor\assembly\check_batch_1.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\优化代码\Core\factor\assembly\check_code_directly.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\优化代码\Core\factor\assembly\check_huge_error.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\优化代码\Core\factor\assembly\get_failed.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\优化代码\Core\factor\assembly\huge_series_results.json` (1 files, 0.00 MB)
+- DELETE `goal\代码\优化代码\Core\factor\assembly\run_huge_series_batch.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\优化代码\Core\factor\assembly\test_ts_reg.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\优化代码\Core\factor\assembly\test_ts_reg2.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\优化代码\Core\factor\filter\alpha_evaluator.py.encoding-backup` (1 files, 0.01 MB)
+- DELETE `goal\因子提升\autonomous_results_20260729.json` (1 files, 0.01 MB)
+- DELETE `goal\因子提升\autonomous_results_GLB_20260729.json` (1 files, 0.00 MB)
+- DELETE `goal\代码\ppa_screening_v2\gbr_miner_state.json` (1 files, 0.00 MB)
+- DELETE `goal\代码\ppa_screening_v2\rank_option9_fields.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b01.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b02.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b03.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b04.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b05.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b06.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b07.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b08.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b09.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b10.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b100.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b101.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b102.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b103.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b104.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b105.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b106.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b107.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b108.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b109.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b11.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b110.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b111.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b112.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b113.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b114.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b115.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b116.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b117.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b118.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b119.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b12.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b120.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b121.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b122.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b123.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b124.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b125.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b126.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b127.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b128.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b129.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b13.py` (1 files, 0.00 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b130.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b131.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b132.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b133.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b134.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b135.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b136.py` (1 files, 0.01 MB)
+- DELETE `goal\代码\ppa_screening_v2\run_batch_b137.py` (1 files, 0.01 MB)
+*(余下 1297 条单文件清理明细省略)*

@@ -1,0 +1,15 @@
+{
+    "found_alphas": [],
+    "used_datasets": [
+        "model109",
+        "other566",
+        "fundamental72",
+        "model219",
+        "model25",
+        "other315",
+        "event_ml_signals",
+        "model239",
+        "analyst16"
+    ],
+    "rounds_run": 5
+}

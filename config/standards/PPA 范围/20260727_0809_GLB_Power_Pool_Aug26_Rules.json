@@ -1,0 +1,66 @@
+{
+  "theme_name": "GLB/D1 Power Pool Aug`26",
+  "duration": {
+    "start_date": "2026-07-27",
+    "end_date": "2026-08-09"
+  },
+  "multiplier": "1X",
+  "core_requirements": {
+    "region": "GLB",
+    "delay": 1,
+    "universe": "TOPDIV3000",
+    "neutralization": [
+      "Slow Factors",
+      "Fast Factors",
+      "Slow + Fast Factors",
+      "Crowding Factors",
+      "RAM"
+    ],
+    "forbidden_datasets": [
+      "PV1",
+      "MODEL110"
+    ]
+  },
+  "warnings": {
+    "universe_warning": "不可混淆使用 TOP3000",
+    "neutralization_warning": "必须在 Settings 中显式选择以上选项之一，不可设为 NONE 并依赖代码内部的 group_neutralize",
+    "dataset_warning": "禁用数据集中不包含 support fields。特别注意：PV1 (Price Volume Data for Equity) 包含基础量价数据（returns, close, volume, open, high, low, vwap, cap 等），在此主题下严禁使用！MODEL110 数据集同样禁用。"
+  },
+  "restricted_datasets_details": {
+    "PV1": {
+      "name": "Price Volume Data for Equity",
+      "forbidden_fields": [
+        "returns",
+        "close",
+        "volume",
+        "open",
+        "high",
+        "low",
+        "vwap",
+        "cap",
+        "adv20",
+        "adv120",
+        "adjfactor",
+        "country",
+        "currency",
+        "cusip",
+        "dividend",
+        "exchange",
+        "industry",
+        "isin",
+        "market",
+        "sector",
+        "sedol",
+        "sharesout",
+        "split",
+        "subindustry",
+        "ticker",
+        "vwap"
+      ]
+    },
+    "MODEL110": {
+      "name": "Model 110",
+      "forbidden_fields_prefix": "mod110_"
+    }
+  }
+}

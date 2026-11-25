@@ -1,0 +1,130 @@
+{
+  "schema_version": "templates_50_50_v1",
+  "delay_locked": 1,
+  "decision_3_compliant": true,
+  "stage0_probe_4_4": [
+    {
+      "id": "S0-A1",
+      "source_side": "ADMIN_ORIGINAL",
+      "author_id": "WL13229",
+      "canonical_post_id": "24497520676119",
+      "atlas_layer": "L4",
+      "expr_matrix": "rank(ts_backfill({x}, 60))",
+      "expr_vector": "rank(ts_backfill(vec_avg({x}), 60))",
+      "note": "Admin 0-order cross-sectional baseline"
+    },
+    {
+      "id": "S0-A2",
+      "source_side": "ADMIN_ORIGINAL",
+      "author_id": "WL13229",
+      "canonical_post_id": "25066216209687",
+      "atlas_layer": "L5",
+      "expr_matrix": "group_rank(ts_backfill({x}, 60), industry)",
+      "expr_vector": "group_rank(ts_backfill(vec_avg({x}), 60), industry)",
+      "note": "Admin industry-relative baseline"
+    },
+    {
+      "id": "S0-A3",
+      "source_side": "ADMIN_ORIGINAL",
+      "author_id": "WL13229",
+      "canonical_post_id": "43567319117079",
+      "atlas_layer": "L2",
+      "expr_matrix": "rank(ts_delta(ts_backfill({x}, 60), 22))",
+      "expr_vector": "rank(ts_delta(ts_backfill(vec_avg({x}), 60), 22))",
+      "note": "Admin monthly change baseline"
+    },
+    {
+      "id": "S0-A4",
+      "source_side": "ADMIN_ORIGINAL",
+      "author_id": "KH94146",
+      "canonical_post_id": "26120715229463",
+      "atlas_layer": "L2",
+      "expr_matrix": "rank(ts_zscore(ts_backfill({x}, 60), 120))",
+      "expr_vector": "rank(ts_zscore(ts_backfill(vec_avg({x}), 60), 120))",
+      "note": "Admin single-dataset self-normalized level"
+    },
+    {
+      "id": "S0-T1",
+      "source_side": "TOP100_2026Q4",
+      "author_id": "LD22811",
+      "q4_rank": 13,
+      "canonical_post_id": "40929650605207",
+      "atlas_layer": "L2",
+      "expr_matrix": "ts_rank(ts_backfill({x}, 60), 66)",
+      "expr_vector": "ts_rank(ts_backfill(vec_avg({x}), 60), 66)",
+      "note": "Top100 0-order time-series rank"
+    },
+    {
+      "id": "S0-T2",
+      "source_side": "TOP100_2026Q4",
+      "author_id": "ZS59763",
+      "q4_rank": 32,
+      "canonical_post_id": "wangge_atlas",
+      "atlas_layer": "L5",
+      "expr_matrix": "group_zscore(ts_mean(ts_backfill({x}, 60), 22), subindustry)",
+      "expr_vector": "group_zscore(ts_mean(ts_backfill(vec_avg({x}), 60), 22), subindustry)",
+      "note": "Wang Ge ATLAS L2->L5 smooth subindustry zscore"
+    },
+    {
+      "id": "S0-T3",
+      "source_side": "TOP100_2026Q4",
+      "author_id": "JR23144",
+      "q4_rank": 12,
+      "canonical_post_id": "38561233060631",
+      "atlas_layer": "L0-L2",
+      "expr_matrix": "rank(ts_min(ts_backfill({x}, 60), 22))",
+      "expr_vector": "rank(ts_min(ts_backfill(vec_min({x}), 60), 22))",
+      "note": "JR23144 same-direction extreme alignment (min with vec_min)"
+    },
+    {
+      "id": "S0-T4",
+      "source_side": "TOP100_2026Q4",
+      "author_id": "SZ83096",
+      "q4_rank": 47,
+      "canonical_post_id": "42509573118999",
+      "atlas_layer": "L4-L5",
+      "expr_matrix": "group_rank(ts_decay_linear(ts_backfill({x}, 60), 22), sector)",
+      "expr_vector": "group_rank(ts_decay_linear(ts_backfill(vec_avg({x}), 60), 22), sector)",
+      "note": "SZ83096 smooth sector rank (decay before rank avoids dense=false pull)"
+    }
+  ],
+  "dual_branch_min_templates": [
+    {
+      "id": "C2-M1",
+      "source_side": "ADMIN_ORIGINAL",
+      "author_id": "WL13229",
+      "canonical_post_id": "23906082201239",
+      "expr": "min(rank({expr_a}), rank({expr_b}))"
+    },
+    {
+      "id": "C2-M2",
+      "source_side": "ADMIN_ORIGINAL",
+      "author_id": "WL13229",
+      "canonical_post_id": "23906082201239",
+      "expr": "reverse(min(rank({expr_a}), rank({expr_b})))"
+    },
+    {
+      "id": "C2-M3",
+      "source_side": "TOP100_2026Q4",
+      "author_id": "SZ83096",
+      "q4_rank": 47,
+      "canonical_post_id": "42509573118999",
+      "expr": "group_rank(min(rank({expr_a}), rank({expr_b})), industry)"
+    },
+    {
+      "id": "C2-M4",
+      "source_side": "TOP100_2026Q4",
+      "author_id": "ZS59763",
+      "q4_rank": 32,
+      "canonical_post_id": "wangge_atlas",
+      "expr": "max(rank({expr_a}), rank({expr_b}))"
+    }
+  ],
+  "rescue_single_axis": {
+    "sub_universe_nested": "group_rank(group_rank({base}, subindustry), country)",
+    "pc_signed_power": "signed_power({base}, 0.5)",
+    "tvr_hump": "hump({base}, hump=0.01)",
+    "tvr_target": "ts_target_tvr_decay({base}, lambda_min=0, lambda_max=1, target_tvr=0.15)",
+    "tail_ranked": "tail(rank({base}), lower=0.2, upper=0.8, newval=0.5)"
+  }
+}

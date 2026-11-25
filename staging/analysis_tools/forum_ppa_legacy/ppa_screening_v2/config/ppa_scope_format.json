@@ -1,0 +1,34 @@
+{
+  "config_type": "PPA_THEME_SCOPE_FORMAT",
+  "required": ["theme_name", "duration", "multiplier", "core_requirements", "warnings"],
+  "duration": {
+    "start_date": "YYYY-MM-DD",
+    "end_date": "YYYY-MM-DD",
+    "end_date_inclusive": true
+  },
+  "core_requirements": {
+    "region": "platform_region_enum",
+    "delay": "0_or_1",
+    "universe": "exact_platform_universe_enum",
+    "neutralization": ["webpage_labels_or_platform_enums"],
+    "forbidden_datasets": ["dataset_id"]
+  },
+  "forbidden_field_rules_file": "same_directory_json_file",
+  "forbidden_field_rules": {
+    "DATASET_LABEL": {
+      "dataset_id": "dataset_id",
+      "forbidden_fields": ["exact_field_id"],
+      "forbidden_prefixes": ["field_id_prefix"]
+    }
+  },
+  "precedence": [
+    "platform_alpha_details_and_check_results",
+    "active_ppa_theme_scope",
+    "ppa_alpha_standard"
+  ],
+  "notes": [
+    "展示名与平台 API 枚举必须通过代码映射后比较",
+    "PPA 范围只表达主题限制，不替代平台实时 PPAC 结果",
+    "多个主题同时有效时必须显式指定 scope 文件"
+  ]
+}
