@@ -1,0 +1,170 @@
+{
+  "schema_version": "wq_d1_4stage_workflow_v1",
+  "updated_at": "2026-11-25",
+  "design_principle": "STRICT_SEPARATION_OF_RA_AND_PPA_SIMPLE_FIRST",
+  "hard_constraints": {
+    "delay_locked": 1,
+    "forbidden_operators_decision_3": ["add", "multiply", "trade_when", "+", "*"],
+    "dual_branch_canonical": "min(rank(expr_A), rank(expr_B)) / reverse(min(rank(expr_A), rank(expr_B)))",
+    "zero_auto_submit": true,
+    "no_web_gui_delivery": true,
+    "manual_review_tag_ra": "Useful",
+    "manual_review_tag_ppa": "PPA_Useful",
+    "server_ram_budget_gib": 1.9
+  },
+  "tracks": {
+    "ra_d1_primary": {
+      "name": "RA 常规因子 D1 独立四阶段流程（主线优先 · 简单直白）",
+      "goal": "稳定放量 + 冲刺 92->100 OS 解锁 SuperAlpha + 点亮高倍率空白 D1 金字塔（DEU/CHN/GLB/GBR）",
+      "explicit_anti_confusion_rule": "RA 线只看完整 RA 门槛与 SC/PC；若表达式碰巧 <=8 算子且 <=3 字段，提交时平台会先跑一遍 PPA 检查，但只要 RA 全项通过，即使 PPA 失败也会自动回退并按 RA 成功提交（不会误伤）。",
+      "stages": [
+        {
+          "stage_id": "RA-S1",
+          "title": "阶段 1 · 选干净 D1 字段（零回测过滤）",
+          "inputs": ["WebDataScope-1.0.6/data 蓝海差距表", "P1-P4 清洗后 Alphas=0 字段卡", "管理员推荐数据集"],
+          "actions": [
+            "锁定 delay=1 与高倍率空白塔（DEU TOP500 1.8x / CHN TOP2000U 1.9x / GLB 2->3）",
+            "硬过滤 JX79797/JX14975 黑名单集、非数值陷阱字段、dateCoverage < 0.60 字段",
+            "已知伪 VECTOR 集强制只测 vec_avg（省 80% 额度）",
+            "优先消耗 2026-12-06 前免每日额度的 Alphas=0 字段"
+          ],
+          "exit_gate": "输出去黑名单、有覆盖、带优先非垄断中性化建议的 D1 字段队列 JSON",
+          "hypotheses_to_optimize": [
+            "猜想 H1-1：WDS 产率 <10% 且 Sharpe 高于区域均值（Blue-Ocean）的数据集，一关出信号率显著高于随机盲扫",
+            "猜想 H1-2：优先使用非垄断高 Sharpe 中性化（如 RAM/COUNTRY/CROWDING）可减少后续 50% 中性化扫频次数"
+          ],
+          "proposal_for_next_iteration": "记录每个数据集前 24-40 条探针的信号通过率；若低于阈值自动降级，集中火力到高产数据集。"
+        },
+        {
+          "stage_id": "RA-S2",
+          "title": "阶段 2 · 简单基线放量回测（找 Sharpe > 0.8 苗子）",
+          "inputs": ["RA-S1 干净字段队列", "5:5 方法池（去 42 缺陷模板）", "Gold 81 算子静态校验器"],
+          "actions": [
+            "固定 delay=1、decay=0、单一推荐中性化，跑 1 字段 + 1-2 算子极简基线（每批 8 条 Multi-Sim）",
+            "广州服务器后台稳定跑批（低内存流式落盘 SQLite WAL，遇 429 自动退避，绝不盲重发）",
+            "自动秒杀：厂字型 PnL（<8 有效年或连续平直 >=220 天）、无持仓、Returns<=0",
+            "自动翻号：IS Sharpe < -1.2 自动加 reverse(...) 复测"
+          ],
+          "exit_gate": "IS Sharpe > 0.8 且 2Y 健康 -> 进入阶段 3 种子池",
+          "hypotheses_to_optimize": [
+            "猜想 H2-1：1-3 个算子的极简基线比广州旧版复杂爬山树（动辄 8+ 算子与 12000 天衰减）更容易过 2Y 与低 PC",
+            "猜想 H2-2：先跑 QUICK 粗筛（或验证 QUICK 速度收益）再 FULL 精跑，可在同等时间把有效吞吐拉升 2-3 倍"
+          ],
+          "proposal_for_next_iteration": "通过今日 T0 校准批（2x8）实测 QUICK vs FULL 提速比与 Margin 字段完整性，再决定阶段 2 是否全量切 QUICK。"
+        },
+        {
+          "stage_id": "RA-S3",
+          "title": "阶段 3 · 单变量逐项打磨至 RA 达标（绝不混改）",
+          "inputs": ["RA-S2 过关种子（Sharpe > 0.8）"],
+          "actions": [
+            "每轮只改 1 个变量，遵循广州实证高胜率顺序：先看 2Y Sharpe >= 1.58 -> 再救 Sub-Universe（subindustry/country*industry/市值分桶）-> 再调换手与衰减窗（严禁 >252 极端窗、严禁 lambda_max>1）",
+            "双强融合统一用表达式级 min(rank(expr_A), rank(expr_B)) 或 reverse(min(...))（永久禁用 +/*/trade_when）",
+            "达标前执行冗余算子瘦身（压低 OpCount < 6）与 [0,1,3,5,10,20] Decay 稳定性核验"
+          ],
+          "exit_gate": "非 CHN: Sh>1.58, Fit>1.0, 2Y>1.58, 1%<TO<70%, Weight<10%, SubUni PASS (ATOM豁免IS Ladder); CHN: Sh>=2.08, Ret>=8%, Robust>=40%",
+          "hypotheses_to_optimize": [
+            "猜想 H3-1：2Y 先行（先修 LOW_2Y_SHARPE 再修其它项）能砍掉广州历史 49% 的无效爬山浪费（近 400 次中 197 次死于 2Y）",
+            "猜想 H3-2：广州实证 Stage-2 三大冠军算子（group_zscore/group_rank/group_neutralize by subindustry，93%-100% 改善率）作为首选固定第一步"
+          ],
+          "proposal_for_next_iteration": "引入 200 有效样本单变量归因账本，只淘汰特定 (Region x Category x Stage x Param) 组合，永不拉黑算子本身。"
+        },
+        {
+          "stage_id": "RA-S4",
+          "title": "阶段 4 · 去重体检 + 打 Useful 标签（网页端人工提交）",
+          "inputs": ["RA-S3 全指标达标候选"],
+          "actions": [
+            "1) 全量最新 92+ OS 本地 SC 校验（< 0.68，彻底修复旧缓存遗漏新 OS 问题）",
+            "2) 候选池 N×N 两两相关性矩阵贪心正交剪枝（< 0.68，防止交一条挂一批）",
+            "3) 异步非阻塞查询远程 PC（< 0.70）与只读 /check（遇 200 空体老实记 PENDING，绝不误报通过）",
+            "4) 全部通过 -> 自动/确认后打上 Useful 标签；高 SC 标 SC_IS_HIGHT，高 PC 标 PC_IS_HIGHT（临界 0.70-0.75 送回单步 signed_power 急救）",
+            "5) 用户在 BRAIN 网页端筛选 Useful 标签，自行复核并手工点击提交（脚本永不调用 /submit）"
+          ],
+          "exit_gate": "平台标签 = Useful，用户随时挑单提交",
+          "hypotheses_to_optimize": [
+            "猜想 H4-1：临界 PC [0.70, 0.75] 候选做 1 步保序变换（signed_power p in {1.5, 2.0, 0.5} 或 bucket 分桶）可将 30-50% 高 PC 因子救回 <0.70",
+            "猜想 H4-2：在服务器后台用低内存流式扫描器每 30 分钟增量扫近 24h 新产出，内存占用可稳定控制在 <150MB"
+          ],
+          "proposal_for_next_iteration": "先用 RA 独立四阶段跑稳每日回测与 92->100 产出；等完全跑顺、理解透彻后，再单独按需开启 PPA 主题支线。"
+        }
+      ]
+    },
+    "ppa_d1_standalone": {
+      "name": "PPA 主题池因子 D1 独立四阶段流程（完全拆分 · 仅做 ASI 等活动主题时单独开启）",
+      "goal": "低门槛快速吃满当期 Power Pool 主题奖励（如 ASI/D1 Dec'26，12-20 截止），免去 PC / Fitness / IS Ladder 约束",
+      "explicit_anti_confusion_rule": "PPA 线独立管理，绝不和 RA 线混在一起！只有在明确冲刺当期 Power Pool Theme 时才启用本流程，标签单独用 PPA_Useful。",
+      "stages": [
+        {
+          "stage_id": "PPA-S1",
+          "title": "阶段 1 · 锁定当期 Power Pool Theme 与极简字段",
+          "inputs": ["当期官方 Power Pool Theme 清单（当前唯一 D1 主题：ASI/MINVOL1M Dec'26，10 个推荐集全有权限）"],
+          "actions": [
+            "确认目标区域与数据池严格匹配活跃 Power Pool Theme（注意：国家级 RA 主题不能解锁 Pure PPA！）",
+            "单条最多选 1-3 个唯一字段（不含 country/industry/subindustry/sector/market/currency/exchange 分组字段）",
+            "检查剩余 Pure PPA 配额（满 3 个月后每榜单 <=1/天、<=10/月；若同时过 RA 的 Hybrid 则不占 Pure PPA 配额）"
+          ],
+          "exit_gate": "Theme 匹配 + 字段数 <= 3",
+          "hypotheses_to_optimize": [
+            "猜想 P1-1：ASI Theme 10 个推荐集中新上线低拥挤集（ai_news_scores/corporate_news_index/price_signal_dl）最容易满足 PPA 池自相关 < 0.5"
+          ],
+          "proposal_for_next_iteration": "严格遵守单数据集（ATOM）构造，若后续顺带过 RA 门槛还可自动升级 Hybrid 省掉 Pure PPA 配额。"
+        },
+        {
+          "stage_id": "PPA-S2",
+          "title": "阶段 2 · 极简表达式回测（<=8 算子，Sharpe >= 1.0）",
+          "inputs": ["PPA-S1 Theme 字段"],
+          "actions": [
+            "严格控制唯一算子 <= 8（ts_backfill/group_backfill 不计入上限），严禁 add/multiply/trade_when",
+            "使用带风险处理的合规中性化（ASI 必须开启 maxTrade=ON 且满足 Robust >= 90%）",
+            "换手控制在 1%-70%"
+          ],
+          "exit_gate": "IS Sharpe >= 1.0 且 Sub-Universe PASS（免检 Fitness、免检 IS Ladder、免检 Prod Correlation！）",
+          "hypotheses_to_optimize": [
+            "猜想 P2-1：因为免检 Fitness 与 Prod Correlation，只需 2-4 个算子的干净信号即可达标，不要过度优化"
+          ],
+          "proposal_for_next_iteration": "第一批只用 2-4 算子短表达式，压低算子数便于拿 Genius 分并避开过拟合。"
+        },
+        {
+          "stage_id": "PPA-S3",
+          "title": "阶段 3 · 本地 PPA 池自相关门禁（< 0.50 核心生死线）",
+          "inputs": ["os_pnl_cache.db 中 is_ppa=1 子池（支持 pool_mode='PPAC_ONLY'）"],
+          "actions": [
+            "只与自己已提交的 PPA 池（含已去掉 PowerPoolSelected 标签的历史 PPA！）算本地相关性",
+            "硬门槛：PPAC < 0.50（若 >= 0.50，则 Sharpe 必须比最高相关那条 PPA 高至少 +10%）",
+            "若 PPAC 失败且没过 RA，直接止损换字段——千万别被界面弹出的 'Prod Correlation FAIL' 误导！"
+          ],
+          "exit_gate": "本地 PPAC < 0.50（或 Sharpe >= 1.10 * peer_sharpe）",
+          "hypotheses_to_optimize": [
+            "猜想 P3-1：提前在本地用 PPAC_ONLY 模式卡死 < 0.48，可 100% 避免提交时掉入 PPA 失败回退 RA 的误导性报错陷阱"
+          ],
+          "proposal_for_next_iteration": "在本地缓存中单独标记所有历史 PPA（无论是否带 PowerPoolSelected 标签），确保 PPAC 计算 100% 准确。"
+        },
+        {
+          "stage_id": "PPA-S4",
+          "title": "阶段 4 · 补齐 >=100 字符英文描述 + 打 PPA_Useful 标签",
+          "inputs": ["PPA-S3 通过候选"],
+          "actions": [
+            "按官方 Idea + Rationale 模板写入 >= 100 字符英文描述（未满 100 字必被拒！）",
+            "打上独立标签 PPA_Useful（与 RA 的 Useful 彻底分开），供用户确认后在网页端手工提交"
+          ],
+          "exit_gate": "描述 >= 100 字 + 标签 = PPA_Useful",
+          "hypotheses_to_optimize": [
+            "猜想 P4-1：预先自动生成标准英文 Idea+Rationale 草稿，可消除手动漏写描述导致的 Pure PPA 提交失败"
+          ],
+          "proposal_for_next_iteration": "等 RA 主线先在广州服务器稳定跑起来后，再择机针对 12-20 截止的 ASI Theme 单独跑一轮 PPA 轻量批。"
+        }
+      ]
+    }
+  },
+  "platform_check_routing_facts": {
+    "source": "User uploaded official-community flowchart (WorldQuant BRAIN: PPA 与 RA 提交检查何时运行)",
+    "priority_rule": "PPA checks run BEFORE RA checks whenever expression structure satisfies PPA eligibility (<=8 unique ops, <=3 unique fields excl. grouping fields, TO 1%-70%, Sharpe>=1 potential), regardless of alpha display name.",
+    "fallback_rule": "If PPA check fails -> platform falls back to full RA check. If BOTH fail, UI often shows an RA-style error like 'Prod Correlation FAIL' even when the true root cause was PPA self-correlation > 0.5.",
+    "hybrid_rule": "Passing BOTH PPA and full RA submits as HYBRID (PPA+RA, optionally +ATOM), which normally does NOT consume Pure PPA daily(1)/monthly(10) quotas.",
+    "pure_ppa_traps": [
+      "Description < 100 chars blocks Pure PPA.",
+      "National RA themes do NOT unlock Pure PPA; must match an active Thematic Power Pool.",
+      "Removing the 'PowerPoolSelected' tag does NOT remove an alpha from the PPA self-correlation pool.",
+      "Some PPA+ATOM alphas are treated as Pure PPA in non-theme regions and blocked."
+    ]
+  }
+}

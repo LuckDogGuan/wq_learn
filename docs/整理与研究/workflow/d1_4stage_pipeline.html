@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WorldQuant BRAIN D1 四阶段优化流程图（RA 与 PPA 独立分离版）</title>
+<style>
+  :root {
+    --bg: #0f1419;
+    --card: #171f27;
+    --card2: #1e2833;
+    --border: #2c3947;
+    --text: #e6edf3;
+    --muted: #93a4b5;
+    --ra: #2ea043;
+    --ra-bg: rgba(46, 160, 67, 0.12);
+    --ppa: #388bfd;
+    --ppa-bg: rgba(56, 139, 253, 0.12);
+    --warn: #d29922;
+    --warn-bg: rgba(210, 153, 34, 0.14);
+    --danger: #f85149;
+    --danger-bg: rgba(248, 81, 73, 0.14);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.55;
+  }
+  header {
+    padding: 20px 28px; border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #121922, #182330);
+  }
+  header h1 { margin: 0 0 6px; font-size: 22px; }
+  header p { margin: 0; color: var(--muted); font-size: 13px; }
+  .pill-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  .pill {
+    font-size: 12px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--border);
+    background: var(--card2); color: var(--text);
+  }
+  .pill.lock { border-color: var(--danger); color: #ff9c97; background: var(--danger-bg); }
+  .pill.ra { border-color: var(--ra); color: #7ee787; background: var(--ra-bg); }
+  .pill.ppa { border-color: var(--ppa); color: #79c0ff; background: var(--ppa-bg); }
+  .tabs {
+    display: flex; gap: 8px; padding: 14px 28px; border-bottom: 1px solid var(--border);
+    background: var(--card); position: sticky; top: 0; z-index: 10;
+  }
+  .tab-btn {
+    padding: 9px 18px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--card2); color: var(--muted); cursor: pointer; font-size: 14px; font-weight: 600;
+  }
+  .tab-btn.active.ra { background: var(--ra-bg); border-color: var(--ra); color: #7ee787; }
+  .tab-btn.active.ppa { background: var(--ppa-bg); border-color: var(--ppa); color: #79c0ff; }
+  .tab-btn.active.trap { background: var(--warn-bg); border-color: var(--warn); color: #f2cc60; }
+  main { max-width: 1260px; margin: 0 auto; padding: 22px 28px 60px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .banner {
+    padding: 14px 18px; border-radius: 10px; margin-bottom: 20px; font-size: 14px;
+    border-left: 4px solid var(--ra); background: var(--ra-bg);
+  }
+  .banner.ppa { border-left-color: var(--ppa); background: var(--ppa-bg); }
+  .banner.warn { border-left-color: var(--warn); background: var(--warn-bg); }
+  .flow-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; position: relative;
+  }
+  @media (max-width: 1020px) { .flow-row { grid-template-columns: 1fr; } }
+  .stage-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .stage-card.ra-card { border-top: 3px solid var(--ra); }
+  .stage-card.ppa-card { border-top: 3px solid var(--ppa); }
+  .stage-badge {
+    display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px;
+    background: var(--card2); color: var(--muted); letter-spacing: .5px;
+  }
+  .stage-card h3 { margin: 2px 0 0; font-size: 16px; }
+  .stage-card ul { margin: 0; padding-left: 18px; font-size: 13px; color: #c9d4df; }
+  .stage-card li { margin-bottom: 5px; }
+  .gate-box {
+    margin-top: auto; padding: 10px 12px; border-radius: 8px; font-size: 12.5px;
+    background: var(--card2); border: 1px dashed var(--border);
+  }
+  .gate-box strong { color: #7ee787; }
+  .ppa-card .gate-box strong { color: #79c0ff; }
+  .hyp-box {
+    padding: 10px 12px; border-radius: 8px; font-size: 12.5px;
+    background: rgba(210, 153, 34, 0.08); border: 1px solid rgba(210, 153, 34, 0.35);
+  }
+  .hyp-box h4 { margin: 0 0 6px; font-size: 12.5px; color: #f2cc60; }
+  .svg-wrap {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px; margin-bottom: 20px; overflow-x: auto;
+  }
+  .trap-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  @media (max-width: 800px) { .trap-grid { grid-template-columns: 1fr; } }
+  .trap-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+  }
+  .trap-card.danger { border-left: 4px solid var(--danger); }
+  .trap-card.ok { border-left: 4px solid var(--ra); }
+  .trap-card h3 { margin: 0 0 8px; font-size: 15px; }
+  code { background: #263240; padding: 1px 5px; border-radius: 4px; font-size: 12.5px; color: #a5d6ff; }
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 16px; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<header>
+  <h1>WorldQuant BRAIN D1 四阶段优化流程图（RA 与 PPA 彻底分离版）</h1>
+  <p>设计原则：先做简单、跑稳放量！RA 与 PPA 完全拆分管理，不混用、不绕晕；最终仅打标签（<code>Useful</code> / <code>PPA_Useful</code>），网页端手工提交。</p>
+  <div class="pill-bar">
+    <span class="pill lock">硬锁 Delay = 1 (D1-Only)</span>
+    <span class="pill lock">永久禁用 add(+) / multiply(*) / trade_when</span>
+    <span class="pill ra">主线优先：RA 常规 4 阶段 → 打 Useful</span>
+    <span class="pill ppa">独立支线：PPA 主题 4 阶段 → 打 PPA_Useful</span>
+    <span class="pill">同源机读配置：d1_4stage_pipeline.json</span>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active ra" onclick="switchTab('ra', this)">1. RA 常规因子 4 阶段（主线优先）</button>
+  <button class="tab-btn ppa" onclick="switchTab('ppa', this)">2. PPA 主题因子 4 阶段（独立拆分）</button>
+  <button class="tab-btn trap" onclick="switchTab('trap', this)">3. 提交检查路由与 4 大避坑要点（对齐原图）</button>
+</div>
+
+<main>
+  <!-- TAB 1: RA -->
+  <section id="tab-ra" class="panel active">
+    <div class="banner">
+      <strong>主线定位（先跑通这一条就够了！）</strong>：当前核心是<strong>拉高 D1 回测吞吐 + 冲刺 92 → 100 OS 解锁 SuperAlpha</strong>。本线只盯 <strong>RA 常规门槛 + SC/PC</strong>，不和 PPA 混在一起，所有最终达标候选统一打 <code>Useful</code> 标签，您在网页端筛选 <code>Useful</code> 即可挑选提交。
+    </div>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 1160 115" width="100%" height="115">
+        <defs>
+          <marker id="arrG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#2ea043" />
+          </marker>
+        </defs>
+        <rect x="10" y="18" width="245" height="76" rx="10" fill="#172a1d" stroke="#2ea043" stroke-width="2"/>
+        <text x="132" y="46" fill="#7ee787" font-size="14" font-weight="bold" text-anchor="middle">阶段 1 · 选干净 D1 字段</text>
+        <text x="132" y="68" fill="#c9d4df" font-size="11.5" text-anchor="middle">WDS蓝海 + Alphas=0(12-06前)</text>
+        <text x="132" y="84" fill="#93a4b5" font-size="11" text-anchor="middle">剔黑名单/低覆盖/伪VECTOR</text>
+
+        <line x1="255" y1="56" x2="303" y2="56" stroke="#2ea043" stroke-width="2.5" marker-end="url(#arrG)"/>
+
+        <rect x="308" y="18" width="245" height="76" rx="10" fill="#172a1d" stroke="#2ea043" stroke-width="2"/>
+        <text x="430" y="46" fill="#7ee787" font-size="14" font-weight="bold" text-anchor="middle">阶段 2 · 极简基线放量回测</text>
+        <text x="430" y="68" fill="#c9d4df" font-size="11.5" text-anchor="middle">广州后台 8条/批 · 1-2算子</text>
+        <text x="430" y="84" fill="#93a4b5" font-size="11" text-anchor="middle">秒杀厂字型 · Sh&gt;0.8入种子池</text>
+
+        <line x1="553" y1="56" x2="601" y2="56" stroke="#2ea043" stroke-width="2.5" marker-end="url(#arrG)"/>
+
+        <rect x="606" y="18" width="245" height="76" rx="10" fill="#172a1d" stroke="#2ea043" stroke-width="2"/>
+        <text x="728" y="46" fill="#7ee787" font-size="14" font-weight="bold" text-anchor="middle">阶段 3 · 单变量精修到 RA 达标</text>
+        <text x="728" y="68" fill="#c9d4df" font-size="11.5" text-anchor="middle">2Y先行 → 分组/调窗/min(rank,rank)</text>
+        <text x="728" y="84" fill="#93a4b5" font-size="11" text-anchor="middle">Sh&gt;1.58(CHN≥2.08) · Fit&gt;1.0</text>
+
+        <line x1="851" y1="56" x2="899" y2="56" stroke="#2ea043" stroke-width="2.5" marker-end="url(#arrG)"/>
+
+        <rect x="904" y="18" width="245" height="76" rx="10" fill="#232b18" stroke="#d29922" stroke-width="2"/>
+        <text x="1026" y="46" fill="#f2cc60" font-size="14" font-weight="bold" text-anchor="middle">阶段 4 · 去重体检 → 打 Useful</text>
+        <text x="1026" y="68" fill="#c9d4df" font-size="11.5" text-anchor="middle">92-OS本地SC + N×N正交 + PC&lt;0.7</text>
+        <text x="1026" y="84" fill="#93a4b5" font-size="11" text-anchor="middle">您网页端筛选 Useful 手工提交</text>
+      </svg>
+    </div>
+
+    <div class="flow-row">
+      <div class="stage-card ra-card">
+        <span class="stage-badge">RA-S1 · 源头控质</span>
+        <h3>阶段 1 · 选干净 D1 字段</h3>
+        <ul>
+          <li>优先高倍率空白塔：<code>DEU TOP500 (1.8×)</code>、<code>CHN TOP2000U (1.9×)</code>、<code>GLB 2→3</code>。</li>
+          <li>优先跑 <code>Alphas=0</code>（12-06 前免每日额度）。</li>
+          <li>自动挡掉黑名单集、陷阱字段、<code>dateCoverage&lt;0.6</code>；伪 VECTOR 只测 <code>vec_avg</code>。</li>
+        </ul>
+        <div class="hyp-box">
+          <h4>待验证猜想与优化建议</h4>
+          <div>• <strong>H1-1</strong>：WDS 产率 &lt;10% 蓝海集一关出信号率显著高于随机盲扫。</div>
+          <div>• <strong>H1-2</strong>：首测直接用 WDS 推荐的非垄断中性化（RAM/COUNTRY/CROWDING）省一半扫频额度。</div>
+        </div>
+        <div class="gate-box"><strong>出口闸门</strong>：干净字段队列 JSON（无黑名单、带首选 Neut）</div>
+      </div>
+
+      <div class="stage-card ra-card">
+        <span class="stage-badge">RA-S2 · 稳定放量</span>
+        <h3>阶段 2 · 极简基线回测</h3>
+        <ul>
+          <li>固定 <code>delay=1, decay=0</code>，只用 1–2 算子极简模板（去 42 缺陷，严守 5:5 来源）。</li>
+          <li>广州服务器后台稳定跑批（8 条 Multi-Sim，SQLite 断点续传，遇 429 自动退避）。</li>
+          <li>秒杀厂字型/无持仓；<code>Sharpe &lt; -1.2</code> 自动加 <code>reverse(...)</code>。</li>
+        </ul>
+        <div class="hyp-box">
+          <h4>待验证猜想与优化建议</h4>
+          <div>• <strong>H2-1</strong>：1–3 算子极简基线远胜广州旧版复杂爬山树（告别 <code>12000</code> 天衰减与活锁）。</div>
+          <div>• <strong>H2-2</strong>：通过 T0 小批核验 <code>QUICK</code> 模式提速比，阶段 2 放量可提速 2–3×。</div>
+        </div>
+        <div class="gate-box"><strong>出口闸门</strong>：<code>IS Sharpe &gt; 0.8</code> 且 2Y 健康 → 入种子池</div>
+      </div>
+
+      <div class="stage-card ra-card">
+        <span class="stage-badge">RA-S3 · 单轴精修</span>
+        <h3>阶段 3 · 单变量推过 RA 线</h3>
+        <ul>
+          <li><strong>每次只改 1 个轴</strong>，严格按广州历史教训排序：先救 <code>2Y ≥ 1.58</code>（历史 49% 死于此）→ 再套 <code>subindustry</code> 分组（实证 93–100% 改善）→ 再调窗。</li>
+          <li>双信号融合统一用 <code>min(rank(expr_A), rank(expr_B))</code>，禁用 <code>+/*/trade_when</code>。</li>
+          <li>提交前算子瘦身（<code>&lt;6 op</code>）+ Decay <code>[0,1,3,5,10,20]</code> 体检。</li>
+        </ul>
+        <div class="hyp-box">
+          <h4>待验证猜想与优化建议</h4>
+          <div>• <strong>H3-1</strong>：先过 2Y 再调其它项，可砍掉近一半无效回测。</div>
+          <div>• <strong>H3-2</strong>：满 200 样本按作用域自动停用低效模板，永不拉黑算子本身。</div>
+        </div>
+        <div class="gate-box"><strong>出口闸门</strong>：非 CHN <code>Sh&gt;1.58, Fit&gt;1.0, 2Y&gt;1.58</code>；CHN <code>Sh≥2.08, Ret≥8%</code></div>
+      </div>
+
+      <div class="stage-card ra-card">
+        <span class="stage-badge">RA-S4 · 轻量交付</span>
+        <h3>阶段 4 · 去重 + 打 Useful</h3>
+        <ul>
+          <li>全量最新 <strong>92+ OS 本地 SC</strong>（<code>&lt;0.68</code>），彻底防旧缓存漏网。</li>
+          <li>候选池 <strong>N×N 两两正交去重</strong>（<code>&lt;0.68</code>），防跨集互撞。</li>
+          <li>异步查远程 PC（<code>&lt;0.70</code>）；全过打 <code>Useful</code>，超限标 <code>SC_IS_HIGHT</code>/<code>PC_IS_HIGHT</code>。</li>
+        </ul>
+        <div class="hyp-box">
+          <h4>待验证猜想与优化建议</h4>
+          <div>• <strong>H4-1</strong>：临界 <code>PC ∈ [0.70, 0.75]</code> 单步 <code>signed_power</code> 保序急救。</div>
+          <div>• <strong>H4-2</strong>：低内存增量流式扫描近 24h 新产出，广州服务器 RAM 占用 &lt;150MB。</div>
+        </div>
+        <div class="gate-box"><strong>最终交付</strong>：自动/确认打上 <code>Useful</code> → 您网页端手工提交</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: PPA -->
+  <section id="tab-ppa" class="panel">
+    <div class="banner ppa">
+      <strong>独立支线（与 RA 彻底隔开，先不用急着碰！）</strong>：只有当您专门想冲刺<strong>当期活跃 Power Pool 主题</strong>（例如 12-20 截止的 <code>ASI/D1 Dec'26</code>）时，才单独启动这条线。它<strong>不查 Prod Correlation、不查 Fitness、不查 IS Ladder</strong>，只盯 <code>Sharpe ≥ 1.0</code> 与 <strong>PPA 池自相关 &lt; 0.50</strong>，最终打独立标签 <code>PPA_Useful</code>。
+    </div>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 1160 115" width="100%" height="115">
+        <defs>
+          <marker id="arrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#388bfd" />
+          </marker>
+        </defs>
+        <rect x="10" y="18" width="245" height="76" rx="10" fill="#132236" stroke="#388bfd" stroke-width="2"/>
+        <text x="132" y="46" fill="#79c0ff" font-size="14" font-weight="bold" text-anchor="middle">PPA-1 · 核对活跃主题</text>
+        <text x="132" y="68" fill="#c9d4df" font-size="11.5" text-anchor="middle">仅做活跃 Power Pool Theme</text>
+        <text x="132" y="84" fill="#93a4b5" font-size="11" text-anchor="middle">每式 ≤3 字段 · 查日1/月10配额</text>
+
+        <line x1="255" y1="56" x2="303" y2="56" stroke="#388bfd" stroke-width="2.5" marker-end="url(#arrB)"/>
+
+        <rect x="308" y="18" width="245" height="76" rx="10" fill="#132236" stroke="#388bfd" stroke-width="2"/>
+        <text x="430" y="46" fill="#79c0ff" font-size="14" font-weight="bold" text-anchor="middle">PPA-2 · 极简短式回测</text>
+        <text x="430" y="68" fill="#c9d4df" font-size="11.5" text-anchor="middle">≤8 唯一算子 · 风险中性化</text>
+        <text x="430" y="84" fill="#93a4b5" font-size="11" text-anchor="middle">Sharpe≥1.0 + SubUni(免PC/Fit)</text>
+
+        <line x1="553" y1="56" x2="601" y2="56" stroke="#388bfd" stroke-width="2.5" marker-end="url(#arrB)"/>
+
+        <rect x="606" y="18" width="245" height="76" rx="10" fill="#132236" stroke="#388bfd" stroke-width="2"/>
+        <text x="728" y="46" fill="#79c0ff" font-size="14" font-weight="bold" text-anchor="middle">PPA-3 · 本地 PPAC &lt; 0.50</text>
+        <text x="728" y="68" fill="#c9d4df" font-size="11.5" text-anchor="middle">仅与自己 PPA 池算自相关</text>
+        <text x="728" y="84" fill="#93a4b5" font-size="11" text-anchor="middle">≥0.5 需 Sharpe 高出 +10%</text>
+
+        <line x1="851" y1="56" x2="899" y2="56" stroke="#388bfd" stroke-width="2.5" marker-end="url(#arrB)"/>
+
+        <rect x="904" y="18" width="245" height="76" rx="10" fill="#232b18" stroke="#d29922" stroke-width="2"/>
+        <text x="1026" y="46" fill="#f2cc60" font-size="14" font-weight="bold" text-anchor="middle">PPA-4 · 写≥100字描述+打标</text>
+        <text x="1026" y="68" fill="#c9d4df" font-size="11.5" text-anchor="middle">Idea+Rationale ≥ 100 字符</text>
+        <text x="1026" y="84" fill="#93a4b5" font-size="11" text-anchor="middle">打 PPA_Useful → 手工提交</text>
+      </svg>
+    </div>
+
+    <div class="flow-row">
+      <div class="stage-card ppa-card">
+        <span class="stage-badge">PPA-S1</span>
+        <h3>阶段 1 · 锁定活跃主题</h3>
+        <ul>
+          <li>目前唯一活跃 D1 主题：<code>ASI/MINVOL1M Dec'26</code>（12-20 截止，10 推荐集均有权限）。</li>
+          <li><strong>切记</strong>：国家级 RA 主题<strong>不能</strong>解锁 Pure PPA！</li>
+          <li>每式最多 3 个唯一数据字段（分组字段不计）。</li>
+        </ul>
+        <div class="gate-box"><strong>出口闸门</strong>：匹配当期 Power Pool Theme + 字段 ≤ 3</div>
+      </div>
+
+      <div class="stage-card ppa-card">
+        <span class="stage-badge">PPA-S2</span>
+        <h3>阶段 2 · 极简表达式回测</h3>
+        <ul>
+          <li>唯一算子 ≤ 8（<code>ts_backfill/group_backfill</code> 不计），只做 2–4 算子短式。</li>
+          <li>ASI 须开 <code>maxTrade=ON</code> 且 <code>Robust ≥ 90%</code>；风险处理中性化。</li>
+          <li><strong>免检项</strong>：不卡 PC、不卡 Fitness、不卡 IS Ladder、不卡普通 OS 的 SC！</li>
+        </ul>
+        <div class="gate-box"><strong>出口闸门</strong>：<code>Sharpe ≥ 1.0</code> + <code>Sub-Universe PASS</code> + <code>TO 1%–70%</code></div>
+      </div>
+
+      <div class="stage-card ppa-card">
+        <span class="stage-badge">PPA-S3</span>
+        <h3>阶段 3 · 本地 PPAC 生死线</h3>
+        <ul>
+          <li>用 <code>wq_research_v2 sc check --pool PPAC_ONLY</code> 只比对已提交 PPA 池。</li>
+          <li>严格 <code>PPAC &lt; 0.50</code>（或 <code>Sharpe ≥ 1.10 × 最高相关 PPA</code>）。</li>
+          <li><strong>注意</strong>：去掉 <code>PowerPoolSelected</code> 标签也不会退出 PPA 池！</li>
+        </ul>
+        <div class="gate-box"><strong>出口闸门</strong>：本地 <code>PPAC &lt; 0.50</code>（绝不踩假 PC 报错坑）</div>
+      </div>
+
+      <div class="stage-card ppa-card">
+        <span class="stage-badge">PPA-S4</span>
+        <h3>阶段 4 · 描述 + 独立标签</h3>
+        <ul>
+          <li>必须填写 <strong>≥ 100 字符</strong>英文描述（Idea + Rationale 模板）。</li>
+          <li>打上独立标签 <code>PPA_Useful</code>，与 RA 线完全隔离。</li>
+          <li>若该式同时也过了完整 RA 门槛，提交时自动变 Hybrid，不占 Pure PPA 配额。</li>
+        </ul>
+        <div class="gate-box"><strong>最终交付</strong>：标签 <code>PPA_Useful</code> → 您在网页端手工提交</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 3: TRAPS -->
+  <section id="tab-trap" class="panel">
+    <div class="banner warn">
+      <strong>一句话看懂您上传的《PPA 与 RA 提交检查何时运行》流程图</strong>：系统不是看你起的 Alpha 名字，而是<strong>只要结构简单（≤8 算子、≤3 字段），点检查时就自动先跑 PPA 检查</strong>；PPA 没过才退回跑 RA 检查。所以只要把 RA 与 PPA 两条线分开管，就不会被系统的混合报错绕晕！
+    </div>
+    <div class="trap-grid">
+      <div class="trap-card danger">
+        <h3>避坑 1 · 看到 “Prod Correlation FAIL” 不一定是 PC 挂了！</h3>
+        <p>当一个简单表达式先跑 PPA 检查、因 <strong>PPA 池自相关 &gt; 0.50</strong>（且 Sharpe 没高出 10%）失败后，系统会<strong>回退去跑完整 RA 测试</strong>；如果 RA 也挂了，页面最终可能显示 <code>Prod Correlation FAIL</code>。根因其实是 PPA 池自相关！</p>
+      </div>
+      <div class="trap-card danger">
+        <h3>避坑 2 · 去掉 <code>PowerPoolSelected</code> 标签并不会移出 PPA 池</h3>
+        <p><code>PowerPoolSelected</code> 只是提交后的榜单组合标签。哪怕去掉该标签，该 Alpha <strong>依然留在 PPA 自相关池中</strong>，新提交的 PPA 仍会和它算 <code>&lt; 0.50</code> 相关性。</p>
+      </div>
+      <div class="trap-card danger">
+        <h3>避坑 3 · Pure PPA 必须配满 4 个硬条件</h3>
+        <p>① 英文描述 <strong>≥ 100 字符</strong>；② 必须匹配<strong>当期 Thematic Power Pool 主题</strong>（国家级 RA 主题无效，且非主题区部分 PPA+ATOM 也会被当 Pure PPA 拦截）；③ 使用合规风险中性化；④ 满 3 个月后每榜单限 <code>≤1/天、≤10/月</code>。</p>
+      </div>
+      <div class="trap-card ok">
+        <h3>好消息 · 简单表达式同时过 RA 门槛 = 自动免费 Hybrid</h3>
+        <p>我们 RA 主线主打的 2–4 算子极简因子，虽然结构上也会触发 PPA-first 检查，但只要它<strong>通过了完整 RA 标准</strong>：① 若 PPA 也过 → 自动以 <strong>Hybrid (PPA+RA)</strong> 提交，且<strong>不占 Pure PPA 配额</strong>；② 若 PPA 没过 → 自动退回按正常 RA 提交成功！因此<strong>专心把 RA 主线做扎实完全安全</strong>。</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  生成自 <code>docs/整理与研究/workflow/d1_4stage_pipeline.json</code> · 遵循 D1-Only、Decision #3、无 GUI 轻量 <code>Useful</code> 标签工作流与零自动提交红线 · 2026-11-25
+</footer>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
