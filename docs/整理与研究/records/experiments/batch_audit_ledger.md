@@ -1,16 +1,16 @@
 # WorldQuant BRAIN D1 RA 批次复盘与阶段漏斗总账（自动生成）
 
-- **生成时间 (UTC)**：`2026-11-25T16:35:12.129226+00:00`
-- **总批次数**：`390`（等级分布：`{'BEST': 13, 'GOOD': 6, 'NORMAL': 202, 'BAD': 113, 'TIMEOUT_BUG': 56}`）
-- **全库阶段过关统计**：有效完成 `1803` · 未观测 `431` · **一阶段 (`Sh≥0.80`) 过 `196` 个** · **二阶段 (`Sh≥1.25`) 过 `83` 个** · **三阶段 (`Sh≥1.58 & Fit≥1.0`) 过 `40` 个**（已核 0-FAIL `12` 个）
+- **生成时间 (UTC)**：`2026-11-25T18:35:23.606832+00:00`
+- **总批次数**：`433`（等级分布：`{'BEST': 23, 'GOOD': 11, 'NORMAL': 202, 'BAD': 125, 'TIMEOUT_BUG': 72}`）
+- **全库阶段过关统计**：有效完成 `2187` · 未观测 `559` · **一阶段 (`Sh≥0.80`) 过 `315` 个** · **二阶段 (`Sh≥1.25`) 过 `169` 个** · **三阶段 (`Sh≥1.58 & Fit≥1.0`) 过 `82` 个**（已核 0-FAIL `35` 个）
 
 ## 1. 分地区阶段漏斗统计
 
 | 地区 | 完成数 | 未观测 | 一阶段过 (`≥0.80`) | 二阶段过 (`≥1.25`) | 三阶段过 (`≥1.58 & Fit≥1`) | 已核 0-FAIL |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
-| **USA** | 432 | 96 | 56 | 7 | 0 | 0 |
+| **USA** | 664 | 144 | 83 | 10 | 0 | 0 |
+| **EUR** | 532 | 328 | 214 | 159 | 82 | 35 |
 | **DEU** | 430 | 8 | 2 | 0 | 0 | 0 |
-| **EUR** | 380 | 248 | 122 | 76 | 40 | 12 |
 | **ASI** | 104 | 7 | 11 | 0 | 0 | 0 |
 | **KOR** | 98 | 16 | 0 | 0 | 0 | 0 |
 | **CHN** | 90 | 24 | 0 | 0 | 0 | 0 |
@@ -26,17 +26,24 @@
 | --- | :-: | --- | --- | --- | --- | :-: | :-: | :-: |
 | `RA-v4-EUR_M25_PCT_NORM-00-egion_percentile-COUNTRY` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 3/3/3 (0) | `3.29` / `2.3` / `0.0bp` | `88Go2dA7` |
 | `RA-v4-EUR_M25_PCT_NORM-00-egion_percentile-INDUSTRY` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `INDUSTRY|d=0|tr=0.04` | 3/3/3 (0) | `3.16` / `2.27` / `0.0bp` | `legq0aml` |
+| `S3-r1b-EUR-M25A-u2500_sub_d2_t06` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `S3-ADM-01-atom-gate30-vm, S3-ADM-02-atom-gate45-vm, S3-ADM-03-atom-bkt-vm (+5)` | `SUBINDUSTRY|d=2|tr=0.06` | 8/8/7 (3) | `3.12` / `2.84` / `21.2bp` | `0mGljvn2` |
 | `S3-r1b-EUR-M25A-u2500_ind_d0_t04` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `S3-ADM-01-atom-gate30-vm, S3-ADM-02-atom-gate45-vm, S3-ADM-03-atom-bkt-vm (+5)` | `INDUSTRY|d=0|tr=0.04` | 8/8/7 (3) | `3.07` / `2.58` / `21.48bp` | `LL8j5Jz1` |
 | `S3-r1b-EUR-M25B-u2500_sub_d2_t06` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `S3-ADM-05-adv-gate35-vm, S3-ADM-06-adv-gate50-vm, S3-ADM-07-adv-bkt-vm (+5)` | `SUBINDUSTRY|d=2|tr=0.06` | 8/8/6 (1) | `3.05` / `2.55` / `19.81bp` | `kq87Jl3l` |
+| `S3-r1b-EUR-M25A-u2500_cty_d2_t06` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `S3-ADM-01-atom-gate30-vm, S3-ADM-02-atom-gate45-vm, S3-ADM-03-atom-bkt-vm (+5)` | `COUNTRY|d=2|tr=0.06` | 8/8/5 (1) | `2.99` / `2.53` / `25.37bp` | `88GovNrv` |
 | `S3-r1b-EUR-M25B-u2500_ind_d0_t04` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `S3-ADM-05-adv-gate35-vm, S3-ADM-06-adv-gate50-vm, S3-ADM-07-adv-bkt-vm (+5)` | `INDUSTRY|d=0|tr=0.04` | 8/8/6 (2) | `2.98` / `2.42` / `19.42bp` | `6XG8AOvP` |
+| `S3-r1b-EUR-M25A-u2500_ram_d4_t06` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `S3-ADM-01-atom-gate30-vm, S3-ADM-02-atom-gate45-vm, S3-ADM-03-atom-bkt-vm (+5)` | `REVERSION_AND_MOMENTUM|d=4|tr=0.06` | 8/5/4 (0) | `2.64` / `3.19` / `15.64bp` | `xAl61rXl` |
+| `S3-r1b-EUR-M25B-u2500_cty_d2_t06` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `S3-ADM-05-adv-gate35-vm, S3-ADM-06-adv-gate50-vm, S3-ADM-07-adv-bkt-vm (+5)` | `COUNTRY|d=2|tr=0.06` | 8/8/6 (1) | `2.39` / `2.33` / `23.27bp` | `6XG8dVNJ` |
+| `S3-r2-EUR-M25PCA-stat_d4_t06` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `S3PC-ADM-01-vmoe-ci, S3PC-ADM-02-vmoe-ci-sp2, S3PC-ADM-03-vm-avdiff126-ci (+5)` | `STATISTICAL|d=4|tr=0.06` | 7/7/1 (0) | `2.31` / `2.75` / `5.39bp` | `np6RJWYM` |
 | `S3-r2-EUR-M25PCA-stat_d6_t08` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `S3PC-ADM-01-vmoe-ci, S3PC-ADM-02-vmoe-ci-sp2, S3PC-ADM-03-vm-avdiff126-ci (+5)` | `STATISTICAL|d=6|tr=0.08` | 7/7/1 (0) | `2.24` / `2.71` / `5.69bp` | `vRYqEALz` |
 | `S3-r2-EUR-M25PCB-stat_d4_t06` | EUR/TOP2500 | `model25` | `model25_x_model238` | `S3PC-ADM-05-vm-shpref-ci, S3PC-ADM-06-vm-shchg-ci, S3PC-ADM-07-oe-shpref-ci (+5)` | `STATISTICAL|d=4|tr=0.06` | 8/6/1 (0) | `2.21` / `2.83` / `3.88bp` | `gJrA5OlJ` |
 | `S3-r2-EUR-M25PCA-crd_d4_t06` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `S3PC-ADM-01-vmoe-ci, S3PC-ADM-02-vmoe-ci-sp2, S3PC-ADM-03-vm-avdiff126-ci (+5)` | `CROWDING|d=4|tr=0.06` | 7/7/2 (0) | `2.17` / `2.85` / `10.52bp` | `np6JGN2l` |
 | `S3-r3b-EUR-FINA-crd_d4_t06` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `S3FIN-ADM-01-acc-adv40, S3FIN-ADM-02-acc-adv45, S3FIN-ADM-03-acc-adv50 (+5)` | `CROWDING|d=4|tr=0.06` | 8/8/6 (6) | `2.14` / `2.75` / `13.01bp` | `3qGrQQ8Q` |
+| `S3-r3b-EUR-FINA-crd_d5_t08` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `S3FIN-ADM-01-acc-adv40, S3FIN-ADM-02-acc-adv45, S3FIN-ADM-03-acc-adv50 (+5)` | `CROWDING|d=5|tr=0.08` | 8/8/5 (5) | `2.1` / `2.73` / `13.7bp` | `np6RxVz3` |
+| `S3-r1b-EUR-M25B-u2500_ram_d4_t06` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `S3-ADM-05-adv-gate35-vm, S3-ADM-06-adv-gate50-vm, S3-ADM-07-adv-bkt-vm (+5)` | `REVERSION_AND_MOMENTUM|d=4|tr=0.06` | 8/6/6 (5) | `2.09` / `2.82` / `15.31bp` | `A1LWQvwR` |
 | `S3-r2-EUR-M25PCB-crd_d4_t06` | EUR/TOP2500 | `model25` | `model25_x_model238` | `S3PC-ADM-05-vm-shpref-ci, S3PC-ADM-06-vm-shchg-ci, S3PC-ADM-07-oe-shpref-ci (+5)` | `CROWDING|d=4|tr=0.06` | 6/3/1 (0) | `2.07` / `2.13` / `6.76bp` | `d59XJOGg` |
 | `S3-r2-EUR-M25PCA-ram_d4_t06` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `S3PC-ADM-01-vmoe-ci, S3PC-ADM-02-vmoe-ci-sp2, S3PC-ADM-03-vm-avdiff126-ci (+5)` | `REVERSION_AND_MOMENTUM|d=4|tr=0.06` | 7/7/1 (0) | `2.04` / `2.86` / `8.39bp` | `pwWX2xNb` |
 | `S3-r2-EUR-M25PCB-ram_d4_t06` | EUR/TOP2500 | `model25` | `model25_x_model238` | `S3PC-ADM-05-vm-shpref-ci, S3PC-ADM-06-vm-shchg-ci, S3PC-ADM-07-oe-shpref-ci (+5)` | `REVERSION_AND_MOMENTUM|d=4|tr=0.06` | 7/3/1 (0) | `1.96` / `2.4` / `6.02bp` | `A1LWpQQe` |
-| `RA-v4-EUR_M25_PCT_NORM-01-onent_percentile-COUNTRY` | EUR/TOP2500 | `model25` | `operating_efficiency_component_percentile` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 3/2/2 (0) | `1.9` / `1.75` / `0.0bp` | `qM51V3jP` |
+| `S3-r3b-EUR-FINA-ram_d5_t06` | EUR/TOP2500 | `model25` | `value_momentum_region_percentile` | `S3FIN-ADM-01-acc-adv40, S3FIN-ADM-02-acc-adv45, S3FIN-ADM-03-acc-adv50 (+5)` | `REVERSION_AND_MOMENTUM|d=5|tr=0.06` | 8/8/3 (3) | `1.95` / `2.74` / `11.13bp` | `omP57YLE` |
 
 ## 3. 过差与超时异常批次（BAD / TIMEOUT_BUG · 排雷与逻辑复盘）
 
@@ -54,21 +61,21 @@
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-02-eference_rank_d1-STATISTICAL` | EUR/`model238` | `regional_change_in_preference_rank_d1` | `STATISTICAL|d=0|tr=0.04` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Unobserved after 1 reconcile: Poll timeout) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-03-eference_rank_d1-REVERSION_AND_MOMENTUM` | EUR/`model238` | `regional_institutional_preference_rank_d1` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: POST HTTP 429) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-03-eference_rank_d1-STATISTICAL` | EUR/`model238` | `regional_institutional_preference_rank_d1` | `STATISTICAL|d=0|tr=0.04` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Unobserved after 1 reconcile: Poll timeout) |
+| **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-04-ntration_rank_d1-CROWDING` | EUR/`model238` | `global_peer_investment_concentration_rank_d1` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll timeout) |
+| **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-05-eference_rank_d1-CROWDING` | EUR/`model238` | `global_change_in_preference_rank_d1` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll timeout) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-05-eference_rank_d1-REVERSION_AND_MOMENTUM` | EUR/`model238` | `global_change_in_preference_rank_d1` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll timeout) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-05-eference_rank_d1-STATISTICAL` | EUR/`model238` | `global_change_in_preference_rank_d1` | `STATISTICAL|d=0|tr=0.04` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Missing child alpha_id) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-06-vestment_rank_d1-REVERSION_AND_MOMENTUM` | EUR/`model238` | `country_relative_investment_rank_d1` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll timeout) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-06-vestment_rank_d1-STATISTICAL` | EUR/`model238` | `country_relative_investment_rank_d1` | `STATISTICAL|d=0|tr=0.04` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Unobserved after 1 reconcile: POST HTTP 429) |
+| **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-07-lignment_rank_d1-CROWDING` | EUR/`model238` | `regional_screening_factor_alignment_rank_d1` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll timeout) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-07-lignment_rank_d1-REVERSION_AND_MOMENTUM` | EUR/`model238` | `regional_screening_factor_alignment_rank_d1` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: POST HTTP 429) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-07-lignment_rank_d1-STATISTICAL` | EUR/`model238` | `regional_screening_factor_alignment_rank_d1` | `STATISTICAL|d=0|tr=0.04` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Unobserved after 1 reconcile: POST HTTP 429) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-DUAL-REVERSION_AND_MOMENTUM-00` | EUR/`model238` | `regional_peer_investment_concentration_rank_d1` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll timeout) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-DUAL-REVERSION_AND_MOMENTUM-01` | EUR/`model238` | `global_screening_factor_alignment_rank_d1, regional_peer_investment_concentration_rank_d1` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: POST HTTP 429) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-DUAL-STATISTICAL-00` | EUR/`model238` | `regional_peer_investment_concentration_rank_d1` | `STATISTICAL|d=0|tr=0.04` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Unobserved after 1 reconcile: POST HTTP 429) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_PRICEDL_NORM-DUAL-COUNTRY-00` | EUR/`price_signal_dl` | `raw_trend_indicator_0` | `COUNTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll timeout) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_PRICEDL_NORM-DUAL-REVERSION_AND_MOMENTUM-00` | EUR/`price_signal_dl` | `raw_trend_indicator_0` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Missing child alpha_id) |
-| **TIMEOUT_BUG** | `S3-r2-EUR-M25PCA-fast_d2_t04` | EUR/`model25` | `value_momentum_region_percentile` | `FAST|d=2|tr=0.04` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Unobserved after 1 reconcile: POST HTTP 429) |
-| **TIMEOUT_BUG** | `S3-r2-EUR-M25PCA-snf_d4_t06` | EUR/`model25` | `value_momentum_region_percentile` | `SLOW_AND_FAST|d=4|tr=0.06` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Missing child alpha_id) |
+| **TIMEOUT_BUG** | `RA-v4-EUR_M25_PCT_NORM-01-onent_percentile-INDUSTRY` | EUR/`model25` | `operating_efficiency_component_percentile` | `INDUSTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Missing child alpha_id) |
 
-## 4. 全批次精简台账（展示前 120 / 390 批）
+## 4. 全批次精简台账（展示前 120 / 433 批）
 
 | 等级 | 地区 | 数据集 | 主字段 | 模板 | 配置 | 完成/未观测 | S1/S2/S3 | Max Sh | Avg Mgn |
 | :-: | :-: | --- | --- | --- | --- | :-: | :-: | :-: | :-: |
@@ -177,18 +184,18 @@
 | TIMEOUT_BUG | DEU | `model264` | `mdl264_1l_ovp` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `INDUSTRY|d=0|tr=0.04` | 0/8 | 0/0/0 | `None` | `Nonebp` |
 | BEST | EUR | `model25` | `value_momentum_region_percentile` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 3/3/3 | `3.29` | `0.0bp` |
 | BEST | EUR | `model25` | `value_momentum_region_percentile` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `INDUSTRY|d=0|tr=0.04` | 8/0 | 3/3/3 | `3.16` | `0.0bp` |
+| BEST | EUR | `model25` | `value_momentum_region_percentile` | `S3-ADM-01-atom-gate30-vm, S3-ADM-02-atom-gate45-vm, S3-ADM-03-atom-bkt-vm (+5)` | `SUBINDUSTRY|d=2|tr=0.06` | 8/0 | 8/8/7 | `3.12` | `21.2bp` |
 | BEST | EUR | `model25` | `value_momentum_region_percentile` | `S3-ADM-01-atom-gate30-vm, S3-ADM-02-atom-gate45-vm, S3-ADM-03-atom-bkt-vm (+5)` | `INDUSTRY|d=0|tr=0.04` | 8/0 | 8/8/7 | `3.07` | `21.48bp` |
 | BEST | EUR | `model25` | `value_momentum_region_percentile` | `S3-ADM-05-adv-gate35-vm, S3-ADM-06-adv-gate50-vm, S3-ADM-07-adv-bkt-vm (+5)` | `SUBINDUSTRY|d=2|tr=0.06` | 8/0 | 8/8/6 | `3.05` | `19.81bp` |
+| BEST | EUR | `model25` | `value_momentum_region_percentile` | `S3-ADM-01-atom-gate30-vm, S3-ADM-02-atom-gate45-vm, S3-ADM-03-atom-bkt-vm (+5)` | `COUNTRY|d=2|tr=0.06` | 8/0 | 8/8/5 | `2.99` | `25.37bp` |
 | BEST | EUR | `model25` | `value_momentum_region_percentile` | `S3-ADM-05-adv-gate35-vm, S3-ADM-06-adv-gate50-vm, S3-ADM-07-adv-bkt-vm (+5)` | `INDUSTRY|d=0|tr=0.04` | 8/0 | 8/8/6 | `2.98` | `19.42bp` |
+| BEST | EUR | `model25` | `value_momentum_region_percentile` | `S3-ADM-01-atom-gate30-vm, S3-ADM-02-atom-gate45-vm, S3-ADM-03-atom-bkt-vm (+5)` | `REVERSION_AND_MOMENTUM|d=4|tr=0.06` | 8/0 | 8/5/4 | `2.64` | `15.64bp` |
+| BEST | EUR | `model25` | `value_momentum_region_percentile` | `S3-ADM-05-adv-gate35-vm, S3-ADM-06-adv-gate50-vm, S3-ADM-07-adv-bkt-vm (+5)` | `COUNTRY|d=2|tr=0.06` | 8/0 | 8/8/6 | `2.39` | `23.27bp` |
+| BEST | EUR | `model25` | `value_momentum_region_percentile` | `S3PC-ADM-01-vmoe-ci, S3PC-ADM-02-vmoe-ci-sp2, S3PC-ADM-03-vm-avdiff126-ci (+5)` | `STATISTICAL|d=4|tr=0.06` | 8/0 | 7/7/1 | `2.31` | `5.39bp` |
 | BEST | EUR | `model25` | `value_momentum_region_percentile` | `S3PC-ADM-01-vmoe-ci, S3PC-ADM-02-vmoe-ci-sp2, S3PC-ADM-03-vm-avdiff126-ci (+5)` | `STATISTICAL|d=6|tr=0.08` | 8/0 | 7/7/1 | `2.24` | `5.69bp` |
 | BEST | EUR | `model25` | `model25_x_model238` | `S3PC-ADM-05-vm-shpref-ci, S3PC-ADM-06-vm-shchg-ci, S3PC-ADM-07-oe-shpref-ci (+5)` | `STATISTICAL|d=4|tr=0.06` | 8/0 | 8/6/1 | `2.21` | `3.88bp` |
 | BEST | EUR | `model25` | `value_momentum_region_percentile` | `S3PC-ADM-01-vmoe-ci, S3PC-ADM-02-vmoe-ci-sp2, S3PC-ADM-03-vm-avdiff126-ci (+5)` | `CROWDING|d=4|tr=0.06` | 8/0 | 7/7/2 | `2.17` | `10.52bp` |
 | BEST | EUR | `model25` | `value_momentum_region_percentile` | `S3FIN-ADM-01-acc-adv40, S3FIN-ADM-02-acc-adv45, S3FIN-ADM-03-acc-adv50 (+5)` | `CROWDING|d=4|tr=0.06` | 8/0 | 8/8/6 | `2.14` | `13.01bp` |
+| BEST | EUR | `model25` | `value_momentum_region_percentile` | `S3FIN-ADM-01-acc-adv40, S3FIN-ADM-02-acc-adv45, S3FIN-ADM-03-acc-adv50 (+5)` | `CROWDING|d=5|tr=0.08` | 8/0 | 8/8/5 | `2.1` | `13.7bp` |
+| BEST | EUR | `model25` | `value_momentum_region_percentile` | `S3-ADM-05-adv-gate35-vm, S3-ADM-06-adv-gate50-vm, S3-ADM-07-adv-bkt-vm (+5)` | `REVERSION_AND_MOMENTUM|d=4|tr=0.06` | 8/0 | 8/6/6 | `2.09` | `15.31bp` |
 | BEST | EUR | `model25` | `model25_x_model238` | `S3PC-ADM-05-vm-shpref-ci, S3PC-ADM-06-vm-shchg-ci, S3PC-ADM-07-oe-shpref-ci (+5)` | `CROWDING|d=4|tr=0.06` | 8/0 | 6/3/1 | `2.07` | `6.76bp` |
-| BEST | EUR | `model25` | `value_momentum_region_percentile` | `S3PC-ADM-01-vmoe-ci, S3PC-ADM-02-vmoe-ci-sp2, S3PC-ADM-03-vm-avdiff126-ci (+5)` | `REVERSION_AND_MOMENTUM|d=4|tr=0.06` | 8/0 | 7/7/1 | `2.04` | `8.39bp` |
-| BEST | EUR | `model25` | `model25_x_model238` | `S3PC-ADM-05-vm-shpref-ci, S3PC-ADM-06-vm-shchg-ci, S3PC-ADM-07-oe-shpref-ci (+5)` | `REVERSION_AND_MOMENTUM|d=4|tr=0.06` | 8/0 | 7/3/1 | `1.96` | `6.02bp` |
-| BEST | EUR | `model25` | `operating_efficiency_component_percentile` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 3/2/2 | `1.9` | `0.0bp` |
-| GOOD | EUR | `model238` | `global_screening_factor_alignment_rank_d1, regional_peer_investment_concentration_rank_d1` | `RA-DUAL-GRANK-MIN-STATISTICAL, RA-DUAL-REV-GRANK-MIN-STATISTICAL` | `STATISTICAL|d=0|tr=0.04` | 8/0 | 3/1/0 | `1.5` | `0.0bp` |
-| GOOD | EUR | `model25` | `value_momentum_region_percentile` | `S3-ADM-01-ci-vm, S3-ADM-02-cs-vm-m10, S3-ADM-03-ci-oe (+5)` | `INDUSTRY|d=0|tr=0.04` | 8/0 | 6/1/0 | `1.26` | `8.86bp` |
-| GOOD | EUR | `model25` | `value_momentum_region_percentile` | `S3-ADM-01-ci-vm, S3-ADM-02-cs-vm-m10, S3-ADM-03-ci-oe (+5)` | `SUBINDUSTRY|d=2|tr=0.06` | 8/0 | 6/1/0 | `1.26` | `8.17bp` |
-| NORMAL | EUR | `price_signal_dl` | `raw_volume_indicator_3` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 8/0 | 4/0/0 | `1.22` | `0.0bp` |

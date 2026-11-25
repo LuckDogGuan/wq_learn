@@ -11,6 +11,8 @@ def test_stage23_refiner_specs_pass_all_static_gates_and_balance() -> None:
 
     batch_ids = [s["batch_id"] for s in specs]
     assert len(batch_ids) == len(set(batch_ids)), "Duplicate batch_id in stage23_refiner!"
+    assert any(b.startswith("S3-r4-EUR-M238-") for b in batch_ids), "Missing EUR model238 Orthogonal Finisher!"
+    assert any(b.startswith("S3-r4-EUR-OPEFF-") for b in batch_ids), "Missing EUR model25 OpEff Orthogonal Pack!"
     assert any(b.startswith("S3-r3b-EUR-FINA-") for b in batch_ids), "Missing EUR PC-Pass Finisher A!"
     assert any(b.startswith("S3-r3b-EUR-FINB-") for b in batch_ids), "Missing EUR PC-Pass Finisher B!"
     assert any(b.startswith("S3-r3b-USA-1AX-") for b in batch_ids), "Missing USA Single-Axis Stage-3 Rescue!"

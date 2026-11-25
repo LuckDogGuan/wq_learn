@@ -72,3 +72,13 @@
     - **`3qGrQQ8Q`（已打 `SC_PASS` + 别名 `SC 0.242 PC 0.720`）**：`Sh=2.14, 2Y=2.75, Fit=1.61, Margin=14.20bp, 0 FAIL`；
     - 同批另 5 条 `0-FAIL` 且 `SC = 0.229–0.259`（`WjYQ18WQ`, `kq8rEEAl`, `MPgRMMJ8`, `A1LZjjAw`, `omP588xJ`）已进入异步 PC 排队，下轮巡检继续按 **`Margin` 降序 + 正交 `< 0.68`** 收割！
   - **新集首波战果**：`EUR / TOP2500 / model238`（SmartHoldings）首波已出 **`kq87w6vO`（`Sh=1.50, SC=0.233, PC=0.6349`）**，已从易超时 `STATISTICAL` 切换至高速 `CROWDING/RAM`；新接入 `EUR / TOP2500 / model354`（`cov=100%, aCnt=1..3`）同步进入 `4,500/天` 连续流水线。
+
+- **2026-11-26 02:50（2 小时定时审计 #2 · 串行 PC 体检再斩 5 条 `PC < 0.70` 全绿因子 + `model238` 正交大突破 + 僵尸仿真 `DELETE` 提速上线！）**：
+  - **串行 Stage-4 PC/SC/正交审计战果（11/11 全部完成 `SC_PASS` 打标 + `SC 0.xxx PC 0.xxx` 别名，`0` 次 `/submit`）**：
+    - 在 11 条新 `0-FAIL + 2Y ≥ 2.24` 候选中，共 **5 条全部打穿 `PC < 0.70`**：`kq8rEEAl`（`13.37bp, Sh=1.78, SC 0.259 PC 0.665`）、**`vRYM8X5d`**（`12.97bp, Sh=1.92, 2Y=2.73, Fit=1.35, SC 0.254 PC 0.662`）、`A1LZjjAw`（`12.89bp, SC 0.251 PC 0.659`）、`omP57YLE`（`12.38bp, Sh=1.95, 2Y=2.74, Fit=1.39, SC 0.252 PC 0.661`）、`ZYX3k2O0`（`12.03bp, Sh=1.82, SC 0.239 PC 0.659`）；另 6 条 `vector_neut` / `sp2` 候选录得 `PC = 0.713–0.767`。
+    - **Margin 优先 + 正交 `< 0.68` 关键洞察**：所有含 `value_momentum_region_percentile` 的 11 条候选与现役冠军 **`RR5QjWYz`（`Margin=14.10bp, SC 0.259 PC 0.668`）** 两两相关均达 `0.7069–0.9997`（均 `≥ 0.68`），因此 **`RR5QjWYz` 稳居该簇唯一最高 Margin `Useful` 冠军**，其余 11 条全部落位 `SC_PASS` + 精确 `SC/PC` 别名（`vRYM8X5d` 作为高夏普 `1.92` 备胎登记在案）。
+  - **重大正交突破 & 换轨升级**：
+    1. **`EUR / model238`（SmartHoldings）直出 `xAl8adOn`（`country_relative_investment_rank_d1`, `Sh=1.58, 2Y=1.95, SC=0.284`）且与 `RR5QjWYz` 两两相关仅 `0.2957`（完全正交！）**，仅缺 `Fitness(0.77)` 与 `Sub-Uni(0.13)` → 已上线 **`S3-r4-EUR-M238-*`** 置顶第 1 顺位直冲第 2 条正交 `Useful`！
+    2. **新增纯非 `val_mom` 高 Margin 正交包 `S3-r4-EUR-OPEFF-*`**（主攻 `operating_efficiency_component_percentile` × `exclusions`/`accruals`/`NOA`/`model238`，脱离 `val_mom` 相关性簇，历史 Margin `40–52bp`！）。
+    3. **止损弱集 & 接入新蓝海**：淘汰 `EUR / model354`（`40 FULL, 0 命中, max=0.47`），换入实盘核验的 **`EUR / ai_equity_alpha`**（`cov=86.1%, aCnt=0..1`，分析师预测修正 AI 信号）。
+    4. **根治吞吐卡顿**：实证抓出 BRAIN 后端卡死在 `progress=0.15/0.90` 长达 44 分钟以上的僵尸仿真占满并发槽并引发 `POST 429` → 已实测官方 `DELETE /simulations/{id}` 返回 `HTTP 200` 清理僵尸成功，并在 `sim_runner.py` 固化 **`stall_timeout_sec=240s` 停滞早退 + 自动 `DELETE` 释槽 + 子查询 429 重试**！

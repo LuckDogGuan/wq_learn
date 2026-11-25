@@ -285,6 +285,15 @@ class BrainAuthSession:
     def post(self, endpoint: str, **kwargs: Any) -> requests.Response:
         return self.request("POST", endpoint, **kwargs)
 
+    def delete_simulation(self, endpoint: str, **kwargs: Any) -> requests.Response:
+        """Cancel a stalled/zombie simulation via official DELETE /simulations/{simulationId} only."""
+        clean_ep = endpoint if endpoint.startswith("http") else f"{self.base_url}/{endpoint.lstrip('/')}"
+        if "/simulations/" not in clean_ep or clean_ep.rstrip("/").endswith("/simulations"):
+            raise PermissionError(
+                f"delete_simulation only permits /simulations/{{simulationId}}, refused: {endpoint!r}"
+            )
+        return self.request("DELETE", endpoint, **kwargs)
+
     def patch(self, endpoint: str, *, explicit_user_confirmed: bool = False, **kwargs: Any) -> requests.Response:
         if not explicit_user_confirmed:
             raise PermissionError(

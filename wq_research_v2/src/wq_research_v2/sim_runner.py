@@ -156,9 +156,10 @@ class SimRunner:
         max_slots: int = 4,
         max_per_region: Optional[int] = 2,
         post_stagger_sec: float = 2.0,
-        max_post_429_retries: int = 2,
+        max_post_429_retries: int = 4,
         poll_interval_sec: float = 5.0,
-        poll_timeout_sec: float = 900.0,
+        poll_timeout_sec: float = 720.0,
+        stall_timeout_sec: float = 240.0,
     ) -> None:
         self.client = client
         self.ledger = ledger
@@ -174,6 +175,7 @@ class SimRunner:
         self._last_post_monotonic = 0.0
         self.poll_interval_sec = float(poll_interval_sec)
         self.poll_timeout_sec = float(poll_timeout_sec)
+        self.stall_timeout_sec = max(0.0, float(stall_timeout_sec))
 
     @staticmethod
     def slot_weight_for_region(region: str) -> int:
@@ -412,15 +414,26 @@ class SimRunner:
             # Poll simulation until server finishes, then IMMEDIATELY release the simulation slot
             # BEFORE fetching 8x2 child alpha metadata payloads -> maximizes slot utilization!
             poll_res = self._poll_progress_raw(chunk, progress_url)
-            _release_slot_once()
             if poll_res["kind"] == "DONE":
+                _release_slot_once()
                 return self._ingest_completed_progress(chunk, poll_res["data"])
-            return self._reconcile_once_chunk(chunk, progress_url, poll_res["reason"])
+            # On stall/timeout, reconcile-once + DELETE zombie BEFORE releasing slot so next POST won't hit 429!
+            res = self._reconcile_once_chunk(
+                chunk,
+                progress_url,
+                poll_res["reason"],
+                cancel_zombie=bool(poll_res.get("cancel_zombie", False)),
+            )
+            _release_slot_once()
+            return res
         finally:
             _release_slot_once()
 
     def _poll_progress_raw(self, chunk: list[dict[str, Any]], progress_url: str) -> dict[str, Any]:
-        deadline = time.monotonic() + self.poll_timeout_sec
+        now = time.monotonic()
+        deadline = now + self.poll_timeout_sec
+        last_progress: Optional[float] = None
+        last_progress_change_ts = now
         while time.monotonic() < deadline:
             try:
                 resp = self.client.get(progress_url, timeout=30)
@@ -429,11 +442,35 @@ class SimRunner:
 
             if resp.status_code == 429:
                 self.quota.wait_if_circuit_open()
+                time.sleep(max(2.0, self.poll_interval_sec))
                 continue
             if resp.status_code >= 500:
                 return {"kind": "FAIL", "reason": f"Poll HTTP {resp.status_code}"}
 
+            data = {}
+            if (resp.text or "").strip():
+                try:
+                    data = resp.json()
+                except Exception:
+                    data = {}
+
+            status = str(data.get("status", "")).upper()
             retry_after = resp.headers.get("Retry-After") or resp.headers.get("retry-after")
+
+            # Track progress movement to detect BRAIN server-side stuck zombies (e.g. progress=0.15 forever)
+            prog = data.get("progress")
+            if isinstance(prog, (int, float)):
+                prog_f = float(prog)
+                if last_progress is None or prog_f != last_progress:
+                    last_progress = prog_f
+                    last_progress_change_ts = time.monotonic()
+                elif self.stall_timeout_sec > 0 and (time.monotonic() - last_progress_change_ts) >= self.stall_timeout_sec:
+                    return {
+                        "kind": "FAIL",
+                        "reason": f"Poll stalled at progress={last_progress:.2f} for {int(self.stall_timeout_sec)}s",
+                        "cancel_zombie": True,
+                    }
+
             if retry_after:
                 try:
                     wait = max(0.5, min(float(retry_after), 30.0))
@@ -442,45 +479,101 @@ class SimRunner:
                 time.sleep(wait)
                 continue
 
-            data = resp.json() if (resp.text or "").strip() else {}
-            status = str(data.get("status", "")).upper()
             if status in ("COMPLETE", "WARNING", "ERROR") or data.get("alpha") or data.get("children"):
                 return {"kind": "DONE", "data": data}
             time.sleep(self.poll_interval_sec)
 
-        return {"kind": "FAIL", "reason": "Poll timeout"}
+        return {"kind": "FAIL", "reason": "Poll timeout", "cancel_zombie": True}
 
     def _poll_progress(self, chunk: list[dict[str, Any]], progress_url: str) -> dict[str, int]:
         poll_res = self._poll_progress_raw(chunk, progress_url)
         if poll_res["kind"] == "DONE":
             return self._ingest_completed_progress(chunk, poll_res["data"])
-        return self._reconcile_once_chunk(chunk, progress_url, poll_res["reason"])
+        return self._reconcile_once_chunk(
+            chunk,
+            progress_url,
+            poll_res["reason"],
+            cancel_zombie=bool(poll_res.get("cancel_zombie", False)),
+        )
+
+    def _fetch_child_result(self, child_id: str) -> tuple[Optional[str], Optional[str]]:
+        """Fetch child simulation result with 429/transient retry; returns (alpha_id, error_msg)."""
+        last_err: Optional[str] = None
+        for attempt in range(3):
+            try:
+                cresp = self.client.get(f"/simulations/{child_id}", timeout=30)
+                if cresp.status_code == 429:
+                    retry_hdr = cresp.headers.get("Retry-After") or cresp.headers.get("retry-after")
+                    try:
+                        wait = float(retry_hdr) if retry_hdr else (3.0 * (attempt + 1))
+                    except ValueError:
+                        wait = 3.0 * (attempt + 1)
+                    time.sleep(max(1.0, min(wait, 15.0)))
+                    last_err = "Child GET HTTP 429"
+                    continue
+                if cresp.status_code == 200 and (cresp.text or "").strip():
+                    cdata = cresp.json()
+                    aid = cdata.get("alpha")
+                    if aid:
+                        return str(aid), None
+                    st = str(cdata.get("status", "")).upper()
+                    msg = str(cdata.get("message") or "").strip()
+                    if st == "ERROR":
+                        return None, f"Sim ERROR: {msg[:120]}" if msg else "Sim ERROR"
+                    last_err = f"Missing child alpha_id (status={st or 'UNKNOWN'})"
+                    if attempt < 2:
+                        time.sleep(1.5)
+                        continue
+                    return None, last_err
+                last_err = f"Child GET HTTP {cresp.status_code}"
+                if attempt < 2:
+                    time.sleep(1.5)
+            except Exception as exc:
+                last_err = f"Child GET exception: {type(exc).__name__}"
+                if attempt < 2:
+                    time.sleep(1.5)
+        return None, last_err or "Missing child alpha_id"
 
     def _fetch_child_alpha_id(self, child_id: str) -> Optional[str]:
-        try:
-            cresp = self.client.get(f"/simulations/{child_id}", timeout=30)
-            cdata = cresp.json() if cresp.status_code == 200 and (cresp.text or "").strip() else {}
-            return cdata.get("alpha")
-        except Exception:
-            return None
+        aid, _ = self._fetch_child_result(child_id)
+        return aid
 
     def _fetch_alpha_payload(self, aid: str) -> Optional[dict[str, Any]]:
-        try:
-            aresp = self.client.get(f"/alphas/{aid}", timeout=30)
-            return aresp.json() if aresp.status_code == 200 else {}
-        except Exception:
-            return None
+        for attempt in range(3):
+            try:
+                aresp = self.client.get(f"/alphas/{aid}", timeout=30)
+                if aresp.status_code == 429:
+                    retry_hdr = aresp.headers.get("Retry-After") or aresp.headers.get("retry-after")
+                    try:
+                        wait = float(retry_hdr) if retry_hdr else (3.0 * (attempt + 1))
+                    except ValueError:
+                        wait = 3.0 * (attempt + 1)
+                    time.sleep(max(1.0, min(wait, 15.0)))
+                    continue
+                if aresp.status_code == 200 and (aresp.text or "").strip():
+                    return aresp.json()
+                if attempt < 2:
+                    time.sleep(1.5)
+            except Exception:
+                if attempt < 2:
+                    time.sleep(1.5)
+        return None
 
     def _ingest_completed_progress(self, chunk: list[dict[str, Any]], data: dict[str, Any]) -> dict[str, int]:
         completed = unobserved = errors = 0
         children = data.get("children")
-        alpha_ids: list[Optional[str]] = []
+        child_results: list[tuple[Optional[str], Optional[str]]] = []
 
         if isinstance(children, list) and len(chunk) > 1:
             with ThreadPoolExecutor(max_workers=min(4, max(1, len(children)))) as fetch_pool:
-                alpha_ids = list(fetch_pool.map(self._fetch_child_alpha_id, children))
+                child_results = list(fetch_pool.map(self._fetch_child_result, children))
         else:
-            alpha_ids.append(data.get("alpha"))
+            aid_single = data.get("alpha")
+            err_single = None if aid_single else (f"Sim ERROR: {str(data.get('message') or '')[:120]}" if str(data.get("status", "")).upper() == "ERROR" else "Missing child alpha_id")
+            child_results.append((str(aid_single) if aid_single else None, err_single))
+
+        alpha_ids = [r[0] for r in child_results]
+        child_errs = [r[1] for r in child_results]
 
         valid_pairs = [(idx, alpha_ids[idx]) for idx in range(len(chunk)) if idx < len(alpha_ids) and alpha_ids[idx]]
         alpha_payloads: dict[int, Optional[dict[str, Any]]] = {}
@@ -493,7 +586,8 @@ class SimRunner:
         for idx, t in enumerate(chunk):
             aid = alpha_ids[idx] if idx < len(alpha_ids) else None
             if not aid:
-                self.ledger.mark_reconcile_failed_unobserved(t["task_id"], "Missing child alpha_id")
+                err_msg = (child_errs[idx] if idx < len(child_errs) and child_errs[idx] else "Missing child alpha_id")
+                self.ledger.mark_reconcile_failed_unobserved(t["task_id"], err_msg)
                 unobserved += 1
                 continue
             adata = alpha_payloads.get(idx)
@@ -605,11 +699,14 @@ class SimRunner:
         chunk: list[dict[str, Any]],
         progress_url: Optional[str],
         reason: str,
+        *,
+        cancel_zombie: bool = False,
     ) -> dict[str, int]:
-        """Reconcile-once-never-resend protocol: read-only check once, else RESULTS_UNOBSERVED."""
+        """Reconcile-once-never-resend protocol: read-only check once, cancel confirmed stuck zombie, else RESULTS_UNOBSERVED."""
         for t in chunk:
             self.ledger.mark_task_pending_reconcile(t["task_id"], reason)
 
+        zombie_canceled = False
         if progress_url:
             try:
                 resp = self.client.get(progress_url, timeout=30)
@@ -617,9 +714,17 @@ class SimRunner:
                     data = resp.json()
                     if data.get("alpha") or data.get("children"):
                         return self._ingest_completed_progress(chunk, data)
+                    if cancel_zombie and hasattr(self.client, "delete_simulation"):
+                        try:
+                            dresp = self.client.delete_simulation(progress_url, timeout=20)
+                            if dresp.status_code in (200, 204):
+                                zombie_canceled = True
+                        except Exception:
+                            pass
             except Exception:
                 pass
 
+        suffix = " [zombie DELETE OK]" if zombie_canceled else ""
         for t in chunk:
-            self.ledger.mark_reconcile_failed_unobserved(t["task_id"], f"Unobserved after 1 reconcile: {reason}")
+            self.ledger.mark_reconcile_failed_unobserved(t["task_id"], f"Unobserved after 1 reconcile: {reason}{suffix}")
         return {"completed": 0, "unobserved": len(chunk), "errors": 0}

@@ -135,3 +135,58 @@ def test_rolling_pipeline_staggers_posts_and_recovers_pre_creation_429(tmp_path)
         assert all(d >= 0.035 for d in diffs), f"POSTs collided too closely: {diffs}"
     finally:
         ledger.close()
+
+
+class _StuckZombieBrainClient:
+    """Simulates a BRAIN server-side zombie stuck forever at progress=0.15."""
+
+    def __init__(self) -> None:
+        self.deleted_urls: list[str] = []
+
+    def post(self, path: str, json: Any = None, timeout: int = 45) -> _FakeResp:
+        return _FakeResp(201, {}, {"Location": "/simulations/ZOMBIE_1"})
+
+    def get(self, path: str, timeout: int = 30) -> _FakeResp:
+        return _FakeResp(200, {"progress": 0.15}, {"Retry-After": "0.02"})
+
+    def delete_simulation(self, path: str, timeout: int = 20) -> _FakeResp:
+        self.deleted_urls.append(path)
+        return _FakeResp(200, {})
+
+
+def test_stalled_zombie_bails_early_and_cancels_via_delete(tmp_path) -> None:
+    ledger = LedgerStore(tmp_path / "zombie.db")
+    quota = QuotaTracker(ledger)
+    client = _StuckZombieBrainClient()
+    runner = SimRunner(
+        client,
+        ledger,
+        quota,
+        max_slots=2,
+        poll_interval_sec=0.01,
+        poll_timeout_sec=5.0,
+        stall_timeout_sec=0.08,
+    )
+    try:
+        spec = {
+            "batch_id": "ZOMBIE-TEST-01",
+            "region": "EUR",
+            "universe": "TOP2500",
+            "dataset_id": "model238",
+            "settings": {"region": "EUR", "universe": "TOP2500", "delay": 1, "neutralization": "CROWDING", "decay": 0, "truncation": 0.04, "visualization": False},
+            "items": [
+                {"expression": "rank(ts_mean(close, 5))", "source_side": "ADMIN_ORIGINAL", "template_id": "T1"},
+                {"expression": "rank(ts_mean(close, 10))", "source_side": "TOP100_2026Q4", "template_id": "T2"},
+            ],
+        }
+        bid, runnable, _ = runner.prepare_batch_tasks(spec, simulation_mode="FULL")
+        t0 = time.monotonic()
+        res = runner.run_prepared_tasks(bid, runnable, batch_size=8)
+        elapsed = time.monotonic() - t0
+        assert elapsed < 2.0, f"Stall bailout did not fire early (took {elapsed:.2f}s)"
+        assert res["unobserved"] == 2
+        assert client.deleted_urls == ["/simulations/ZOMBIE_1"]
+        rows = ledger._conn.execute("SELECT error_reason FROM sim_tasks WHERE batch_id=?", (bid,)).fetchall()
+        assert all("Poll stalled at progress=0.15" in r["error_reason"] and "zombie DELETE OK" in r["error_reason"] for r in rows)
+    finally:
+        ledger.close()

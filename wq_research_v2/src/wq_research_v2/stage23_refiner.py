@@ -655,10 +655,136 @@ def build_usa_pricedl_single_axis_s3r3_specs() -> list[dict[str, Any]]:
     return specs
 
 
+def build_eur_model238_stage3_finisher_specs() -> list[dict[str, Any]]:
+    """Stage-3 r4 ORTHOGONAL Finisher for EUR/TOP2500/model238 (SmartHoldings, ZERO model25 overlap!).
+
+    Audit #2 verified breakthrough:
+      - xAl8adOn (country_relative_investment_rank_d1, CROWDING d=0):
+        Sh=1.58, 2Y=1.95, Local SC=0.2836, pairwise corr(RR5QjWYz)=0.2957 (COMPLETELY ORTHOGONAL!),
+        ONLY failing LOW_FITNESS(0.77, TO=17.95%) and LOW_SUB_UNIVERSE_SHARPE(0.13)!
+      - kq87w6vO (global_screening_factor_alignment x regional_change_in_preference):
+        Sh=1.50, PC=0.6349 (ALREADY PC_PASS!).
+    Applies our proven EUR Stage-3 blueprint (adv20 gate + mild decay {2,4,6} + truncation {0.06,0.08} +
+    light 3d/5d smoothing + same-dataset model238 dual branches) to mint our #2 orthogonal EUR Useful winner!
+    """
+    specs: list[dict[str, Any]] = []
+    cri = "ts_backfill(country_relative_investment_rank_d1, 21)"
+    gfa = "ts_backfill(global_screening_factor_alignment_rank_d1, 21)"
+    rcp = "ts_backfill(regional_change_in_preference_rank_d1, 21)"
+    rpic = "ts_backfill(regional_peer_investment_concentration_rank_d1, 21)"
+    rip = "ts_backfill(regional_institutional_preference_rank_d1, 21)"
+    ci = "group_cartesian_product(country, industry)"
+
+    m238_exprs: list[tuple[str, str, str, str]] = [
+        ("S3M238-ADM-01-cri-adv35-ind", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_zscore({cri}, industry), 0)"),
+        ("S3M238-ADM-02-cri-adv45-ind", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.45, group_zscore({cri}, industry), 0)"),
+        ("S3M238-ADM-03-cri-d5-adv40-ci", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.4, group_zscore(ts_decay_linear({cri}, 5), {ci}), 0)"),
+        ("S3M238-ADM-04-cri-gfa-adv40", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.4, group_zscore(min(rank({cri}), rank({gfa})), {ci}), 0)"),
+        ("S3M238-TOP-01-cri-rcp-adv40", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.4, group_zscore(min(rank({cri}), rank({rcp})), {ci}), 0)"),
+        ("S3M238-TOP-02-cri-sp15-adv40", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.4, signed_power(group_zscore({cri}, {ci}), 1.5), 0)"),
+        ("S3M238-TOP-03-gfa-rcp-adv35", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.35, group_rank(min(rank(ts_decay_linear({gfa}, 5)), rank(ts_decay_linear({rcp}, 5))), subindustry), 0)"),
+        ("S3M238-TOP-04-cri-rip-adv45", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.45, group_zscore(min(rank({cri}), rank({rip})), industry), 0)"),
+    ]
+
+    m238_grid: list[tuple[str, str, int, float]] = [
+        ("crd_d3_t06", "CROWDING", 3, 0.06),
+        ("crd_d5_t08", "CROWDING", 5, 0.08),
+        ("ram_d4_t06", "REVERSION_AND_MOMENTUM", 4, 0.06),
+        ("ram_d6_t08", "REVERSION_AND_MOMENTUM", 6, 0.08),
+        ("ind_d4_t06", "INDUSTRY", 4, 0.06),
+        ("cty_d4_t06", "COUNTRY", 4, 0.06),
+    ]
+    for tag, neut, dec, trunc in m238_grid:
+        specs.append(
+            _pack_items_into_spec(
+                batch_id=f"S3-r4-EUR-M238-{tag}",
+                campaign_id="S3_EUR_M238_ORTHOGONAL",
+                hypothesis_id="HYP-S3-EUR-M238-ORTHO-USEFUL",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model238",
+                queue_type="NORMAL",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=[
+                    {
+                        "expression": expr,
+                        "template_id": f"{tid}_{neut}_d{dec}",
+                        "source_side": side,
+                        "author_id": auth,
+                        "dataset_id": "model238",
+                        "primary_field_id": "country_relative_investment_rank_d1",
+                    }
+                    for tid, side, auth, expr in m238_exprs
+                ],
+            )
+        )
+    return specs
+
+
+def build_eur_model25_opeff_orthogonal_s3r4_specs() -> list[dict[str, Any]]:
+    """Stage-3 r4 NON-val_mom EUR/model25 high-Margin orthogonal pack (operating_efficiency / exclusions / accruals).
+
+    Audit #2 proved all val_mom variants correlate 0.707-0.999 with Useful winner RR5QjWYz (14.10bp).
+    Pure operating_efficiency_component_percentile already hit np6JW77q (Sh=1.85, 2Y=1.79, Fit=1.25, Mgn=40.73bp)
+    and kq87KjPK (Sh=1.70, 2Y=1.85, Mgn=52.92bp) WITHOUT value_momentum -> high Margin + low corr vs RR5QjWYz!
+    """
+    specs: list[dict[str, Any]] = []
+    oe = "ts_backfill(operating_efficiency_component_percentile, 21)"
+    excl = "ts_backfill(exclusions_component_percentile, 21)"
+    acc = "ts_backfill(mdl25_8v, 21)"
+    noa = "ts_backfill(mdl25_bsv421_8v, 126)"
+    cri = "ts_backfill(country_relative_investment_rank_d1, 21)"
+    ci = "group_cartesian_product(country, industry)"
+
+    opeff_exprs: list[tuple[str, str, str, str]] = [
+        ("S3OE-ADM-01-oe-adv40-ci", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.4, group_zscore({oe}, {ci}), 0)"),
+        ("S3OE-ADM-02-oe-adv45-ci", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.45, group_zscore({oe}, {ci}), 0)"),
+        ("S3OE-ADM-03-oe-acc-adv40-ci", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.4, group_zscore(min(rank({oe}), rank({acc})), {ci}), 0)"),
+        ("S3OE-ADM-04-oe-noa-adv40-ci", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.4, group_zscore(min(rank({oe}), rank({noa})), {ci}), 0)"),
+        ("S3OE-TOP-01-oe-sp2-adv40-ci", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.4, signed_power(group_zscore({oe}, {ci}), 2), 0)"),
+        ("S3OE-TOP-02-oe-excl-adv40-ci", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.4, group_zscore(min(rank({oe}), rank({excl})), {ci}), 0)"),
+        ("S3OE-TOP-03-oe-cri-adv40-ci", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.4, group_zscore(min(rank({oe}), rank({cri})), {ci}), 0)"),
+        ("S3OE-TOP-04-oe-vret-adv40-ci", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.4, vector_neut(group_zscore({oe}, {ci}), rank(ts_mean(returns, 22))), 0)"),
+    ]
+
+    for tag, neut, dec, trunc in [
+        ("crd_d4_t06", "CROWDING", 4, 0.06),
+        ("crd_d6_t08", "CROWDING", 6, 0.08),
+        ("ram_d4_t06", "REVERSION_AND_MOMENTUM", 4, 0.06),
+        ("ram_d6_t08", "REVERSION_AND_MOMENTUM", 6, 0.08),
+    ]:
+        specs.append(
+            _pack_items_into_spec(
+                batch_id=f"S3-r4-EUR-OPEFF-{tag}",
+                campaign_id="S3_EUR_M25_OPEFF_ORTHO",
+                hypothesis_id="HYP-S3-EUR-OPEFF-HIGHMGN-ORTHO",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model25",
+                queue_type="NORMAL",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=[
+                    {
+                        "expression": expr,
+                        "template_id": f"{tid}_{neut}_d{dec}",
+                        "source_side": side,
+                        "author_id": auth,
+                        "dataset_id": "model25",
+                        "primary_field_id": "operating_efficiency_component_percentile",
+                    }
+                    for tid, side, auth, expr in opeff_exprs
+                ],
+            )
+        )
+    return specs
+
+
 def build_all_stage23_refiner_specs() -> list[dict[str, Any]]:
-    """Return ordered Stage-3 r3 Finishers -> r2 PC-Crush -> r1b Sub-Universe -> Stage-2 Mild Param Ladder."""
+    """Return ordered Stage-3 r4 Orthogonal Winners -> r3 Finishers -> r2 PC-Crush -> r1b Sub-Uni -> Stage-2."""
     return (
-        build_eur_pc_pass_finisher_s3r3_specs()
+        build_eur_model238_stage3_finisher_specs()
+        + build_eur_model25_opeff_orthogonal_s3r4_specs()
+        + build_eur_pc_pass_finisher_s3r3_specs()
         + build_usa_pricedl_single_axis_s3r3_specs()
         + build_eur_model25_stage3_pc_crush_specs()
         + build_eur_model25_stage3_subuniverse_rescue_specs()

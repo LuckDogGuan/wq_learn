@@ -61,3 +61,7 @@
 - **2026-11-26 00:35（2 小时定时审计 #1 · 单轴纠偏验证成功 + 3 个新数据集并行验证 + 4,500/天流水线上线）**：
   - **坏批次纠偏实证**：`S3-r2-USA-PSD` 因同时修改窗口+`adv20`硬切+`decay` 导致 `1.51 → 0.77`；切换严格单轴 **`S3-r3b-USA-1AX`** 后立刻恢复 **`Jj3Ej6bO`（`Sh=1.51, 2Y=2.89, sub=PASS:0.82/0.65`）**、**`RR5QRjmj`（`Sh=1.47, 2Y=2.84, sub=PASS`）** 与 **`LL8aLV7L`（`Sh=1.46, 2Y=2.66`）**。
   - **数据集快速止损与新集初筛**：`USA / model238` 满 `48` 条 `0` 命中（`max=0.61`）已自动早停；新换入 **`USA / forward_beta_risk`** 首波即出 **`kq8rxe3k`（`Sh=0.99, Mgn=6.33bp`）**，**`USA / news_sentiment_nlp`** 首波出 **`wpNxpZ3Y`（`Sh=0.89`）**，**`USA / forum_sentiment`** 正在零屏障连续流水线中与 `EUR` 2+2 混跑推进。
+
+- **2026-11-26 02:50（2 小时定时审计 #2 · `price_signal_dl` `POOL_A` 扩至 `10` 条 + 淘汰低天花板舆情集、换入 `model68` DREAM 风险调整动量！）**：
+  - **漏斗增量**：`USA / TOP3000` 累计 `664` FULL，一阶段 `83` 条、二阶段 `POOL_A` 从 `2` 条暴增至 **`10` 条**（全部由 `price_signal_dl` 单轴微调贡献：`Jj3Ej6bO 1.51/2Y 2.89`、`akRZk5ow 1.49/2Y 2.65`、`xAl6VmEw 1.43/2Y 2.33`、`blxZle1p 1.42/2Y 2.62`、`9qG1qN3V 1.41/2Y 2.79`、`XgNQgd1b 1.28/2Y 2.62` 等）。
+  - **数据集果断换血**：`USA / news_sentiment_nlp`（`80 FULL, max=0.91, 2Y=0.77`）与 `USA / forum_sentiment`（`80 FULL, max=0.86, 2Y=0.94`）天花板明显偏低，本轮下线停止消耗额度；保留 `price_signal_dl` + `forward_beta_risk`（`max=0.99`），并引入实盘核验的 **`USA / model68`（DREAM Risk-Alleviated Momentum Scores，`val=5.0, cov=82.5–86.4%, aCnt=1..12`）** 补强 `USA / model (1.3×, 0 OS)` 空白塔！
