@@ -290,10 +290,12 @@ class ExprValidator:
         elif neut:
             if region == "AMR":
                 valid_neuts = set(self.ops_cfg["valid_neutralizations"]["amr_only_7"])
-            else:
+            elif region in {"GLB", "EUR", "ASI"}:
                 valid_neuts = set(self.ops_cfg["valid_neutralizations"]["standard_11"]) | set(
                     self.ops_cfg["valid_neutralizations"]["multi_country_extra"]
                 )
+            else:
+                valid_neuts = set(self.ops_cfg["valid_neutralizations"]["standard_11"])
             if neut not in valid_neuts:
                 errors.append(f"Invalid neutralization {neut!r} for region {region!r}")
 

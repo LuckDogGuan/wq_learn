@@ -36,6 +36,12 @@ python -m wq_research_v2 pc check --alpha-ids KPVlkqwE,2rG8ZR8Z
 # 7. 无 GUI 轻量标签工作流（默认只预览不写库，确认后加 --confirm-apply 打上 Useful 供网页端挑选提交）
 python -m wq_research_v2 tag apply --alpha-ids 2rG8ZR8Z,1YGknEYQ --tag Useful
 python -m wq_research_v2 tag apply --alpha-ids 2rG8ZR8Z,1YGknEYQ --tag Useful --confirm-apply
+
+# 8. 高 Base 多市场 D1 RA 守护进程（默认按 EUR,USA,GLB,ASI,CHN,DEU,HKG,KOR,GBR,AMR,IND 轮巡 + 48 条无命中自动早停）
+python -u -m wq_research_v2.daemon_ra_runner --region EUR,USA,GLB,ASI,CHN,DEU,HKG,KOR,GBR,AMR,IND --slots 4 --batch-size 8 --mode FULL --daily-target 3000 --round-robin-waves 1 --early-stop-sims 48 --loop
+
+# 9. 只读审计广州服务器实时进展（30 分钟巡检脚本）
+Get-Content -Raw scripts/ops/check_guangzhou_v2.py | ssh guangzhou "/root/miniconda3/bin/python -"
 ```
 
 ## 模块清单

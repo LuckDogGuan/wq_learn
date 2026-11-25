@@ -72,3 +72,12 @@
   - **关键实证结论 ①**：`FULL`（`144s`）与 `QUICK`（`132s`）耗时仅差 8.1%，且 `QUICK` 丢失 `rn_sharpe`，因此 `DEU` 生产批**直接全走 `FULL`**；
   - **关键实证结论 ②**：`model264` 原始日频信号直接做 `ts_zscore`/`ts_rank` 换手高达 `67%–101%`，但**前置 `ts_mean(..., 22)` 平滑**后（`gJr6Zd8g`）换手降至 **`2.37%`**、**`Margin = 26.11bp`**、`2Y = +0.55`！已据此将广州 `DEU` 生产模板全线升级为前置平滑（`ts_mean 22` / `ts_decay_linear 10`）+ `subindustry` 分组，并增补 `fundamental6` 低换手财报比率梯队。
 - **2026-11-25 17:05（广州 `DEU` 专属 RA 服务上线）**：部署 `worldquant-v2-deu-ra.service`（4 槽 × 8 条 `FULL` Multi-Sim，硬限 `MemoryMax=512M`，日目标 `3,000`，全量保留分池 `deu_ra_funnel_latest.json` 绝不丢弃任何好结果）。
+- **2026-11-25 17:22（Checkpoint #1 实时审计与果断止损换向！）**：
+  - **运行健康度**：服务 `active (running)`，仅占 **`64.1 MB` RAM**，**12 分钟完成 `160` 条 `FULL`**（`0` unobserved、`0` HTTP 429，吞吐约 `800 FULL/小时`）。
+  - **关键实证发现（`Dataset = model264` 方向止损）**：
+    - `model264` 在 `DEU/TOP500/SUBINDUSTRY` 下实测 `160` 条（20 个字段 × 8 个模板）：仅 `1` 条 `|Sharpe| ≥ 0.80`（`rK0Y7128`, `Sh=-0.83`），最高正向 Sharpe 仅 **`+0.71`**（`LL8WK2q9`, `2Y=+0.68`, `TO=3.85%`, `Margin=+23.83bp`），`POOL_S / POOL_A / POOL_B (>0.80)` 均为 `0`！
+    - **方向规律定位**：所有 20 个 `model264` 字段均呈严格一致的**原始负向 → `reverse(...)` 正向**（`RA-TOP-02-rev-sub-gz-m22` 均值 `+0.499`、`max +0.71`、`TO 3.0%`、`Margin 23–32bp`），正反双向对跑导致 50% 额度被明知反号的模板消耗；且单字段 Sharpe 天花板偏低（`~0.71`）。
+  - **立即执行修正动作**：
+    1. **不丢弃好种子**：`LL8WK2q9`（`0.71, Mgn=23.8bp`）、`0mGqGY9q`（`0.63, Mgn=32.1bp`）、`0mGqPKl1`（`0.63, Mgn=26.4bp`）永久保留在 SQLite 中，未来可作为低换手辅助腿；
+    2. **立即早停 `DEU/model264`**（不再浪费额度跑 `INDUSTRY`/`RAM`），`DEU` 直接跳过 `model264` 转向 **`analyst93`（38 个免额 VECTOR）→ `other250`（9 个免额 VECTOR）→ `fundamental6`（低换手财报比率）**；
+    3. 同步在 `daemon_ra_runner.py` 植入**自动数据集早停（连续 2 波 `0` 条 `|Sh|≥0.80` 自动切下一集）**与**高 Base 多市场轮巡（`EUR → USA → GLB → ASI → CHN → DEU(analyst93/fnd6) → HKG → KOR → GBR → AMR → IND`）**。
