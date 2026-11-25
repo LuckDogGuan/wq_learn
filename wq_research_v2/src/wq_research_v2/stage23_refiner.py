@@ -321,6 +321,188 @@ def build_stage2_mild_param_ladder_specs() -> list[dict[str, Any]]:
     return specs
 
 
+def build_eur_model25_stage3_pc_crush_specs() -> list[dict[str, Any]]:
+    """Stage-3 PC-Crushing Pack for EUR/TOP2500/model25 (2-Hour Audit #1 pivot).
+
+    Live PC audit proved:
+      - Simple INDUSTRY/MARKET val_mom + adv20 hits 0-FAIL Sh=2.49, 2Y=2.40, SC=0.37, BUT PC=0.946 (crowded).
+      - Adding REVERSION_AND_MOMENTUM + country*industry (pwWXv5Kq) cut PC 0.946 -> 0.7948 (0-FAIL Sh=1.95, 2Y=2.20).
+      - Adding REVERSION_AND_MOMENTUM + min(rank(val_mom), rank(op_eff)) (WjYqLeGo) cut PC -> 0.7815 (0-FAIL Sh=1.63, 2Y=2.28).
+    This pack combines ALL FOUR PC-cutting levers to push PC from 0.7815 -> < 0.68 while preserving 0-FAIL POOL_S:
+      1) Risk-factor neutralizations: STATISTICAL, SLOW_AND_FAST, CROWDING, FAST, REVERSION_AND_MOMENTUM
+      2) Combining country*industry + dual-branch + signed_power(2/0.5) + ts_av_diff(126) + vector_neut(..., returns)
+      3) Cross-dataset fusion with ultra-low-crowding EUR model238 SmartHoldings (aCnt=0..2, cov=96.27%!)
+    """
+    specs: list[dict[str, Any]] = []
+    vm = "ts_backfill(value_momentum_region_percentile, 21)"
+    oe = "ts_backfill(operating_efficiency_component_percentile, 21)"
+    acc = "ts_backfill(mdl25_8v, 21)"
+    noa = "ts_backfill(mdl25_bsv421_8v, 126)"
+    ci = "group_cartesian_product(country, industry)"
+    # Ultra-low-crowding EUR model238 SmartHoldings fields (live-verified cov=96.27%, aCnt=0..2!)
+    sh_pref = "ts_backfill(regional_institutional_preference_rank_d1, 21)"
+    sh_chg = "ts_backfill(regional_change_in_preference_rank_d1, 21)"
+    sh_conc = "ts_backfill(regional_peer_investment_concentration_rank_d1, 21)"
+    sh_fit = "ts_backfill(global_screening_factor_alignment_rank_d1, 21)"
+
+    # Pack PC-A: Pure model25 + adv20 PC-crushers (combine country*industry + dual + signed_power + ts_av_diff + vector_neut)
+    expr_defs_pca: list[tuple[str, str, str, str]] = [
+        ("S3PC-ADM-01-vmoe-ci", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_zscore(min(rank({vm}), rank({oe})), {ci}), 0)"),
+        ("S3PC-ADM-02-vmoe-ci-sp2", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, signed_power(group_zscore(min(rank({vm}), rank({oe})), {ci}), 2), 0)"),
+        ("S3PC-ADM-03-vm-avdiff126-ci", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_zscore(ts_av_diff({vm}, 126), {ci}), 0)"),
+        ("S3PC-ADM-04-vmoe-vneut-ret", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, vector_neut(group_zscore(min(rank({vm}), rank({oe})), {ci}), rank(ts_mean(returns, 22))), 0)"),
+        ("S3PC-TOP-01-vm-ci-sp2", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.35, signed_power(group_zscore({vm}, {ci}), 2), 0)"),
+        ("S3PC-TOP-02-vmav-oe-ci", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.35, group_zscore(min(rank(ts_av_diff({vm}, 126)), rank({oe})), {ci}), 0)"),
+        ("S3PC-TOP-03-vm-acc-ci", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.35, group_zscore(min(rank({vm}), rank({acc})), {ci}), 0)"),
+        ("S3PC-TOP-04-oe-noa-ci", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.35, group_zscore(min(rank({oe}), rank({noa})), {ci}), 0)"),
+    ]
+
+    # Pack PC-B: Cross-dataset model25 x model238 SmartHoldings (aCnt=0..2!) low-PC fusion
+    expr_defs_pcb: list[tuple[str, str, str, str]] = [
+        ("S3PC-ADM-05-vm-shpref-ci", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_zscore(min(rank({vm}), rank({sh_pref})), {ci}), 0)"),
+        ("S3PC-ADM-06-vm-shchg-ci", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_zscore(min(rank({vm}), rank({sh_chg})), {ci}), 0)"),
+        ("S3PC-ADM-07-oe-shpref-ci", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_zscore(min(rank({oe}), rank({sh_pref})), {ci}), 0)"),
+        ("S3PC-ADM-08-vm-shconc-rev", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_zscore(min(rank({vm}), rank(reverse({sh_conc}))), {ci}), 0)"),
+        ("S3PC-TOP-05-vm-shfit-sp2", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.35, signed_power(group_zscore(min(rank({vm}), rank({sh_fit})), {ci}), 2), 0)"),
+        ("S3PC-TOP-06-vm-vneut-shconc", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.35, vector_neut(group_zscore({vm}, {ci}), rank({sh_conc})), 0)"),
+        ("S3PC-TOP-07-oe-shchg-ci", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.35, group_zscore(min(rank({oe}), rank({sh_chg})), {ci}), 0)"),
+        ("S3PC-TOP-08-vm-shpref-sp05", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.35, signed_power(group_zscore(min(rank({vm}), rank({sh_pref})), {ci}), 0.5), 0)"),
+    ]
+
+    pc_grid: list[tuple[str, str, int, float]] = [
+        ("stat_d4_t06", "STATISTICAL", 4, 0.06),
+        ("snf_d4_t06", "SLOW_AND_FAST", 4, 0.06),
+        ("crd_d4_t06", "CROWDING", 4, 0.06),
+        ("fast_d2_t04", "FAST", 2, 0.04),
+        ("ram_d4_t06", "REVERSION_AND_MOMENTUM", 4, 0.06),
+        ("stat_d6_t08", "STATISTICAL", 6, 0.08),
+    ]
+
+    for tag, neut, dec, trunc in pc_grid:
+        specs.append(
+            _pack_items_into_spec(
+                batch_id=f"S3-r2-EUR-M25PCA-{tag}",
+                campaign_id="S3_EUR_M25_PC_CRUSH",
+                hypothesis_id="HYP-S3-EUR-M25-PC-LT068-PURE",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model25",
+                queue_type="NORMAL",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=[
+                    {
+                        "expression": expr,
+                        "template_id": f"{tid}_{neut}_d{dec}",
+                        "source_side": side,
+                        "author_id": auth,
+                        "dataset_id": "model25",
+                        "primary_field_id": "value_momentum_region_percentile",
+                    }
+                    for tid, side, auth, expr in expr_defs_pca
+                ],
+            )
+        )
+        specs.append(
+            _pack_items_into_spec(
+                batch_id=f"S3-r2-EUR-M25PCB-{tag}",
+                campaign_id="S3_EUR_M25_PC_CRUSH",
+                hypothesis_id="HYP-S3-EUR-M25-M238-PC-LT068",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model25",
+                queue_type="NORMAL",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=[
+                    {
+                        "expression": expr,
+                        "template_id": f"{tid}_{neut}_d{dec}",
+                        "source_side": side,
+                        "author_id": auth,
+                        "dataset_id": "model25",
+                        "primary_field_id": "model25_x_model238",
+                    }
+                    for tid, side, auth, expr in expr_defs_pcb
+                ],
+            )
+        )
+    return specs
+
+
+def build_usa_pricedl_stage3_rescue_specs() -> list[dict[str, Any]]:
+    """Stage-3 Rescue for USA/TOP3000/price_signal_dl POOL_A breakthroughs (2-Hour Audit #1).
+
+    Live breakthroughs:
+      - xAl6rxYw: Sh=1.51, 2Y=2.89, Fit=0.69, TO=25.4%, Mgn=4.22bp, PC=0.7490 (ONLY 0.049 from <0.70!)
+      - gJrAXo2J: Sh=1.49, 2Y=2.65, Fit=0.74, TO=19.1%, Mgn=4.90bp, PC=0.7576
+      - xAl6VmEw: Sh=1.43, 2Y=2.33, Fit=0.64, TO=22.9%, Mgn=3.99bp
+    Targets simultaneously:
+      1) Cut TO 25% -> 7-12% (ts_mean 10/15/22 + mild decay {2,4,6} + hump) -> Fitness 0.7 -> >1.0 & Margin 4bp -> >10bp
+      2) Fix Sub-Universe Sharpe via adv20 large-cap gating (if_else(rank(adv20) > 0.35, ...))
+      3) Crush PC from 0.749 -> <0.65 via STATISTICAL / SLOW_AND_FAST / CROWDING / signed_power(2/0.5) / model238 fusion!
+    """
+    specs: list[dict[str, Any]] = []
+    t1 = "ts_backfill(raw_trend_indicator_1, 21)"
+    t4 = "ts_backfill(raw_trend_indicator_4, 21)"
+    v6 = "ts_backfill(raw_volume_indicator_6, 21)"
+    # Ultra-low-crowding USA model238 SmartHoldings (cov=96.74%, aCnt=1..2) for PC-crushing cross-fusion
+    us_sh = "ts_backfill(regional_institutional_preference_rank, 21)"
+    us_chg = "ts_backfill(regional_change_in_preference_rank, 21)"
+
+    dual_v6_t1 = f"min(rank(ts_decay_linear({v6}, 10)), rank(ts_decay_linear({t1}, 10)))"
+    dual_v6_t4 = f"min(rank(ts_decay_linear({v6}, 10)), rank(ts_decay_linear({t4}, 10)))"
+
+    usa_s3_exprs: list[tuple[str, str, str, str]] = [
+        ("S3US-ADM-01-t1-m15-z66-adv", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_rank(ts_zscore(ts_mean({t1}, 15), 66), subindustry), 0)"),
+        ("S3US-ADM-02-t1-m22-z126-adv", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_rank(ts_zscore(ts_mean({t1}, 22), 126), subindustry), 0)"),
+        ("S3US-ADM-03-dual-v6t1-m15-adv", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_rank(ts_zscore(ts_mean({dual_v6_t1}, 15), 66), subindustry), 0)"),
+        ("S3US-ADM-04-dual-v6t4-m15-adv", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_rank(ts_zscore(ts_mean({dual_v6_t4}, 15), 66), subindustry), 0)"),
+        ("S3US-TOP-01-t1-m15-sp2-adv", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.35, signed_power(group_zscore(ts_zscore(ts_mean({t1}, 15), 66), subindustry), 2), 0)"),
+        ("S3US-TOP-02-v6t1-hump-adv", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.35, hump(group_rank(ts_zscore(ts_mean({dual_v6_t1}, 10), 66), subindustry), hump=0.01), 0)"),
+        ("S3US-TOP-03-t1-x-shpref-adv", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.35, group_rank(min(rank(ts_zscore(ts_mean({t1}, 15), 66)), rank({us_sh})), subindustry), 0)"),
+        ("S3US-TOP-04-v6t1-x-shchg-adv", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.35, group_rank(min(rank(ts_zscore(ts_mean({dual_v6_t1}, 15), 66)), rank({us_chg})), subindustry), 0)"),
+    ]
+
+    usa_grid: list[tuple[str, str, int, float]] = [
+        ("ram_d4_t06", "REVERSION_AND_MOMENTUM", 4, 0.06),
+        ("ram_d6_t06", "REVERSION_AND_MOMENTUM", 6, 0.06),
+        ("stat_d4_t06", "STATISTICAL", 4, 0.06),
+        ("snf_d4_t06", "SLOW_AND_FAST", 4, 0.06),
+        ("crd_d4_t06", "CROWDING", 4, 0.06),
+        ("sub_d6_t08", "SUBINDUSTRY", 6, 0.08),
+    ]
+
+    for tag, neut, dec, trunc in usa_grid:
+        specs.append(
+            _pack_items_into_spec(
+                batch_id=f"S3-r2-USA-PSD-{tag}",
+                campaign_id="S3_USA_PSD_RESCUE",
+                hypothesis_id="HYP-S3-USA-PSD-160-PC-LT068",
+                region="USA",
+                universe="TOP3000",
+                dataset_id="price_signal_dl",
+                queue_type="NORMAL",
+                settings=_make_settings("USA", "TOP3000", neut, decay=dec, truncation=trunc),
+                items=[
+                    {
+                        "expression": expr,
+                        "template_id": f"{tid}_{neut}_d{dec}",
+                        "source_side": side,
+                        "author_id": auth,
+                        "dataset_id": "price_signal_dl",
+                        "primary_field_id": "raw_trend_indicator_1",
+                    }
+                    for tid, side, auth, expr in usa_s3_exprs
+                ],
+            )
+        )
+    return specs
+
+
 def build_all_stage23_refiner_specs() -> list[dict[str, Any]]:
-    """Return ordered Stage-3 Sub-Universe Rescue specs followed by Stage-2 Mild Param Ladder specs."""
-    return build_eur_model25_stage3_subuniverse_rescue_specs() + build_stage2_mild_param_ladder_specs()
+    """Return ordered Stage-3 PC-Crushing & USA Rescue specs followed by Stage-2 Mild Param Ladder specs."""
+    return (
+        build_eur_model25_stage3_pc_crush_specs()
+        + build_usa_pricedl_stage3_rescue_specs()
+        + build_eur_model25_stage3_subuniverse_rescue_specs()
+        + build_stage2_mild_param_ladder_specs()
+    )

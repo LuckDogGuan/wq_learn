@@ -7,10 +7,13 @@ from wq_research_v2.stage23_refiner import build_all_stage23_refiner_specs
 
 def test_stage23_refiner_specs_pass_all_static_gates_and_balance() -> None:
     specs = build_all_stage23_refiner_specs()
-    assert len(specs) >= 25
+    assert len(specs) >= 40
 
     batch_ids = [s["batch_id"] for s in specs]
     assert len(batch_ids) == len(set(batch_ids)), "Duplicate batch_id in stage23_refiner!"
+    assert any(b.startswith("S3-r2-EUR-M25PCA-") for b in batch_ids), "Missing EUR PC-Crush Pack A!"
+    assert any(b.startswith("S3-r2-EUR-M25PCB-") for b in batch_ids), "Missing EUR PC-Crush Pack B (model25 x model238)!"
+    assert any(b.startswith("S3-r2-USA-PSD-") for b in batch_ids), "Missing USA price_signal_dl Stage-3 Rescue!"
 
     alpha0_map = {
         "raw_volume_indicator_6": 0,

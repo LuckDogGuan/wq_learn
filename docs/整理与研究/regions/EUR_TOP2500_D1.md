@@ -51,3 +51,16 @@
 - **2026-11-25 21:16（`TOP1200` 对比实证 & 切换专注 `EUR + USA` 双方向独占运行）**：
   - Stage-3 首波实测：`EUR / TOP1200 / model25` 将 `value_momentum_region_percentile` Sharpe 从 `3.16` 降至 `1.26`（`vRYq23qw`, `2Y=0.85`），证明**核心超额仍在 `TOP2500` 中大盘+次优盘结构中，不宜直接切小宇宙 `TOP1200`**！
   - **立即精准修正**：停掉 `TOP1200/TOP800`，回归 **`EUR / TOP2500`**，在 `TOP2500` 内直接采用 **单数据集 ATOM 总资产大盘门控/分桶**（`mdl25_bsv421_5v`: `if_else(rank(...)>0.3/0.45, ...)` 与 `bucket(rank(...), range="0.2,1,0.2")`）+ **`adv20` 流动性大盘门控** + 轻参数微调（`decay ∈ {0,2,4,6}`、`truncation ∈ {0.04,0.06,0.08}`），专攻把 `Sub-Universe Sharpe` 从 `1.29` 推过门槛实现 **`0 FAIL` `POOL_S`**！同时广州服务已热切换至 **`--region EUR,USA` 专注 2 方向独占模式**。
+
+- **2026-11-25 22:20（2 小时定时审计 #1 · 0-FAIL 大爆发 + 真实远程 PC 体检救命避坑 & 精准压 PC 升级！）**：
+  - **重大战果**：`EUR / TOP2500 / model25` 累计 `224` FULL，产出 **`82` 条 `Sharpe ≥ 1.58`**，其中 **`adv20` / `mdl25_bsv421_5v` 大盘门控一次斩获 `20+` 条 `0-FAIL` `POOL_S` 全绿因子**（全部通过 `LOW_SUB_UNIVERSE_SHARPE` 与 `IS_LADDER_SHARPE 2Y > 2.02`），最高 **`6XG8AOVP`**（`Sh=2.49, 2Y=2.40, Fit=2.38, Mgn=18.60bp`）、**`rK030WX9`**（`Sh=2.25, 2Y=2.29, Mgn=31.44bp`）、**`pwWXv5Kq`**（`Sh=1.95, 2Y=2.20, country*industry, RAM`）、**`WjYqLeGo`**（`Sh=1.63, 2Y=2.28, min(rank(val_mom), rank(op_eff)), RAM`）！
+  - **关键 Stage-4 真实体检（本地 92-OS SC + 异步远程 `pc_poller.py`）**：
+    - **本地 SC 全部极度安全（`0.23–0.41 << 0.68`）**，与我方现有 18/26 条 EUR OS 零撞车；池内正交剪枝保留 `6XG8AOVP` + `pwWXv5Kq`（两两 `0.6242`）+ `1YG9P5lK`。
+    - **但真实远程 Prod Correlation（PC）暴露关键规律（幸亏严禁轻信 `cnhkmcp` 假通过！）**：
+      - 普通 `INDUSTRY`/`MARKET` 的 `model25` 因子（`6XG8AOVP`、`rK030WX9`、`xAl6lnMp`、`A1LWQKrW`、`gJrArXVO`）`PC = 0.863–0.947`（StarMine 热门拥挤区）；
+      - **但仅凭 `REVERSION_AND_MOMENTUM` + `country*industry`（`pwWXv5Kq`）就把 `PC` 砍降 `-0.153` 至 `0.7948`**；
+      - **仅凭 `REVERSION_AND_MOMENTUM` + 双支 `min(rank(val_mom), rank(op_eff))`（`WjYqLeGo`）就把 `PC` 砍降 `-0.166` 至 `0.7815`（距 `< 0.70` 仅差 `0.08`！）**
+  - **本轮精准方向修正**：
+    1. **下线低天花板 `EUR / price_signal_dl`**（`148` FULL，`0` 条 `≥1.25`，最高 `1.22`、`max_fit=0.36`）；
+    2. **上线 `S3-r2-EUR-M25PCA/B` 专项压 PC 组合包**（[stage23_refiner.py](../../../wq_research_v2/src/wq_research_v2/stage23_refiner.py)）：将 `WjYqLeGo` 与 `pwWXv5Kq` 两大已验真降 PC 杠杆叠加 **`STATISTICAL` / `SLOW_AND_FAST` / `CROWDING` / `FAST`** 风险模型中性化 + **`signed_power(..., 2/0.5)`** + **`ts_av_diff(..., 126)`** + **`vector_neut(..., rank(ts_mean(returns, 22)))`** + **跨数据集融合超低拥挤 `EUR / model238`（SmartHoldings，`cov=96.27%`, `aCnt=0..2`！）**，目标把 `PC` 从 `0.7815` 压穿 `< 0.68` 直取可打 `Useful` 的全绿正交因子！
+    3. **接入 `EUR_M238_SMARTHOLDINGS_NORM`**（8 个 `aCnt=0..3`、`cov=96.27%` 的 `_d1` 干净 MATRIX 字段，直补 `EUR / model 1.3×, 0 OS` 空白塔）。

@@ -47,3 +47,13 @@
 - **2026-11-25 20:16（1 小时定时检查 #2 · 新增 `option_horizon_decomp` 免额期权偏度/期限矿脉！）**：
   - `USA / price_signal_dl` 累计 `128` 条收获 `10` 条 `POOL_B`（最高 `Sh=+1.10, 2Y=+1.99, Mgn=+33.4bp`），单字段天花板暂卡在 `1.10`；需补入更高毛 Alpha 矿脉破 `1.58`！
   - **新增核心矿脉**：经 `cnhkmcp` 实盘核验 **`option_horizon_decomp`**（`option 1.3×`, 本账号 **`0` OS**, `cov=96.7–98.4%`, `dCov=0.9507`）含 **8 个纯 `Alphas=0` 免额 MATRIX**（`put_call_open_interest_ratio_*`、`put_call_volume_ratio_*`、`implied_volatility_*`）+ 4 个免额期限结构价差（借鉴历史 `Sh=2.22, Fit=2.58, Mgn=27bp` 的期权 IV 骨架），已置顶第 2 顺位开跑！
+
+- **2026-11-25 22:20（2 小时定时审计 #1 · `price_signal_dl` 冲破第 2 轮目标 `1.51 / 2Y 2.89 / PC 0.749`！果断止损期权集并换入 `model238`）**：
+  - **重大突破**：`USA / TOP3000 / price_signal_dl`（`232` FULL）一举冲破第 2 轮目标（`1.30–1.45+`），连出 **`3` 条 `POOL_A` 强因子**，且 **2Y Sharpe 全面爆表（`2.33–2.89`）**、**远程 `PC` 已迫近可提交黄金解救区（`0.749`！）**：
+    - **`xAl6rxYw`**：`group_rank(ts_zscore(ts_mean(ts_backfill(raw_trend_indicator_1, 21), 5), 66), subindustry)`（`RAM, d=0`）→ **`Sh = +1.51, 2Y = +2.89, Fit = 0.69, TO = 25.4%, Mgn = 4.22bp, PC = 0.7490`**（距 `< 0.70` 仅差 `0.049`！）；
+    - **`gJrAXo2J`**：`min(rank(raw_volume_indicator_6), rank(raw_trend_indicator_1))` 双支（`RAM, d=0`）→ **`Sh = +1.49, 2Y = +2.65, Fit = 0.74, TO = 19.1%, Mgn = 4.90bp, PC = 0.7576`**；
+    - **`xAl6VmEw`**：`min(rank(raw_volume_indicator_6), rank(raw_trend_indicator_4))` 双支（`RAM, d=0`）→ **`Sh = +1.43, 2Y = +2.33, Fit = 0.64, TO = 22.9%, Mgn = 3.99bp`**。
+  - **果断止损弱向**：`USA / TOP3000 / option_horizon_decomp` 完成 `64` FULL 仅 `1` 条刚过 `0.80`（`YPlrpXQw Sh=0.84, 2Y=0.07`，命中率 `1.56% < 2%`），立即移出主队列停止浪费算力！
+  - **本轮精准方向修正**：
+    1. **上线 `S3-r2-USA-PSD-*` 第 3 轮专项冲刺包**（[stage23_refiner.py](../../../wq_research_v2/src/wq_research_v2/stage23_refiner.py)）：在 `xAl6rxYw` / `gJrAXo2J` / `xAl6VmEw` 骨架上将 `ts_mean(..., 5)` 轻度拉长至 `10/15/22` + `decay ∈ {4, 6}` + `hump=0.01`（把换手从 `25%` 压至 `7–12%`，同步拉升 **Fitness `0.74→1.1+`** 与 **Margin `4.9bp→10bp+`**）+ **`if_else(rank(adv20) > 0.35, ...)`** 解救 `Sub-Universe` + **`STATISTICAL` / `SLOW_AND_FAST` / `CROWDING` / `signed_power(..., 2)` / 融合 `model238`**，一举把 `Sh 1.51 → 1.65+` 且 `PC 0.749 → < 0.65`！
+    2. **换入高价值超低拥挤新矿脉 `USA / TOP3000 / model238`（SmartHoldings）**：实盘核验 `cov = 96.74%`, `val = 5.0`, 8 个 MATRIX 字段全部仅 `aCnt = 1–3`（`model 1.3×, 0 OS`），天然低 PC 撞车率！
