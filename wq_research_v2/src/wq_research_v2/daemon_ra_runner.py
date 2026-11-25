@@ -30,34 +30,83 @@ from wq_research_v2.ra_evaluator import D1RAEvaluator
 from wq_research_v2.sim_runner import SimRunner
 
 # Default high-Base first multi-market D1 exploration order (every region tracked independently!)
+# High-Base Tier-1 (CHN/USA/EUR/GLB/ASI) first; AMR demoted after 24-sim 0-hit probe.
 HIGH_BASE_MULTI_MARKET_ORDER: list[str] = [
-    "EUR", "USA", "GLB", "ASI", "CHN", "DEU", "HKG", "KOR", "GBR", "AMR", "IND"
+    "CHN", "USA", "EUR", "GLB", "ASI", "DEU", "HKG", "KOR", "GBR", "IND", "AMR"
 ]
 
 # Verified clean D1 RA seed pools (ALL live-checked against cnhkmcp get_datafields on 2026-11-25).
 # Strictly MATRIX / verified non-trap VECTOR fields, zero ID/currency/metadata traps, zero blacklisted datasets.
-# Note: DEU/model264 was empirically FAST_DEMOTED at Checkpoint #1 (160 FULL sims, max +0.71, 0 hits >0.80)
-# so DEU starts directly on analyst93 -> other250 -> fundamental6!
+# Audit #1 & #2 empirical updates:
+# - DEU/model264 FAST_DEMOTED (312 FULL sims, max +0.71 single-field)
+# - CHN/other496 BREAKOUT (58Gx273n |Sh|=1.99, Fit=1.19, Mgn=21bp; WjYMxwKo |Sh|=1.40, Mgn=68bp!)
+# - USA/price_signal_dl BREAKOUT (N1K03xae Sh=+1.10, 2Y=+1.84, Mgn=24.9bp; vol_3/5/0 all 2Y 1.39-1.69!)
+# - EUR/price_signal_dl promoted ahead of weak EUR/news_sentiment_dl
 CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
-    # ==================== TIER 1: HIGH-BASE REGIONS ====================
+    # ==================== TIER 1: HIGH-BASE WINNERS & PROBES ====================
     {
-        "campaign_id": "EUR_NEWSDL_FREE",
-        "region": "EUR",
-        "universe": "TOP2500",
-        "dataset_id": "news_sentiment_dl",
+        "campaign_id": "CHN_OTH496_BREAKOUT_FREE",
+        "region": "CHN",
+        "universe": "TOP2000U",
+        "dataset_id": "other496",
         "queue_type": "UNUSED_ALPHA0",
-        "field_type": "VECTOR",
+        "field_type": "CUSTOM_EXPRS",
         "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["COUNTRY", "REVERSION_AND_MOMENTUM"],
-        "fields": [
-            "min_positive_word_sentiment_inferess",
-            "negative_word_count_inferess",
-            "negative_word_sentiment_stddev_inferess",
-            "positive_word_sentiment_entropy_inferess",
-            "min_negative_word_sentiment_trna",
-            "min_positive_word_sentiment_trna",
-            "output_metric_4_inferess",
-            "avg_words_per_sentence_inferess",
+        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING", "INDUSTRY"],
+        "custom_base_exprs": [
+            # Clean raw positive ratios (no embedded reverse -> avoids double-negation!)
+            # Note: In Audit #2, reverse(group_neutralize(ts_rank(ts_decay_linear(AR/CurAssets,10),66),subindustry))
+            # equals +1.99 Sharpe / +1.19 Fit / +20.99bp Margin!
+            ("oth496_ar_ca_raw", "divide(ts_backfill(oth496_q_ard_accts_receivable_trade, 126), abs(ts_backfill(oth496_ard_total_cur_assets_282, 126)))"),
+            ("oth496_ap_ar_raw", "divide(ts_backfill(oth496_ard_accounts_payable_trade_333, 126), abs(ts_backfill(oth496_q_ard_accts_receivable_trade, 126)))"),
+            ("oth496_curr_ratio", "divide(ts_backfill(oth496_ard_total_cur_assets_282, 126), abs(ts_backfill(oth496_ff_liabs_curr_nugget, 126)))"),
+            ("oth496_lt_lev_raw", "divide(ts_backfill(oth496_q_ard_tot_noncurrent_liabilities, 126), abs(ts_backfill(oth496_q_ard_total_noncurrent_assets, 126)))"),
+            ("oth496_oth_rec_raw", "divide(ts_backfill(oth496_ard_other_receivables_st, 126), abs(ts_backfill(oth496_ard_total_cur_assets_282, 126)))"),
+            ("oth496_oth_pay_raw", "divide(ts_backfill(oth496_ard_other_payables_277, 126), abs(ts_backfill(oth496_ff_liabs_curr_nugget, 126)))"),
+            ("oth496_asset_light", "divide(ts_backfill(oth496_ard_total_cur_assets_282, 126), abs(ts_backfill(oth496_q_ard_total_noncurrent_assets, 126)))"),
+            ("oth496_tax_conserv", "divide(ts_backfill(oth496_ard_deferred_inc_tax_asset_lt_343, 126), abs(ts_backfill(oth496_ard_deferred_income_taxes_liab, 126)))"),
+            # Stage-2/3 Decision-#3 dual-branch resonances (100% Alphas=0 FREE + ATOM!)
+            (
+                "oth496_dual_ar_apar",
+                "min(rank(reverse(ts_rank(ts_decay_linear(divide(ts_backfill(oth496_q_ard_accts_receivable_trade, 126), abs(ts_backfill(oth496_ard_total_cur_assets_282, 126))), 10), 66))), rank(reverse(ts_rank(ts_decay_linear(divide(ts_backfill(oth496_ard_accounts_payable_trade_333, 126), abs(ts_backfill(oth496_q_ard_accts_receivable_trade, 126))), 10), 66))))",
+            ),
+            (
+                "oth496_dual_ar_cr",
+                "min(rank(reverse(ts_rank(ts_decay_linear(divide(ts_backfill(oth496_q_ard_accts_receivable_trade, 126), abs(ts_backfill(oth496_ard_total_cur_assets_282, 126))), 10), 126))), rank(ts_mean(divide(ts_backfill(oth496_ard_total_cur_assets_282, 126), abs(ts_backfill(oth496_ff_liabs_curr_nugget, 126))), 22)))",
+            ),
+        ],
+    },
+    {
+        "campaign_id": "USA_PRICEDL_BREAKOUT_FREE",
+        "region": "USA",
+        "universe": "TOP3000",
+        "dataset_id": "price_signal_dl",
+        "queue_type": "UNUSED_ALPHA0",
+        "field_type": "CUSTOM_EXPRS",
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING", "INDUSTRY"],
+        "custom_base_exprs": [
+            # Audit #1/#2 confirmed positive direction + 2Y 1.39-1.84 on raw_volume_indicator_6/3/5/0!
+            ("usa_vol6_dec5", "ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 5)"),
+            ("usa_vol6_dec22", "ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 22)"),
+            ("usa_vol6_z66", "ts_zscore(ts_mean(ts_backfill(raw_volume_indicator_6, 21), 5), 66)"),
+            ("usa_vol6_tsr126", "ts_rank(ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 10), 126)"),
+            ("usa_vol3_z66", "ts_zscore(ts_mean(ts_backfill(raw_volume_indicator_3, 21), 5), 66)"),
+            ("usa_vol5_z66", "ts_zscore(ts_mean(ts_backfill(raw_volume_indicator_5, 21), 5), 66)"),
+            ("usa_vol0_z66", "ts_zscore(ts_mean(ts_backfill(raw_volume_indicator_0, 21), 5), 66)"),
+            # Decision-#3 dual-branch resonances (100% Alphas=0 FREE + ATOM!)
+            (
+                "usa_dual_v6_v3",
+                "min(rank(ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 10)), rank(ts_decay_linear(ts_backfill(raw_volume_indicator_3, 21), 10)))",
+            ),
+            (
+                "usa_dual_v6_v5",
+                "min(rank(ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 10)), rank(ts_zscore(ts_mean(ts_backfill(raw_volume_indicator_5, 21), 5), 66)))",
+            ),
+            (
+                "usa_dual_v6_v0",
+                "min(rank(ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 10)), rank(ts_zscore(ts_mean(ts_backfill(raw_volume_indicator_0, 21), 5), 66)))",
+            ),
         ],
     },
     {
@@ -81,19 +130,23 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
         ],
     },
     {
-        "campaign_id": "USA_PRICEDL_FREE",
-        "region": "USA",
-        "universe": "TOP3000",
-        "dataset_id": "price_signal_dl",
+        "campaign_id": "EUR_NEWSDL_FREE",
+        "region": "EUR",
+        "universe": "TOP2500",
+        "dataset_id": "news_sentiment_dl",
         "queue_type": "UNUSED_ALPHA0",
-        "field_type": "MATRIX",
+        "field_type": "VECTOR",
         "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING"],
+        "alt_neuts": ["COUNTRY", "REVERSION_AND_MOMENTUM"],
         "fields": [
-            "raw_volume_indicator_0",
-            "raw_volume_indicator_3",
-            "raw_volume_indicator_5",
-            "raw_volume_indicator_6",
+            "min_positive_word_sentiment_inferess",
+            "negative_word_count_inferess",
+            "negative_word_sentiment_stddev_inferess",
+            "positive_word_sentiment_entropy_inferess",
+            "min_negative_word_sentiment_trna",
+            "min_positive_word_sentiment_trna",
+            "output_metric_4_inferess",
+            "avg_words_per_sentence_inferess",
         ],
     },
     {
@@ -204,26 +257,6 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
             "visual_price_path_shape_score",
             "chronological_return_sequence_correlation",
             "consecutive_return_streak_length",
-        ],
-    },
-    {
-        "campaign_id": "CHN_OTH496_RATIOS_FREE",
-        "region": "CHN",
-        "universe": "TOP2000U",
-        "dataset_id": "other496",
-        "queue_type": "UNUSED_ALPHA0",
-        "field_type": "CUSTOM_EXPRS",
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["INDUSTRY", "CROWDING"],
-        "custom_base_exprs": [
-            ("oth496_curr_ratio", "divide(ts_backfill(oth496_ard_total_cur_assets_282, 126), abs(ts_backfill(oth496_ff_liabs_curr_nugget, 126)))"),
-            ("oth496_pay_rec_power", "divide(ts_backfill(oth496_ard_accounts_payable_trade_333, 126), abs(ts_backfill(oth496_q_ard_accts_receivable_trade, 126)))"),
-            ("oth496_lt_lev", "reverse(divide(ts_backfill(oth496_q_ard_tot_noncurrent_liabilities, 126), abs(ts_backfill(oth496_q_ard_total_noncurrent_assets, 126))))"),
-            ("oth496_rec_share", "reverse(divide(ts_backfill(oth496_q_ard_accts_receivable_trade, 126), abs(ts_backfill(oth496_ard_total_cur_assets_282, 126))))"),
-            ("oth496_oth_rec_risk", "reverse(divide(ts_backfill(oth496_ard_other_receivables_st, 126), abs(ts_backfill(oth496_ard_total_cur_assets_282, 126))))"),
-            ("oth496_oth_pay_risk", "reverse(divide(ts_backfill(oth496_ard_other_payables_277, 126), abs(ts_backfill(oth496_ff_liabs_curr_nugget, 126))))"),
-            ("oth496_asset_light", "divide(ts_backfill(oth496_ard_total_cur_assets_282, 126), abs(ts_backfill(oth496_q_ard_total_noncurrent_assets, 126)))"),
-            ("oth496_tax_conserv", "divide(ts_backfill(oth496_ard_deferred_inc_tax_asset_lt_343, 126), abs(ts_backfill(oth496_ard_deferred_income_taxes_liab, 126)))"),
         ],
     },
     {
@@ -506,7 +539,7 @@ def build_ra_campaign_specs(
 
         fields = camp.get("fields") or []
         for neut in neuts:
-            for fid in fields:
+            for f_idx, fid in enumerate(fields):
                 wrapped = _wrap_field(fid, ftype)
                 items = [
                     {
@@ -520,7 +553,7 @@ def build_ra_campaign_specs(
                     for t in STAGE12_TEMPLATES_8
                 ]
                 specs.append({
-                    "batch_id": f"RA-{cid}-{fid[:24]}-{neut}",
+                    "batch_id": f"RA-{cid}-{f_idx:02d}-{fid[-16:]}-{neut}",
                     "campaign_id": cid,
                     "hypothesis_id": f"HYP-{cid}",
                     "queue_type": qtype,
@@ -768,7 +801,7 @@ def run_ra_production_loop(
     if round_robin_waves > 0:
         specs = interleave_specs_by_campaign_waves(specs, max_slots=max_slots, waves_per_turn=round_robin_waves)
 
-    # Build alpha0 map for validation
+    # Build alpha0 map for validation (handles both fields and custom_base_exprs)
     alpha0_map: dict[str, int] = {}
     for camp in CURATED_RA_D1_CAMPAIGNS:
         if camp["queue_type"] == "UNUSED_ALPHA0":
@@ -776,7 +809,7 @@ def run_ra_production_loop(
                 alpha0_map[f] = 0
             for _, expr in camp.get("custom_base_exprs") or []:
                 for tok in expr.replace("(", " ").replace(")", " ").replace(",", " ").split():
-                    if tok.startswith("oth496_"):
+                    if tok.startswith(("oth496_", "raw_volume_indicator_")):
                         alpha0_map[tok] = 0
 
     auth.authenticate()

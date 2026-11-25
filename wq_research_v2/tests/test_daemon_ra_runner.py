@@ -17,6 +17,10 @@ def test_all_curated_ra_d1_campaign_specs_pass_static_validator() -> None:
     specs = build_ra_campaign_specs(include_dual_branch=True, include_alt_neut=True)
     assert len(specs) > 250
 
+    # Zero batch_id collisions (prevents SQLite INSERT OR REPLACE overwriting sibling fields!)
+    batch_ids = [s["batch_id"] for s in specs]
+    assert len(batch_ids) == len(set(batch_ids)), "Duplicate batch_id detected!"
+
     covered_regions = {s["region"] for s in specs}
     assert set(HIGH_BASE_MULTI_MARKET_ORDER).issubset(covered_regions)
 
@@ -28,7 +32,7 @@ def test_all_curated_ra_d1_campaign_specs_pass_static_validator() -> None:
                 alpha0_map[f] = 0
             for _, expr in camp.get("custom_base_exprs") or []:
                 for tok in expr.replace("(", " ").replace(")", " ").replace(",", " ").split():
-                    if tok.startswith("oth496_"):
+                    if tok.startswith(("oth496_", "raw_volume_indicator_")):
                         alpha0_map[tok] = 0
 
     validator = ExprValidator()

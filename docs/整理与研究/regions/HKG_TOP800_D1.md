@@ -6,3 +6,4 @@
 - **首轮实盘核验探针（2026-11-25 `cnhkmcp`）**：
   - **`news_sentiment_dl`**（`other` **`1.7×`**, **`Alphas=0` 免额**, `VECTOR`, `cov=86.3%`, `dCov=0.9507`）：`min_positive_word_sentiment_inferess`, `positive_word_sentiment_entropy_inferess`, `positive_word_sentiment_stddev_inferess`, `text_complexity_score_inferess`, `sentence_count_inferess`, `avg_words_per_sentence_inferess`。
 - **独立漏斗快照**：`data/exports/hkg_ra_funnel_latest.json`。
+- **2026-11-25 18:15（巡检 #2）**：`news_sentiment_dl` 首波完成 32 条（24 条入库，已修 `batch_id` 24 字符前缀碰撞），出现 **`RR5Mwj1j`（`min_positive_word_sentiment_inferess`, `Sh=-0.95` → 正向 `+0.95`）** 与 **`2rGMo8LN`（`Sh=+0.64, 2Y=+1.35, Margin=+8.93bp`）**，确有真实信号，继续保留在多市场轮巡中。

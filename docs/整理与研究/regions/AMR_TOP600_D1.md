@@ -7,3 +7,4 @@
 - **首轮实盘核验探针（2026-11-25 `cnhkmcp`）**：
   - **`model239`**（**`Alphas=0` 免额**, `VECTOR`, `cov=84.8%–94.8%`, `dCov=0.9507`）：`mdl239_shortlasso1d`, `mdl239_combo_tickets`, `mdl239_combo_crossdeltaactivity`, `mdl239_combo_deltacrossdelta`, `loan_rate_change_aggregated_metric`, `mdl239_combo_deltarate` *(严禁使用已捕获的纯 ID 陷阱 `mdl239_gvkey`, `mdl239_isin`！)*。
 - **独立漏斗快照**：`data/exports/amr_ra_funnel_latest.json`。
+- **2026-11-25 18:15（巡检 #2）**：`model239` 首波完成 24 条，`0` 命中 `|Sh| ≥ 0.80`（最高 `+0.42`），且 AMR 仅开放 2 塔 → 已降级至轮巡最末位，不挤占高 Base 槽位。
