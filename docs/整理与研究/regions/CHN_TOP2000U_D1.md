@@ -21,3 +21,8 @@
     - **`QPWM8KwW`**（`lt_lev = NonCurLiab/NonCurAssets` · `RA-TOP-04`）：**`Sharpe = -2.19`、`Fit = -1.34`、`TO = 4.19%`、`Margin = -22.22bp`**！
     - **`akR6g8px`**（`curr_ratio` · `RA-TOP-04`）：**`Sharpe = -1.95`、`Fit = -1.22`、`TO = 7.02%`**！
   - **关键模板缺陷根治**：发现旧 `STAGE12_TEMPLATES_8` 中两个时序变化冠军模板（`ts_zscore(ts_mean(x,5),66)` 与 `ts_rank(ts_decay_linear(x,10),66)`）仅写了 `reverse(...)` 负向版、**缺少正向孪生版**！现已立刻补齐双正向冠军模板 + `signed_power(..., 1.5)` 收益放大版并热更广州，下一波将直接产出**正向 `Sharpe > +2.19 ~ +2.51` 的 CHN `POOL_S` 候选**！
+
+- **2026-11-25 19:16（1 小时定时检查 #1 · 抓获 CHN 融券双负假象并果断止损 `other496`！）**：
+  - **关键科学证伪**：补齐正向孪生模板后实测 `other496` 出现 **`+x` 与 `reverse(x)` 同时为 `-2.0`**（如 `curr_ratio`: 正向 `pwWXqzYq = -2.26`，反向 `akR6g8px = -1.95`；`lt_lev`: 正向 `LL8jPXWM = -1.93`，反向 `QPWM8KwW = -2.19`；34 条全军 `MAX = -0.21`，`0` 条正向）。
+  - **根因代数定位**：`Net(+x) + Net(-x) = -2 × Cost` → CHN `TOP2000U` 高额年化融券/做空成本（~4–6%/年）对零信号双边同时拖累约 `-2.0` Sharpe，导致 `ABS(sharpe)` 误判为“可翻转金矿”！
+  - **立即止损纠偏**：① 已止损撤出 `CHN/other496`；② 已将早停引擎升级为**严格正向 Sharpe 判定**（免疫双负假象）；③ CHN 改测更高毛超额潜力的 **`analyst45`（`1.8×` 免额）**，并受 48 条正向早停保护。

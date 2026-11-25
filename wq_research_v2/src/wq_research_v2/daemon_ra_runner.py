@@ -3,11 +3,10 @@
 Strictly enforces:
 - RA-Only D1 pipeline (PPA kept completely separate to avoid complexity/confusion)
 - Delay = 1 hard lock, Decision #3 (NO add/multiply/trade_when), Gold 81 operator whitelist
-- Prioritizes Tier-1 High-Base D1 regions (EUR, USA, GLB, ASI, CHN) while probing every D1 market
-  independently (DEU, HKG, KOR, GBR, AMR, IND) with per-region isolated funnel exports
-- Automatic dataset-level early stop: if a (region, dataset_id) produces <2% |Sharpe|>=0.80 hits
-  and 0 |Sharpe|>=1.25 hits after >= early_stop_min_sims completed sims, skip remaining specs
-  for that weak dataset and immediately pivot to the next dataset/region!
+- Prioritizes Tier-1 High-Base D1 winners (USA, ASI, EUR, GLB) + fresh high-multiplier markets
+  (HKG, DEU/fnd6, CHN/analyst45, KOR/forum, GBR/other250, IND) with isolated per-region funnel exports
+- Automatic POSITIVE-Sharpe dataset-level early stop: checks positive sharpe >= 0.80 / >= 1.25
+  (immune to CHN short-borrow double-negative mirages where both +x and -x yield -2.0!)
 - 8-item Multi-Sim packing, weighted slot concurrency (GLB=2 slots), SQLite WAL checkpoints,
   10m auth refresh + 10s reconnect, zero /submit calls
 """
@@ -29,83 +28,120 @@ from wq_research_v2.quota_tracker import QuotaTracker, current_est_platform_date
 from wq_research_v2.ra_evaluator import D1RAEvaluator
 from wq_research_v2.sim_runner import SimRunner
 
-# Default high-Base first multi-market D1 exploration order (every region tracked independently!)
-# High-Base Tier-1 (CHN/USA/EUR/GLB/ASI) first; AMR demoted after 24-sim 0-hit probe.
+# Default high-Base winner-first multi-market D1 exploration order (every region tracked independently!)
+# Hourly Audit #1: USA & ASI price_signal_dl confirmed real symmetric alpha (8 & 5 positive POOL_B seeds!);
+# CHN/other496, DEU/model264, DEU/analyst93, EUR/news_sentiment_dl, GBR/dl_riskfree_returns, KOR/behavioral, AMR/model239 demoted!
 HIGH_BASE_MULTI_MARKET_ORDER: list[str] = [
-    "CHN", "USA", "EUR", "GLB", "ASI", "DEU", "HKG", "KOR", "GBR", "IND", "AMR"
+    "USA", "ASI", "EUR", "GLB", "HKG", "DEU", "CHN", "KOR", "GBR", "IND"
 ]
 
 # Verified clean D1 RA seed pools (ALL live-checked against cnhkmcp get_datafields on 2026-11-25).
-# Strictly MATRIX / verified non-trap VECTOR fields, zero ID/currency/metadata traps, zero blacklisted datasets.
-# Audit #1 & #2 empirical updates:
-# - DEU/model264 FAST_DEMOTED (312 FULL sims, max +0.71 single-field)
-# - CHN/other496 BREAKOUT (58Gx273n |Sh|=1.99, Fit=1.19, Mgn=21bp; WjYMxwKo |Sh|=1.40, Mgn=68bp!)
-# - USA/price_signal_dl BREAKOUT (N1K03xae Sh=+1.10, 2Y=+1.84, Mgn=24.9bp; vol_3/5/0 all 2Y 1.39-1.69!)
-# - EUR/price_signal_dl promoted ahead of weak EUR/news_sentiment_dl
 CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
-    # ==================== TIER 1: HIGH-BASE WINNERS & PROBES ====================
+    # ==================== TIER 1: PROVEN HIGH-BASE WINNERS ====================
     {
-        "campaign_id": "CHN_OTH496_BREAKOUT_FREE",
-        "region": "CHN",
-        "universe": "TOP2000U",
-        "dataset_id": "other496",
-        "queue_type": "UNUSED_ALPHA0",
-        "field_type": "CUSTOM_EXPRS",
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING", "INDUSTRY"],
-        "custom_base_exprs": [
-            # Clean raw positive ratios (no embedded reverse -> avoids double-negation!)
-            # Note: In Audit #2, reverse(group_neutralize(ts_rank(ts_decay_linear(AR/CurAssets,10),66),subindustry))
-            # equals +1.99 Sharpe / +1.19 Fit / +20.99bp Margin!
-            ("oth496_ar_ca_raw", "divide(ts_backfill(oth496_q_ard_accts_receivable_trade, 126), abs(ts_backfill(oth496_ard_total_cur_assets_282, 126)))"),
-            ("oth496_ap_ar_raw", "divide(ts_backfill(oth496_ard_accounts_payable_trade_333, 126), abs(ts_backfill(oth496_q_ard_accts_receivable_trade, 126)))"),
-            ("oth496_curr_ratio", "divide(ts_backfill(oth496_ard_total_cur_assets_282, 126), abs(ts_backfill(oth496_ff_liabs_curr_nugget, 126)))"),
-            ("oth496_lt_lev_raw", "divide(ts_backfill(oth496_q_ard_tot_noncurrent_liabilities, 126), abs(ts_backfill(oth496_q_ard_total_noncurrent_assets, 126)))"),
-            ("oth496_oth_rec_raw", "divide(ts_backfill(oth496_ard_other_receivables_st, 126), abs(ts_backfill(oth496_ard_total_cur_assets_282, 126)))"),
-            ("oth496_oth_pay_raw", "divide(ts_backfill(oth496_ard_other_payables_277, 126), abs(ts_backfill(oth496_ff_liabs_curr_nugget, 126)))"),
-            ("oth496_asset_light", "divide(ts_backfill(oth496_ard_total_cur_assets_282, 126), abs(ts_backfill(oth496_q_ard_total_noncurrent_assets, 126)))"),
-            ("oth496_tax_conserv", "divide(ts_backfill(oth496_ard_deferred_inc_tax_asset_lt_343, 126), abs(ts_backfill(oth496_ard_deferred_income_taxes_liab, 126)))"),
-            # Stage-2/3 Decision-#3 dual-branch resonances (100% Alphas=0 FREE + ATOM!)
-            (
-                "oth496_dual_ar_apar",
-                "min(rank(reverse(ts_rank(ts_decay_linear(divide(ts_backfill(oth496_q_ard_accts_receivable_trade, 126), abs(ts_backfill(oth496_ard_total_cur_assets_282, 126))), 10), 66))), rank(reverse(ts_rank(ts_decay_linear(divide(ts_backfill(oth496_ard_accounts_payable_trade_333, 126), abs(ts_backfill(oth496_q_ard_accts_receivable_trade, 126))), 10), 66))))",
-            ),
-            (
-                "oth496_dual_ar_cr",
-                "min(rank(reverse(ts_rank(ts_decay_linear(divide(ts_backfill(oth496_q_ard_accts_receivable_trade, 126), abs(ts_backfill(oth496_ard_total_cur_assets_282, 126))), 10), 126))), rank(ts_mean(divide(ts_backfill(oth496_ard_total_cur_assets_282, 126), abs(ts_backfill(oth496_ff_liabs_curr_nugget, 126))), 22)))",
-            ),
-        ],
-    },
-    {
-        "campaign_id": "USA_PRICEDL_BREAKOUT_FREE",
+        "campaign_id": "USA_PRICEDL_NORMVOL_FREE",
         "region": "USA",
         "universe": "TOP3000",
         "dataset_id": "price_signal_dl",
         "queue_type": "UNUSED_ALPHA0",
+        "field_type": "MATRIX",
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING", "MARKET"],
+        "fields": [
+            "normalized_volume_indicator_1",
+            "normalized_volume_indicator_2",
+            "normalized_volume_indicator_3",
+            "normalized_volume_indicator_5",
+            "normalized_volume_indicator_6",
+            "raw_volume_indicator_6",
+            "raw_volume_indicator_3",
+            "raw_volume_indicator_5",
+        ],
+    },
+    {
+        "campaign_id": "USA_PRICEDL_TREND_VOL_NORM",
+        "region": "USA",
+        "universe": "TOP3000",
+        "dataset_id": "price_signal_dl",
+        "queue_type": "NORMAL",
         "field_type": "CUSTOM_EXPRS",
         "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING", "INDUSTRY"],
+        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING", "MARKET"],
         "custom_base_exprs": [
-            # Audit #1/#2 confirmed positive direction + 2Y 1.39-1.84 on raw_volume_indicator_6/3/5/0!
-            ("usa_vol6_dec5", "ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 5)"),
-            ("usa_vol6_dec22", "ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 22)"),
-            ("usa_vol6_z66", "ts_zscore(ts_mean(ts_backfill(raw_volume_indicator_6, 21), 5), 66)"),
-            ("usa_vol6_tsr126", "ts_rank(ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 10), 126)"),
-            ("usa_vol3_z66", "ts_zscore(ts_mean(ts_backfill(raw_volume_indicator_3, 21), 5), 66)"),
-            ("usa_vol5_z66", "ts_zscore(ts_mean(ts_backfill(raw_volume_indicator_5, 21), 5), 66)"),
-            ("usa_vol0_z66", "ts_zscore(ts_mean(ts_backfill(raw_volume_indicator_0, 21), 5), 66)"),
-            # Decision-#3 dual-branch resonances (100% Alphas=0 FREE + ATOM!)
+            ("usa_rt0", "ts_backfill(raw_trend_indicator_0, 21)"),
+            ("usa_rt1", "ts_backfill(raw_trend_indicator_1, 21)"),
+            ("usa_rt2", "ts_backfill(raw_trend_indicator_2, 21)"),
+            ("usa_rt3", "ts_backfill(raw_trend_indicator_3, 21)"),
+            ("usa_rt4", "ts_backfill(raw_trend_indicator_4, 21)"),
+            ("usa_rt5", "ts_backfill(raw_trend_indicator_5, 21)"),
+            ("usa_rt6", "ts_backfill(raw_trend_indicator_6, 21)"),
+            # Decision-#3 cross-subfamily dual-branch resonances (volume x trend, ATOM!)
             (
-                "usa_dual_v6_v3",
-                "min(rank(ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 10)), rank(ts_decay_linear(ts_backfill(raw_volume_indicator_3, 21), 10)))",
+                "usa_dual_v6_t6",
+                "min(rank(ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 10)), rank(ts_decay_linear(ts_backfill(raw_trend_indicator_6, 21), 10)))",
             ),
             (
-                "usa_dual_v6_v5",
-                "min(rank(ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 10)), rank(ts_zscore(ts_mean(ts_backfill(raw_volume_indicator_5, 21), 5), 66)))",
+                "usa_dual_v6_t4",
+                "min(rank(ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 10)), rank(ts_decay_linear(ts_backfill(raw_trend_indicator_4, 21), 10)))",
             ),
             (
-                "usa_dual_v6_v0",
-                "min(rank(ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 10)), rank(ts_zscore(ts_mean(ts_backfill(raw_volume_indicator_0, 21), 5), 66)))",
+                "usa_dual_v6_t1",
+                "min(rank(ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 10)), rank(ts_decay_linear(ts_backfill(raw_trend_indicator_1, 21), 10)))",
+            ),
+            (
+                "usa_dual_nv2_t6",
+                "min(rank(ts_decay_linear(ts_backfill(normalized_volume_indicator_2, 21), 10)), rank(ts_decay_linear(ts_backfill(raw_trend_indicator_6, 21), 10)))",
+            ),
+        ],
+    },
+    {
+        "campaign_id": "ASI_PRICEDL_RA",
+        "region": "ASI",
+        "universe": "MINVOL1M",
+        "dataset_id": "price_signal_dl",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "max_trade": "ON",
+        "default_neut": "COUNTRY",
+        "alt_neuts": ["SUBINDUSTRY", "REVERSION_AND_MOMENTUM"],
+        "fields": [
+            "normalized_volume_indicator_2",
+            "normalized_volume_indicator_0",
+            "normalized_volume_indicator_1",
+            "normalized_volume_indicator_5",
+            "raw_trend_indicator_4",
+            "normalized_trend_indicator_5",
+            "normalized_trend_indicator_3",
+            "normalized_trend_indicator_1",
+        ],
+    },
+    {
+        "campaign_id": "ASI_PRICEDL_DUAL_LOWTO",
+        "region": "ASI",
+        "universe": "MINVOL1M",
+        "dataset_id": "price_signal_dl",
+        "queue_type": "NORMAL",
+        "field_type": "CUSTOM_EXPRS",
+        "max_trade": "ON",
+        "default_neut": "COUNTRY",
+        "alt_neuts": ["SUBINDUSTRY", "REVERSION_AND_MOMENTUM"],
+        "custom_base_exprs": [
+            # Pre-smoothed low-TO variants aiming to lift ASI Margin >= 15bp (like legd1PAN 15.28bp)
+            ("asi_nv2_m22", "ts_mean(ts_backfill(normalized_volume_indicator_2, 21), 22)"),
+            ("asi_nv0_m22", "ts_mean(ts_backfill(normalized_volume_indicator_0, 21), 22)"),
+            ("asi_nv1_m22", "ts_mean(ts_backfill(normalized_volume_indicator_1, 21), 22)"),
+            ("asi_rt4_m22", "ts_mean(ts_backfill(raw_trend_indicator_4, 21), 22)"),
+            (
+                "asi_dual_nv2_rt4",
+                "min(rank(ts_decay_linear(ts_backfill(normalized_volume_indicator_2, 21), 10)), rank(ts_decay_linear(ts_backfill(raw_trend_indicator_4, 21), 10)))",
+            ),
+            (
+                "asi_dual_nv2_nt5",
+                "min(rank(ts_decay_linear(ts_backfill(normalized_volume_indicator_2, 21), 10)), rank(ts_decay_linear(ts_backfill(normalized_trend_indicator_5, 21), 10)))",
+            ),
+            (
+                "asi_dual_nv0_nt3",
+                "min(rank(ts_decay_linear(ts_backfill(normalized_volume_indicator_0, 21), 10)), rank(ts_decay_linear(ts_backfill(normalized_trend_indicator_3, 21), 10)))",
             ),
         ],
     },
@@ -116,37 +152,50 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
         "dataset_id": "price_signal_dl",
         "queue_type": "NORMAL",
         "field_type": "MATRIX",
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["COUNTRY", "REVERSION_AND_MOMENTUM"],
+        "default_neut": "COUNTRY",
+        "alt_neuts": ["REVERSION_AND_MOMENTUM", "SUBINDUSTRY"],
         "fields": [
-            "raw_trend_indicator_2",
-            "raw_volume_indicator_2",
-            "normalized_trend_indicator_6",
             "raw_trend_indicator_0",
+            "raw_trend_indicator_1",
+            "raw_trend_indicator_2",
+            "raw_trend_indicator_6",
+            "raw_volume_indicator_2",
             "raw_volume_indicator_3",
             "normalized_trend_indicator_2",
-            "raw_trend_indicator_1",
-            "raw_trend_indicator_6",
+            "normalized_trend_indicator_6",
         ],
     },
     {
-        "campaign_id": "EUR_NEWSDL_FREE",
-        "region": "EUR",
-        "universe": "TOP2500",
-        "dataset_id": "news_sentiment_dl",
-        "queue_type": "UNUSED_ALPHA0",
-        "field_type": "VECTOR",
+        "campaign_id": "GLB_ANL10_2TO3",
+        "region": "GLB",
+        "universe": "TOP3000",
+        "dataset_id": "analyst10",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "default_neut": "REVERSION_AND_MOMENTUM",
+        "alt_neuts": ["COUNTRY", "SUBINDUSTRY"],
+        "fields": [
+            "anl10_entfy1_pred_surps_v1_6484",
+            "anl10_entfy2_pred_surps_v1_6476",
+            "anl10_fcffy1_pred_surps_v1_6437",
+            "anl10_fcffy2_pred_surps_v1_6420",
+            "anl10_grmfq2_pred_surps_v1_6235",
+            "anl10_cpsfy2_pred_surps_v1_6286",
+        ],
+    },
+    {
+        "campaign_id": "GLB_FND44_2TO3",
+        "region": "GLB",
+        "universe": "TOP3000",
+        "dataset_id": "fundamental44",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
         "default_neut": "SUBINDUSTRY",
         "alt_neuts": ["COUNTRY", "REVERSION_AND_MOMENTUM"],
         "fields": [
-            "min_positive_word_sentiment_inferess",
-            "negative_word_count_inferess",
-            "negative_word_sentiment_stddev_inferess",
-            "positive_word_sentiment_entropy_inferess",
-            "min_negative_word_sentiment_trna",
-            "min_positive_word_sentiment_trna",
-            "output_metric_4_inferess",
-            "avg_words_per_sentence_inferess",
+            "fnd44_fscore",
+            "fnd44_yoon_wc_accruals",
+            "fnd44_probability_restatement",
         ],
     },
     {
@@ -187,60 +236,6 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
         ],
     },
     {
-        "campaign_id": "GLB_ANL10_2TO3",
-        "region": "GLB",
-        "universe": "TOP3000",
-        "dataset_id": "analyst10",
-        "queue_type": "NORMAL",
-        "field_type": "MATRIX",
-        "default_neut": "REVERSION_AND_MOMENTUM",
-        "alt_neuts": ["COUNTRY", "SUBINDUSTRY"],
-        "fields": [
-            "anl10_entfy1_pred_surps_v1_6484",
-            "anl10_entfy2_pred_surps_v1_6476",
-            "anl10_fcffy1_pred_surps_v1_6437",
-            "anl10_fcffy2_pred_surps_v1_6420",
-            "anl10_grmfq2_pred_surps_v1_6235",
-            "anl10_cpsfy2_pred_surps_v1_6286",
-        ],
-    },
-    {
-        "campaign_id": "GLB_FND44_2TO3",
-        "region": "GLB",
-        "universe": "TOP3000",
-        "dataset_id": "fundamental44",
-        "queue_type": "NORMAL",
-        "field_type": "MATRIX",
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["COUNTRY", "REVERSION_AND_MOMENTUM"],
-        "fields": [
-            "fnd44_fscore",
-            "fnd44_yoon_wc_accruals",
-            "fnd44_probability_restatement",
-        ],
-    },
-    {
-        "campaign_id": "ASI_PRICEDL_RA",
-        "region": "ASI",
-        "universe": "MINVOL1M",
-        "dataset_id": "price_signal_dl",
-        "queue_type": "NORMAL",
-        "field_type": "MATRIX",
-        "max_trade": "ON",
-        "default_neut": "COUNTRY",
-        "alt_neuts": ["SUBINDUSTRY", "REVERSION_AND_MOMENTUM"],
-        "fields": [
-            "normalized_volume_indicator_2",
-            "normalized_volume_indicator_0",
-            "normalized_volume_indicator_1",
-            "normalized_volume_indicator_5",
-            "raw_trend_indicator_4",
-            "normalized_trend_indicator_5",
-            "normalized_trend_indicator_3",
-            "normalized_trend_indicator_1",
-        ],
-    },
-    {
         "campaign_id": "ASI_BEHAV_RA",
         "region": "ASI",
         "universe": "MINVOL1M",
@@ -257,6 +252,65 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
             "visual_price_path_shape_score",
             "chronological_return_sequence_correlation",
             "consecutive_return_streak_length",
+        ],
+    },
+    # ==================== TIER 2: HIGH-MULTIPLIER / FRESH PROBES ====================
+    {
+        "campaign_id": "HKG_NEWSDL_FREE",
+        "region": "HKG",
+        "universe": "TOP800",
+        "dataset_id": "news_sentiment_dl",
+        "queue_type": "UNUSED_ALPHA0",
+        "field_type": "VECTOR",
+        "max_trade": "ON",
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["INDUSTRY", "REVERSION_AND_MOMENTUM"],
+        "fields": [
+            "min_positive_word_sentiment_inferess",
+            "positive_word_sentiment_entropy_inferess",
+            "positive_word_sentiment_stddev_inferess",
+            "text_complexity_score_inferess",
+            "sentence_count_inferess",
+            "avg_words_per_sentence_inferess",
+        ],
+    },
+    {
+        "campaign_id": "DEU_FND6_RATIOS",
+        "region": "DEU",
+        "universe": "TOP500",
+        "dataset_id": "fundamental6",
+        "queue_type": "NORMAL",
+        "field_type": "CUSTOM_EXPRS",
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["INDUSTRY", "REVERSION_AND_MOMENTUM"],
+        "custom_base_exprs": [
+            ("fnd6_roa", "divide(ts_backfill(fnd6_ewq_ibmiiq, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126)))"),
+            ("fnd6_roe", "divide(ts_backfill(fnd6_ewq_ibmiiq, 126), abs(ts_backfill(fnd6_ewq_teqq, 126)))"),
+            ("fnd6_cash_at", "divide(ts_backfill(fnd6_newq_cheq, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126)))"),
+            ("fnd6_gp_at", "divide(ts_backfill(fnd6_gpsa, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126)))"),
+            ("fnd6_cf_at", "divide(ts_backfill(fnd6_chechy, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126)))"),
+            ("fnd6_rev_at", "divide(ts_backfill(fnd6_revty, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126)))"),
+            ("fnd6_lev", "divide(ts_backfill(fnd6_ewq_lltq, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126)))"),
+            ("fnd6_intan", "divide(ts_backfill(fnd6_ewq_intanq, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126)))"),
+            ("fnd6_depr_capex", "divide(ts_backfill(fnd6_dpy, 126), abs(ts_backfill(fnd6_newq_ppentq, 126)))"),
+            ("fnd6_eq_res", "divide(ts_backfill(fnd6_ewq_eqrtq, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126)))"),
+        ],
+    },
+    {
+        "campaign_id": "DEU_OTH250_FREE",
+        "region": "DEU",
+        "universe": "TOP500",
+        "dataset_id": "other250",
+        "queue_type": "UNUSED_ALPHA0",
+        "field_type": "VECTOR",
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["INDUSTRY", "MARKET"],
+        "fields": [
+            "sales_position_rank",
+            "oth250_item_review_count",
+            "total_review_number",
+            "oth250_item_display_price",
+            "product_listed_price",
         ],
     },
     {
@@ -284,107 +338,6 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
             "average_idea_age_period",
         ],
     },
-    # ==================== TIER 2: HIGH-MULTIPLIER / ZERO-OS MARKETS ====================
-    {
-        "campaign_id": "DEU_ANL93_FREE",
-        "region": "DEU",
-        "universe": "TOP500",
-        "dataset_id": "analyst93",
-        "queue_type": "UNUSED_ALPHA0",
-        "field_type": "VECTOR",
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["INDUSTRY", "CROWDING"],
-        "fields": [
-            "anl93_profitabilityprev_analyst_profitability1_60d",
-            "anl93_profitabilityprev_analyst_profitability2_60d",
-            "anl93_profitabilityprev_estimator_profitability1",
-            "anl93_recprofitabilityprev_analyst_profitability1",
-            "anl93_recprofitabilityprev_estimator_profitability1_60d",
-            "anl93_estimator_accuracy2",
-            "anl93_analyst_relative_accuracy1",
-            "anl93_estimator_consistency",
-            "anl93_estimator_relative_consistency1",
-            "anl93_estimator_correct_revision_times",
-            "anl93_analyst_correct_forecast_times1",
-        ],
-    },
-    {
-        "campaign_id": "DEU_FND6_RATIOS",
-        "region": "DEU",
-        "universe": "TOP500",
-        "dataset_id": "fundamental6",
-        "queue_type": "NORMAL",
-        "field_type": "CUSTOM_EXPRS",
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["INDUSTRY", "REVERSION_AND_MOMENTUM"],
-        "custom_base_exprs": [
-            ("fnd6_roa", "divide(ts_backfill(fnd6_ewq_ibmiiq, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126)))"),
-            ("fnd6_roe", "divide(ts_backfill(fnd6_ewq_ibmiiq, 126), abs(ts_backfill(fnd6_ewq_teqq, 126)))"),
-            ("fnd6_cash_at", "divide(ts_backfill(fnd6_newq_cheq, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126)))"),
-            ("fnd6_gp_at", "divide(ts_backfill(fnd6_gpsa, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126)))"),
-            ("fnd6_cf_at", "divide(ts_backfill(fnd6_chechy, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126)))"),
-            ("fnd6_rev_at", "divide(ts_backfill(fnd6_revty, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126)))"),
-            ("fnd6_low_lev", "reverse(divide(ts_backfill(fnd6_ewq_lltq, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126))))"),
-            ("fnd6_intan_low", "reverse(divide(ts_backfill(fnd6_ewq_intanq, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126))))"),
-            ("fnd6_depr_capex", "divide(ts_backfill(fnd6_dpy, 126), abs(ts_backfill(fnd6_newq_ppentq, 126)))"),
-            ("fnd6_eq_res", "divide(ts_backfill(fnd6_ewq_eqrtq, 126), abs(ts_backfill(fnd6_cptnewq_atq, 126)))"),
-        ],
-    },
-    {
-        "campaign_id": "DEU_OTH250_FREE",
-        "region": "DEU",
-        "universe": "TOP500",
-        "dataset_id": "other250",
-        "queue_type": "UNUSED_ALPHA0",
-        "field_type": "VECTOR",
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["INDUSTRY", "MARKET"],
-        "fields": [
-            "sales_position_rank",
-            "oth250_item_review_count",
-            "total_review_number",
-            "oth250_item_display_price",
-            "product_listed_price",
-        ],
-    },
-    {
-        "campaign_id": "HKG_NEWSDL_FREE",
-        "region": "HKG",
-        "universe": "TOP800",
-        "dataset_id": "news_sentiment_dl",
-        "queue_type": "UNUSED_ALPHA0",
-        "field_type": "VECTOR",
-        "max_trade": "ON",
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["INDUSTRY", "REVERSION_AND_MOMENTUM"],
-        "fields": [
-            "min_positive_word_sentiment_inferess",
-            "positive_word_sentiment_entropy_inferess",
-            "positive_word_sentiment_stddev_inferess",
-            "text_complexity_score_inferess",
-            "sentence_count_inferess",
-            "avg_words_per_sentence_inferess",
-        ],
-    },
-    {
-        "campaign_id": "KOR_BEHAV_NORM",
-        "region": "KOR",
-        "universe": "TOP600",
-        "dataset_id": "behavioral_signals",
-        "queue_type": "NORMAL",
-        "field_type": "VECTOR",
-        "max_trade": "ON",
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["INDUSTRY", "REVERSION_AND_MOMENTUM"],
-        "fields": [
-            "visual_price_path_shape_score",
-            "consecutive_return_streak_length",
-            "extreme_daily_return_indicator",
-            "chronological_return_sequence_correlation",
-            "price_path_curvature_measure",
-            "salience_weighted_return_score",
-        ],
-    },
     {
         "campaign_id": "KOR_FORUM_NORM",
         "region": "KOR",
@@ -404,40 +357,20 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
         ],
     },
     {
-        "campaign_id": "GBR_DLRF_FREE",
+        "campaign_id": "GBR_OTH250_FREE",
         "region": "GBR",
         "universe": "TOP700",
-        "dataset_id": "dl_riskfree_returns",
-        "queue_type": "UNUSED_ALPHA0",
-        "field_type": "MATRIX",
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["INDUSTRY", "REVERSION_AND_MOMENTUM"],
-        "fields": [
-            "probability_label1_3quantile_60day_ohlcv",
-            "probability_label0_3quantile_5day_eur_ohlc_ma",
-            "probability_label0_3quantile_20day_eur_ohlc_ma",
-            "probability_label0_4quantile_20day_eur_ohlcma",
-            "probability_label0_4quantile_50day_eur_ohlc_ma",
-            "probability_label0_5quantile_20day_eur_ohlcma",
-        ],
-    },
-    {
-        "campaign_id": "AMR_M239_FREE",
-        "region": "AMR",
-        "universe": "TOP600",
-        "dataset_id": "model239",
+        "dataset_id": "other250",
         "queue_type": "UNUSED_ALPHA0",
         "field_type": "VECTOR",
-        # AMR strictly supports only 7 neutralizations (NO RAM/CROWDING/FAST/SLOW!)
         "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["COUNTRY", "INDUSTRY"],
+        "alt_neuts": ["INDUSTRY", "MARKET"],
         "fields": [
-            "mdl239_shortlasso1d",
-            "mdl239_combo_tickets",
-            "mdl239_combo_crossdeltaactivity",
-            "mdl239_combo_deltacrossdelta",
-            "loan_rate_change_aggregated_metric",
-            "mdl239_combo_deltarate",
+            "oth250_rank",
+            "oth250_item_rating",
+            "total_review_number",
+            "oth250_item_display_price",
+            "product_listed_price",
         ],
     },
     {
@@ -462,12 +395,10 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
 
 
 # 8 clean 5:5 Stage-1/Stage-2 RA templates (4 ADMIN_ORIGINAL : 4 TOP100_2026Q4).
-# Updated with live Audit #2 breakthroughs:
-# - Positive & negative twins of ts_zscore(ts_mean(x,5),66) (hit |Sh|=2.51, Fit=2.14, 2Y=1.86 on CHN/other496!)
-# - Positive & negative twins of ts_rank(ts_decay_linear(x,10),66) (hit |Sh|=2.19, Mgn=22.2bp on CHN/other496!)
-# - Proven USA winner group_rank(ts_decay_linear(x,10), subindustry) (Sh=+1.10, 2Y=+1.84, Mgn=24.9bp!)
-# - signed_power(..., 1.5) tail booster to lift Returns past CHN 8% & lower PC.
+# Includes BOTH positive & negative twins of ts_zscore(ts_mean(x,5),66) and ts_rank(ts_decay_linear(x,10),66)
+# plus proven USA/ASI winner group_rank(ts_decay_linear(x,10), subindustry) and signed_power tail booster.
 # Strictly ZERO add/multiply/trade_when, ZERO decay > 252, ZERO lambda_max > 1.
+TEMPLATE_SET_VER = "v3"
 STAGE12_TEMPLATES_8: list[dict[str, str]] = [
     {"id": "RA-ADM-01-sub-grank-z66-pos", "side": "ADMIN_ORIGINAL", "author": "WL13229", "fmt": "group_rank(ts_zscore(ts_mean({x}, 5), 66), subindustry)"},
     {"id": "RA-ADM-02-rev-sub-grank-z66", "side": "ADMIN_ORIGINAL", "author": "WL13229", "fmt": "reverse(group_rank(ts_zscore(ts_mean({x}, 5), 66), subindustry))"},
@@ -509,7 +440,7 @@ def build_ra_campaign_specs(
         if ftype == "CUSTOM_EXPRS":
             base_list = camp.get("custom_base_exprs") or []
             for neut in neuts:
-                for name, base_expr in base_list:
+                for c_idx, (name, base_expr) in enumerate(base_list):
                     items = [
                         {
                             "expression": t["fmt"].format(x=base_expr),
@@ -522,7 +453,7 @@ def build_ra_campaign_specs(
                         for t in STAGE12_TEMPLATES_8
                     ]
                     specs.append({
-                        "batch_id": f"RA-{cid}-{name}-{neut}",
+                        "batch_id": f"RA-{TEMPLATE_SET_VER}-{cid}-{c_idx:02d}-{name}-{neut}",
                         "campaign_id": cid,
                         "hypothesis_id": f"HYP-{cid}",
                         "queue_type": qtype,
@@ -556,7 +487,7 @@ def build_ra_campaign_specs(
                     for t in STAGE12_TEMPLATES_8
                 ]
                 specs.append({
-                    "batch_id": f"RA-{cid}-{f_idx:02d}-{fid[-16:]}-{neut}",
+                    "batch_id": f"RA-{TEMPLATE_SET_VER}-{cid}-{f_idx:02d}-{fid[-16:]}-{neut}",
                     "campaign_id": cid,
                     "hypothesis_id": f"HYP-{cid}",
                     "queue_type": qtype,
@@ -579,19 +510,19 @@ def build_ra_campaign_specs(
                 for f1, f2 in list(itertools.combinations(fields[:8], 2))[:8]:
                     w1 = _wrap_field(f1, ftype)
                     w2 = _wrap_field(f2, ftype)
-                    expr_a = f"ts_zscore({w1}, 66)"
-                    expr_b = f"ts_zscore({w2}, 66)"
+                    expr_a = f"ts_decay_linear({w1}, 10)"
+                    expr_b = f"ts_decay_linear({w2}, 10)"
                     pair_items.append({
-                        "expression": f"reverse(min(rank({expr_a}), rank({expr_b})))",
-                        "template_id": f"RA-DUAL-REV-MIN-{neut}",
+                        "expression": f"group_rank(min(rank({expr_a}), rank({expr_b})), subindustry)",
+                        "template_id": f"RA-DUAL-GRANK-MIN-{neut}",
                         "source_side": "ADMIN_ORIGINAL",
                         "author_id": "WL13229",
                         "dataset_id": ds,
                         "primary_field_id": f1,
                     })
                     pair_items.append({
-                        "expression": f"min(rank({expr_a}), rank({expr_b}))",
-                        "template_id": f"RA-DUAL-MIN-{neut}",
+                        "expression": f"reverse(group_rank(min(rank({expr_a}), rank({expr_b})), subindustry))",
+                        "template_id": f"RA-DUAL-REV-GRANK-MIN-{neut}",
                         "source_side": "TOP100_2026Q4",
                         "author_id": "SZ83096",
                         "dataset_id": ds,
@@ -601,7 +532,7 @@ def build_ra_campaign_specs(
                     sub = pair_items[chunk_i : chunk_i + 8]
                     if len(sub) >= 2:
                         specs.append({
-                            "batch_id": f"RA-{cid}-DUAL-{neut}-{chunk_i//8:02d}",
+                            "batch_id": f"RA-{TEMPLATE_SET_VER}-{cid}-DUAL-{neut}-{chunk_i//8:02d}",
                             "campaign_id": cid,
                             "hypothesis_id": f"HYP-{cid}-DUAL",
                             "queue_type": qtype,
@@ -627,12 +558,7 @@ def interleave_specs_by_campaign_waves(
     max_slots: int = 4,
     waves_per_turn: int = 1,
 ) -> list[dict[str, Any]]:
-    """Round-robin interleave specs by Region -> Campaign in wave-sized slices.
-
-    Ensures Pass 1 probes every requested market in priority order (high-Base first)
-    before cycling back to each region's second dataset/wave, while keeping every wave
-    strictly single-(region, dataset).
-    """
+    """Round-robin interleave specs by Region -> Campaign in wave-sized slices."""
     if waves_per_turn <= 0:
         return list(specs)
 
@@ -681,36 +607,40 @@ def should_early_stop_dataset(
     region: str,
     dataset_id: str,
     min_completed: int = 48,
-    min_abs_sharpe: float = 0.80,
+    min_pos_sharpe: float = 0.80,
     min_hit_rate: float = 0.02,
-    strong_abs_sharpe: float = 1.25,
+    strong_pos_sharpe: float = 1.25,
 ) -> tuple[bool, dict[str, Any]]:
-    """Check SQLite empirical performance for (region, dataset_id) to auto-stop dead directions."""
+    """Check SQLite POSITIVE-Sharpe performance for (region, dataset_id) to auto-stop dead directions.
+
+    Strictly checks positive Sharpe (not ABS(sharpe)) because high short-borrow-cost regions like CHN
+    produce negative Sharpe (-1.5..-2.5) on BOTH +x and -x for zero-alpha noise signals!
+    """
     row = ledger._conn.execute(
         """
         SELECT
             COUNT(*) AS completed,
-            SUM(CASE WHEN ABS(COALESCE(sharpe, 0)) >= ? THEN 1 ELSE 0 END) AS hits_08,
-            SUM(CASE WHEN ABS(COALESCE(sharpe, 0)) >= ? THEN 1 ELSE 0 END) AS hits_strong,
-            MAX(ABS(COALESCE(sharpe, 0))) AS max_abs_sh
+            SUM(CASE WHEN COALESCE(sharpe, -999.0) >= ? THEN 1 ELSE 0 END) AS pos_hits_08,
+            SUM(CASE WHEN COALESCE(sharpe, -999.0) >= ? THEN 1 ELSE 0 END) AS pos_hits_strong,
+            MAX(sharpe) AS max_pos_sh
         FROM sim_tasks
         WHERE region = ? AND dataset_id = ? AND status IN ('COMPLETED_FULL', 'COMPLETED_QUICK')
         """,
-        (min_abs_sharpe, strong_abs_sharpe, region.upper(), dataset_id),
+        (min_pos_sharpe, strong_pos_sharpe, region.upper(), dataset_id),
     ).fetchone()
     completed = int(row["completed"] or 0)
-    hits_08 = int(row["hits_08"] or 0)
-    hits_strong = int(row["hits_strong"] or 0)
-    max_abs_sh = round(float(row["max_abs_sh"] or 0.0), 3)
-    hit_rate = (hits_08 / completed) if completed > 0 else 0.0
+    pos_hits_08 = int(row["pos_hits_08"] or 0)
+    pos_hits_strong = int(row["pos_hits_strong"] or 0)
+    max_pos_sh = round(float(row["max_pos_sh"]), 3) if row["max_pos_sh"] is not None else None
+    hit_rate = (pos_hits_08 / completed) if completed > 0 else 0.0
     stats = {
         "completed": completed,
-        "hits_08": hits_08,
-        "hits_strong": hits_strong,
-        "max_abs_sh": max_abs_sh,
+        "hits_08": pos_hits_08,
+        "hits_strong": pos_hits_strong,
+        "max_pos_sh": max_pos_sh,
         "hit_rate": round(hit_rate, 4),
     }
-    if min_completed > 0 and completed >= min_completed and hits_strong == 0 and hit_rate < min_hit_rate:
+    if min_completed > 0 and completed >= min_completed and pos_hits_strong == 0 and hit_rate < min_hit_rate:
         return True, stats
     return False, stats
 
@@ -775,15 +705,15 @@ def run_ra_production_loop(
     max_slots: int = 4,
     batch_size: int = 8,
     simulation_mode: str = "FULL",
-    daily_target: int = 2400,
+    daily_target: int = 3000,
     max_batches: Optional[int] = None,
     sleep_between_batches_sec: float = 2.0,
     only_free_alpha0: bool = False,
     round_robin_waves: int = 1,
     early_stop_min_sims: int = 48,
-    early_stop_min_abs_sharpe: float = 0.80,
+    early_stop_min_pos_sharpe: float = 0.80,
 ) -> dict[str, Any]:
-    """Run low-memory D1 RA production simulation loop with wave concurrency & auto early-stop."""
+    """Run low-memory D1 RA production simulation loop with wave concurrency & positive-Sharpe auto early-stop."""
     ledger = LedgerStore()
     quota = QuotaTracker(ledger)
     auth = BrainAuthSession(quota_observer=quota.observe_response)
@@ -812,7 +742,7 @@ def run_ra_production_loop(
                 alpha0_map[f] = 0
             for _, expr in camp.get("custom_base_exprs") or []:
                 for tok in expr.replace("(", " ").replace(")", " ").replace(",", " ").split():
-                    if tok.startswith(("oth496_", "raw_volume_indicator_")):
+                    if tok.startswith(("oth496_", "raw_volume_indicator_", "normalized_volume_indicator_")):
                         alpha0_map[tok] = 0
 
     auth.authenticate()
@@ -860,14 +790,14 @@ def run_ra_production_loop(
                 region=reg,
                 dataset_id=ds,
                 min_completed=early_stop_min_sims,
-                min_abs_sharpe=early_stop_min_abs_sharpe,
+                min_pos_sharpe=early_stop_min_pos_sharpe,
             )
             if stop_now:
                 early_stopped_keys.add(ds_key)
                 print(
                     f"[EARLY-STOP] Demoting weak direction {reg}/{ds}: "
-                    f"completed={ds_stats['completed']} hits(|sh|>={early_stop_min_abs_sharpe})={ds_stats['hits_08']} "
-                    f"max|sh|={ds_stats['max_abs_sh']} -> pivoting to next dataset/market!",
+                    f"completed={ds_stats['completed']} pos_hits(sh>={early_stop_min_pos_sharpe})={ds_stats['hits_08']} "
+                    f"max_pos_sh={ds_stats['max_pos_sh']} -> pivoting to next dataset/market!",
                     flush=True,
                 )
                 idx += 1
@@ -970,7 +900,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     p.add_argument(
         "--region",
         default=",".join(HIGH_BASE_MULTI_MARKET_ORDER),
-        help="Comma-separated ordered region(s); default high-Base first across all 11 D1 markets",
+        help="Comma-separated ordered region(s); default high-Base winners first",
     )
     p.add_argument("--slots", type=int, default=4)
     p.add_argument("--batch-size", type=int, default=8)
@@ -980,7 +910,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     p.add_argument("--only-free-alpha0", action="store_true")
     p.add_argument("--round-robin-waves", type=int, default=1, help="Waves per campaign before rotating to next market (0=sequential)")
     p.add_argument("--early-stop-sims", type=int, default=48, help="Min completed sims before auto-stopping a dead dataset (0=disable)")
-    p.add_argument("--early-stop-sharpe", type=float, default=0.80, help="Min |Sharpe| threshold for early-stop hit detection")
+    p.add_argument("--early-stop-sharpe", type=float, default=0.80, help="Min POSITIVE Sharpe threshold for early-stop hit detection")
     p.add_argument("--loop", action="store_true", help="Continuously loop across EST platform days")
     args = p.parse_args(argv)
 
@@ -996,7 +926,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             only_free_alpha0=args.only_free_alpha0,
             round_robin_waves=args.round_robin_waves,
             early_stop_min_sims=args.early_stop_sims,
-            early_stop_min_abs_sharpe=args.early_stop_sharpe,
+            early_stop_min_pos_sharpe=args.early_stop_sharpe,
         )
         print("[RA-DAEMON] Pass finished:", json.dumps(res), flush=True)
         if not args.loop or args.max_batches is not None:

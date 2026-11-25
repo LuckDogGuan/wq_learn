@@ -84,18 +84,18 @@ def test_round_robin_interleave_preserves_all_specs_and_rotates_markets() -> Non
     specs = build_ra_campaign_specs(include_dual_branch=False, include_alt_neut=False)
     rr = interleave_specs_by_campaign_waves(specs, max_slots=4, waves_per_turn=1)
     assert len(rr) == len(specs)
-    # First 18 specs (EUR 4 + USA 4 + GLB 2 + ASI 4 + CHN 4) must already hit all 5 Tier-1 High-Base markets!
+    # First 18 specs (USA 4 + ASI 4 + EUR 4 + GLB 2 + HKG 4) must already hit all Tier-1 High-Base winners!
     early_regions = {s["region"] for s in rr[:18]}
-    assert {"EUR", "USA", "GLB", "ASI", "CHN"}.issubset(early_regions)
+    assert {"USA", "ASI", "EUR", "GLB"}.issubset(early_regions)
 
 
-def test_auto_early_stop_demotes_weak_dataset_but_keeps_strong_dataset(tmp_path) -> None:
+def test_auto_early_stop_demotes_weak_and_chn_double_negative_mirage(tmp_path) -> None:
     ledger = LedgerStore(tmp_path / "early_stop.db")
     try:
         est = current_est_platform_date()
         ledger.create_batch(
             "B-WEAK", hypothesis_id="H1", queue_type="UNUSED_ALPHA0", source_side="MIXED_4_4",
-            region="DEU", universe="TOP500", delay=1, simulation_mode="FULL", slots_required=1,
+            region="CHN", universe="TOP2000U", delay=1, simulation_mode="FULL", slots_required=1,
         )
         for i in range(50):
             tid = f"T-WEAK-{i}"
@@ -106,33 +106,34 @@ def test_auto_early_stop_demotes_weak_dataset_but_keeps_strong_dataset(tmp_path)
                 "canonical_dedup_key": f"dk-w-{i}",
                 "source_side": "ADMIN_ORIGINAL",
                 "queue_type": "UNUSED_ALPHA0",
-                "region": "DEU",
-                "universe": "TOP500",
+                "region": "CHN",
+                "universe": "TOP2000U",
                 "delay": 1,
-                "dataset_id": "model264",
+                "dataset_id": "other496",
                 "primary_field_id": "f1",
                 "simulation_mode": "FULL",
                 "expression": f"rank(f_{i})",
-                "settings_json": '{"region":"DEU","delay":1}',
+                "settings_json": '{"region":"CHN","delay":1}',
                 "status": "SUBMITTED",
                 "est_platform_date": est,
             })
+            # Even huge negative Sharpe (-2.26 from CHN borrow cost drag) MUST early stop if 0 positive hits!
             ledger.mark_task_completed(
                 tid, simulation_mode="FULL", alpha_id=f"A{i}",
-                sharpe=0.45, fitness=0.25, turnover=0.10, margin=0.0012,
+                sharpe=-2.26, fitness=-1.53, turnover=0.07, margin=-0.0016,
             )
 
-        stop_weak, stats_weak = should_early_stop_dataset(ledger, region="DEU", dataset_id="model264", min_completed=48)
+        stop_weak, stats_weak = should_early_stop_dataset(ledger, region="CHN", dataset_id="other496", min_completed=48)
         assert stop_weak is True
         assert stats_weak["completed"] == 50
         assert stats_weak["hits_08"] == 0
 
-        # Add one strong hit -> must NOT early stop
+        # Add one strong POSITIVE hit -> must NOT early stop
         ledger.mark_task_completed(
             "T-WEAK-0", simulation_mode="FULL", alpha_id="A0",
             sharpe=1.45, fitness=0.95, turnover=0.10, margin=0.0015,
         )
-        stop_strong, stats_strong = should_early_stop_dataset(ledger, region="DEU", dataset_id="model264", min_completed=48)
+        stop_strong, stats_strong = should_early_stop_dataset(ledger, region="CHN", dataset_id="other496", min_completed=48)
         assert stop_strong is False
         assert stats_strong["hits_strong"] == 1
     finally:

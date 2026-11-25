@@ -39,3 +39,7 @@
     - **头号高质种子 `N1K03xae`**（`raw_volume_indicator_6` · `group_rank(ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 10), subindustry)`）：**`Sharpe = +1.10`、`2Y Sharpe = +1.84`（已远超 1.58！）`、Fit = 0.67、TO = 3.71%、Margin = +24.91bp`**！同时落入最高 Base 市场 `USA` + `model (1.3×, 0 OS)` 空白塔！
     - 同批另出 `RR5MKj6n`（`Sh=-0.92, 2Y=-1.55`，说明 `raw_volume_indicator_6` 经 `ts_zscore(...,66)` **正向**约 `+0.92 / 2Y +1.55`）与 `omP7GbJE`（`raw_volume_indicator_3`, `Sh=+0.70, 2Y=+1.29`）及 `MPgOzEz9`（`-0.79, 2Y=-1.39`）。
   - **方向修正建议**：`price_signal_dl` 的 `raw_volume_indicator_*` 系列在美股呈现清晰**正向 + 高 2Y + 超低换手高 Margin** 特征！待 Pass 1 全市场摸底完毕后，将把 `raw_volume_indicator_0..6` 与 `raw_trend_indicator_0..6` 的正向 `group_rank`/`group_zscore` + 同集双支 `min(rank(vol), rank(trend))` 作为 USA 第一精修主力！
+
+- **2026-11-25 19:16（1 小时定时检查 #1 · `USA / price_signal_dl` 稳居全场头号真 Alpha 矿脉！）**：
+  - 累计完成 `64` 条即收获 **`8` 条纯正向 `POOL_B` 种子**（对称验真，非成本假象！）：`xAl6KWkp` (`Sh=+1.10, 2Y=+1.85, Mgn=+26.42bp`)、`N1K03xae` (`Sh=+1.10, 2Y=+1.84, Mgn=+24.91bp`)、`gJrAY2bM` (`Sh=+1.06, 2Y=+1.99, TO=2.66%, Mgn=+33.40bp`!)、`j2VE57mo` (`+0.89`)、`1YG9qMQR` (`+0.87`)、`np6J1r2a` (`+0.87`)、`xAl6KZYw` (`+0.84`)。
+  - **加码方向**：已将 `USA` 置顶为全队列第 1 顺位，新增 `USA_PRICEDL_NORMVOL_FREE`（5 个实盘核验 `Alphas=0` `normalized_volume_indicator_1/2/3/5/6`）与 `USA_PRICEDL_TREND_VOL_NORM`（`raw_trend_indicator_0..6` + 跨子族量价双支 `min(rank(vol), rank(trend))`），主冲 `Sharpe > 1.58`！

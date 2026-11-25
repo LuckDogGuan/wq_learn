@@ -81,3 +81,5 @@
     1. **不丢弃好种子**：`LL8WK2q9`（`0.71, Mgn=23.8bp`）、`0mGqGY9q`（`0.63, Mgn=32.1bp`）、`0mGqPKl1`（`0.63, Mgn=26.4bp`）永久保留在 SQLite 中，未来可作为低换手辅助腿；
     2. **立即早停 `DEU/model264`**（不再浪费额度跑 `INDUSTRY`/`RAM`），`DEU` 直接跳过 `model264` 转向 **`analyst93`（38 个免额 VECTOR）→ `other250`（9 个免额 VECTOR）→ `fundamental6`（低换手财报比率）**；
     3. 同步在 `daemon_ra_runner.py` 植入**自动数据集早停（连续 2 波 `0` 条 `|Sh|≥0.80` 自动切下一集）**与**高 Base 多市场轮巡（`EUR → USA → GLB → ASI → CHN → DEU(analyst93/fnd6) → HKG → KOR → GBR → AMR → IND`）**。
+
+- **2026-11-25 19:16（1 小时定时检查 #1）**：`DEU / analyst93` 完成 `38` 条 `0` 命中（最高 `+0.55`），已主动跳过避免浪费额度，DEU 直切低换手财报比率 **`fundamental6`** 与 **`other250`**。

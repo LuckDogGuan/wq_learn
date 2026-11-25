@@ -32,4 +32,5 @@
    - 严禁无上限爬山、`ts_decay_linear(..., >252)` 与 `ts_target_tvr_decay(..., lambda_max > 1)`；
    - 生产直跑 `FULL`（`QUICK` 仅快 8% 且丢 `rn_sharpe`）；
    - 阶段 3 必先修 **`LOW_2Y_SHARPE ≥ 1.58`**（历史占 49% 失败），首选实证冠军分组算子 `group_zscore`/`group_rank`/`group_neutralize(..., subindustry)` 与前置平滑（`ts_mean 22`/`ts_decay_linear 10`）；
+   - **`CHN/TOP2000U` 融券双负假象**：因 A 股高融券成本（~4–6%/年），零信号在 `+x` 与 `reverse(x)` 上可同时打出 `-1.5 ~ -2.5` Sharpe（如 `other496` 实测 `+x=-2.26` 且 `-x=-1.95`）！严禁单看负 Sharpe 误判翻转，早停与筛选须以**正向 Sharpe**及正反对称差为准；
    - `Alphas=0` 免每日额度窗口于 **`2026-12-06`** 冻结截止；凭据加载须以 `Password/config.yaml` 优先于环境变量。
