@@ -32,12 +32,7 @@ class BiometricsRequiredError(RuntimeError):
 
 
 def discover_credentials(config_path: Optional[Path] = None) -> tuple[str, str]:
-    """Load (username, password) from env vars or read-only Password/config.yaml."""
-    env_user = os.environ.get("WQ_USERNAME")
-    env_pass = os.environ.get("WQ_PASSWORD")
-    if env_user and env_pass:
-        return env_user.strip(), env_pass.strip()
-
+    """Load (username, password) from explicit config_path / Password/config.yaml first, then env fallback."""
     candidates: list[Path] = []
     if config_path:
         candidates.append(Path(config_path))
@@ -74,8 +69,13 @@ def discover_credentials(config_path: Optional[Path] = None) -> tuple[str, str]:
             if user and pwd:
                 return str(user).strip(), str(pwd).strip()
 
+    env_user = os.environ.get("WQ_USERNAME")
+    env_pass = os.environ.get("WQ_PASSWORD")
+    if env_user and env_pass:
+        return env_user.strip(), env_pass.strip()
+
     raise FileNotFoundError(
-        "WorldQuant Credential not found. Set WQ_USERNAME/WQ_PASSWORD or provide Password/config.yaml."
+        "WorldQuant Credential not found. Provide Password/config.yaml or set WQ_USERNAME/WQ_PASSWORD."
     )
 
 
