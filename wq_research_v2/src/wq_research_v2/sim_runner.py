@@ -111,7 +111,7 @@ class SimRunner:
         blacklist_registry: Any = None,
         max_slots: int = 4,
         poll_interval_sec: float = 5.0,
-        poll_timeout_sec: float = 300.0,
+        poll_timeout_sec: float = 600.0,
     ) -> None:
         self.client = client
         self.ledger = ledger

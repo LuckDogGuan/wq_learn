@@ -7,4 +7,7 @@
 
 ## 2. 备战字段与策略预案
 - **核心清洗字段卡**：[FLD-P1-2to3-QuickWin.md](../records/fields/FLD-P1-2to3-QuickWin.md)（`analyst10`、`analyst15` [65 个 `.bin` T1]、`fundamental23`、`fundamental44`）与 Stage-0 蓝海 `model239`、`sentiment26`。
-- **状态**：待 `DEU / TOP500 / D1` 首战跑顺后独立启动定向 2→3 速赢批。
+- **状态**：已纳入高 Base 多市场轮巡。
+- **2026-11-25 17:45（30 分钟巡检 #1 · `analyst10` 有信号但出现 300s 轮询超时观测）**：
+  - `GLB / TOP3000 / analyst10`（Wave #1 `2×8` 耗时 `304.7s`）：完成 `8` 条、另 `8` 条落 `RESULTS_UNOBSERVED`（GLB 3000 多国大池单批 `FULL` 接近 300s 轮询上限，后续需把 GLB 轮询上限放宽至 `600s` 并只对账不重发）。
+  - 已完成 8 条中即出现 `MPgOZYZ8`（`anl10_entfy1_pred_surps_v1_6484`, `Sh=-0.80` → 正向约 `+0.80`）与 `1YGePNKW`（`Sh=+0.69, TO=9.1%`），验证 `analyst10` 存在真实盈利意外正向信号，值得继续推进 `2→3` 冲塔。

@@ -34,3 +34,8 @@
 ## 3. 实盘运行与 30 分钟滚动复盘日志
 
 - **2026-11-25 17:26（建档完成）**：完成 `USA/TOP3000/D1` 实时免额/低拥挤字段核验，纳入高 Base 多市场轮巡。
+- **2026-11-25 17:45（30 分钟巡检 #1 · `price_signal_dl` 首波 32 条即出高质种子！）**：
+  - `USA / TOP3000 / price_signal_dl`（`Alphas=0` 免额，Wave #1 `32` FULL 仅耗时 `144.1s`）：
+    - **头号高质种子 `N1K03xae`**（`raw_volume_indicator_6` · `group_rank(ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 10), subindustry)`）：**`Sharpe = +1.10`、`2Y Sharpe = +1.84`（已远超 1.58！）`、Fit = 0.67、TO = 3.71%、Margin = +24.91bp`**！同时落入最高 Base 市场 `USA` + `model (1.3×, 0 OS)` 空白塔！
+    - 同批另出 `RR5MKj6n`（`Sh=-0.92, 2Y=-1.55`，说明 `raw_volume_indicator_6` 经 `ts_zscore(...,66)` **正向**约 `+0.92 / 2Y +1.55`）与 `omP7GbJE`（`raw_volume_indicator_3`, `Sh=+0.70, 2Y=+1.29`）及 `MPgOzEz9`（`-0.79, 2Y=-1.39`）。
+  - **方向修正建议**：`price_signal_dl` 的 `raw_volume_indicator_*` 系列在美股呈现清晰**正向 + 高 2Y + 超低换手高 Margin** 特征！待 Pass 1 全市场摸底完毕后，将把 `raw_volume_indicator_0..6` 与 `raw_trend_indicator_0..6` 的正向 `group_rank`/`group_zscore` + 同集双支 `min(rank(vol), rank(trend))` 作为 USA 第一精修主力！
