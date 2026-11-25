@@ -6,8 +6,8 @@
 
 1. **严格 D1-Only**：全链路锁定 `settings.delay == 1`，严禁任何 `Delay = 0 (D0)` 回测。
 2. **Decision #3 算子永久禁令**：永久禁止 `add (+)`、`multiply (*)`、`trade_when`；双分支融合统一用 `min(rank(expr_A), rank(expr_B))` / `reverse(min(...))`。
-3. **绝不自动提交**：永不调用 `POST /alphas/{id}/submit`。合格候选只打标签（RA 线打 **`Useful`**，独立 PPA 线打 **`PPA_Useful`**），由用户在网页端手工提交；`PATCH /alphas/{id}` 须显式确认或 `--confirm-apply`。
-4. **硬保护只读资产**：严禁删除/改写 `legacy_core/Core/runtime_data/`（1,532 文件）、`reference/`（静态参考库）；严禁读取/打印/提交 `Password/config.yaml`。
+3. **绝不自动提交**：永不调用 `POST /alphas/{id}/submit`。全绿候选只打 **`Useful`**（独立 PPA 线打 **`PPA_Useful`**），由用户在网页端手工提交；**通过全部硬检且本地 SC `< 0.68`、仅 PC 未过（`≥ 0.70`）者至少标记 `SC_PASS`** 入专项降 PC 队列；`PATCH /alphas/{id}` 须显式确认或 `--confirm-apply`。
+4. **硬保护只读资产与已完成台账**：严禁删除/改写 `legacy_core/Core/runtime_data/`（1,532 文件）、`reference/`（静态参考库）；严禁读取/打印/提交 `Password/config.yaml`；SQLite `COMPLETED_FULL` 行永久不可被重启去重（`DEDUP_SKIPPED`）覆盖。
 5. **只对账一次、绝不盲重发**：遇 `429 / 5xx / 超时 / 缺子 ID` 仅存指纹标 `PENDING_RECONCILE`，冷却后只读对账 1 次，仍未观测落 `RESULTS_UNOBSERVED`。
 6. **无 GUI & 广州低内存（1.9 GiB RAM）**：不建本地 Web GUI；后台任务必配 SQLite WAL Checkpoint、10m 认证刷新、10s 重连、流式低内存扫描与 `MemoryMax=512M`；新模块必配 `tests/` 单测与 AST 校验。
 
@@ -15,9 +15,11 @@
 
 1. **7 层概念严禁混为一谈**（官方术语表：[BRAIN_OFFICIAL_GLOSSARY.md](docs/official_guides/BRAIN_OFFICIAL_GLOSSARY.md)）：
    `Dataset（数据集）` ≠ `Data Field（数据字段）` ≠ `Operator（算子，永不拉黑）` ≠ `Template（模板）` ≠ `Expression（表达式）` ≠ `Simulation Settings（设置）` ≠ `Alpha`。
-2. **分地区独立研究 + 绝不丢弃好结果 + 漏斗筛选**：
-   - 每个地区必须独立建档、独立对比、结合各自平台门槛与股市特征持续优化（[docs/整理与研究/regions/](docs/整理与研究/regions/README.md)），优先多跑高 Base / 高倍率 D1 地区，方向不对须每 30 分钟复查并及时止损换向；
-   - 全量回测结果均落盘 SQLite，通过分层池（`POOL_S / POOL_A / POOL_B / POOL_FLIP / POOL_DROP`）过滤低 Sharpe 噪声自然抬高候选池质量。
+2. **8:2 查资料优先级 + 可复用自动化规则 + 批次台账复盘**：
+   - **严格 8:2 资料优先级**：遇到提效/降 PC/排雷问题，**80% 优先查阅「王哥 skill（`worldquant-brain-cyber-game-king`）+ Top100 黄金顾问（`wq-top-advisors-skill`）+ 管理员原创发帖」**；**仅当前三者无法解决时，才用 20% 查阅普通论坛资料**；
+   - **可复用经验与动态微调真源**：筛选/提效/模板规则固化在 [REUSABLE_D1_RA_EXPERIENCE_PLAYBOOK.md](docs/整理与研究/records/rules/REUSABLE_D1_RA_EXPERIENCE_PLAYBOOK.md) 与 [reusable_experience_rules.json](wq_research_v2/config/reusable_experience_rules.json)；除 RA 硬门槛外，小范围参数（`decay`/`truncation`/窗口/中性化/剪枝）可多轮微调，且**数据集优先、持续试新集**；
+   - **每批必记漏斗与好坏复盘**：通过 `wq_research_v2/batch_audit_logger.py` 自动记录每批（地区/字段/模板/一二三阶段过关数）与过好/过差/超时批次根因至 [batch_audit_ledger.md](docs/整理与研究/records/experiments/batch_audit_ledger.md) 及 [sc_pass_pc_rescue_queue.json](docs/整理与研究/records/experiments/sc_pass_pc_rescue_queue.json)；
+   - 每个地区独立建档优化（[docs/整理与研究/regions/](docs/整理与研究/regions/README.md)），优先专注 1–2 个高 Base 方向，每 2 小时复查止损换向；全量落盘 SQLite 不丢弃好结果。
 3. **RA 与 PPA 彻底分离 + 平台 PPA-First 四大陷阱**（四阶段流程：[d1_4stage_pipeline.json](docs/整理与研究/workflow/d1_4stage_pipeline.json) · [网页版](docs/整理与研究/workflow/d1_4stage_pipeline.html)）：
    - 先跑通简单的 RA 四阶段主线，不与 PPA 混用；
    - 满足 PPA 结构（≤8 唯一算子［`ts_backfill`/`group_backfill` 豁免］、≤3 唯一字段［分组字段豁免］）时系统默认**先跑 PPA 检查**；若因 **PPA 自相关 ≥ 0.50**（且 Sharpe 未高出 +10%）失败回退 RA 也失败，UI 常报错 **`Prod Correlation FAIL`**，实为假象；

@@ -76,11 +76,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_pc.add_argument("--alpha-ids", required=True)
     p_pc.add_argument("--region", default="GBR")
 
-    # tag (Guangzhou-style Useful / SC_IS_HIGHT / PC_IS_HIGHT tagging; dry-run by default)
-    p_tag = sub.add_parser("tag", help="Preview or apply Useful/SC_IS_HIGHT/PC_IS_HIGHT tag (dry-run by default)")
+    # tag (Guangzhou-style Useful / SC_PASS / SC_IS_HIGHT / PC_IS_HIGHT tagging; dry-run by default)
+    p_tag = sub.add_parser("tag", help="Preview or apply Useful/SC_PASS/SC_IS_HIGHT/PC_IS_HIGHT tag (dry-run by default)")
     p_tag.add_argument("action", choices=["apply"])
     p_tag.add_argument("--alpha-ids", required=True)
-    p_tag.add_argument("--tag", default=USEFUL_TAG, choices=["Useful", "SC_IS_HIGHT", "PC_IS_HIGHT"])
+    p_tag.add_argument("--tag", default=USEFUL_TAG, choices=["Useful", "SC_PASS", "SC_IS_HIGHT", "PC_IS_HIGHT"])
     p_tag.add_argument("--confirm-apply", action="store_true", help="Explicit confirmation required to send PATCH")
 
     # ablate

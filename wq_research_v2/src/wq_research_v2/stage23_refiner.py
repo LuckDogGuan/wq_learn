@@ -370,11 +370,9 @@ def build_eur_model25_stage3_pc_crush_specs() -> list[dict[str, Any]]:
     ]
 
     pc_grid: list[tuple[str, str, int, float]] = [
-        ("stat_d4_t06", "STATISTICAL", 4, 0.06),
-        ("snf_d4_t06", "SLOW_AND_FAST", 4, 0.06),
         ("crd_d4_t06", "CROWDING", 4, 0.06),
-        ("fast_d2_t04", "FAST", 2, 0.04),
         ("ram_d4_t06", "REVERSION_AND_MOMENTUM", 4, 0.06),
+        ("stat_d4_t06", "STATISTICAL", 4, 0.06),
         ("stat_d6_t08", "STATISTICAL", 6, 0.08),
     ]
 
@@ -498,11 +496,171 @@ def build_usa_pricedl_stage3_rescue_specs() -> list[dict[str, Any]]:
     return specs
 
 
+def build_eur_pc_pass_finisher_s3r3_specs() -> list[dict[str, Any]]:
+    """Stage-3 r3 Finisher for ALREADY PC_PASS (<0.68) + SC_PASS (<0.30) EUR/model25 monsters!
+
+    Live verified PC_PASS near-miss alphas (literally 0.01-0.02 from ALL-GREEN Useful!):
+      - RR53xm10 (val_mom x mdl25_8v accruals, CROWDING d=4): Sh=1.76, 2Y=2.37, Fit=1.05, SC=0.269, PC=0.6599, ONLY sub=0.90/0.91!
+      - vRYqEZja (val_mom x mdl25_8v accruals, RAM d=4): Sh=1.71, 2Y=2.33, sub=PASS, lad=PASS, SC=0.296, PC=0.6688, ONLY Fit=0.98/1.00!
+      - pwWX2xNb (signed_power(val_mom, 2), RAM d=4): Sh=2.04, 2Y=2.86, Fit=1.47, SC=0.256, PC=0.6806, ONLY sub=1.05/1.06!
+      - vRYqEALz (signed_power(val_mom, 2), STAT d=6): Sh=2.24, 2Y=2.71, Fit=1.40, SC=0.204, PC=0.6218, ONLY sub=0.93/1.16!
+      - gJrA5OlJ (vector_neut(val_mom, m238_conc), STAT d=4): Sh=2.21, 2Y=2.83, Fit=1.26, SC=0.203, PC=0.6433, ONLY sub=0.90/1.15!
+      - 1YG98OpJ (val_mom x op_eff, RAM d=4): Sh=1.62, 2Y=2.06, sub=PASS, lad=PASS, SC=0.325, PC=0.6727, ONLY Fit=0.91/1.00!
+    Micro-sweeps adv20 gate {0.40, 0.45, 0.50} + mild decay {3, 4, 5, 6} + truncation {0.06, 0.08}
+    on fast CROWDING & REVERSION_AND_MOMENTUM (and 1 safe STATISTICAL batch) -> instant ALL-GREEN Useful!
+    """
+    specs: list[dict[str, Any]] = []
+    vm = "ts_backfill(value_momentum_region_percentile, 21)"
+    oe = "ts_backfill(operating_efficiency_component_percentile, 21)"
+    acc = "ts_backfill(mdl25_8v, 21)"
+    sh_conc = "ts_backfill(regional_peer_investment_concentration_rank_d1, 21)"
+    ci = "group_cartesian_product(country, industry)"
+
+    fin_exprs: list[tuple[str, str, str, str]] = [
+        ("S3FIN-ADM-01-acc-adv40", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.4, group_zscore(min(rank({vm}), rank({acc})), {ci}), 0)"),
+        ("S3FIN-ADM-02-acc-adv45", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.45, group_zscore(min(rank({vm}), rank({acc})), {ci}), 0)"),
+        ("S3FIN-ADM-03-acc-adv50", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.5, group_zscore(min(rank({vm}), rank({acc})), {ci}), 0)"),
+        ("S3FIN-ADM-04-acc-m5-adv40", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.4, group_zscore(ts_mean(min(rank({vm}), rank({acc})), 5), {ci}), 0)"),
+        ("S3FIN-TOP-01-sp2-adv40", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.4, signed_power(group_zscore({vm}, {ci}), 2), 0)"),
+        ("S3FIN-TOP-02-sp2-adv45", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.45, signed_power(group_zscore({vm}, {ci}), 2), 0)"),
+        ("S3FIN-TOP-03-sp2-adv50", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.5, signed_power(group_zscore({vm}, {ci}), 2), 0)"),
+        ("S3FIN-TOP-04-vneut-adv45", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.45, vector_neut(group_zscore({vm}, {ci}), rank({sh_conc})), 0)"),
+    ]
+
+    fin_exprs_b: list[tuple[str, str, str, str]] = [
+        ("S3FIN-ADM-05-vmoe-adv40", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.4, group_zscore(min(rank({vm}), rank({oe})), {ci}), 0)"),
+        ("S3FIN-ADM-06-vmoe-adv45", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.45, group_zscore(min(rank({vm}), rank({oe})), {ci}), 0)"),
+        ("S3FIN-ADM-07-vmoe-m5-adv35", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_zscore(ts_mean(min(rank({vm}), rank({oe})), 5), {ci}), 0)"),
+        ("S3FIN-ADM-08-acc-m10-adv35", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_zscore(ts_mean(min(rank({vm}), rank({acc})), 10), {ci}), 0)"),
+        ("S3FIN-TOP-05-sp2-adv55", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.55, signed_power(group_zscore({vm}, {ci}), 2), 0)"),
+        ("S3FIN-TOP-06-vneut-adv50", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.5, vector_neut(group_zscore({vm}, {ci}), rank({sh_conc})), 0)"),
+        ("S3FIN-TOP-07-vmoe-ret-adv45", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.45, vector_neut(group_zscore(min(rank({vm}), rank({oe})), {ci}), rank(ts_mean(returns, 22))), 0)"),
+        ("S3FIN-TOP-08-acc-sp15-adv40", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.4, signed_power(group_zscore(min(rank({vm}), rank({acc})), {ci}), 1.5), 0)"),
+    ]
+
+    fin_grid: list[tuple[str, str, int, float]] = [
+        ("crd_d4_t06", "CROWDING", 4, 0.06),
+        ("crd_d5_t08", "CROWDING", 5, 0.08),
+        ("ram_d5_t06", "REVERSION_AND_MOMENTUM", 5, 0.06),
+        ("ram_d6_t08", "REVERSION_AND_MOMENTUM", 6, 0.08),
+        ("crd_d3_t06", "CROWDING", 3, 0.06),
+        ("stat_d5_t08", "STATISTICAL", 5, 0.08),
+    ]
+
+    for tag, neut, dec, trunc in fin_grid:
+        specs.append(
+            _pack_items_into_spec(
+                batch_id=f"S3-r3-EUR-FINA-{tag}",
+                campaign_id="S3_EUR_PC_PASS_FINISHER",
+                hypothesis_id="HYP-S3-EUR-FIN-0FAIL-PC-LT068",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model25",
+                queue_type="NORMAL",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=[
+                    {
+                        "expression": expr,
+                        "template_id": f"{tid}_{neut}_d{dec}",
+                        "source_side": side,
+                        "author_id": auth,
+                        "dataset_id": "model25",
+                        "primary_field_id": "value_momentum_region_percentile",
+                    }
+                    for tid, side, auth, expr in fin_exprs
+                ],
+            )
+        )
+        specs.append(
+            _pack_items_into_spec(
+                batch_id=f"S3-r3-EUR-FINB-{tag}",
+                campaign_id="S3_EUR_PC_PASS_FINISHER",
+                hypothesis_id="HYP-S3-EUR-FINB-0FAIL-PC-LT068",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model25",
+                queue_type="NORMAL",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=[
+                    {
+                        "expression": expr,
+                        "template_id": f"{tid}_{neut}_d{dec}",
+                        "source_side": side,
+                        "author_id": auth,
+                        "dataset_id": "model25",
+                        "primary_field_id": "value_momentum_region_percentile",
+                    }
+                    for tid, side, auth, expr in fin_exprs_b
+                ],
+            )
+        )
+    return specs
+
+
+def build_usa_pricedl_single_axis_s3r3_specs() -> list[dict[str, Any]]:
+    """Stage-3 r3 STRICT SINGLE-AXIS refinement around USA/TOP3000/price_signal_dl winners.
+
+    Postmortem fix from S3-r2-USA-PSD (which changed window + adv20 + decay simultaneously and dropped 1.51 -> 0.77):
+    Keep xAl6rxYw (Sh=1.51, 2Y=2.89, PC=0.749) & gJrAXo2J (Sh=1.49, 2Y=2.65, PC=0.758) intact WITHOUT hard adv20 cutoff,
+    and sweep ONE mild axis at a time (decay {1,2,3} | window {5,8,10} | hump {0.005,0.01} | signed_power {0.5,1.5}).
+    """
+    specs: list[dict[str, Any]] = []
+    t1 = "ts_backfill(raw_trend_indicator_1, 21)"
+    t4 = "ts_backfill(raw_trend_indicator_4, 21)"
+    v6 = "ts_backfill(raw_volume_indicator_6, 21)"
+    dual_v6_t1 = f"min(rank(ts_decay_linear({v6}, 10)), rank(ts_decay_linear({t1}, 10)))"
+    dual_v6_t4 = f"min(rank(ts_decay_linear({v6}, 10)), rank(ts_decay_linear({t4}, 10)))"
+
+    single_axis_exprs: list[tuple[str, str, str, str]] = [
+        ("S3U1-ADM-01-t1-m5-base", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_zscore(ts_mean({t1}, 5), 66), subindustry)"),
+        ("S3U1-ADM-02-t1-m8-z66", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_zscore(ts_mean({t1}, 8), 66), subindustry)"),
+        ("S3U1-ADM-03-t1-m10-z66", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_zscore(ts_mean({t1}, 10), 66), subindustry)"),
+        ("S3U1-ADM-04-v6t1-m5-base", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_zscore(ts_mean({dual_v6_t1}, 5), 66), subindustry)"),
+        ("S3U1-TOP-01-t1-hump005", "TOP100_2026Q4", "SZ83096", f"hump(group_rank(ts_zscore(ts_mean({t1}, 5), 66), subindustry), hump=0.005)"),
+        ("S3U1-TOP-02-t1-sp15", "TOP100_2026Q4", "SZ83096", f"signed_power(group_zscore(ts_zscore(ts_mean({t1}, 5), 66), subindustry), 1.5)"),
+        ("S3U1-TOP-03-v6t1-hump01", "TOP100_2026Q4", "ZS59763", f"hump(group_rank(ts_zscore(ts_mean({dual_v6_t1}, 5), 66), subindustry), hump=0.01)"),
+        ("S3U1-TOP-04-v6t4-sp05", "TOP100_2026Q4", "LD22811", f"signed_power(group_zscore(ts_zscore(ts_mean({dual_v6_t4}, 5), 66), subindustry), 0.5)"),
+    ]
+
+    for tag, neut, dec, trunc in [
+        ("ram_d1_t04", "REVERSION_AND_MOMENTUM", 1, 0.04),
+        ("ram_d2_t06", "REVERSION_AND_MOMENTUM", 2, 0.06),
+        ("ram_d3_t06", "REVERSION_AND_MOMENTUM", 3, 0.06),
+        ("crd_d2_t06", "CROWDING", 2, 0.06),
+        ("sub_d2_t06", "SUBINDUSTRY", 2, 0.06),
+    ]:
+        specs.append(
+            _pack_items_into_spec(
+                batch_id=f"S3-r3-USA-1AX-{tag}",
+                campaign_id="S3_USA_PSD_SINGLE_AXIS",
+                hypothesis_id="HYP-S3-USA-PSD-1AX-160-PC-LT068",
+                region="USA",
+                universe="TOP3000",
+                dataset_id="price_signal_dl",
+                queue_type="NORMAL",
+                settings=_make_settings("USA", "TOP3000", neut, decay=dec, truncation=trunc),
+                items=[
+                    {
+                        "expression": expr,
+                        "template_id": f"{tid}_{neut}_d{dec}",
+                        "source_side": side,
+                        "author_id": auth,
+                        "dataset_id": "price_signal_dl",
+                        "primary_field_id": "raw_trend_indicator_1",
+                    }
+                    for tid, side, auth, expr in single_axis_exprs
+                ],
+            )
+        )
+    return specs
+
+
 def build_all_stage23_refiner_specs() -> list[dict[str, Any]]:
-    """Return ordered Stage-3 PC-Crushing & USA Rescue specs followed by Stage-2 Mild Param Ladder specs."""
+    """Return ordered Stage-3 r3 Finishers -> r2 PC-Crush -> r1b Sub-Universe -> Stage-2 Mild Param Ladder."""
     return (
-        build_eur_model25_stage3_pc_crush_specs()
-        + build_usa_pricedl_stage3_rescue_specs()
+        build_eur_pc_pass_finisher_s3r3_specs()
+        + build_usa_pricedl_single_axis_s3r3_specs()
+        + build_eur_model25_stage3_pc_crush_specs()
         + build_eur_model25_stage3_subuniverse_rescue_specs()
         + build_stage2_mild_param_ladder_specs()
     )

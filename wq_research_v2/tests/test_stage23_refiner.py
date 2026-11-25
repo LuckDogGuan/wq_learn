@@ -11,9 +11,15 @@ def test_stage23_refiner_specs_pass_all_static_gates_and_balance() -> None:
 
     batch_ids = [s["batch_id"] for s in specs]
     assert len(batch_ids) == len(set(batch_ids)), "Duplicate batch_id in stage23_refiner!"
+    assert any(b.startswith("S3-r3-EUR-FINA-") for b in batch_ids), "Missing EUR PC-Pass Finisher A!"
+    assert any(b.startswith("S3-r3-EUR-FINB-") for b in batch_ids), "Missing EUR PC-Pass Finisher B!"
+    assert any(b.startswith("S3-r3-USA-1AX-") for b in batch_ids), "Missing USA Single-Axis Stage-3 Rescue!"
     assert any(b.startswith("S3-r2-EUR-M25PCA-") for b in batch_ids), "Missing EUR PC-Crush Pack A!"
     assert any(b.startswith("S3-r2-EUR-M25PCB-") for b in batch_ids), "Missing EUR PC-Crush Pack B (model25 x model238)!"
-    assert any(b.startswith("S3-r2-USA-PSD-") for b in batch_ids), "Missing USA price_signal_dl Stage-3 Rescue!"
+    # Ensure timeout-prone FAST / SLOW_AND_FAST are removed from EUR wide-universe specs
+    for s in specs:
+        if s["region"] == "EUR":
+            assert s["settings"]["neutralization"] not in ("FAST", "SLOW_AND_FAST")
 
     alpha0_map = {
         "raw_volume_indicator_6": 0,

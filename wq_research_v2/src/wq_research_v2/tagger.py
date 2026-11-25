@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from typing import Any, Iterator, Optional
 
 USEFUL_TAG = "Useful"
+SC_PASS_TAG = "SC_PASS"
 SC_HIGH_TAG = "SC_IS_HIGHT"
 PC_HIGH_TAG = "PC_IS_HIGHT"
 TERMINAL_HIGH_TAGS = {SC_HIGH_TAG, PC_HIGH_TAG}
@@ -24,12 +25,12 @@ def compute_merged_tags(
     existing_tags: list[str],
     target_tag: str,
 ) -> tuple[list[str], bool]:
-    """Compute idempotent merged tag list matching Guangzhou RA V7 semantics.
+    """Compute idempotent merged tag list matching Guangzhou RA V7 + SC_PASS PC-rescue semantics.
 
-    - If `target_tag` is a terminal high-correlation tag (`SC_IS_HIGHT` or `PC_IS_HIGHT`),
-      automatically strips stale `Useful` tag so the user never sees conflicted candidates.
-    - If `target_tag` is `Useful`, preserves all non-conflicting existing tags (e.g. competition tags)
-      while refusing to add `Useful` if a terminal high tag is still present unless cleaned.
+    - If `target_tag` is `SC_IS_HIGHT` or `PC_IS_HIGHT`, strips stale `Useful` (and strips `SC_PASS` on `SC_IS_HIGHT`).
+    - If `target_tag` is `SC_PASS` (all hard checks PASS + local SC < 0.68, ONLY PC >= 0.70), preserves
+      non-conflicting tags and marks `SC_PASS` cleanly for dedicated PC-reduction queue.
+    - If `target_tag` is `Useful`, preserves non-terminal tags and removes stale `SC_PASS` / high-corr markers.
     - Returns `(new_tags, changed)`.
     """
     cleaned = [str(t).strip() for t in (existing_tags or []) if str(t).strip()]
@@ -37,12 +38,21 @@ def compute_merged_tags(
     if not target:
         return cleaned, False
 
-    if target in TERMINAL_HIGH_TAGS:
+    if target == SC_HIGH_TAG:
+        filtered = [t for t in cleaned if t.casefold() not in {USEFUL_TAG.casefold(), SC_PASS_TAG.casefold()}]
+        merged = list(dict.fromkeys([*filtered, target]))
+    elif target == PC_HIGH_TAG:
         filtered = [t for t in cleaned if t.casefold() != USEFUL_TAG.casefold()]
         merged = list(dict.fromkeys([*filtered, target]))
+    elif target.casefold() == SC_PASS_TAG.casefold():
+        filtered = [t for t in cleaned if t not in {SC_HIGH_TAG} and t.casefold() != SC_PASS_TAG.casefold()]
+        merged = list(dict.fromkeys([*filtered, SC_PASS_TAG]))
     elif target.casefold() == USEFUL_TAG.casefold():
         # Preserve non-terminal tags (e.g., competition tags) and put Useful cleanly once
-        filtered = [t for t in cleaned if t not in TERMINAL_HIGH_TAGS and t.casefold() != USEFUL_TAG.casefold()]
+        filtered = [
+            t for t in cleaned
+            if t not in TERMINAL_HIGH_TAGS and t.casefold() not in {USEFUL_TAG.casefold(), SC_PASS_TAG.casefold()}
+        ]
         merged = list(dict.fromkeys([USEFUL_TAG, *filtered]))
     else:
         merged = list(dict.fromkeys([*cleaned, target]))

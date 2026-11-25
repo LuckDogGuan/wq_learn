@@ -1,0 +1,148 @@
+{
+  "schema_version": "reusable_d1_ra_experience_v1",
+  "updated_at": "2026-11-25T23:55:00+08:00",
+  "hard_invariants_fixed": {
+    "delay": 1,
+    "ra_ppa_separated": true,
+    "decision_3_forbidden_ops": ["add", "multiply", "trade_when", "+", "*"],
+    "canonical_dual_branch": "min(rank(expr_A), rank(expr_B)) / reverse(min(...))",
+    "auto_submit_forbidden": true,
+    "sc_local_safe_lt": 0.68,
+    "pc_remote_hard_lt": 0.70,
+    "ra_thresholds_standard": {
+      "sharpe_gt": 1.58,
+      "fitness_gt": 1.0,
+      "two_year_sharpe_gt": 1.58,
+      "is_ladder_2y_non_atom": 2.02,
+      "turnover_min": 0.01,
+      "turnover_max": 0.70,
+      "max_weight_lt": 0.10,
+      "margin_bp_target_ge": 10.0
+    },
+    "ledger_completed_immutable": true
+  },
+  "knowledge_lookup_priority_80_20": {
+    "primary_80_pct": [
+      {
+        "rank": 1,
+        "source": "worldquant-brain-cyber-game-king (王哥 / ZS59763 #32)",
+        "path": "C:/Users/31186/.gemini/config/skills/worldquant-brain-cyber-game-king/SKILL.md",
+        "key_rules": [
+          "ATLAS L1->L6 (no premature rank)",
+          "Decay sweep [0,1,3,5,10,20] anti-cliff check & 9-neutralization sweep",
+          "Local SC safe line 0.68 (2% buffer under 0.70)",
+          "OpCount lean (<6-8), avoid overfitting"
+        ]
+      },
+      {
+        "rank": 2,
+        "source": "wq-top-advisors-skill (Top 100 黄金顾问: 2026Q4 verified 6 + 14 empirical)",
+        "path": "C:/Users/31186/.gemini/antigravity/skills/wq-top-advisors-skill/SKILL.md",
+        "key_rules": [
+          "SZ83096 #47: 2Y>=1.58 first -> nested country*industry -> mild smooth -> signed_power PC reduction",
+          "JR23144 #12: same-direction vec_min/min alignment + N*N candidate pairwise SC pruning (<0.68)",
+          "JX79797 #15: never lambda_max>1 in ts_target_tvr_decay; Shannon operator diversity",
+          "JX14975 #100: fake single-value VECTOR only test vec_avg",
+          "ZH87224 #51: strip redundant abs/+0.01/ts_backfill before final tag"
+        ]
+      },
+      {
+        "rank": 3,
+        "source": "Admin Original Posts (WL13229 + KH94146, 254 verified posts)",
+        "path": "docs/整理与研究/04_分方向优化与模板.md",
+        "key_rules": [
+          "WL13229: min(rank(A), rank(B)) dual-branch; never ts_decay_linear(rank(x), d) without dense=true",
+          "WL13229: never add noise to lower PC; preserve >=70% Sharpe on sub-universe",
+          "KH94146: single-dataset ATOM structures exempt from IS_LADDER_SHARPE"
+        ]
+      }
+    ],
+    "secondary_fallback_20_pct": {
+      "rule": "ONLY consult general forum posts (brain-forum-browse / brain-alpha-judge corpus) when Primary 80% stack cannot resolve the current bottleneck.",
+      "max_weight": 0.20
+    }
+  },
+  "adjustable_screening_and_pruning_params": {
+    "note": "Iteratively tunable within mild bounds; only hard RA thresholds & D1/Decision-#3 are fixed.",
+    "stage1_pool_b_min_pos_sharpe": 0.80,
+    "stage2_pool_a_target_sharpe_range": [1.25, 1.45],
+    "stage3_pool_s_min_sharpe": 1.58,
+    "stage3_pool_s_min_fitness": 1.00,
+    "early_stop_positive_only": {
+      "min_completed": 48,
+      "min_pos_sharpe": 0.80,
+      "min_hit_rate": 0.02,
+      "strong_pos_sharpe": 1.25,
+      "rationale": "Immune to CHN short-borrow double-negative mirage (-2.26 on +x AND -1.95 on -x)"
+    },
+    "similar_seed_pruning": {
+      "non_destructive": true,
+      "jaccard_max": 0.78,
+      "metric_delta_sharpe": 0.06,
+      "metric_delta_to": 0.02,
+      "max_per_field": 2,
+      "max_per_dataset": 6
+    },
+    "mild_parameter_sweep_ranges": {
+      "decay": [0, 1, 2, 3, 4, 5, 6],
+      "truncation": [0.04, 0.06, 0.08],
+      "smoothing_windows": [5, 8, 10, 15, 22, 66, 126],
+      "adv20_gate_cutoffs": [0.35, 0.40, 0.45, 0.50, 0.55],
+      "signed_power_exponents": [0.5, 0.75, 1.5, 2.0],
+      "hump_values": [0.005, 0.01],
+      "fast_safe_neutralizations_eur": ["CROWDING", "REVERSION_AND_MOMENTUM", "INDUSTRY", "SUBINDUSTRY", "COUNTRY", "MARKET"],
+      "slow_pc_crusher_neutralizations": ["STATISTICAL"],
+      "avoid_timeout_neutralizations_wide_eur": ["FAST", "SLOW_AND_FAST"]
+    }
+  },
+  "factor_improvement_rules_empirical": [
+    {
+      "rule_id": "IMP-01-SUBUNIVERSE-GATING",
+      "symptom": "Sh >= 1.70, 2Y >= 1.80, ONLY fail = LOW_SUB_UNIVERSE_SHARPE",
+      "action": "Stay on wide universe (e.g. EUR/TOP2500); apply large-cap liquidity gate if_else(rank(adv20) > cutoff, expr, 0) with cutoff in {0.35..0.55} OR single-dataset ATOM Total Assets gate (mdl25_bsv421_5v).",
+      "empirical_evidence": "EUR/model25 legq0aml (Sh=3.16) shrunk to TOP1200 crashed to Sh=1.26; staying on TOP2500 + adv20 gate produced 20+ 0-FAIL POOL_S winners (6XG8AOVP Sh=2.49, pwWXv5Kq Sh=1.95).",
+      "caution": "Do NOT blindly apply adv20 > 0.35 to broad small/mid-cap alpha like USA/price_signal_dl (dropped 1.51 -> 0.77 when combined with window & decay changes)."
+    },
+    {
+      "rule_id": "IMP-02-PC-CRUSH-STACK",
+      "symptom": "All hard checks PASS (or near-pass) + Local SC < 0.68 (marked SC_PASS), ONLY Prod Correlation >= 0.70",
+      "action": "Apply verified 4-lever PC reduction stack: (1) group_cartesian_product(country, industry) [-0.153 PC], (2) Decision #3 dual-branch min(rank(A), rank(B)) with orthogonal low-aCnt field [-0.166 PC], (3) CROWDING / STATISTICAL / REVERSION_AND_MOMENTUM neutralization, (4) signed_power(x, 2 or 0.5) or vector_neut(x, rank(ts_mean(returns, 22))).",
+      "empirical_evidence": "EUR/model25 PC crushed from 0.9458 (6XG8AOVP) -> 0.7815 (WjYqLeGo) -> 0.6599 (RR53xm10, CROWDING + accruals) -> 0.6218 (vRYqEALz, STATISTICAL + signed_power 2) -> 0.6146 (9qGvelwo, STATISTICAL + vector_neut returns)!"
+    },
+    {
+      "rule_id": "IMP-03-SINGLE-AXIS-DISCIPLINE",
+      "symptom": "Stage-2 POOL_A seed (Sh 1.30-1.51, 2Y > 2.0) drops sharply during Stage-3 refinement",
+      "action": "Freeze winning base expression and vary ONLY ONE axis per batch (decay {1,2,3} OR window {5,8,10} OR hump {0.005,0.01} OR neut OR signed_power).",
+      "empirical_evidence": "S3-r2-USA-PSD changed window (5->15/22) + adv20 gate + decay (0->4/6) simultaneously and crashed xAl6rxYw 1.51 -> 0.77; fixed in S3-r3-USA-PSD-SINGLEAXIS."
+    },
+    {
+      "rule_id": "IMP-04-DATASET-FIRST-LOW-CROWDING",
+      "symptom": "Mature dataset hits PC ceiling despite strong Sharpe, or region shows 0/48 early stop",
+      "action": "Prioritize fresh high-coverage (>=80%) low-alphaCount (aCnt <= 10) datasets. Test independently per region because dataset efficacy is region-specific.",
+      "empirical_evidence": "model238 SmartHoldings hit Sh=1.50 & PC=0.6349 on EUR/TOP2500 Wave 1 (kq87w6vO), while failing 0/48 (max=0.61) on USA/TOP3000."
+    }
+  ],
+  "template_registry_explicit": [
+    {"id": "RA-ADM-01-sub-gz-m22-pos", "side": "ADMIN_ORIGINAL", "author": "WL13229", "formula": "group_zscore(ts_mean({x}, 22), subindustry)", "purpose": "Low-TO 22d smoothed subindustry zscore (positive level)"},
+    {"id": "RA-ADM-02-rev-sub-gz-m22", "side": "ADMIN_ORIGINAL", "author": "WL13229", "formula": "reverse(group_zscore(ts_mean({x}, 22), subindustry))", "purpose": "Symmetric reverse pair of RA-ADM-01"},
+    {"id": "RA-ADM-03-sub-grank-dec10-pos", "side": "ADMIN_ORIGINAL", "author": "WL13229", "formula": "group_rank(ts_decay_linear({x}, 10), subindustry)", "purpose": "10d linear decay before rank (avoids dense=false bug)"},
+    {"id": "RA-ADM-04-rev-sub-grank-dec10", "side": "ADMIN_ORIGINAL", "author": "WL13229", "formula": "reverse(group_rank(ts_decay_linear({x}, 10), subindustry))", "purpose": "Symmetric reverse pair of RA-ADM-03"},
+    {"id": "RA-TOP-01-sub-grank-z66-pos", "side": "TOP100_2026Q4", "author": "SZ83096", "formula": "group_rank(ts_zscore(ts_mean({x}, 5), 66), subindustry)", "purpose": "66d short-impulse ts_zscore (USA xAl6rxYw Sh=1.51, 2Y=2.89 champion!)"},
+    {"id": "RA-TOP-02-rev-sub-grank-z66", "side": "TOP100_2026Q4", "author": "SZ83096", "formula": "reverse(group_rank(ts_zscore(ts_mean({x}, 5), 66), subindustry))", "purpose": "Symmetric reverse pair of RA-TOP-01"},
+    {"id": "RA-TOP-03-ind-gz-raw-pos", "side": "TOP100_2026Q4", "author": "LD22811", "formula": "group_zscore({x}, industry)", "purpose": "1-op raw industry zscore (EUR model25 Sh=3.16-3.33 champion!)"},
+    {"id": "RA-TOP-04-rev-ind-gz-raw", "side": "TOP100_2026Q4", "author": "LD22811", "formula": "reverse(group_zscore({x}, industry))", "purpose": "Symmetric reverse pair of RA-TOP-03"},
+    {"id": "S3PC-DUAL-ACC-CI", "side": "TOP100_2026Q4", "author": "ZS59763+WL13229", "formula": "if_else(rank(adv20) > {cut}, group_zscore(min(rank({a}), rank({b})), group_cartesian_product(country, industry)), 0)", "purpose": "PC-crushing dual-branch + nested country*industry + large-cap gate (RR53xm10 PC=0.6599, vRYqEZja PC=0.6688)"},
+    {"id": "S3PC-SP2-CI", "side": "TOP100_2026Q4", "author": "SZ83096", "formula": "if_else(rank(adv20) > {cut}, signed_power(group_zscore({a}, group_cartesian_product(country, industry)), 2), 0)", "purpose": "Nonlinear tail emphasis PC-crusher (vRYqEALz Sh=2.24, PC=0.6218; pwWX2xNb Sh=2.04, PC=0.6806)"},
+    {"id": "S3PC-VNEUT-CI", "side": "ADMIN_ORIGINAL", "author": "WL13229+ZS59763", "formula": "if_else(rank(adv20) > {cut}, vector_neut(group_zscore({a}, group_cartesian_product(country, industry)), rank({b})), 0)", "purpose": "Orthogonalize signal against crowding/returns (9qGvelwo PC=0.6146; gJrA5OlJ Sh=2.21, PC=0.6433)"}
+  ],
+  "tagging_state_machine": {
+    "SC_PASS": "All platform hard checks PASS (0 FAIL) AND local 92-OS SC < 0.68, ONLY remote PC >= 0.70 -> mark SC_PASS and queue for dedicated PC-crushing optimization.",
+    "Useful": "All platform hard checks PASS (0 FAIL) AND local 92-OS SC < 0.68 AND intra-pool pairwise SC < 0.68 AND remote PC < 0.70 -> request user confirmation to apply Useful tag (NEVER auto-submit).",
+    "SC_IS_HIGHT": "Local or remote SC >= 0.70 -> terminal high-SC marker.",
+    "PC_IS_HIGHT": "Unrescuable high PC (>= 0.85 after PC-crushing stack) -> terminal high-PC marker."
+  },
+  "fresh_dataset_queue": {
+    "EUR": ["model25 (PC-crush S3-r3)", "model238 (SmartHoldings, hit Sh=1.50 PC=0.6349 on Wave 1)", "model354 (Comprehensive Factor Analytics, cov=100%, aCnt=1..3)"],
+    "USA": ["price_signal_dl (Single-Axis S3-r3 from xAl6rxYw Sh=1.51/PC=0.749)", "forward_beta_risk (val=5.0, aCnt=0..5)", "news_sentiment_nlp (cov=99.5%, val=5.0, aCnt=1..6)"]
+  }
+}

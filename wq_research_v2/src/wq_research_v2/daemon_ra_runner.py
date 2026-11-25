@@ -29,6 +29,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from wq_research_v2.auth_session import BrainAuthSession
+from wq_research_v2.batch_audit_logger import build_batch_audit_report, render_batch_audit_markdown
 from wq_research_v2.blacklist_registry import BlacklistRegistry
 from wq_research_v2.ledger_store import LedgerStore
 from wq_research_v2.quota_tracker import QuotaTracker, current_est_platform_date
@@ -72,8 +73,8 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
         "dataset_id": "model238",
         "queue_type": "NORMAL",
         "field_type": "MATRIX",
-        "default_neut": "STATISTICAL",
-        "alt_neuts": ["REVERSION_AND_MOMENTUM", "SLOW_AND_FAST", "COUNTRY"],
+        "default_neut": "CROWDING",
+        "alt_neuts": ["REVERSION_AND_MOMENTUM", "COUNTRY", "SUBINDUSTRY"],
         "fields": [
             "regional_peer_investment_concentration_rank_d1",
             "global_screening_factor_alignment_rank_d1",
@@ -86,23 +87,63 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
         ],
     },
     {
-        "campaign_id": "USA_M238_SMARTHOLDINGS_NORM",
+        "campaign_id": "EUR_M354_FACTOR_VEC_NORM",
+        "region": "EUR",
+        "universe": "TOP2500",
+        "dataset_id": "model354",
+        "queue_type": "NORMAL",
+        "field_type": "VECTOR",
+        "default_neut": "CROWDING",
+        "alt_neuts": ["REVERSION_AND_MOMENTUM", "COUNTRY", "SUBINDUSTRY"],
+        "fields": [
+            "mdl354_group_pt12yf_dlyspe",
+            "mdl354_group_pt1divyld_fy1",
+            "mdl354_group_pt1es_ebitda_fy1_d1m",
+            "mdl354_group_pt1ac_5y_sale",
+            "mdl354_group_pt1b_mtl_dlyspe",
+            "mdl354_group_pt1bookp_fy1",
+            "mdl354_group_pt1cfoyld_fy1",
+            "mdl354_group_pt1dlyfcf",
+        ],
+    },
+    {
+        "campaign_id": "USA_FWDBETA_VEC_NORM",
         "region": "USA",
         "universe": "TOP3000",
-        "dataset_id": "model238",
+        "dataset_id": "forward_beta_risk",
         "queue_type": "NORMAL",
-        "field_type": "MATRIX",
-        "default_neut": "STATISTICAL",
-        "alt_neuts": ["REVERSION_AND_MOMENTUM", "SLOW_AND_FAST", "SUBINDUSTRY"],
+        "field_type": "VECTOR",
+        "default_neut": "REVERSION_AND_MOMENTUM",
+        "alt_neuts": ["CROWDING", "SUBINDUSTRY", "INDUSTRY"],
         "fields": [
-            "country_relative_investment_rank",
-            "global_screening_factor_alignment_rank",
-            "regional_peer_investment_concentration_rank",
-            "regional_screening_factor_alignment_rank",
-            "regional_institutional_preference_rank",
-            "sector_relative_investment_rank",
-            "global_change_in_preference_rank",
-            "regional_change_in_preference_rank",
+            "beta_prediction_uncertainty_2",
+            "beta_risk_surprise_probability_2",
+            "beta_upper_confidence_band_2",
+            "capm_residual_volatility_2",
+            "downside_market_beta_2",
+            "beta_prediction_dispersion_2",
+            "downside_tail_dependence_2",
+            "beta_lower_confidence_band_2",
+        ],
+    },
+    {
+        "campaign_id": "USA_NEWSNLP_VEC_NORM",
+        "region": "USA",
+        "universe": "TOP3000",
+        "dataset_id": "news_sentiment_nlp",
+        "queue_type": "NORMAL",
+        "field_type": "VECTOR",
+        "default_neut": "REVERSION_AND_MOMENTUM",
+        "alt_neuts": ["CROWDING", "SUBINDUSTRY"],
+        "fields": [
+            "headline_sentence_sentiment_minimum",
+            "headline_sentiwordnet_negative_polarity",
+            "headline_sentence_sentiment_average",
+            "headline_sentiwordnet_positive_polarity",
+            "headline_textblob_sentiment_score",
+            "headline_sentence_sentiment_variance",
+            "headline_subjectivity_score",
+            "headline_flesch_readability_score",
         ],
     },
     {
@@ -636,6 +677,16 @@ def export_funnel_snapshot(
         "top_pool_flip": pools["POOL_FLIP_SH_LT_NEG120"][:50],
     }
     out_path.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+    try:
+        audit_rep = build_batch_audit_report(ledger.db_path)
+        (DATA_DIR / "exports" / "batch_audit_latest.json").write_text(
+            json.dumps(audit_rep, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+        (DATA_DIR / "exports" / "batch_audit_latest.md").write_text(
+            render_batch_audit_markdown(audit_rep), encoding="utf-8"
+        )
+    except Exception:
+        pass
     return out_path
 
 

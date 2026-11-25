@@ -286,9 +286,25 @@ class LedgerStore:
             ).fetchone()
             return row is not None
 
+    def get_task_status(self, task_id: str) -> Optional[str]:
+        with self._lock:
+            row = self._conn.execute(
+                "SELECT status FROM sim_tasks WHERE task_id=? LIMIT 1",
+                (task_id,),
+            ).fetchone()
+            return str(row["status"]) if row is not None else None
+
     def upsert_sim_task(self, task: dict[str, Any]) -> None:
         if task.get("delay", 1) != 1:
             raise ValueError("D1-Only violation in sim_tasks")
+        incoming_status = str(task.get("status") or "")
+        task_id = str(task.get("task_id") or "")
+        # Immutable guard: NEVER let QUEUED/DEDUP_SKIPPED/SYNTAX_ERROR/BLACKLIST_SKIPPED/SUBMITTED
+        # overwrite an already completed simulation row on daemon restart / loop!
+        if task_id and incoming_status not in ("COMPLETED_FULL", "COMPLETED_QUICK"):
+            existing_status = self.get_task_status(task_id)
+            if existing_status in ("COMPLETED_FULL", "COMPLETED_QUICK"):
+                return
         cols = [
             "task_id", "batch_id", "payload_fingerprint", "canonical_dedup_key",
             "parent_baseline_alpha_id", "parent_quick_task_id", "parent_family_id",

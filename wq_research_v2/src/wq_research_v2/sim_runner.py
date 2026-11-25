@@ -111,7 +111,7 @@ class SimRunner:
         blacklist_registry: Any = None,
         max_slots: int = 4,
         poll_interval_sec: float = 5.0,
-        poll_timeout_sec: float = 600.0,
+        poll_timeout_sec: float = 900.0,
     ) -> None:
         self.client = client
         self.ledger = ledger
@@ -210,6 +210,12 @@ class SimRunner:
                 task_row["status"] = "SYNTAX_ERROR"
                 task_row["error_reason"] = "; ".join(rep.errors)
                 self.ledger.upsert_sim_task(task_row)
+                skipped.append(task_row)
+                continue
+
+            if self.ledger.get_task_status(task_id) in ("COMPLETED_FULL", "COMPLETED_QUICK"):
+                task_row["status"] = "DEDUP_SKIPPED"
+                task_row["error_reason"] = "Task already completed in ledger (preserved immutable)"
                 skipped.append(task_row)
                 continue
 
