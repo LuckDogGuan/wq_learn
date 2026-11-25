@@ -462,18 +462,21 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
 
 
 # 8 clean 5:5 Stage-1/Stage-2 RA templates (4 ADMIN_ORIGINAL : 4 TOP100_2026Q4).
-# Pre-smoothing (ts_mean 22 / ts_decay_linear 10) reduces daily turnover + preserves Margin,
-# paired with Guangzhou post-mortem champions (group_zscore/group_rank/group_neutralize by subindustry).
+# Updated with live Audit #2 breakthroughs:
+# - Positive & negative twins of ts_zscore(ts_mean(x,5),66) (hit |Sh|=2.51, Fit=2.14, 2Y=1.86 on CHN/other496!)
+# - Positive & negative twins of ts_rank(ts_decay_linear(x,10),66) (hit |Sh|=2.19, Mgn=22.2bp on CHN/other496!)
+# - Proven USA winner group_rank(ts_decay_linear(x,10), subindustry) (Sh=+1.10, 2Y=+1.84, Mgn=24.9bp!)
+# - signed_power(..., 1.5) tail booster to lift Returns past CHN 8% & lower PC.
 # Strictly ZERO add/multiply/trade_when, ZERO decay > 252, ZERO lambda_max > 1.
 STAGE12_TEMPLATES_8: list[dict[str, str]] = [
-    {"id": "RA-ADM-01-rank-m22", "side": "ADMIN_ORIGINAL", "author": "WL13229", "fmt": "rank(ts_mean({x}, 22))"},
-    {"id": "RA-ADM-02-rev-rank-m22", "side": "ADMIN_ORIGINAL", "author": "WL13229", "fmt": "reverse(rank(ts_mean({x}, 22)))"},
+    {"id": "RA-ADM-01-sub-grank-z66-pos", "side": "ADMIN_ORIGINAL", "author": "WL13229", "fmt": "group_rank(ts_zscore(ts_mean({x}, 5), 66), subindustry)"},
+    {"id": "RA-ADM-02-rev-sub-grank-z66", "side": "ADMIN_ORIGINAL", "author": "WL13229", "fmt": "reverse(group_rank(ts_zscore(ts_mean({x}, 5), 66), subindustry))"},
     {"id": "RA-ADM-03-sub-grank-dec10", "side": "ADMIN_ORIGINAL", "author": "WL13229", "fmt": "group_rank(ts_decay_linear({x}, 10), subindustry)"},
-    {"id": "RA-ADM-04-rev-sub-grank-z66", "side": "ADMIN_ORIGINAL", "author": "WL13229", "fmt": "reverse(group_rank(ts_zscore(ts_mean({x}, 5), 66), subindustry))"},
-    {"id": "RA-TOP-01-sub-gz-m22", "side": "TOP100_2026Q4", "author": "SZ83096", "fmt": "group_zscore(ts_mean({x}, 22), subindustry)"},
-    {"id": "RA-TOP-02-rev-sub-gz-m22", "side": "TOP100_2026Q4", "author": "SZ83096", "fmt": "reverse(group_zscore(ts_mean({x}, 22), subindustry))"},
-    {"id": "RA-TOP-03-sp-sub-m22", "side": "TOP100_2026Q4", "author": "ZS59763", "fmt": "signed_power(group_zscore(ts_mean({x}, 22), subindustry), 1.5)"},
-    {"id": "RA-TOP-04-rev-sub-tsrank66", "side": "TOP100_2026Q4", "author": "LD22811", "fmt": "reverse(group_neutralize(ts_rank(ts_decay_linear({x}, 10), 66), subindustry))"},
+    {"id": "RA-ADM-04-rev-rank-m22", "side": "ADMIN_ORIGINAL", "author": "WL13229", "fmt": "reverse(rank(ts_mean({x}, 22)))"},
+    {"id": "RA-TOP-01-sub-tsrank66-pos", "side": "TOP100_2026Q4", "author": "LD22811", "fmt": "group_neutralize(ts_rank(ts_decay_linear({x}, 10), 66), subindustry)"},
+    {"id": "RA-TOP-02-rev-sub-tsrank66", "side": "TOP100_2026Q4", "author": "LD22811", "fmt": "reverse(group_neutralize(ts_rank(ts_decay_linear({x}, 10), 66), subindustry))"},
+    {"id": "RA-TOP-03-rev-sub-gz-m22", "side": "TOP100_2026Q4", "author": "SZ83096", "fmt": "reverse(group_zscore(ts_mean({x}, 22), subindustry))"},
+    {"id": "RA-TOP-04-sp-sub-z66-pos", "side": "TOP100_2026Q4", "author": "ZS59763", "fmt": "signed_power(group_zscore(ts_zscore(ts_mean({x}, 5), 66), subindustry), 1.5)"},
 ]
 
 

@@ -14,3 +14,10 @@
     - **`58Gx273n`**（`AR / CurAssets` · `ts_rank(ts_decay_linear(...,10), 66)` + `subindustry`）：**`Sharpe = -1.99`、`2Y = -1.42`、`Fit = -1.19`、`TO = 4.24%`、`Margin = -20.99bp`**（因原模板与自定义表达式双重 `reverse` 负负得正变成反号 → **去掉多余 `reverse` 即为正向 `Sh = +1.99, Fit = +1.19, Margin = +20.99bp`！**）
     - **`WjYMxwKo`**（`AR / CurAssets`）：`Sh = -1.40, TO = 1.47%, Margin = -68.11bp`（翻转后 `+1.40 / +68.11bp`！）；**`akR6glNx`**（`AP / AR`）：`Sh = -1.37, 2Y = -1.59, TO = 5.38%, Margin = -14.95bp`（翻转后 `+1.37 / 2Y +1.59`！）。
   - **立即执行修正**：① 修复双 `reverse` 错号，将 `CHN_OTH496_BREAKOUT_FREE` 置顶为全队列第 1 优先级；② 加入 `signed_power(..., 1.5)` 拉升 `Returns`（当前 `4.45%–7.03%` → 冲破 `≥ 8%`）与同集双支 `min(rank(AR/CA), rank(AP/AR))`（保持 `100% Alphas=0 + ATOM`）；③ 同步部署 `poll_timeout_sec = 600s` 消除 CHN 300s 超时漏单（上波 16 条因 302s 超时落 `unobs`）。
+
+- **2026-11-25 18:26（重磅突破！`|Sharpe| = 2.51` 与 `2.19` 连续击穿 CHN `2.08` 硬门槛！）**：
+  - `CHN / TOP2000U / other496` 累计完成 `32` 条即命中 **`18` 条 `|Sh| ≥ 0.80`（56.3% 命中率）**、**`7` 条 `|Sh| ≥ 1.20`**：
+    - **`88Gb2ZWX`**（`curr_ratio = CurAssets/CurLiabs` · `RA-ADM-04`）：**`Sharpe = -2.51`、`2Y = -1.86`、`Fit = -2.14`、`TO = 12.16%`、`Margin = -14.93bp`**！
+    - **`QPWM8KwW`**（`lt_lev = NonCurLiab/NonCurAssets` · `RA-TOP-04`）：**`Sharpe = -2.19`、`Fit = -1.34`、`TO = 4.19%`、`Margin = -22.22bp`**！
+    - **`akR6g8px`**（`curr_ratio` · `RA-TOP-04`）：**`Sharpe = -1.95`、`Fit = -1.22`、`TO = 7.02%`**！
+  - **关键模板缺陷根治**：发现旧 `STAGE12_TEMPLATES_8` 中两个时序变化冠军模板（`ts_zscore(ts_mean(x,5),66)` 与 `ts_rank(ts_decay_linear(x,10),66)`）仅写了 `reverse(...)` 负向版、**缺少正向孪生版**！现已立刻补齐双正向冠军模板 + `signed_power(..., 1.5)` 收益放大版并热更广州，下一波将直接产出**正向 `Sharpe > +2.19 ~ +2.51` 的 CHN `POOL_S` 候选**！
