@@ -31,11 +31,20 @@ class WeightedSlotSemaphore:
       run smoothly in parallel without triggering single-region concurrency 429s!
     """
 
-    def __init__(self, max_slots: int = 8, *, max_per_region: Optional[int] = None) -> None:
+    def __init__(
+        self,
+        max_slots: int = 8,
+        *,
+        max_per_region: Optional[int] = None,
+        region_caps: Optional[dict[str, int]] = None,
+    ) -> None:
         if max_slots < 2:
             raise ValueError("max_slots must be >= 2 to support GLB 2-slot batches")
         self.max_slots = int(max_slots)
         self.max_per_region = int(max_per_region) if max_per_region is not None and max_per_region > 0 else self.max_slots
+        self.region_caps: dict[str, int] = {
+            str(k).upper(): max(1, int(v)) for k, v in (region_caps or {}).items() if int(v) > 0
+        }
         self._available = int(max_slots)
         self._region_in_flight: dict[str, int] = {}
         self._cond = threading.Condition()
@@ -54,7 +63,8 @@ class WeightedSlotSemaphore:
             return False
         if region:
             reg = str(region).upper()
-            reg_cap = max(weight, self.max_per_region)
+            cap_val = self.region_caps.get(reg, self.max_per_region)
+            reg_cap = max(weight, cap_val)
             if self._region_in_flight.get(reg, 0) + weight > reg_cap:
                 return False
         return True
@@ -155,6 +165,7 @@ class SimRunner:
         blacklist_registry: Any = None,
         max_slots: int = 4,
         max_per_region: Optional[int] = 2,
+        region_caps: Optional[dict[str, int]] = None,
         post_stagger_sec: float = 2.0,
         max_post_429_retries: int = 4,
         poll_interval_sec: float = 5.0,
@@ -168,9 +179,14 @@ class SimRunner:
         self.blacklist = blacklist_registry
         self.max_slots = max(2, min(8, int(max_slots)))
         self.max_per_region = int(max_per_region) if max_per_region is not None and max_per_region > 0 else self.max_slots
+        self.region_caps = {str(k).upper(): max(1, int(v)) for k, v in (region_caps or {}).items() if int(v) > 0}
         self.post_stagger_sec = max(0.0, float(post_stagger_sec))
         self.max_post_429_retries = max(0, int(max_post_429_retries))
-        self.semaphore = WeightedSlotSemaphore(self.max_slots, max_per_region=self.max_per_region)
+        self.semaphore = WeightedSlotSemaphore(
+            self.max_slots,
+            max_per_region=self.max_per_region,
+            region_caps=self.region_caps,
+        )
         self._post_lock = threading.Lock()
         self._last_post_monotonic = 0.0
         self.poll_interval_sec = float(poll_interval_sec)
@@ -714,13 +730,14 @@ class SimRunner:
                     data = resp.json()
                     if data.get("alpha") or data.get("children"):
                         return self._ingest_completed_progress(chunk, data)
-                    if cancel_zombie and hasattr(self.client, "delete_simulation"):
-                        try:
-                            dresp = self.client.delete_simulation(progress_url, timeout=20)
-                            if dresp.status_code in (200, 204):
-                                zombie_canceled = True
-                        except Exception:
-                            pass
+                # Even if GET returned HTTP 200 with empty body + Retry-After, cancel confirmed stalled zombie!
+                if cancel_zombie and resp.status_code == 200 and hasattr(self.client, "delete_simulation"):
+                    try:
+                        dresp = self.client.delete_simulation(progress_url, timeout=20)
+                        if dresp.status_code in (200, 204):
+                            zombie_canceled = True
+                    except Exception:
+                        pass
             except Exception:
                 pass
 

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-26T02:50:00+08:00",
+  "updated_at": "2026-11-26T04:42:00+08:00",
   "policy": "All RA 0-FAIL + SC < 0.65 receive alias 'SC 0.xxx PC 0.xxx'. All-pass (PC < 0.70 + pairwise < 0.68, ranked by Margin DESC) receive Useful tag; PC >= 0.70 or correlated siblings (>=0.68 vs higher-Margin Useful) receive SC_PASS tag.",
   "useful_all_pass_tagged": [
     {
@@ -25,6 +25,32 @@
     }
   ],
   "all_green_pc_lt_070_correlated_backups": [
+    {
+      "alpha_id": "1YGb19Gm",
+      "tag": "SC_PASS",
+      "alias": "SC 0.239 PC 0.667",
+      "margin_bp": 13.64,
+      "sharpe": 1.74,
+      "sharpe_2y": 2.13,
+      "fitness": 1.07,
+      "local_sc": 0.2388,
+      "remote_pc": 0.6672,
+      "pairwise_vs_RR5QjWYz": 0.9794,
+      "note": "Audit #3 signed_power(1.5) sibling of RR5QjWYz (13.64bp vs 14.10bp)"
+    },
+    {
+      "alpha_id": "2rGzqY2x",
+      "tag": "SC_PASS",
+      "alias": "SC 0.239 PC 0.664",
+      "margin_bp": 12.91,
+      "sharpe": 1.77,
+      "sharpe_2y": 2.18,
+      "fitness": 1.10,
+      "local_sc": 0.2392,
+      "remote_pc": 0.6637,
+      "pairwise_vs_RR5QjWYz": 0.9790,
+      "note": "Audit #3 signed_power(1.5) CROWDING d=4 sibling of RR5QjWYz"
+    },
     {
       "alpha_id": "kq8rEEAl",
       "tag": "SC_PASS",
@@ -92,6 +118,25 @@
     }
   ],
   "sc_pass_only_pc_high": [
+    {
+      "alpha_id": "WjYQw5xG",
+      "region": "EUR",
+      "universe": "TOP2500",
+      "dataset_id": "model25",
+      "mark": "SC_PASS",
+      "alias": "SC 0.251 PC 0.742",
+      "sharpe": 1.61,
+      "sharpe_2y": 2.34,
+      "fitness": 1.00,
+      "margin_bp": 11.24,
+      "hard_checks": "0_FAIL",
+      "local_sc": 0.2512,
+      "remote_pc": 0.7423,
+      "neutralization": "CROWDING",
+      "decay": 4,
+      "truncation": 0.06,
+      "pc_rescue_plan": "Audit #3 adv20>0.50 vector_neut sibling (corr=0.820 vs RR5QjWYz); pivoted to EUR/model238 88G9Kk9o (corr=0.205, PC=0.608!)."
+    },
     {
       "alpha_id": "WjYQ18WQ",
       "region": "EUR",

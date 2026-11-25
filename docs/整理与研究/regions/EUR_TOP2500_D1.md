@@ -82,3 +82,9 @@
     2. **新增纯非 `val_mom` 高 Margin 正交包 `S3-r4-EUR-OPEFF-*`**（主攻 `operating_efficiency_component_percentile` × `exclusions`/`accruals`/`NOA`/`model238`，脱离 `val_mom` 相关性簇，历史 Margin `40–52bp`！）。
     3. **止损弱集 & 接入新蓝海**：淘汰 `EUR / model354`（`40 FULL, 0 命中, max=0.47`），换入实盘核验的 **`EUR / ai_equity_alpha`**（`cov=86.1%, aCnt=0..1`，分析师预测修正 AI 信号）。
     4. **根治吞吐卡顿**：实证抓出 BRAIN 后端卡死在 `progress=0.15/0.90` 长达 44 分钟以上的僵尸仿真占满并发槽并引发 `POST 429` → 已实测官方 `DELETE /simulations/{id}` 返回 `HTTP 200` 清理僵尸成功，并在 `sim_runner.py` 固化 **`stall_timeout_sec=240s` 停滞早退 + 自动 `DELETE` 释槽 + 子查询 429 重试**！
+
+- **2026-11-26 04:42（2 小时定时审计 #3 · 0 次 `429` + `model238` 爆出 `88G9Kk9o` (`Sh=1.76, SC=0.188, PC=0.608, corr=0.205`) + EUR 并发降为 1 槽消杀 `Sim ERROR`！）**：
+  - **新增 3 条 `0-FAIL + SC < 0.65` 全完成打标与别名**：`1YGb19Gm`（`13.64bp, Sh=1.74, SC 0.239 PC 0.667`）、`2rGzqY2x`（`12.91bp, Sh=1.77, SC 0.239 PC 0.664`）、`WjYQw5xG`（`11.24bp, Sh=1.61, SC 0.251 PC 0.742`），均因与 `RR5QjWYz`（`14.10bp`）相关性 `0.820–0.979 ≥ 0.68` 归入 `SC_PASS`；**`RR5QjWYz` 稳居唯一最高 Margin `Useful` 冠军**。
+  - **头号正交核弹诞生：`EUR / model238` `88G9Kk9o`**：`group_zscore(ts_backfill(regional_change_in_preference_rank_d1, 21), industry)`（`RAM d=0`）直出 **`Sh = 1.76, 2Y = PASS, 本地 SC = 0.1876, 远程 PC = 0.6075, 与 RR5QjWYz 相关性仅 0.2054`**，仅缺 `Fitness(0.60)` 与 `Sub-Uni(0.43)`！
+  - **坏批次复盘与精准纠偏**：`S3-r4-EUR-M238` 与 `S3-r4-EUR-OPEFF` 因直接硬切 `adv20 > 0.40/0.45` 导致信号掉至 `0.71/0.83` → 新上线严格单轴 **`S3-r5-EUR-88G-*`**（严禁硬切 `adv20 > 0.40`，在 `RAM` 下采用轻衰减 `d={2,4,6}` + `ts_decay_linear(3/5)` + `hump(0.01)` + 轻门控 `adv20 > 0.20/0.30` 及原池 `TOP1200/TOP800` 对照），直冲第 2 条正交 `Useful`！
+  - **工程与数据集换血**：实证 `EUR` 2 并发叠加 `VECTOR` 集 `ai_equity_alpha` 导致 `58%` 后端 `Sim ERROR`/停滞（而 `USA` 零 `Sim ERROR` 且完成率 `88–100%`！）→ 立即淘汰 `EUR/ai_equity_alpha`，引入纯 `MATRIX` 机构大集 **`EUR/model77`**（S&P Capital IQ Alpha Factors, `dCov=1.00`）与 **`EUR/other455`**（`other 1.5×` 最高塔倍率, `cov=97.1%`），并上线 **`--region-caps EUR:1,USA:3`**（EUR 单槽稳健零抖动 + USA 三槽高速满载）+ 修复空体 `HTTP 200` 僵尸漏删边界。

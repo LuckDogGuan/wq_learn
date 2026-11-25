@@ -779,10 +779,74 @@ def build_eur_model25_opeff_orthogonal_s3r4_specs() -> list[dict[str, Any]]:
     return specs
 
 
+def build_eur_model238_88g_s3r5_specs() -> list[dict[str, Any]]:
+    """Stage-3 r5 SINGLE-AXIS Finisher for EUR/model238 breakthrough 88G9Kk9o!
+
+    Audit #3 verified monster seed:
+      - 88G9Kk9o (regional_change_in_preference_rank_d1, RAM d=0):
+        Sh=1.76, 2Y=PASS, Local SC=0.1876, Remote PC=0.6075, corr(RR5QjWYz)=0.2054 (COMPLETELY ORTHOGONAL!),
+        ONLY failing LOW_FITNESS(0.60, high TO) and LOW_SUB_UNIVERSE_SHARPE(0.43)!
+    Postmortem fix from S3-r4-EUR-M238 (which used harsh adv20>0.40/0.45 and crashed xAl8adOn 1.58->0.69):
+      Keep regional_change_in_preference_rank_d1 intact on REVERSION_AND_MOMENTUM, cut TO via mild decay {2,4,6} +
+      light ts_decay_linear(3/5) + hump(0.01), and test SOFT adv20 {0.20,0.25,0.30} plus native TOP1200 / TOP800!
+    """
+    specs: list[dict[str, Any]] = []
+    rcp = "ts_backfill(regional_change_in_preference_rank_d1, 21)"
+    cri = "ts_backfill(country_relative_investment_rank_d1, 21)"
+    gfa = "ts_backfill(global_screening_factor_alignment_rank_d1, 21)"
+    ci = "group_cartesian_product(country, industry)"
+
+    exprs_88g: list[tuple[str, str, str, str]] = [
+        ("S388G-ADM-01-rcp-ind", "ADMIN_ORIGINAL", "WL13229", f"group_zscore({rcp}, industry)"),
+        ("S388G-ADM-02-rcp-d3-ind", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(ts_decay_linear({rcp}, 3), industry)"),
+        ("S388G-ADM-03-rcp-d5-ci", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(ts_decay_linear({rcp}, 5), {ci})"),
+        ("S388G-ADM-04-rcp-hump01", "ADMIN_ORIGINAL", "WL13229", f"hump(group_zscore({rcp}, industry), hump=0.01)"),
+        ("S388G-TOP-01-rcp-adv20", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.2, group_zscore({rcp}, industry), 0)"),
+        ("S388G-TOP-02-rcp-adv30", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.3, group_zscore({rcp}, industry), 0)"),
+        ("S388G-TOP-03-rcp-cri-ci", "TOP100_2026Q4", "ZS59763", f"group_zscore(min(rank({rcp}), rank({cri})), {ci})"),
+        ("S388G-TOP-04-rcp-gfa-d5", "TOP100_2026Q4", "LD22811", f"group_zscore(min(rank(ts_decay_linear({rcp}, 5)), rank(ts_decay_linear({gfa}, 5))), industry)"),
+    ]
+
+    grid_88g: list[tuple[str, str, str, int, float]] = [
+        ("u2500_ram_d2_t06", "TOP2500", "REVERSION_AND_MOMENTUM", 2, 0.06),
+        ("u2500_ram_d4_t06", "TOP2500", "REVERSION_AND_MOMENTUM", 4, 0.06),
+        ("u2500_ram_d6_t08", "TOP2500", "REVERSION_AND_MOMENTUM", 6, 0.08),
+        ("u1200_ram_d2_t06", "TOP1200", "REVERSION_AND_MOMENTUM", 2, 0.06),
+        ("u1200_ram_d4_t08", "TOP1200", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("u800_ram_d4_t08", "TOP800", "REVERSION_AND_MOMENTUM", 4, 0.08),
+    ]
+    for tag, uni, neut, dec, trunc in grid_88g:
+        specs.append(
+            _pack_items_into_spec(
+                batch_id=f"S3-r5-EUR-88G-{tag}",
+                campaign_id="S3_EUR_M238_88G_ORTHO",
+                hypothesis_id="HYP-S3-EUR-88G-PC060-USEFUL2",
+                region="EUR",
+                universe=uni,
+                dataset_id="model238",
+                queue_type="NORMAL",
+                settings=_make_settings("EUR", uni, neut, decay=dec, truncation=trunc),
+                items=[
+                    {
+                        "expression": expr,
+                        "template_id": f"{tid}_{uni}_{neut}_d{dec}",
+                        "source_side": side,
+                        "author_id": auth,
+                        "dataset_id": "model238",
+                        "primary_field_id": "regional_change_in_preference_rank_d1",
+                    }
+                    for tid, side, auth, expr in exprs_88g
+                ],
+            )
+        )
+    return specs
+
+
 def build_all_stage23_refiner_specs() -> list[dict[str, Any]]:
-    """Return ordered Stage-3 r4 Orthogonal Winners -> r3 Finishers -> r2 PC-Crush -> r1b Sub-Uni -> Stage-2."""
+    """Return ordered Stage-3 r5 88G9Kk9o Orthogonal -> r4 -> r3 Finishers -> r2 PC-Crush -> r1b -> Stage-2."""
     return (
-        build_eur_model238_stage3_finisher_specs()
+        build_eur_model238_88g_s3r5_specs()
+        + build_eur_model238_stage3_finisher_specs()
         + build_eur_model25_opeff_orthogonal_s3r4_specs()
         + build_eur_pc_pass_finisher_s3r3_specs()
         + build_usa_pricedl_single_axis_s3r3_specs()

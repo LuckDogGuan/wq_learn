@@ -87,68 +87,88 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
         ],
     },
     {
-        "campaign_id": "EUR_AIEQ_ALPHA_VEC_NORM",
+        "campaign_id": "EUR_M77_CAPIQ_NORM",
         "region": "EUR",
         "universe": "TOP2500",
-        "dataset_id": "ai_equity_alpha",
+        "dataset_id": "model77",
         "queue_type": "NORMAL",
-        "field_type": "VECTOR",
-        "default_neut": "CROWDING",
-        "alt_neuts": ["REVERSION_AND_MOMENTUM", "COUNTRY", "SUBINDUSTRY"],
-        "fields": [
-            "analyst_opinion_metric",
-            "analyst_forecast_revision_factor_3",
-            "analyst_opinion_metric_6",
-            "analyst_opinion_metric_8",
-            "analyst_forecast_revision_factor_2",
-            "analyst_forecast_revision_factor_4",
-            "analyst_opinion_metric_7",
-            "analyst_view_score_2",
-        ],
-    },
-    # EUR_M354_FACTOR_VEC_NORM retired at 2-Hour Audit #2 (40 FULL completed, 0 >= 0.80, max=0.47, max_fit=0.10).
-    {
-        "campaign_id": "USA_M68_DREAM_VEC_NORM",
-        "region": "USA",
-        "universe": "TOP3000",
-        "dataset_id": "model68",
-        "queue_type": "NORMAL",
-        "field_type": "VECTOR",
+        "field_type": "MATRIX",
         "default_neut": "REVERSION_AND_MOMENTUM",
-        "alt_neuts": ["CROWDING", "SUBINDUSTRY", "INDUSTRY"],
+        "alt_neuts": ["CROWDING", "COUNTRY", "SUBINDUSTRY"],
         "fields": [
-            "mdl68_ream_us_score",
-            "mdl68_ream_us_ram",
-            "mdl68_ream_us_raw",
-            "mdl68_score",
-            "mdl68_ram",
-            "mdl68_raw",
-            "mdl68_1_score",
-            "mdl68_1_ram",
+            "mdl177_pmm_actrtn24m_2",
+            "mdl177_pmm_p50_200ratio_2",
+            "mdl177_pmm_indrelrtn5d_2",
+            "mdl177_pmm_slope52wp_alt",
+            "mdl177_dvm_past_alt",
+            "mdl177_emm_fc_rev3y2_alt",
+            "mdl177_emm_fc_stdevfy1epsp_alt",
+            "mdl177_qvm_ev_qvaeur_alt",
         ],
     },
     {
-        "campaign_id": "USA_FWDBETA_VEC_NORM",
+        "campaign_id": "EUR_OTH455_N2V_NORM",
+        "region": "EUR",
+        "universe": "TOP2500",
+        "dataset_id": "other455",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "default_neut": "REVERSION_AND_MOMENTUM",
+        "alt_neuts": ["CROWDING", "COUNTRY", "SUBINDUSTRY"],
+        "fields": [
+            "oth455_competitor_n2v_p10_q200_w2_pca_fact1_value",
+            "oth455_competitor_n2v_p10_q200_w3_pca_fact1_value",
+            "oth455_competitor_n2v_p10_q200_w3_pca_fact2_value",
+            "oth455_competitor_n2v_p10_q200_w1_pca_fact3_value",
+            "oth455_competitor_n2v_p10_q200_w2_pca_fact3_value",
+            "oth455_competitor_n2v_p10_q200_w3_pca_fact3_value",
+            "oth455_competitor_n2v_p10_q200_w1_pca_fact2_value",
+            "oth455_competitor_n2v_p10_q200_w2_pca_fact2_value",
+        ],
+    },
+    # EUR_AIEQ_ALPHA_VEC_NORM retired at 2-Hour Audit #3 (72% Sim ERROR/stall rate, 0/24 hits, max=0.68).
+    {
+        "campaign_id": "USA_OTH580_ETF_FREE",
         "region": "USA",
         "universe": "TOP3000",
-        "dataset_id": "forward_beta_risk",
-        "queue_type": "NORMAL",
-        "field_type": "VECTOR",
+        "dataset_id": "other580",
+        "queue_type": "UNUSED_ALPHA0",
+        "field_type": "MATRIX",
         "default_neut": "REVERSION_AND_MOMENTUM",
         "alt_neuts": ["CROWDING", "SUBINDUSTRY", "INDUSTRY"],
         "fields": [
-            "beta_prediction_uncertainty_2",
-            "beta_risk_surprise_probability_2",
-            "beta_upper_confidence_band_2",
-            "capm_residual_volatility_2",
-            "downside_market_beta_2",
-            "beta_prediction_dispersion_2",
-            "downside_tail_dependence_2",
-            "beta_lower_confidence_band_2",
+            "change_sqrt_weighted_count",
+            "change_cubed_sum_5d",
+            "change_log_weighted_cubed_sum_2",
+            "change_sqrt_weighted_cubed_sum",
+            "change_sqrt_weighted_simple_sum",
+            "change_cubed_sum",
+            "change_log_weighted_squared_sum",
+            "change_log_weighted_sum",
         ],
     },
-    # USA_NEWSNLP_VEC_NORM (80 FULL, max=0.91, 2Y=0.77) & USA_FORUM_SENTIMENT_VEC_NORM (80 FULL, max=0.86)
-    # retired at 2-Hour Audit #2 in favor of USA_M68_DREAM_VEC_NORM (val=5.0, cov=86%, aCnt=1..12).
+    {
+        "campaign_id": "USA_PVTECH_MATRIX_NORM",
+        "region": "USA",
+        "universe": "TOP3000",
+        "dataset_id": "pv_tech_indicators",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "default_neut": "REVERSION_AND_MOMENTUM",
+        "alt_neuts": ["CROWDING", "SUBINDUSTRY", "INDUSTRY"],
+        "fields": [
+            "price_change_index",
+            "price_change_intensity",
+            "price_fluctuation_index",
+            "price_fluctuation_score",
+            "price_movement_index",
+            "price_movement_score",
+            "price_reversal_index",
+            "price_trend_factor",
+        ],
+    },
+    # USA_M68_DREAM_VEC_NORM (56 FULL, max=0.82, 2Y=0.27) & USA_FWDBETA_VEC_NORM (120 FULL, max=0.99, 0>=1.25)
+    # retired at 2-Hour Audit #3 in favor of pure-MATRIX USA_OTH580_ETF_FREE (Alphas=0) & USA_PVTECH_MATRIX_NORM (val=6.0).
     {
         "campaign_id": "GLB_M239_SHORT_NORM",
         "region": "GLB",
@@ -693,11 +713,32 @@ def export_funnel_snapshot(
     return out_path
 
 
+def parse_region_caps(spec_str: Optional[str]) -> dict[str, int]:
+    """Parse CLI `--region-caps EUR:1,USA:3` into `{region: max_slots}`."""
+    caps: dict[str, int] = {}
+    if not spec_str:
+        return caps
+    for part in str(spec_str).split(","):
+        part = part.strip()
+        if ":" not in part:
+            continue
+        reg, val = part.split(":", 1)
+        reg_u = reg.strip().upper()
+        try:
+            n = int(val.strip())
+        except ValueError:
+            continue
+        if reg_u and n > 0:
+            caps[reg_u] = n
+    return caps
+
+
 def run_ra_production_loop(
     *,
     regions: Optional[list[str]] = None,
     max_slots: int = 4,
     max_per_region: int = 2,
+    region_caps: Optional[dict[str, int]] = None,
     post_stagger_sec: float = 2.0,
     batch_size: int = 8,
     simulation_mode: str = "FULL",
@@ -716,6 +757,7 @@ def run_ra_production_loop(
     quota = QuotaTracker(ledger)
     auth = BrainAuthSession(quota_observer=quota.observe_response)
     bl = BlacklistRegistry(ledger)
+    clean_region_caps = {str(k).upper(): int(v) for k, v in (region_caps or {}).items() if int(v) > 0}
     runner = SimRunner(
         auth,
         ledger,
@@ -723,6 +765,7 @@ def run_ra_production_loop(
         blacklist_registry=bl,
         max_slots=max_slots,
         max_per_region=max_per_region,
+        region_caps=clean_region_caps,
         post_stagger_sec=post_stagger_sec,
         max_post_429_retries=4,
         poll_interval_sec=4.0,
@@ -785,14 +828,14 @@ def run_ra_production_loop(
 
     print(
         f"[RA-DAEMON] Started Continuous Rolling D1-Only RA runner | regions={regions or 'HIGH_BASE_ALL'} | specs={len(specs)} | "
-        f"slots={max_slots} (max_per_region={max_per_region}) | batch={batch_size} | stagger={post_stagger_sec}s | "
-        f"mode={simulation_mode} | daily_target={daily_target} | early_stop_sims={early_stop_min_sims}",
+        f"slots={max_slots} (max_per_region={max_per_region}, region_caps={clean_region_caps or 'default'}) | "
+        f"batch={batch_size} | stagger={post_stagger_sec}s | mode={simulation_mode} | daily_target={daily_target} | early_stop_sims={early_stop_min_sims}",
         flush=True,
     )
 
     try:
-        # Interleave single batches across regions (EUR, USA, EUR, USA...) so continuous pool
-        # always maintains 2 EUR + 2 USA = 4 simultaneous 8-alpha threads with ZERO wave-barrier idle time!
+        # Interleave batches proportionally to per-region caps (e.g. 1 EUR : 3 USA) so continuous pool
+        # keeps all 4 threads saturated with zero idle slots and zero EUR compute-node thrashing!
         by_reg_q: dict[str, deque[dict[str, Any]]] = {}
         reg_cycle: list[str] = []
         for s in specs:
@@ -806,8 +849,10 @@ def run_ra_production_loop(
         active_r = deque(reg_cycle)
         while active_r:
             r = active_r.popleft()
-            if by_reg_q[r]:
-                interleaved_specs.append(by_reg_q[r].popleft())
+            take_n = max(1, int(clean_region_caps.get(r, max_per_region)))
+            for _ in range(take_n):
+                if by_reg_q[r]:
+                    interleaved_specs.append(by_reg_q[r].popleft())
             if by_reg_q[r]:
                 active_r.append(r)
 
@@ -962,7 +1007,8 @@ def main(argv: Optional[list[str]] = None) -> int:
         help="Comma-separated ordered region(s); default high-Base institutional heavyweights first",
     )
     p.add_argument("--slots", type=int, default=4, help="Global concurrent multi-sim threads (2-4 recommended; max 8)")
-    p.add_argument("--max-per-region", type=int, default=2, help="Max concurrent multi-sim threads per region (e.g. 2 EUR + 2 USA = 4 total)")
+    p.add_argument("--max-per-region", type=int, default=2, help="Default max concurrent multi-sim threads per region")
+    p.add_argument("--region-caps", default="", help="Optional per-region slot overrides, e.g. EUR:1,USA:3")
     p.add_argument("--post-stagger", type=float, default=2.0, help="Min seconds between POST /simulations across threads to prevent burst 429")
     p.add_argument("--batch-size", type=int, default=8, help="Children per multi-sim (Gold max=8)")
     p.add_argument("--mode", default="FULL", choices=["FULL", "QUICK"])
@@ -979,6 +1025,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     args = p.parse_args(argv)
 
     reg_list = [r.strip().upper() for r in str(args.region).split(",") if r.strip()]
+    reg_caps = parse_region_caps(args.region_caps)
     p_cfg = PruningConfig(
         jaccard_max=args.prune_jaccard,
         max_per_field=args.prune_max_per_field,
@@ -989,6 +1036,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             regions=reg_list,
             max_slots=args.slots,
             max_per_region=args.max_per_region,
+            region_caps=reg_caps,
             post_stagger_sec=args.post_stagger,
             batch_size=args.batch_size,
             simulation_mode=args.mode,

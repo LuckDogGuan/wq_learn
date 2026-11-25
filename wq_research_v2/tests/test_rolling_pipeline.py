@@ -80,6 +80,17 @@ def test_weighted_semaphore_enforces_global_and_per_region_caps() -> None:
     sem.release(1, region="EUR")
     assert sem.try_acquire(1, region="EUR") is True
 
+    # Per-region override caps: EUR:1 + USA:3 = 4 total!
+    sem2 = WeightedSlotSemaphore(max_slots=4, max_per_region=2, region_caps={"EUR": 1, "USA": 3})
+    assert sem2.try_acquire(1, region="EUR") is True
+    assert sem2.try_acquire(1, region="EUR") is False
+    assert sem2.try_acquire(1, region="USA") is True
+    assert sem2.try_acquire(1, region="USA") is True
+    assert sem2.try_acquire(1, region="USA") is True
+    assert sem2.available == 0
+    assert sem2.region_in_flight("EUR") == 1
+    assert sem2.region_in_flight("USA") == 3
+
 
 def test_pack_multisim_batches_respects_gold_8_ceiling() -> None:
     items = [{"id": i} for i in range(17)]

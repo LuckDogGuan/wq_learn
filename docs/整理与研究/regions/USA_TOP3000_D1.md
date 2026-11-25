@@ -65,3 +65,9 @@
 - **2026-11-26 02:50（2 小时定时审计 #2 · `price_signal_dl` `POOL_A` 扩至 `10` 条 + 淘汰低天花板舆情集、换入 `model68` DREAM 风险调整动量！）**：
   - **漏斗增量**：`USA / TOP3000` 累计 `664` FULL，一阶段 `83` 条、二阶段 `POOL_A` 从 `2` 条暴增至 **`10` 条**（全部由 `price_signal_dl` 单轴微调贡献：`Jj3Ej6bO 1.51/2Y 2.89`、`akRZk5ow 1.49/2Y 2.65`、`xAl6VmEw 1.43/2Y 2.33`、`blxZle1p 1.42/2Y 2.62`、`9qG1qN3V 1.41/2Y 2.79`、`XgNQgd1b 1.28/2Y 2.62` 等）。
   - **数据集果断换血**：`USA / news_sentiment_nlp`（`80 FULL, max=0.91, 2Y=0.77`）与 `USA / forum_sentiment`（`80 FULL, max=0.86, 2Y=0.94`）天花板明显偏低，本轮下线停止消耗额度；保留 `price_signal_dl` + `forward_beta_risk`（`max=0.99`），并引入实盘核验的 **`USA / model68`（DREAM Risk-Alleviated Momentum Scores，`val=5.0, cov=82.5–86.4%, aCnt=1..12`）** 补强 `USA / model (1.3×, 0 OS)` 空白塔！
+
+- **2026-11-26 04:42（2 小时定时审计 #3 · USA 零 `Sim ERROR` 稳健提速至 `3` 并发槽 + 接入纯 `MATRIX` 免额 `other580` & `val=6.0` `pv_tech_indicators`！）**：
+  - **稳定性与换血复盘**：近 2 小时 `USA` 完成 `216` FULL（`880` 累计）且 **0 次 `Sim ERROR`、0 次 `429`**，但 `USA / model68`（`56 FULL, max=0.82, 2Y=0.27`）与 `USA / forward_beta_risk`（`120 FULL, max=0.99, 0≥1.25`）表现偏弱且全队列跑空导致后半段 2 槽闲置。
+  - **本轮满槽换血升级（`--region-caps EUR:1,USA:3`）**：淘汰 `model68` 与 `forward_beta_risk`，接入两大实盘核验 **100% 纯 `MATRIX`** 蓝海大集，供 `USA` 3 并发槽高速满载运行：
+    1. **`USA / other580`**（Standardized Daily ETF Holdings，**`other 1.4×, 0 OS`**，8 个核心 `MATRIX` 字段**全部 `Alphas=0` 免额**、`cov=90.8%–100%`）；
+    2. **`USA / pv_tech_indicators`**（Price Volume Technical Indicators，**`model 1.3×, 0 OS`**，**`val=6.0`**, `cov=100%`, `aCnt=1`）。

@@ -147,14 +147,14 @@
   },
   "fresh_dataset_queue": {
     "EUR": [
-      "model238 (SmartHoldings S3-r4 ORTHOGONAL Finisher: xAl8adOn Sh=1.58, corr=0.296 vs RR5QjWYz!)",
-      "model25 (S3-r4 NON-val_mom operating_efficiency/exclusions/accruals high-Margin orthogonal pack)",
-      "ai_equity_alpha (Analyst Forecast Revision AI, cov=86.1%, aCnt=0..1, replaces dead model354)"
+      "model238 (S3-r5-EUR-88G: 88G9Kk9o Sh=1.76, SC=0.188, PC=0.608, corr=0.205 vs RR5QjWYz! Single-axis mild decay/hump/soft adv20/TOP1200)",
+      "model77 (S&P Capital IQ Alpha Factors, pure MATRIX, dCov=1.00, aCnt=1..41)",
+      "other455 (EUR/other 1.5x highest pyramid! Node2Vec PCA MATRIX, cov=97.1%, dCov=1.00, aCnt=5..26)"
     ],
     "USA": [
-      "price_signal_dl (Single-Axis S3-r3b from xAl6rxYw Sh=1.51/2Y=2.89/PC=0.749)",
-      "model68 (DREAM Risk-Alleviated Momentum Scores, val=5.0, cov=86.4%, aCnt=1..12, replaces forum_sentiment/news_sentiment_nlp)",
-      "forward_beta_risk (val=5.0, hit Sh=0.99 on Wave 1)"
+      "other580 (Standardized Daily ETF Holdings, ALL Alphas=0 FREE MATRIX, cov=91-100%, other 1.4x 0 OS!)",
+      "pv_tech_indicators (Price Volume Technical Indicators, val=6.0, ALL MATRIX, cov=100%, aCnt=1, model 1.3x 0 OS!)",
+      "price_signal_dl (POOL_A=10, max=1.51/2Y=2.89)"
     ]
   }
 }
