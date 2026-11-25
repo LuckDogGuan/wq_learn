@@ -57,3 +57,7 @@
   - **本轮精准方向修正**：
     1. **上线 `S3-r2-USA-PSD-*` 第 3 轮专项冲刺包**（[stage23_refiner.py](../../../wq_research_v2/src/wq_research_v2/stage23_refiner.py)）：在 `xAl6rxYw` / `gJrAXo2J` / `xAl6VmEw` 骨架上将 `ts_mean(..., 5)` 轻度拉长至 `10/15/22` + `decay ∈ {4, 6}` + `hump=0.01`（把换手从 `25%` 压至 `7–12%`，同步拉升 **Fitness `0.74→1.1+`** 与 **Margin `4.9bp→10bp+`**）+ **`if_else(rank(adv20) > 0.35, ...)`** 解救 `Sub-Universe` + **`STATISTICAL` / `SLOW_AND_FAST` / `CROWDING` / `signed_power(..., 2)` / 融合 `model238`**，一举把 `Sh 1.51 → 1.65+` 且 `PC 0.749 → < 0.65`！
     2. **换入高价值超低拥挤新矿脉 `USA / TOP3000 / model238`（SmartHoldings）**：实盘核验 `cov = 96.74%`, `val = 5.0`, 8 个 MATRIX 字段全部仅 `aCnt = 1–3`（`model 1.3×, 0 OS`），天然低 PC 撞车率！
+
+- **2026-11-26 00:35（2 小时定时审计 #1 · 单轴纠偏验证成功 + 3 个新数据集并行验证 + 4,500/天流水线上线）**：
+  - **坏批次纠偏实证**：`S3-r2-USA-PSD` 因同时修改窗口+`adv20`硬切+`decay` 导致 `1.51 → 0.77`；切换严格单轴 **`S3-r3b-USA-1AX`** 后立刻恢复 **`Jj3Ej6bO`（`Sh=1.51, 2Y=2.89, sub=PASS:0.82/0.65`）**、**`RR5QRjmj`（`Sh=1.47, 2Y=2.84, sub=PASS`）** 与 **`LL8aLV7L`（`Sh=1.46, 2Y=2.66`）**。
+  - **数据集快速止损与新集初筛**：`USA / model238` 满 `48` 条 `0` 命中（`max=0.61`）已自动早停；新换入 **`USA / forward_beta_risk`** 首波即出 **`kq8rxe3k`（`Sh=0.99, Mgn=6.33bp`）**，**`USA / news_sentiment_nlp`** 首波出 **`wpNxpZ3Y`（`Sh=0.89`）**，**`USA / forum_sentiment`** 正在零屏障连续流水线中与 `EUR` 2+2 混跑推进。

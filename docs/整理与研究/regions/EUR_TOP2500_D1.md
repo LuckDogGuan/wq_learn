@@ -64,3 +64,11 @@
     1. **下线低天花板 `EUR / price_signal_dl`**（`148` FULL，`0` 条 `≥1.25`，最高 `1.22`、`max_fit=0.36`）；
     2. **上线 `S3-r2-EUR-M25PCA/B` 专项压 PC 组合包**（[stage23_refiner.py](../../../wq_research_v2/src/wq_research_v2/stage23_refiner.py)）：将 `WjYqLeGo` 与 `pwWXv5Kq` 两大已验真降 PC 杠杆叠加 **`STATISTICAL` / `SLOW_AND_FAST` / `CROWDING` / `FAST`** 风险模型中性化 + **`signed_power(..., 2/0.5)`** + **`ts_av_diff(..., 126)`** + **`vector_neut(..., rank(ts_mean(returns, 22)))`** + **跨数据集融合超低拥挤 `EUR / model238`（SmartHoldings，`cov=96.27%`, `aCnt=0..2`！）**，目标把 `PC` 从 `0.7815` 压穿 `< 0.68` 直取可打 `Useful` 的全绿正交因子！
     3. **接入 `EUR_M238_SMARTHOLDINGS_NORM`**（8 个 `aCnt=0..3`、`cov=96.27%` 的 `_d1` 干净 MATRIX 字段，直补 `EUR / model 1.3×, 0 OS` 空白塔）。
+
+- **2026-11-26 00:41（2 小时定时审计 #1 · 重大里程碑：首条 100% 全绿 `Useful` 因子 `RR5QjWYz` 诞生并完成平台打标写别名！）**：
+  - **首破 `EUR / D1 / model (1.3×, 0 OS)` 空白金字塔！** 经过 `S3-r3b-EUR-FINA` 精准微调（`CROWDING, d=5, tr=0.08, adv20 > 0.4` + `val_mom × mdl25_8v` 应计项双支 + `country*industry`），一次性跑出 **`8` 条新 `0-FAIL` `POOL_S`**，其中：
+    - **`RR5QjWYz`（已打 `Useful` + 别名 `SC 0.259 PC 0.668`）**：**`Sharpe = 1.74, 2Y = 2.28 (>2.02 PASS), Fit = 1.04, Sub-Uni = 0.94/0.90 PASS, TO = 6.3%, Margin = 14.10bp, 本地 SC = 0.259, 远程 PC = 0.668 < 0.70`**！
+    - **`np6RxVz3`（已打 `SC_PASS` + 别名 `SC 0.241 PC 0.720`）**：`Sh=2.10, 2Y=2.73, Fit=1.56, Margin=15.10bp, 0 FAIL`（仅 PC 差 `0.02`）；
+    - **`3qGrQQ8Q`（已打 `SC_PASS` + 别名 `SC 0.242 PC 0.720`）**：`Sh=2.14, 2Y=2.75, Fit=1.61, Margin=14.20bp, 0 FAIL`；
+    - 同批另 5 条 `0-FAIL` 且 `SC = 0.229–0.259`（`WjYQ18WQ`, `kq8rEEAl`, `MPgRMMJ8`, `A1LZjjAw`, `omP588xJ`）已进入异步 PC 排队，下轮巡检继续按 **`Margin` 降序 + 正交 `< 0.68`** 收割！
+  - **新集首波战果**：`EUR / TOP2500 / model238`（SmartHoldings）首波已出 **`kq87w6vO`（`Sh=1.50, SC=0.233, PC=0.6349`）**，已从易超时 `STATISTICAL` 切换至高速 `CROWDING/RAM`；新接入 `EUR / TOP2500 / model354`（`cov=100%, aCnt=1..3`）同步进入 `4,500/天` 连续流水线。
