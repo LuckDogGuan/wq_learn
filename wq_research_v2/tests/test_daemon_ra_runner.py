@@ -44,3 +44,16 @@ def test_all_curated_ra_d1_campaign_specs_pass_static_validator() -> None:
     assert total_exprs >= 1200
     # Verify exact 50/50 split!
     assert admin_cnt == top_cnt
+
+
+def test_daily_summary_keys_and_funnel_export(tmp_path) -> None:
+    from wq_research_v2.ledger_store import LedgerStore
+    from wq_research_v2.quota_tracker import current_est_platform_date
+
+    ledger = LedgerStore(tmp_path / "test_ledger.db")
+    try:
+        stats = ledger.compute_daily_summary(current_est_platform_date())
+        assert "full_valid_completed_count" in stats
+        assert "quick_screened_count" in stats
+    finally:
+        ledger.close()

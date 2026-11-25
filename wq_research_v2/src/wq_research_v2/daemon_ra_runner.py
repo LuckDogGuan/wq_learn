@@ -459,7 +459,7 @@ def run_ra_production_loop(
         while idx < len(specs):
             est_day = current_est_platform_date()
             day_stats = ledger.compute_daily_summary(est_day)
-            day_done = day_stats["full_completed"] + day_stats["quick_completed"]
+            day_done = int(day_stats.get("full_valid_completed_count", 0)) + int(day_stats.get("quick_screened_count", 0))
             if day_done >= daily_target:
                 print(f"[RA-DAEMON] Daily target reached ({day_done}/{daily_target}) on EST {est_day}; sleeping 300s.", flush=True)
                 if max_batches is not None:
