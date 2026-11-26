@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-27T04:54:00+08:00",
+  "updated_at": "2026-11-27T06:53:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -98,6 +98,14 @@
       "verdict": "EFFECTIVE（Phase-2 零额度头号大矿 · 272 QUICK 产 89 S1 / 39 S2 / 12 S3 >= 1.58，Margin 16-38bp！）",
       "metric_delta": "rK0kmNY1 (rev regime_120d_prob0) Sh=1.80; wpN6V2Kl 16.13bp/Sh=1.67/Fit=1.19; blx30mzK 32.62bp/Sh=1.65/Fit=1.15/TO=3.7%; kq8R5WdK 37.76bp/Sh=1.60/Fit=1.19; LL8eeG2n/3qGddp2O (monthquarter_120d_score3) Sh=1.57-1.64, 2Y=1.50-1.58, 21.76bp; 已即时升级 S3-r21-ASI-GLBSEASON-FREE (24 FULL 免额) 核验日本子市场与 2Y>=1.65，并同步扩展 60d/120d 版本至 EUR/USA!",
       "reusable_rule": "Phase-2 免额阶段应优先选取 60d/120d 长周期机构/分析师预测概率字段（天然低换手 3.7%-7.9% + 高 Margin 16-38bp），显著优于 5d/30d 短周期图谱类高换手字段。"
+    },
+    {
+      "case_id": "EFF-13",
+      "region_dataset": "ASI/MINVOL1M & USA/TOP3000 multifactor_return_pred (Phase-2 Alphas=0 FREE 跨区双爆矿!)",
+      "controlled_change": "在 Phase-2 零额度模式下，对 ASI/MINVOL1M (maxTrade=ON, COUNTRY) 与 USA/TOP3000 同步接入 60d/120d multifactor_return_pred 纯 MATRIX 免额字段（cov=0.954-0.983）",
+      "verdict": "EFFECTIVE（迄今最强 Phase-2 免额发现 · ASI 仅 96 QUICK 爆出 Sh=2.87/2Y=3.07 核弹，USA 同步出 Sh=1.59/2Y=2.17！）",
+      "metric_delta": "1) ASI/multifactor_return_pred (仅 96 QUICK): 4 条 0-FAIL QUICK —— N1KMgZao (short_term_regime2_60d_single_quantile_pred d10) Sh=2.87, 2Y=3.07, Fit=1.93, 9.02bp; A1L631kY (analyst_120d x st_r2) Sh=2.35, 2Y=2.30, Fit=1.58, 9.09bp; rK0kJx58 (m22) Sh=2.15, 2Y=1.87, 11.81bp, TO=6.9%; WjYkXgEZ (qtile5_class) Sh=2.12, 2Y=2.77! 2) USA/multifactor_return_pred (208 QUICK): 46 S1 / 15 S2 / 1 S3 —— RR5X05Yj Sh=1.59, QPWeEOXQ 1.48/2Y=1.69, qM5beOvK 1.44/2Y=1.99, blxp7x2r d10 在将换手从 41.3% 砍至 12.9% 时仍保住 Sh=1.41! 已双双晋级 S3-r22 免费 FULL!",
+      "reusable_rule": "multifactor_return_pred 的 60d regime2 与 60d/120d quantile 预测字段在 ASI 与 USA 均呈现强正向 Alpha 且抗衰减保夏普（远优于 30d 图谱），已立即双区晋级 S3-r22 免额 FULL 核验日本子市场与 PC。"
     }
   ],
   "ineffective_cases": [
@@ -180,6 +188,14 @@
       "verdict": "INEFFECTIVE（30d 短周期图谱过度平滑即失真、期权图谱换手 91%、EUR DL 分类集零信号）",
       "metric_delta": "1) chart_cnn_alpha 在 SUBINDUSTRY d=4+ts_decay5 下 2Y 飙至 2.96 (wpNV7mxd)，但全期 10Y Sharpe 从 1.45 跌至 1.20 (RAM/CROWDING 更跌至 0.92)；2) option_chart_model 虽 maxSh=1.41 但 TO=89%-105% 且 2Y=0.99-1.17；3) EUR/model264 (0/64, max=0.68) 与 EUR/other460 (1/80, max=0.80) 已自动早停。",
       "root_cause_and_ban": "短周期(<=30d)深度学习图像/分类预测字段不适合重衰减单打 RA 1.58（chart_cnn_alpha 可留作高 2Y 辅支而非独立主力）；Phase-2 免额换血聚焦 60d/120d 长周期 global_seasonal_model & multifactor_return_pred。"
+    },
+    {
+      "case_id": "INEFF-11",
+      "region_dataset": "ASI/MINVOL1M/global_seasonal_model (S3-r21 24/24 FULL 实证) + EUR/global_seasonal_model",
+      "controlled_change": "将 ASI/global_seasonal_model 首波 16-38bp 种子晋级 24 FULL (COUNTRY d=0/4, CROWDING d=2)，并在 EUR/TOP2500 初筛 global_seasonal_model 60d (408 QUICK)",
+      "verdict": "INEFFECTIVE（ASI 日本子市场不足 JPN=0.14..0.63/1.00；EUR 60d 偏弱 maxSh=1.15）",
+      "metric_delta": "1) S3-r21 24/24 FULL 虽保持 Sh=1.57-1.65 / Margin=15-39bp，但全员败于 LOW_ASI_JPN_SHARPE (0.14-0.63/1.00) + LOW_ROBUST_UNIVERSE_SHARPE (0.96-1.04/1.48) + 2Y (1.25-1.55)；2) EUR/global_seasonal_model 408 QUICK 仅 19 S1 / 0 S2 (maxSh=1.15, TO=66%)。",
+      "root_cause_and_ban": "ASI/global_seasonal_model 与 ASI/model39 类似存在日本区偏弱问题，果断止损不恋战，立即切入同为免额但 Sharpe 高出 +1.07 (2.87 vs 1.80) 且 2Y=3.07 的 ASI/multifactor_return_pred!"
     }
   ]
 }
