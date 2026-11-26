@@ -80,3 +80,11 @@
     1. **`USA / model28`（StarMine Structural Credit Risk）**：**8 个纯 `MATRIX` 全部 `Alphas=0` 免额**（`cov=96.4–98.8%, dCov=1.00`，含违约距离/资产漂移/违约概率行业分位）；
     2. **`USA / model31`（StarMine Earnings Quality）**：美股版 `model25` 孪生矿脉，精选 8 个低拥挤 `MATRIX`（`cov=89–95%, aCnt=3..9`）；
     3. **`USA / model30`（StarMine SmartEstimate EPS Surprise）**：机构盈利预期差（`MATRIX, dCov=1.00, aCnt=12..41`）。
+
+- **2026-11-26 08:40（2 小时定时审计 #5 · 历史双里程碑：单小时狂飙 `648 FULL` + 首条 `USA / TOP3000` `0-FAIL` `19.95bp` `SC_PASS` 冠军 `blxZQePZ` 诞生！）**：
+  - **历史级吞吐与零故障**：`EUR:1 + USA:3` 满载机构纯 `MATRIX` 队列后，单小时飙至 **`648 FULL / hr`**（近 2 小时净增 **`+1,048 FULL`**，总完成 **`4,179`**，日完成 **`4,166 / 4,500`**，`0` 次 `HTTP 429`！`USA/model31` 与 `model30` 完成率 **`100%`**，`model28` 免额 `97.5%`！）。
+  - **美股首条 `0-FAIL` 正式通过 `/check` 里程碑：`blxZQePZ`（`USA / TOP3000 / model31`, `mdl31_ab1_ass_tvr_prior_qtr`）**：
+    - 表达式：`group_rank(ts_decay_linear(ts_backfill(mdl31_ab1_ass_tvr_prior_qtr, 21), 10), subindustry)`（`RAM, d=0, tr=0.04`）
+    - 官方 `/check` 实测：**`Sh = 1.58 (PASS), 2Y = 2.34 (PASS), Fit = 1.01 (PASS), Sub-Uni = 0.81/0.68 (PASS), TO = 5.1%, Margin = 19.95bp, 官方 SC = 0.5495 (本地 0.5465, PASS), MATCHES_PYRAMID = PASS`**，仅 `PC = 0.8072` 距 `< 0.70` 仅差 `0.107`！已打 **`SC_PASS`** + 别名 **`SC 0.547 PC 0.807`**！
+  - **配套低 PC 辅支全面就位**：`USA / model30` 首波打出 **`58G0pARz`（`star_eps_surprise_prediction_fq1`, `Sh=1.35, SC=0.431, 远程 PC=0.6755 < 0.70!`）**，`USA / model28`（免额）打出 `58G0pRqz`（`Sh=1.29`）。
+  - **立即置顶第 1 顺位冲刺 USA 首条 `Useful`**：上线 **`S3-r7-USA-M31-*`**（`blxZQePZ` 叠 `signed_power(1.5/2)` + 跨集双支 `model31 × model30 (PC=0.676)` / `price_signal_dl (2Y=2.89)` / `gm`/`roe` + `vector_neut` + `CROWDING/STATISTICAL/SLOW_AND_FAST/RAM`）+ 追加 `USA_M31_ERQ_V2_NORM`（8 个最新季度 `last_qtr/t4q` 字段）。

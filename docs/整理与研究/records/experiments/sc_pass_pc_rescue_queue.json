@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-26T04:42:00+08:00",
+  "updated_at": "2026-11-26T08:40:00+08:00",
   "policy": "All RA 0-FAIL + SC < 0.65 receive alias 'SC 0.xxx PC 0.xxx'. All-pass (PC < 0.70 + pairwise < 0.68, ranked by Margin DESC) receive Useful tag; PC >= 0.70 or correlated siblings (>=0.68 vs higher-Margin Useful) receive SC_PASS tag.",
   "useful_all_pass_tagged": [
     {
@@ -118,6 +118,26 @@
     }
   ],
   "sc_pass_only_pc_high": [
+    {
+      "alpha_id": "blxZQePZ",
+      "region": "USA",
+      "universe": "TOP3000",
+      "dataset_id": "model31",
+      "mark": "SC_PASS",
+      "alias": "SC 0.546 PC 0.807",
+      "sharpe": 1.58,
+      "sharpe_2y": 2.34,
+      "fitness": 1.01,
+      "margin_bp": 19.95,
+      "hard_checks": "0_FAIL_OFFICIAL_CHECK_PASS",
+      "local_sc": 0.5465,
+      "official_sc": 0.5495,
+      "remote_pc": 0.8072,
+      "neutralization": "REVERSION_AND_MOMENTUM",
+      "decay": 0,
+      "truncation": 0.04,
+      "pc_rescue_plan": "FIRST USA/TOP3000 0-FAIL SC_PASS winner (19.95bp, 2Y=2.34, Sub-Uni PASS)! Needs only -0.11 PC -> launched S3-r7-USA-M31 combining ass_tvr with model30 (58G0pARz PC=0.676), price_signal_dl, gm/roe, signed_power(2) & CROWDING/STATISTICAL."
+    },
     {
       "alpha_id": "WjYQw5xG",
       "region": "EUR",

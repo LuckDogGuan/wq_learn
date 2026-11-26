@@ -96,3 +96,10 @@
     - **`gJrO9RbK`**（`mdl177_emm_fc_rev3y2_alt` 3M FY2 EPS 修正, `RAM d=0`）：**`Sh = 1.66, Fit = 0.91, SC = 0.149, corr(RR5) = 0.135（几乎零相关!）, 远程 PC = 0.6976（原生态已破 < 0.70!）`**！
   - **`model238` 复盘**：`S3-r5-EUR-88G` 将 `88G9Kk9o` 推至 **`78GbxbA1`（`Sh=1.73, 2Y=2.21, Fit=0.99, SC=0.346, corr=0.250, PC=0.721`）**，但 `TOP1200` 骤降至 `0.43` 证实其纯单集难过 `Sub-Uni`，本轮将其作为正交减 PC 辅支融入 `S3-r6-EUR-M77`！
   - **立即置顶第 1 顺位**：上线 **`S3-r6-EUR-M77-*`**（复刻 `RR5QjWYz` 冠军公式：`country*industry + adv20(0.35/0.40/0.45) + qvm × emm/balshtrank/roe/model238 + signed_power + CROWDING/RAM`），同步追加 `EUR_M77_CAPIQ_V2_NORM`（8 个精选 `qvm/emm/dvm` 字段）并淘汰死集 `EUR / other455`（`24 FULL, max=0.36`）。
+
+- **2026-11-26 08:40（2 小时定时审计 #5 · `EUR / model77` V2 再爆 `Sh=2.05` & `1.95` 正交双星！上线软门控 `S3-r7-EUR-M77V2`）**：
+  - **V2 新星连爆**：
+    - **`YPlK5WxA`**（`mdl177_qvm_dvm_qvaeur_alt`, `RAM d=0`）：**`Sh = 2.05, 2Y = 2.24, Fit = 1.54, Mgn = 21.81bp, SC = 0.316, corr(RR5QjWYz) = 0.557 (正交!), PC = 0.893`**，仅缺 `Sub-Uni(0.62)` + 压 PC；
+    - **`88G93gMv`**（`mdl177_qvm_estrevrank_qmaeur_alt`, `RAM d=0`）：**`Sh = 1.95, 2Y = 1.63, Fit = 1.17, SC = 0.159, corr(RR5) = 0.271 (完全正交!), PC = 0.846`**，仅缺 `Sub-Uni(0.84)`（只差 `0.17`！）；
+    - **`78GbZK6v`**（`mdl177_qvm_dvm_qvaeur_alt m22`）：**`Sh = 1.87, 2Y = 2.31, Fit = 1.24, TO = 3.7%, Mgn = 29.39bp`**！
+  - **坏批次纠偏**：`S3-r6-EUR-M77` 对 `1.80` 的 `qvm_ev` 用 `adv20 > 0.40` 略重（降至 `1.47`）→ 新上线 **`S3-r7-EUR-M77V2-*`** 改以 `2.05 / 1.95` 更强基座配 **软门控 `adv20 > 0.25/0.30/0.35`** + `dvm × estrev × emm(PC=0.698) × model238` + `country*industry` + `signed_power(2)` 冲刺高 Margin 正交 `Useful`！
