@@ -1,0 +1,105 @@
+{
+  "schema_version": "wq_d1_goal_run_config_v1",
+  "updated_at": "2026-11-26T15:46:00+08:00",
+  "description": "WorldQuant BRAIN D1-Only RA 统一启动与方向配置文件（支持自定义地区、宇宙、数据集分类、研究方式、Stage 1-2 QUICK 快筛、管理员模板 5:5->8:2 演进及子代理模型/思考强度配置）。",
+  "direction": {
+    "regions": ["USA", "EUR"],
+    "universes": {
+      "USA": "TOP3000",
+      "EUR": "TOP2500",
+      "GLB": "TOP3000",
+      "ASI": "MINVOL1M",
+      "DEU": "TOP500",
+      "CHN": "TOP2000U",
+      "GBR": "TOP700",
+      "HKG": "TOP800",
+      "KOR": "TOP600"
+    },
+    "categories": ["model", "analyst", "fundamental", "other", "option", "sentiment"],
+    "research_mode": "SEED_TO_USEFUL_CLOSED_LOOP",
+    "available_research_modes": [
+      "SEED_TO_USEFUL_CLOSED_LOOP（默认全闭环：严进种子 -> 宽中 QUICK 快筛剪枝 -> 专终 FULL 控制变量优化）",
+      "STAGE12_QUICK_SCREEN_ONLY（仅跑 Stage 1-2 QUICK 模式广筛新数据集与新模板）",
+      "STAGE3_DEDICATED_OPT_ONLY（仅对 POOL_A / SC_PASS 存量强种子做 FULL 专一控制变量优化）",
+      "ADMIN_TEMPLATE_VALIDATION（专项测试与清洗 WL13229/KH94146 管理员发帖新模板，推进 5:5 -> 8:2）",
+      "DATAFIELD_6PROBE_EXPLORE（对陌生新数据集执行 6 步覆盖/非零/更新频率探查）"
+    ]
+  },
+  "subagent_profile": {
+    "default_provider": "google",
+    "default_model": "neon",
+    "antigravity_subagent_model_param": "inherit",
+    "default_thinking_effort": "medium",
+    "rationale": "默认使用 Google 模型（Neon/Gemini），子代理默认思考强度设为『中 (medium)』，兼顾单轴控制变量推理质量与响应速度，防止子代理过度发散耗时。",
+    "override_presets": {
+      "google_neon_medium": {
+        "provider": "google",
+        "model": "neon",
+        "antigravity_model": "inherit",
+        "thinking_effort": "medium"
+      },
+      "google_flash_fast": {
+        "provider": "google",
+        "model": "flash",
+        "antigravity_model": "flash",
+        "thinking_effort": "medium"
+      },
+      "chatgpt_openai_medium": {
+        "provider": "openai",
+        "model": "gpt-5 / o3",
+        "thinking_effort": "medium",
+        "note": "切换到 ChatGPT / Codex CLI / Cursor OpenAI 模型时启用，同样读取 goal/run_config.json + docs/agents/CORE_STATE.json"
+      },
+      "claude_code_medium": {
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-5",
+        "thinking_effort": "medium"
+      }
+    }
+  },
+  "adaptive_pipeline_policy": {
+    "philosophy": "严进（Stage 0 数据与种子严筛） -> 宽中（Stage 1-2 模板放松管理、QUICK 快筛剪枝 + 管理员模板持续验证） -> 专终（Stage 3-4 王哥/Top100 专一优化 + PC 分布表决策 + 2-3 轮无果止损打标休眠）",
+    "stage0_strict_entry": {
+      "rules_source": "CLASSROOM_HUAZIGE_SEED_RULES (field_screener.py)",
+      "min_coverage": 0.75,
+      "min_matrix_date_coverage": 0.60,
+      "prefer_alpha0_free_until": "2026-12-06",
+      "max_field_alpha_count": 10,
+      "wds_blue_ocean_prod_rate_lt": 0.10
+    },
+    "stage12_relaxed_middle": {
+      "guangzhou_current_wave_mode": "FULL（当前广州正在跑的批次保持不动，先让它跑完）",
+      "next_wave_stage12_simulation_mode": "QUICK",
+      "default_decay": 0,
+      "default_neutralization": "SUBINDUSTRY",
+      "default_truncation": 0.04,
+      "test_period": "P0Y0M",
+      "max_trade": "OFF",
+      "template_ratio_current": "5:5",
+      "template_ratio_future_target": "8:2",
+      "admin_template_validation_plan": "持续从 Admin Original Posts (WL13229 / KH94146 254篇) 提取并实盘测试未过拟合的干净模板；当前成熟模板按 5:5（4 Admin : 4 Top100）运行，验证扩充达标后切为 8:2（6 Admin : 2 Top100）。"
+    },
+    "stage34_dedicated_final": {
+      "simulation_mode_locked": "FULL",
+      "primary_80pct_optimization_brains": [
+        "worldquant-brain-cyber-game-king (王哥 ZS59763 #32)",
+        "wq-top-advisors-skill (Top100 黄金顾问 2026Q4)",
+        "Admin Original Posts (WL13229 / KH94146) + 顾问课堂 53 课"
+      ],
+      "controlled_variable_decay_poll": [0, 5, 20],
+      "max_opt_rounds_without_improvement": 3,
+      "on_stalled_after_2_to_3_rounds": "停止继续消耗算力优化，打上内部休眠标记 `STALLED_DORMANT_AFTER_3_ROUNDS`（连同瓶颈原因存入 sc_pass_pc_rescue_queue.json / OPTIMIZATION_LEDGER.json），待后续找到新方法再唤醒专项攻关。",
+      "pc_policy_and_histogram_rule": {
+        "hard_preference": "PC < 0.70 才标为主力可交 Useful；PC >= 0.70 即使触发 +10% Sharpe 官方豁免也建议少交（标记 `PC_EXEMPT_HIGH_PC_HOLD` 供人工谨慎定夺）。",
+        "histogram_api_endpoint": "GET /alphas/{alphaId}/correlations/prod",
+        "histogram_schema": "records: [[min, max, alphas], ...], top-level: {min, max}",
+        "rescue_condition_near_and_sparse": "0.70 <= pc_max <= 0.75 且 [0.7, 0.8] 桶内生产因子数 alphas <= 5 且 [0.8, 1.0] 桶 alphas == 0 -> 判定 `PC_RESCUE_NEAR_SPARSE`，值得专项优化 1-2 轮",
+        "abandon_condition_crowded_or_stalled": "pc_max > 0.75 或 >=0.70 桶内 alphas > 5（数据很多、高度拥挤）或专项优化 1-2 轮后 PC 无明显下降 -> 判定 `PC_ABANDON_CROWDED_OR_STALLED`，不再继续优化，打标 `PC_STUCK_DORMANT` 归档休眠"
+      }
+    },
+    "deferred_strict_switches": {
+      "scheduled_date": "2026-12-10",
+      "switches": ["testPeriod='P2Y0M0D' (2Y Test)", "maxTrade='ON'"]
+    }
+  }
+}

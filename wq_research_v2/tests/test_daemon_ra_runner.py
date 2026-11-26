@@ -2,11 +2,14 @@
 from __future__ import annotations
 
 from wq_research_v2.daemon_ra_runner import (
+    ADMIN_WL13229_KH94146_CANDIDATE_TEMPLATES,
     CURATED_RA_D1_CAMPAIGNS,
     HIGH_BASE_MULTI_MARKET_ORDER,
     build_ra_campaign_specs,
     interleave_specs_by_campaign_waves,
+    select_stage12_templates,
     should_early_stop_dataset,
+    should_shelve_stalled_seed,
 )
 from wq_research_v2.expr_validator import ExprValidator
 from wq_research_v2.ledger_store import LedgerStore
@@ -154,3 +157,30 @@ def test_daily_summary_keys_and_funnel_export(tmp_path) -> None:
         assert "quick_screened_count" in stats
     finally:
         ledger.close()
+
+
+def test_admin_template_ratio_5_5_to_8_2_and_stalled_seed_stop_loss() -> None:
+    t_55 = select_stage12_templates("5:5")
+    assert len(t_55) == 8
+    assert sum(1 for t in t_55 if t["side"] == "ADMIN_ORIGINAL") == 4
+    assert sum(1 for t in t_55 if t["side"] == "TOP100_2026Q4") == 4
+
+    t_82 = select_stage12_templates("8:2")
+    assert len(t_82) == 8
+    assert sum(1 for t in t_82 if t["side"] == "ADMIN_ORIGINAL") == 6
+    assert sum(1 for t in t_82 if t["side"] == "TOP100_2026Q4") == 2
+
+    validator = ExprValidator()
+    for t in ADMIN_WL13229_KH94146_CANDIDATE_TEMPLATES:
+        rep = validator.validate(
+            t["fmt"].format(x="ts_backfill(mdl31_ab1_ass_tvr_last_qtr, 21)"),
+            {"region": "USA", "universe": "TOP3000", "delay": 1, "neutralization": "SUBINDUSTRY", "decay": 0, "truncation": 0.04},
+        )
+        assert rep.valid, f"Admin candidate template invalid: {t['id']} -> {rep.errors}"
+
+    shelve1, tag1 = should_shelve_stalled_seed(2, False, max_opt_rounds=3)
+    assert not shelve1 and tag1 == "ACTIVE_ELIGIBLE"
+    shelve2, tag2 = should_shelve_stalled_seed(3, False, max_opt_rounds=3)
+    assert shelve2 and tag2 == "STALLED_DORMANT_AFTER_3_ROUNDS"
+    shelve3, tag3 = should_shelve_stalled_seed(3, True, max_opt_rounds=3)
+    assert not shelve3 and tag3 == "ACTIVE_ELIGIBLE"

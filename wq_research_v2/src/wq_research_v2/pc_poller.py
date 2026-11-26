@@ -32,6 +32,103 @@ class PCPollResult:
     check_failures: list[str]
     http_status: Optional[int]
     error: Optional[str]
+    pc_buckets: Optional[list[dict[str, Any]]] = None
+    alphas_ge_070: Optional[int] = None
+    alphas_in_070_080: Optional[int] = None
+    alphas_ge_080: Optional[int] = None
+    alphas_in_060_070: Optional[int] = None
+    pc_table_decision: Optional[str] = None
+
+
+def parse_pc_histogram_records(
+    payload: dict[str, Any],
+    *,
+    pc_hard_lt: float = 0.70,
+    near_pc_max: float = 0.75,
+    sparse_count_max: int = 5,
+    prior_pc_opt_rounds: int = 0,
+    max_pc_opt_rounds: int = 2,
+) -> dict[str, Any]:
+    """Parse GET /alphas/{alphaId}/correlations/prod histogram table (`records`: [min, max, alphas]).
+
+    Implements the user's quantitative PC range-table rule:
+    - If pc_max < 0.70 -> `PC_PASS_STRICT` (true low-PC pass).
+    - Note: Even if official /check grants +10% Sharpe outperformance exemption at PC >= 0.70,
+      we advise rarely submitting PC > 0.70 (`PC_HIGH_ADVISE_HOLD`).
+    - If range is close (0.70 <= pc_max <= 0.75) AND colliding prod alpha count in >=0.70 is small
+      (<= 5 alphas in [0.7, 0.8] and 0 in >=0.8) AND prior_pc_opt_rounds < max_pc_opt_rounds (1-2 rounds):
+      -> `PC_RESCUE_NEAR_SPARSE` (worth 1-2 dedicated PC optimization rounds).
+    - If data count in >=0.70 is large (> 5), or bucket reaches >=0.80 (pc_max > 0.75), or 1-2 optimization
+      rounds already failed to move PC < 0.70:
+      -> `PC_ABANDON_CROWDED_OR_STALLED` (stop optimizing, tag & shelve for future methods).
+    """
+    raw_records = payload.get("records")
+    schema_props = ((payload.get("schema") or {}).get("properties")) or []
+    col_names = [str(p.get("name") or "").lower() for p in schema_props if isinstance(p, dict)]
+
+    buckets: list[dict[str, Any]] = []
+    alphas_ge_070 = 0
+    alphas_in_070_080 = 0
+    alphas_ge_080 = 0
+    alphas_in_060_070 = 0
+
+    if isinstance(raw_records, list):
+        for row in raw_records:
+            b_min: Optional[float] = None
+            b_max: Optional[float] = None
+            cnt: int = 0
+            if isinstance(row, dict):
+                b_min = float(row["min"]) if isinstance(row.get("min"), (int, float)) else None
+                b_max = float(row["max"]) if isinstance(row.get("max"), (int, float)) else None
+                cnt = int(row.get("alphas") or 0)
+            elif isinstance(row, (list, tuple)) and len(row) >= 3:
+                try:
+                    if col_names and "min" in col_names and "max" in col_names and "alphas" in col_names:
+                        b_min = float(row[col_names.index("min")])
+                        b_max = float(row[col_names.index("max")])
+                        cnt = int(row[col_names.index("alphas")])
+                    else:
+                        b_min = float(row[0])
+                        b_max = float(row[1])
+                        cnt = int(row[2])
+                except (TypeError, ValueError):
+                    continue
+            if b_min is None or b_max is None:
+                continue
+            buckets.append({"min": round(b_min, 4), "max": round(b_max, 4), "alphas": cnt})
+            if cnt > 0:
+                if b_max > 0.70 + 1e-6 and b_min >= 0.70 - 1e-6:
+                    alphas_ge_070 += cnt
+                    if b_max <= 0.80 + 1e-6:
+                        alphas_in_070_080 += cnt
+                    else:
+                        alphas_ge_080 += cnt
+                elif b_max > 0.60 + 1e-6 and b_min >= 0.60 - 1e-6:
+                    alphas_in_060_070 += cnt
+
+    pc_max_raw = payload.get("max")
+    pc_val = float(pc_max_raw) if isinstance(pc_max_raw, (int, float)) and math.isfinite(float(pc_max_raw)) else None
+
+    if pc_val is None:
+        decision = "PENDING_PC_COMPUTING"
+    elif pc_val < pc_hard_lt:
+        decision = "PC_PASS_STRICT"
+    elif prior_pc_opt_rounds >= max_pc_opt_rounds:
+        decision = "PC_ABANDON_MAX_ROUNDS_REACHED"
+    elif pc_val <= near_pc_max and alphas_ge_080 == 0 and alphas_ge_070 <= sparse_count_max:
+        decision = "PC_RESCUE_NEAR_SPARSE"
+    else:
+        decision = "PC_ABANDON_CROWDED_OR_FAR"
+
+    return {
+        "buckets": buckets,
+        "non_empty_buckets": [b for b in buckets if b["alphas"] > 0],
+        "alphas_ge_070": alphas_ge_070,
+        "alphas_in_070_080": alphas_in_070_080,
+        "alphas_ge_080": alphas_ge_080,
+        "alphas_in_060_070": alphas_in_060_070,
+        "decision": decision,
+    }
 
 
 def classify_readonly_check_payload(status_code: int, body_text: str) -> tuple[str, list[str], str]:
@@ -134,13 +231,16 @@ class PCPoller:
             except Exception:
                 check_status = "PENDING"
 
+        hist = parse_pc_histogram_records(payload, pc_hard_lt=self.pc_hard_lt)
         rescue_hint = None
         if pc_val < self.pc_hard_lt:
             status = "PC_READY_PASS"
         else:
             status = "PC_READY_HIGH"
-            if self.pc_hard_lt <= pc_val <= 0.75:
+            if hist["decision"] == "PC_RESCUE_NEAR_SPARSE":
                 rescue_hint = "RESCUE_CANDIDATE_SIGNED_POWER"
+            else:
+                rescue_hint = hist["decision"]
 
         res = PCPollResult(
             alpha_id=alpha_id,
@@ -153,6 +253,12 @@ class PCPoller:
             check_failures=check_failures,
             http_status=code,
             error=None,
+            pc_buckets=hist["non_empty_buckets"],
+            alphas_ge_070=hist["alphas_ge_070"],
+            alphas_in_070_080=hist["alphas_in_070_080"],
+            alphas_ge_080=hist["alphas_ge_080"],
+            alphas_in_060_070=hist["alphas_in_060_070"],
+            pc_table_decision=hist["decision"],
         )
         self._persist(res, attempts + 1, check_raw)
         return res

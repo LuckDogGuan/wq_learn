@@ -9,7 +9,8 @@ description: "WorldQuant BRAIN D1-Only RA 跨 AI 工具通用闭环技能（主 
 
 ## 1. 启动第一步：只读加载轻量核心上下文（防上下文爆炸）
 
-每次启动或 `/compact` 后，**只读以下 3 个轻量文件**（绝不扫描历史长对话）：
+每次启动或 `/compact` 后，**只读以下 4 个轻量文件**（绝不扫描历史长对话）：
+0. `goal/run_config.json` 与 `goal/START_HERE.md`（统一启动配置：自定义/默认 `Region`、`Universe`、`Category`、`Research Mode`、Stage 1-2 `QUICK` 模式、模板比例 `5:5 -> 8:2`、子代理默认 Google Neon + 思考强度「中 (`medium`)」或切换 ChatGPT）
 1. `AGENTS.md`（硬红线：严格 `delay==1`、禁用 `+/*/trade_when`、精确 81 个 Gold 算子、零自动 `/submit`、Margin 优先、`Useful`/`SC_PASS` + `SC 0.xxx PC 0.xxx` 别名、8:2 查资料优先级）
 2. `docs/agents/CORE_STATE.json`（当前专注的 1–2 个地区/数据集、现役 `Useful` 冠军、阶段 1–4 参数契约、Baseline v1.0 回退指针）
 3. `docs/agents/OPTIMIZATION_LEDGER.json`（上轮哪些优化**有效 `[EFFECTIVE]`**、哪些**无效 `[INEFFECTIVE]`**）
@@ -26,8 +27,9 @@ description: "WorldQuant BRAIN D1-Only RA 跨 AI 工具通用闭环技能（主 
 3. 对任何新产出的 RA 硬检 `0-FAIL` 候选，立即按 Stage-4 规程执行：
    - 同步最新全量 OS（`LocalSCEngine.sync_os_alphas(client)`）算本地 SC `< 0.65`；
    - 按 **`Margin (bp)` 降序** 做池内两两正交剪枝（`< 0.68`）；
-   - 串行查远程 PC（`pc_poller.py`）与官方 `/check`；
-   - 全过且正交最高 Margin 打 **`Useful`** + 别名 `SC 0.xxx PC 0.xxx`；仅 PC 未过或同簇次优打 **`SC_PASS`** + 别名 `SC 0.xxx PC 0.xxx`（严禁调 `/submit`）。
+   - 串行查远程 PC（`pc_poller.py` 调用 `GET /alphas/{id}/correlations/prod` 解析 `records: [[min, max, alphas], ...]` 范围分布表）与官方 `/check`：
+     - **严控 `PC < 0.70`**：仅当 `pc_max < 0.70`（且 RA 0-FAIL + SC < 0.65 + 池内正交最高 Margin）才打主力 **`Useful`** + 别名 `SC 0.xxx PC 0.xxx`；若 `PC >= 0.70` 即使触发 `+10%` Sharpe 官方豁免也建议少交（标记 `PC_EXEMPT_HIGH_PC_HOLD`）；
+     - **PC 范围分布表定量判据（`parse_pc_histogram_records`）**：若 `0.70 <= pc_max <= 0.75` 且 `[0.7, 0.8]` 桶内生产因子数 `alphas <= 5`、`>=0.8` 桶为 `0`（范围近、碰撞少），判定 `PC_RESCUE_NEAR_SPARSE`，值得回 Stage 3 专项优化 `1–2` 轮；若 `>=0.7` 区间数据很多（`alphas > 5`）或 `pc_max > 0.75` 或优化 `1–2` 轮无改变，判定 `PC_ABANDON_CROWDED_OR_STALLED`，果断放弃继续压 PC，打 `SC_PASS` + 内部标记 `PC_STUCK_DORMANT` 休眠归档（严禁调 `/submit`）。
 
 ### Step B · 种子因子（Seed Factor）采集与 Stage 1–2 标准化快筛
 1. **种子筛选固定规则**（`wq_research_v2/src/wq_research_v2/field_screener.py` · 融合华子哥四差距 + 顾问课堂 53 课 `worldquant-classroom-reference`）：
@@ -48,6 +50,8 @@ description: "WorldQuant BRAIN D1-Only RA 跨 AI 工具通用闭环技能（主 
      - 轴 1（Decay 轮询）：固定母版表达式与中性化，轮询 **`decay ∈ {0, 5, 20}`**（默认 `0` 起步，胜出点邻域再细扫 `{2, 4, 6}`）；
      - 轴 2（Neutralization 轮询）：固定最优 Decay，轮询 `SUBINDUSTRY` → `INDUSTRY` / `REVERSION_AND_MOMENTUM` / `CROWDING` / `STATISTICAL`；
      - 轴 3（单一短板手术）：按 8:2 优先级（80% 王哥 + Top100 顾问 + 管理员/课堂53课）针对唯一 FAIL 项做单步改造（如后置 `ts_decay_linear(22)` 救 2Y/Margin、`adv20` 门控+`country*industry` 救 Sub-Uni、王哥 `L6 tail(0.25,0.75,0.5)` 或同集/跨集 `min(rank,rank)` 降 PC）。
+   - **2–3 轮止损休眠铁律（`should_shelve_stalled_seed`）**：若某种子连续专一优化 **2–3 轮** 仍无有效提升，立刻停止消耗额度，打上 `STALLED_DORMANT_AFTER_3_ROUNDS` 标签连同瓶颈原因归档，留待未来找到新优化方法再定向唤醒。
+   - **子代理默认配置**：默认使用 Google Neon 模型（`Model="inherit"`），思考强度默认设为 **中 (`medium`)**（兼容在 ChatGPT / Codex / Claude Code 中按 `goal/run_config.json` 切换模型）。
 3. **嵌套层数治理**：
    - 调用 `compute_expression_nesting_metrics(expr)` 检查 `operator_count` 与 `nesting_depth`；
    - 优先保持 `operator_count <= 6`、`nesting_depth <= 4`；若 `nesting_depth >= 5` 或 `operator_count >= 7`，必须打上 `OVER_NESTED_TEMP_PC_FIX` 标签并完整记录每一层参数。

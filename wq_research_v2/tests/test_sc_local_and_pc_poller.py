@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 from wq_research_v2.ledger_store import LedgerStore
-from wq_research_v2.pc_poller import PCPoller, classify_readonly_check_payload
+from wq_research_v2.pc_poller import PCPoller, classify_readonly_check_payload, parse_pc_histogram_records
 from wq_research_v2.sc_local import LocalSCEngine
 
 
@@ -97,7 +97,30 @@ def test_pc_poller_handles_200_empty_body_and_rescue_band(tmp_path: Path) -> Non
     p2 = PCPoller(_PCMockClient(200, json.dumps({"max": 0.62, "min": -0.1}), 200, chk_ok), ledger).poll_once("AID2", "GBR")
     assert p2.status == "PC_READY_PASS" and p2.check_status == "PASS"
 
-    # PC=0.72 -> PC_READY_HIGH + RESCUE_CANDIDATE_SIGNED_POWER
-    p3 = PCPoller(_PCMockClient(200, json.dumps({"max": 0.72}), 200, chk_ok), ledger).poll_once("AID3", "GBR")
-    assert p3.status == "PC_READY_HIGH" and p3.rescue_hint == "RESCUE_CANDIDATE_SIGNED_POWER"
+    # PC=0.72 with sparse [0.7, 0.8] bucket (only 2 alphas) -> PC_RESCUE_NEAR_SPARSE + RESCUE_CANDIDATE_SIGNED_POWER
+    sparse_payload = {
+        "max": 0.72,
+        "min": -0.15,
+        "schema": {"properties": [{"name": "min"}, {"name": "max"}, {"name": "alphas"}]},
+        "records": [[-0.2, -0.1, 15], [0.6, 0.7, 18], [0.7, 0.8, 2], [0.8, 0.9, 0], [0.9, 1.0, 0]],
+    }
+    p3 = PCPoller(_PCMockClient(200, json.dumps(sparse_payload), 200, chk_ok), ledger).poll_once("AID3", "GBR")
+    assert p3.status == "PC_READY_HIGH"
+    assert p3.rescue_hint == "RESCUE_CANDIDATE_SIGNED_POWER"
+    assert p3.pc_table_decision == "PC_RESCUE_NEAR_SPARSE"
+    assert p3.alphas_ge_070 == 2 and p3.alphas_in_070_080 == 2 and p3.alphas_ge_080 == 0
+
+    # PC=0.73 with crowded [0.7, 0.8] bucket (25 alphas > 5) -> PC_ABANDON_CROWDED_OR_FAR
+    crowded_payload = {
+        "max": 0.73,
+        "min": -0.15,
+        "records": [[0.6, 0.7, 120], [0.7, 0.8, 25], [0.8, 0.9, 0]],
+    }
+    p4 = PCPoller(_PCMockClient(200, json.dumps(crowded_payload), 200, chk_ok), ledger).poll_once("AID4", "GBR")
+    assert p4.pc_table_decision == "PC_ABANDON_CROWDED_OR_FAR"
+    assert p4.alphas_ge_070 == 25
+
+    # After 2 failed PC optimization rounds -> PC_ABANDON_MAX_ROUNDS_REACHED
+    h_stalled = parse_pc_histogram_records(sparse_payload, prior_pc_opt_rounds=2, max_pc_opt_rounds=2)
+    assert h_stalled["decision"] == "PC_ABANDON_MAX_ROUNDS_REACHED"
     ledger.close()

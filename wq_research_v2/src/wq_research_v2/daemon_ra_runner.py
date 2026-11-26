@@ -659,6 +659,36 @@ STAGE12_TEMPLATES_8: list[dict[str, str]] = [
     {"id": "RA-TOP-04-rev-ind-gz-raw", "side": "TOP100_2026Q4", "author": "LD22811", "fmt": "reverse(group_zscore({x}, industry))"},
 ]
 
+# Extra clean (non-overfit) Admin Original templates from WL13229 & KH94146 posts for continuous validation & 5:5 -> 8:2 transition
+ADMIN_WL13229_KH94146_CANDIDATE_TEMPLATES: list[dict[str, str]] = [
+    {"id": "RA-ADM-05-sub-gneut-avdiff66-pos", "side": "ADMIN_ORIGINAL", "author": "WL13229", "fmt": "group_neutralize(ts_av_diff({x}, 66), subindustry)"},
+    {"id": "RA-ADM-06-rev-sub-gneut-avdiff66", "side": "ADMIN_ORIGINAL", "author": "WL13229", "fmt": "reverse(group_neutralize(ts_av_diff({x}, 66), subindustry))"},
+    {"id": "RA-ADM-07-sub-grank-tsrank252-pos", "side": "ADMIN_ORIGINAL", "author": "KH94146", "fmt": "group_rank(ts_rank({x}, 252), subindustry)"},
+    {"id": "RA-ADM-08-rev-sub-grank-tsrank252", "side": "ADMIN_ORIGINAL", "author": "KH94146", "fmt": "reverse(group_rank(ts_rank({x}, 252), subindustry))"},
+]
+
+
+def select_stage12_templates(template_ratio: str = "5:5") -> list[dict[str, str]]:
+    """Return 8 Stage-1/2 templates matching '5:5' (4 Admin : 4 Top100, current default)
+    or '8:2' (6 Admin : 2 Top100, target once Admin templates are validated).
+    """
+    ratio = str(template_ratio or "5:5").strip()
+    if ratio == "8:2":
+        return STAGE12_TEMPLATES_8[:4] + ADMIN_WL13229_KH94146_CANDIDATE_TEMPLATES[:2] + STAGE12_TEMPLATES_8[4:6]
+    return list(STAGE12_TEMPLATES_8)
+
+
+def should_shelve_stalled_seed(
+    opt_rounds_completed: int,
+    improved_in_recent_rounds: bool,
+    *,
+    max_opt_rounds: int = 3,
+) -> tuple[bool, str]:
+    """Stop optimizing after 2-3 rounds without effective improvement; tag for future new methods."""
+    if int(opt_rounds_completed) >= int(max_opt_rounds) and not improved_in_recent_rounds:
+        return True, "STALLED_DORMANT_AFTER_3_ROUNDS"
+    return False, "ACTIVE_ELIGIBLE"
+
 
 def _wrap_field(field_id: str, field_type: str, backfill_days: int = 21) -> str:
     if field_type == "VECTOR":
@@ -671,9 +701,11 @@ def build_ra_campaign_specs(
     campaigns: Optional[list[dict[str, Any]]] = None,
     include_dual_branch: bool = True,
     include_alt_neut: bool = True,
+    template_ratio: str = "5:5",
 ) -> list[dict[str, Any]]:
-    """Build deterministic, 5:5 balanced, Decision-#3 compliant D1 RA specs (8 tasks per batch)."""
+    """Build deterministic, 5:5 (or 8:2) balanced, Decision-#3 compliant D1 RA specs (8 tasks per batch)."""
     camp_list = campaigns or CURATED_RA_D1_CAMPAIGNS
+    templates_8 = select_stage12_templates(template_ratio)
     specs: list[dict[str, Any]] = []
 
     for camp in camp_list:
@@ -699,7 +731,7 @@ def build_ra_campaign_specs(
                             "dataset_id": ds,
                             "primary_field_id": name,
                         }
-                        for t in STAGE12_TEMPLATES_8
+                        for t in templates_8
                     ]
                     specs.append({
                         "batch_id": f"RA-{TEMPLATE_SET_VER}-{cid}-{c_idx:02d}-{name}-{neut}",
@@ -733,7 +765,7 @@ def build_ra_campaign_specs(
                         "dataset_id": ds,
                         "primary_field_id": fid,
                     }
-                    for t in STAGE12_TEMPLATES_8
+                    for t in templates_8
                 ]
                 specs.append({
                     "batch_id": f"RA-{TEMPLATE_SET_VER}-{cid}-{f_idx:02d}-{fid[-16:]}-{neut}",
@@ -1007,6 +1039,8 @@ def run_ra_production_loop(
     post_stagger_sec: float = 2.0,
     batch_size: int = 8,
     simulation_mode: str = "FULL",
+    stage12_simulation_mode: Optional[str] = None,
+    template_ratio: str = "5:5",
     daily_target: int = 4500,
     max_batches: Optional[int] = None,
     sleep_between_batches_sec: float = 1.0,
@@ -1046,7 +1080,7 @@ def run_ra_production_loop(
         selected_campaigns = [c for c in selected_campaigns if c["region"].upper() in reg_rank]
         selected_campaigns.sort(key=lambda c: reg_rank[c["region"].upper()])
 
-    stage1_specs = build_ra_campaign_specs(campaigns=selected_campaigns)
+    stage1_specs = build_ra_campaign_specs(campaigns=selected_campaigns, template_ratio=template_ratio)
     refiner_specs: list[dict[str, Any]] = []
     if include_stage23_refiner:
         refiner_specs = [
@@ -1171,9 +1205,11 @@ def run_ra_production_loop(
                         flush=True,
                     )
                     continue
+                is_stage3_spec = str(spec.get("batch_id") or "").startswith("S3-")
+                effective_mode = "FULL" if is_stage3_spec else (stage12_simulation_mode or simulation_mode).upper()
                 bid, runnable, _ = runner.prepare_batch_tasks(
                     spec,
-                    simulation_mode=simulation_mode,
+                    simulation_mode=effective_mode,
                     field_alpha_counts=alpha0_map if spec["queue_type"] == "UNUSED_ALPHA0" else None,
                 )
                 if runnable:
@@ -1276,7 +1312,10 @@ def main(argv: Optional[list[str]] = None) -> int:
     p.add_argument("--region-caps", default="", help="Optional per-region slot overrides, e.g. EUR:1,USA:3")
     p.add_argument("--post-stagger", type=float, default=2.0, help="Min seconds between POST /simulations across threads to prevent burst 429")
     p.add_argument("--batch-size", type=int, default=8, help="Children per multi-sim (Gold max=8)")
-    p.add_argument("--mode", default="FULL", choices=["FULL", "QUICK"])
+    p.add_argument("--mode", default="FULL", choices=["FULL", "QUICK"], help="Stage 3+ simulation mode (default FULL)")
+    p.add_argument("--stage12-mode", default=None, choices=["FULL", "QUICK"], help="Optional Stage 1-2 simulation mode (e.g. QUICK for next wave while Stage 3 stays FULL)")
+    p.add_argument("--template-ratio", default="5:5", choices=["5:5", "8:2"], help="Stage 1-2 Admin:Top100 template ratio (default 5:5; switch to 8:2 after validation)")
+    p.add_argument("--goal-config", default="", help="Optional path to goal/run_config.json to load direction defaults")
     p.add_argument("--daily-target", type=int, default=4500)
     p.add_argument("--max-batches", type=int, default=None)
     p.add_argument("--only-free-alpha0", action="store_true")
@@ -1305,6 +1344,8 @@ def main(argv: Optional[list[str]] = None) -> int:
             post_stagger_sec=args.post_stagger,
             batch_size=args.batch_size,
             simulation_mode=args.mode,
+            stage12_simulation_mode=args.stage12_mode,
+            template_ratio=args.template_ratio,
             daily_target=args.daily_target,
             max_batches=args.max_batches,
             only_free_alpha0=args.only_free_alpha0,
