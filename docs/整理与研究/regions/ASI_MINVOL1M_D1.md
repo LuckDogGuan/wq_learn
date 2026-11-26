@@ -9,3 +9,6 @@
 - **2026-11-25 19:16（1 小时定时检查 #1 · `ASI / price_signal_dl` 单波爆发 5 条纯正向对称种子！）**：
   - 放宽 `600s` 超时后首波 `31/31` 零漏单完成，单波即出 **`5` 条正向 `POOL_B` 种子**（且正反完全对称验真：`6XG87dkJ = +0.98` vs `omP7keVv = -0.98`！）：**`kq8dY5nz` (`Sh=+1.13, 2Y=+1.40, Fit=0.57`)**、`6XG87dkJ` (`+0.98, 2Y=+0.97`)、`vRYq8P8b` (`+0.96`)、`O06YYNOv` (`+0.83`)、**`legd1PAN` (`+0.82, Margin=+15.28bp` 已过 ASI 15bp 安全垫！)**。
   - **加码方向**：提至全队列第 2 顺位，新增 `ASI_PRICEDL_DUAL_LOWTO`（前置 `ts_mean 22` 低换手高 Margin 变体 + `min(rank(vol), rank(trend))` 同集双支，保持 `maxTrade=ON` + `COUNTRY` + RA 与 PPA 严格隔离）。
+- **2026-11-26 19:03（2 小时定时审计 #9 · 多域星阵 `ASI / MINVOL1M` 首波 `QUICK` 狂爆 `8` 条 `0-FAIL` 高质种子，`ASI` 现有 OS=0 天然 `SC=0.000`！）**：
+  - **`ASI / MINVOL1M / model39`**（`64 QUICK, 0 unobs`，`7` 条 `0-FAIL`）：`akRqpR1v`（**`24.19bp`**, `Sh=1.98, 2Y=1.96, Fit=1.45, Sub-Uni PASS 1.13/0.58`）、`P0Pdk9Gq`（**`21.32bp`**, `Sh=2.10, 2Y=2.21, Fit=1.45, Sub-Uni PASS 1.19/0.62`）、`vRY3QYjr`（`17.66bp, Sh=2.21, Fit=1.91`）、`RR5nGWmg`（`12.65bp, Sh=2.35, Fit=1.87`）；实时核查 **`SC(ASI)=0.000`**，但单字段原始 `model39` `PC = 0.949–0.981`（后续晋级 `FULL` 必配 `country*industry` + `nonlinear_tail_group` / 跨集 `price_signal_dl` 降 PC！）。
+  - **`ASI / MINVOL1M / price_signal_dl`（`Alphas=0` 免额）**：`d59AaaMg`（`normalized_volume_indicator_2`, `RAM d=4`）打出 **`Sh=1.74, 2Y=2.56, Fit=1.00, Sub-Uni PASS 1.19/0.51, fails=[], SC=0.000`**，为下一轮转 `FULL` 实盘冲 `ASI` 首条 `Useful` 的头号低拥挤种子！

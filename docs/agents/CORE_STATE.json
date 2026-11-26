@@ -6,7 +6,7 @@
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >4000切Alphas=0)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)"
   },
-  "updated_at": "2026-11-26T17:05:00+08:00",
+  "updated_at": "2026-11-26T19:03:00+08:00",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "context_compaction_rule": "任何 AI 工具（Antigravity / Claude Code / Codex / Cursor）启动或上下文超长重置（/compact）后，只读本文件 + docs/agents/OPTIMIZATION_LEDGER.json + AGENTS.md（总计 < 8KB），绝不重读数万行历史聊天记录！",
   "immutable_red_lines": {
@@ -38,6 +38,21 @@
           "op_count": 6,
           "nesting_tag": "CLEAN_LE4_LAYERS",
           "status": "LIVE_IN_95_OS"
+        },
+        {
+          "alpha_id": "kq82m3gL",
+          "dataset_id": "model31+model30+model28",
+          "margin_bp": 10.28,
+          "sharpe": 1.78,
+          "sharpe_2y": 2.38,
+          "fitness": 1.04,
+          "turnover": 0.083,
+          "official_sc": 0.3509,
+          "remote_pc": 0.6989,
+          "pc_collisions_ge_070": 0,
+          "nesting_depth": 8,
+          "nesting_tag": "OVER_NESTED_TEMP_PC_FIX",
+          "status": "TAGGED_USEFUL_STRICT_PC_LT_070_AWAITING_MANUAL_REVIEW"
         },
         {
           "alpha_id": "E5mWLW0J",

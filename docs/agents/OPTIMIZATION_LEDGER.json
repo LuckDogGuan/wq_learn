@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-26T16:36:00+08:00",
+  "updated_at": "2026-11-26T19:03:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -48,8 +48,8 @@
       "region_dataset": "USA/TOP3000/model31+model30+model28 (S3-r14 严格单轴对照)",
       "controlled_change": "冻结 E5mWLW0J 核心，严格单改 1 轴：d22->d33/d44（blx5PQ9q / Jj3ZXp7A / A1LMaw0g）、ret22->ret33（legbzWV2 / E5mXawvm）、或外加 ts_target_tvr_decay(target_tvr=0.08)（kq82m3gL，零 hump）",
       "verdict": "EFFECTIVE（单轴稳健有效 · 15/16 保持 0-FAIL）",
-      "metric_delta": "d33/d44/ret33 将 Sh 1.83->1.86-1.87、2Y 2.38->2.48-2.49、Fit 1.11->1.14；tvr08 将 Margin 7.99bp->10.28bp (+2.29bp)、TO 11.5%->8.30%，95-OS Local SC=0.3509（但 E5mWLW0J 簇因 PC>=0.75 且 >=7 层仍按保守规则归档 SC_PASS 休眠）",
-      "reusable_rule": "严格单变量微调（尤其 ts_target_tvr_decay(0.08) 与轻拉后置衰减 22->33/44）远优于多变量同改，且绝不触发 tail+hump 崩盘。"
+      "metric_delta": "d33/d44/ret33 将 Sh 1.83->1.86-1.87、2Y 2.38->2.48-2.49、Fit 1.11->1.14；更重大突破：单轴加 ts_target_tvr_decay(lambda_max=0.9, target_tvr=0.08) 诞生的 kq82m3gL 将 Margin 从 7.99bp 推升至 10.28bp (+2.29bp)、TO 从 11.5% 降至 8.3%、官方 95-OS SC=0.3509 PASS，并将远程 PC 从 0.7531 一举压穿至 0.6989 (<0.70, >=0.70碰撞数=0!)，晋级 Useful (仍保留 OVER_NESTED_TEMP_PC_FIX 标记供人工终审)",
+      "reusable_rule": "严格单变量微调（尤其 ts_target_tvr_decay(target_tvr=0.08, lambda_max=0.9)）不仅降换手提 Margin，还能作为温和时序重权有效把临界 PC (0.75) 压穿 0.70 且零 tail+hump 崩盘。"
     },
     {
       "case_id": "EFF-07",

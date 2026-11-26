@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-26T12:56:00+08:00",
+  "updated_at": "2026-11-26T19:03:00+08:00",
   "policy": "All RA 0-FAIL + SC < 0.65 receive alias 'SC 0.xxx PC 0.xxx'. All-pass (PC < 0.70 + pairwise < 0.68, ranked by Margin DESC) receive Useful tag; PC >= 0.70 or correlated siblings (>=0.68 vs higher-Margin Useful) receive SC_PASS tag. Note: os_pnl_cache.db synced to 95 OS alphas (newly_synced=3, incl. e71w5Qrl live in OS!).",
   "useful_all_pass_tagged": [
     {
@@ -53,6 +53,35 @@
       "nesting_tag": "CLEAN_LE4_LAYERS",
       "exact_params": {"decay": 5, "truncation": 0.08, "neutralization": "CROWDING", "adv20_gate": 0.4, "group": "country*industry"},
       "expression": "if_else(rank(adv20) > 0.4, group_zscore(min(rank(ts_backfill(value_momentum_region_percentile, 21)), rank(ts_backfill(mdl25_8v, 21))), group_cartesian_product(country, industry)), 0)"
+    },
+    {
+      "alpha_id": "kq82m3gL",
+      "region": "USA",
+      "universe": "TOP3000",
+      "dataset_id": "model31+model30+model28",
+      "tag": "Useful",
+      "alias": "SC 0.351 PC 0.699",
+      "margin_bp": 10.28,
+      "sharpe": 1.78,
+      "sharpe_2y": 2.38,
+      "fitness": 1.04,
+      "turnover": 0.083,
+      "sub_universe": "PASS (0.91/0.77)",
+      "is_ladder": "PASS (2.38/2.02)",
+      "official_check": "0_FAIL_ALL_GREEN_STRICT_PC_LT_070_ZERO_COLLISIONS",
+      "local_sc_95os": 0.3509,
+      "official_sc": 0.3509,
+      "remote_pc": 0.6989,
+      "pc_collisions_ge_070": 0,
+      "matches_pyramid": "USA/D1/MODEL (1.3x) + USA/D1/PV (1.1x)",
+      "matches_competition": "AQP202611",
+      "neutralization": "STATISTICAL",
+      "decay": 6,
+      "truncation": 0.08,
+      "nesting_depth": 8,
+      "nesting_tag": "OVER_NESTED_TEMP_PC_FIX",
+      "exact_params": {"decay": 6, "truncation": 0.08, "neutralization": "STATISTICAL", "post_decay_days": 22, "vneut_ret_days": 22, "tail_bounds": [-0.25, 0.25, 0], "target_tvr": 0.08, "lambda_max": 0.9},
+      "expression": "ts_target_tvr_decay(tail(vector_neut(group_rank(ts_decay_linear(min(rank(ts_backfill(mdl31_ab1_ass_tvr_prior_qtr, 21)), min(rank(ts_backfill(star_eps_surprise_prediction_fq1, 21)), rank(ts_backfill(mdl28_sm_structural2_v14_0_0_nd_credit_structural_distance_to_default, 21)))), 22), subindustry), rank(ts_mean(returns, 22))), lower=-0.25, upper=0.25, newval=0), lambda_min=0, lambda_max=0.9, target_tvr=0.08)"
     },
     {
       "alpha_id": "E5mWLW0J",
