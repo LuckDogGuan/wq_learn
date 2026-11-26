@@ -95,3 +95,12 @@
     2. **`MPgR3wQ6`**（`ass_tvr_last_qtr`, `RAM d=0 tr=0.04`）：**`Margin = 20.09bp, Sh = 1.63, 2Y = 2.17, Fit = 1.04, Sub-Uni PASS (0.81/0.71), 官方 SC = 0.5203 PASS, 官方 PC = 0.8058`** → 别名 **`SC 0.520 PC 0.806`**；
     3. **`qM5r0dxj`**（`vector_neut(group_rank(ass_tvr_prior_qtr), rank(ts_mean(returns, 22)))`, `STATISTICAL d=3 tr=0.06`）：**`Sh = 1.95, 2Y = 2.69, Fit = 1.26, Sub-Uni PASS (1.10/0.84), Margin = 10.21bp, 官方 SC = 0.4569 PASS, 官方 PC = 0.7896`**，且与 `QPWkKAMX` 池内两两相关性仅 **`0.5208 < 0.68`**（天然正交第二簇！）→ 别名 **`SC 0.457 PC 0.790`**。
   - **上线精准收口包 `S3-r8-USA-M31-QPW`（48 FULL）**：直接以 `QPWkKAMX`（`PC=0.7055`）为核心骨架，扫 `decay {2,4,6}` / `tr {0.06,0.08}` / `signed_power(1.5)` / `vector_neut(returns)`（融合 `qM5r0dxj` 正交簇！）/ `hump(0.01)` / `acc_prior_y` / `ass_tvr_prior_y(21.35bp)` 跨 `RAM / CROWDING / STATISTICAL`，一举冲破 `PC < 0.70` 并冲刺 `17–25bp` USA 首条（乃至双条正交）`Useful`！
+- **2026-11-26 09:38（`S3-r8-USA-M31-QPW` 单包狂出 `11` 条 `0-FAIL POOL_S`（`22.9%` 命中率！），`78GbojXL` 已压至 `PC = 0.7020`，距首条 USA `Useful` 仅差 `0.0020`！上线王哥 80% 经验 `S3-r9-USA-M31-WG` 精准斩首！）**：
+  - **11 条 `0-FAIL + SC < 0.65` 全部完成 `SC_PASS` 打标 + `SC 0.xxx PC 0.xxx` 别名（`HTTP 200 OK`，零 `/submit`）**：
+    - **后置 `ts_decay_linear(min(...), 22)` 冠军簇（同时拉升 Sh/2Y/Margin 并降 PC！）**：`2rGzjlNJ`（`20.19bp, Sh=1.75, 2Y=2.56, Fit=1.06, SC 0.541 PC 0.705`）、`ZYX3m7qd`（`19.73bp, Sh=1.75, 2Y=2.55, SC 0.539 PC 0.703`）、**`78GbojXL`（`18.90bp, Sh=1.74, 2Y=2.50, Fit=1.05, SC 0.538 PC 0.702` — 仅差 `0.0020`！）**；
+    - **`ass_tvr_prior_y × acc_prior_qtr` 最高 Margin 簇**：`N1Kme7Ro`（**`21.70bp`**, `SC 0.579 PC 0.784`）、`zqA6rkQO`（`21.21bp`, `SC 0.577 PC 0.784`）、`MPgR0788`（`20.52bp`, `SC 0.575 PC 0.784`）；
+    - **`QPWkKAMX` 原骨架衰减簇**：`omP5oql6`（`19.37bp, SC 0.546 PC 0.709`）、`xAl81jwb`（`18.88bp, SC 0.545 PC 0.707`）、`GrQAgl60`（`18.16bp, SC 0.544 PC 0.706`）；
+    - **正交 `STATISTICAL + vector_neut(returns)` 簇**：`1YGbjW96`（`10.17bp, Sh=1.72, SC 0.437 PC 0.746`）、`Jj3EPPb2`（`8.99bp, Sh=1.78, Fit=1.09, SC 0.444 PC 0.755`）。
+  - **关键物理规律 + 80% 王哥 Skill 精准手术（`S3-r9-USA-M31-WG-*`, `32 FULL`）**：
+    - `d=6 → d=4 → d=2` 单调降 PC（`0.7047 → 0.7031 → 0.7020`），且后置 `ts_decay_linear(22)` 全面碾压前置 `10d`；
+    - 严格按 8:2 原则调用 `worldquant-brain-cyber-game-king`（王哥 Skill）核心降 PC 算子：**`d=0` 外推 + `d44` 长衰减 + L6 `tail(0.25/0.75)` & `tail(0.35/0.65)` 尾部浓缩 + 动态 `bucket(rank(cap), range="0,1,0.1")` & `sector*cap` 分组 + `industry` 分组 + `vector_neut(..., rank(ts_std_dev(returns, 66)))`**，直击 `-0.01 ~ -0.08` PC 降幅，锁定 `19–25bp` USA 首条 `Useful`！

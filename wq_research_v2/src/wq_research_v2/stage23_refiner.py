@@ -1225,10 +1225,74 @@ def build_eur_model77_qvm_subfix_s3r8_specs() -> list[dict[str, Any]]:
     return specs
 
 
+def build_usa_model31_wangge_pc002_s3r9_specs() -> list[dict[str, Any]]:
+    """Stage-3 r9 Wang Ge 80%-Skill Surgical PC Finisher on 78GbojXL (PC=0.7020, ONLY 0.0020 above 0.70!).
+
+    S3-r8 verified 11 new 0-FAIL POOL_S USA/model31 winners (all SC < 0.58), proving:
+      - Moving ts_decay_linear(..., 22) AFTER min(rank(ass_tvr_last_qtr), rank(acc_prior_qtr))
+        boosted Sh 1.71->1.75, 2Y 2.36->2.56, Margin 17.58->20.19bp AND cut PC 0.7085->0.7020!
+      - Decay monotonic PC drop: d=6 (0.7047) -> d=4 (0.7031) -> d=2 (0.7020, 78GbojXL 18.90bp).
+    Applies Wang Ge skill (worldquant-brain-cyber-game-king) surgical -0.01..-0.08 PC operators:
+      1) d=0 extrapolation on post-min 22d decay + 44d post-min decay;
+      2) L6 tail(lower=0.25/0.35, upper=0.75/0.65, newval=0.5) conviction-tail transformation;
+      3) Dynamic bucket(rank(cap), range="0,1,0.1") & sector*cap-quintile peer grouping;
+      4) industry peer grouping & slow 66d-vol vector_neut to drop PC 0.7020 -> 0.62-0.68 at 19-25bp Margin!
+    """
+    specs: list[dict[str, Any]] = []
+    at_lq = "ts_backfill(mdl31_ab1_ass_tvr_last_qtr, 21)"
+    acc_pq = "ts_backfill(mdl31_ab1_acc_prior_qtr, 21)"
+    base_min = f"min(rank({at_lq}), rank({acc_pq}))"
+    d22 = f"ts_decay_linear({base_min}, 22)"
+    d44 = f"ts_decay_linear({base_min}, 44)"
+
+    wg_exprs: list[tuple[str, str, str, str]] = [
+        ("S3WG9-ADM-01-d22-sub", "ADMIN_ORIGINAL", "WL13229", f"group_rank({d22}, subindustry)"),
+        ("S3WG9-ADM-02-wangge-tail25", "ADMIN_ORIGINAL", "WL13229", f"tail(group_rank({d22}, subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("S3WG9-ADM-03-wangge-bktcap", "ADMIN_ORIGINAL", "WL13229", f'group_rank({d22}, densify(bucket(rank(cap), range="0,1,0.1")))'),
+        ("S3WG9-ADM-04-wangge-seccap", "ADMIN_ORIGINAL", "WL13229", f'group_rank({d22}, densify(group_cartesian_product(sector, bucket(rank(cap), range="0,1,0.2"))))'),
+        ("S3WG9-TOP-01-d44-sub", "TOP100_2026Q4", "SZ83096", f"group_rank({d44}, subindustry)"),
+        ("S3WG9-TOP-02-d22-ind", "TOP100_2026Q4", "SZ83096", f"group_rank({d22}, industry)"),
+        ("S3WG9-TOP-03-wangge-tail35", "TOP100_2026Q4", "ZS59763", f"tail(group_rank({d22}, subindustry), lower=0.35, upper=0.65, newval=0.5)"),
+        ("S3WG9-TOP-04-vneut-vol66", "TOP100_2026Q4", "LD22811", f"vector_neut(group_rank({d22}, subindustry), rank(ts_std_dev(returns, 66)))"),
+    ]
+
+    for tag, neut, dec, trunc in [
+        ("ram_d0_t04", "REVERSION_AND_MOMENTUM", 0, 0.04),
+        ("ram_d0_t06", "REVERSION_AND_MOMENTUM", 0, 0.06),
+        ("ram_d2_t06", "REVERSION_AND_MOMENTUM", 2, 0.06),
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+    ]:
+        specs.append(
+            _pack_items_into_spec(
+                batch_id=f"S3-r9-USA-M31-WG-{tag}",
+                campaign_id="S3_USA_M31_WANGGE_PC002",
+                hypothesis_id="HYP-S3-USA-M31-PC0702-USEFUL",
+                region="USA",
+                universe="TOP3000",
+                dataset_id="model31",
+                queue_type="NORMAL",
+                settings=_make_settings("USA", "TOP3000", neut, decay=dec, truncation=trunc),
+                items=[
+                    {
+                        "expression": expr,
+                        "template_id": f"{tid}_{neut}_d{dec}",
+                        "source_side": side,
+                        "author_id": auth,
+                        "dataset_id": "model31",
+                        "primary_field_id": "mdl31_ab1_ass_tvr_last_qtr",
+                    }
+                    for tid, side, auth, expr in wg_exprs
+                ],
+            )
+        )
+    return specs
+
+
 def build_all_stage23_refiner_specs() -> list[dict[str, Any]]:
-    """Return ordered Stage-3 r8 USA-M31-QPW + EUR-M77-SUB -> r7 -> r6 -> r5 -> r4 -> r3 -> r2 -> r1b -> Stage-2."""
+    """Return ordered Stage-3 r9 USA-M31-WG -> r8 -> r7 -> r6 -> r5 -> r4 -> r3 -> r2 -> r1b -> Stage-2."""
     return (
-        build_usa_model31_qpw_useful_s3r8_specs()
+        build_usa_model31_wangge_pc002_s3r9_specs()
+        + build_usa_model31_qpw_useful_s3r8_specs()
         + build_eur_model77_qvm_subfix_s3r8_specs()
         + build_usa_model31_pc_crush_s3r7_specs()
         + build_eur_model77_v2_s3r7_specs()
