@@ -2,17 +2,19 @@
 from __future__ import annotations
 
 from wq_research_v2.expr_validator import ExprValidator
-from wq_research_v2.pc_breakout_lab import build_pc_breakout_lab_s3r10_specs
+from wq_research_v2.pc_breakout_lab import S3_ALPHA0_VERIFIED_FIELDS, build_pc_breakout_lab_s3r10_specs
 
 
 def test_pc_breakout_lab_passes_all_static_gates_and_operator_diversity() -> None:
     specs = build_pc_breakout_lab_s3r10_specs()
-    assert len(specs) == 84
+    assert len(specs) == 90
     total_items = sum(len(s["items"]) for s in specs)
-    assert total_items == 672
+    assert total_items == 720
 
     batch_ids = [s["batch_id"] for s in specs]
     assert len(batch_ids) == len(set(batch_ids)), "Duplicate batch_id in pc_breakout_lab!"
+    assert any(b.startswith("S3-r20-USA-CNN-FREE-") for b in batch_ids), "Missing S3-r20 USA chart_cnn_alpha FREE!"
+    assert any(b.startswith("S3-r20-EUR-1YG-HIGHMGN-") for b in batch_ids), "Missing S3-r20 EUR 1YG578aX High-Margin!"
     assert any(b.startswith("S3-r19-EUR-PC54-FIN-") for b in batch_ids), "Missing S3-r19 EUR PC=0.54 Finisher!"
     assert any(b.startswith("S3-r19-ASI-M25-FULL-") for b in batch_ids), "Missing S3-r19 ASI/model25 FULL!"
     assert any(b.startswith("S3-r18-EUR-M77M110-ORTHO-") for b in batch_ids), "Missing S3-r18 EUR model77 x model110!"
@@ -46,6 +48,7 @@ def test_pc_breakout_lab_passes_all_static_gates_and_operator_diversity() -> Non
                 item["expression"],
                 spec["settings"],
                 queue_type=spec["queue_type"],
+                field_alpha_counts=S3_ALPHA0_VERIFIED_FIELDS if spec["queue_type"] == "UNUSED_ALPHA0" else None,
             )
             assert rep.valid, f"Failed {spec['batch_id']} -> {item['expression']}: {rep.errors}"
             all_ops.update(rep.operators_used)
@@ -54,7 +57,7 @@ def test_pc_breakout_lab_passes_all_static_gates_and_operator_diversity() -> Non
             elif item["source_side"] == "TOP100_2026Q4":
                 top_cnt += 1
 
-    assert admin_cnt == top_cnt == 336, f"50:50 imbalance: admin={admin_cnt}, top={top_cnt}"
+    assert admin_cnt == top_cnt == 360, f"50:50 imbalance: admin={admin_cnt}, top={top_cnt}"
 
     # Verify genuinely diverse, live-verified REGULAR Gold-81 operators are exercised!
     required_new_ops = {

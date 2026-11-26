@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-27T00:56:00+08:00",
+  "updated_at": "2026-11-27T02:57:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -82,6 +82,14 @@
       "verdict": "EFFECTIVE（重大破壁：EUR 首次打出 PC=0.5419 + 97-OS SC=0.266 超低双相关组合，且 ASI/model25 首波爆出 51.63bp 黑马）",
       "metric_delta": "1) 3qGWQAeX (dvm x anl_sent, RAM d=0): Sh=2.32, Fit=1.39, 7.78bp, Sub=1.19/1.21(仅差0.02!), 2Y=1.51/1.58(仅差0.07!), 97-OS SC=0.2660, 远程 PC=0.5419 (0个>=0.70碰撞!); vRYVwmJv (d=4): Sh=2.19, 10.06bp, SC=0.2673, PC=0.5446; MPgAMxbM (dvm x emm, d=4): Sh=1.95, 11.36bp, 2Y=2.05 PASS, SC=0.2593, PC=0.5643; YPldLA5q (轻 adv20>0.25): Sh=1.97, Fit=1.11 且直接通过 Sub-Universe! 2) ASI/model25 ev_to_ebitda_relative_score (78GVVzjx, COUNTRY d=0 QUICK): 51.63bp, Sh=1.91, 2Y=2.62, Fit=1.29, TO=2.2% (跳过降换手, 待 S3-r19 FULL 核验日本子市场)",
       "reusable_rule": "EUR 跨集互补融合（高 2Y/估值 model77 × 大盘情绪 model110）可一次性将 PC 砸至 0.54-0.56、SC 压至 0.26，留出 0.15 巨大 PC 裕度供 3 支融合与轻 adv20>0.15-0.25 补齐最后 0.02 Sub-Uni / 0.07 2Y；此外含 <=3 字段与 <=8 算子的表达式（如 1YG5kgpz/ZYXLPo2d）会触发 PPA-First 显示 FAIL=[]，必须联合校核 Sharpe>=1.58 & Fit>=1.0 & 2Y>=1.58 严防误标。"
+    },
+    {
+      "case_id": "EFF-11",
+      "region_dataset": "EUR/TOP2500/model77+model110 (S3-r19 诞生干净4层 Useful 冠军 1YG578aX!) + USA/chart_cnn_alpha (Alphas=0 FREE 爆发)",
+      "controlled_change": "1) 在 EUR/TOP2500 上用 3 支互补融合 min(rank(rev(dvm_ttmgfp_alt)), min(rank(rev(emm_fc_epsrm_alt)), rank(mdl110_score))) 配 country*industry，严格对照 REVERSION_AND_MOMENTUM (RAM d=0, 1YG578aX) vs SUBINDUSTRY (d=4, O06vZ7md)；2) 切入 Phase-2 Alphas=0 零额度队列首波验证 USA/chart_cnn_alpha",
+      "verdict": "EFFECTIVE（里程碑通关：诞生 100% 官方 /check 0-FAIL 干净 4 层 Useful 冠军 1YG578aX，并量化 RAM 单轴降 PC -0.190 的决定性作用！）",
+      "metric_delta": "1) 1YG578aX (RAM d=0 tr=0.06): Sh=2.39, 2Y=2.25/2.02 PASS, Fit=1.46, Sub-Uni=1.24/1.24 PASS, TO=12.88%, Mgn=7.44bp (IC Mgn=11.43bp/Sh=1.59), 官方 97-OS SC=0.2598 PASS, 官方 PC=0.5897 PASS (0碰撞!), EUR/D1/MODEL 1.3x + AQP202611，已打 Useful + SC 0.260 PC 0.590；2) 同式切换 SUBINDUSTRY (O06vZ7md) 虽将 Margin 推至 16.12bp，但远程 PC 暴涨至 0.7793 (142 个 >=0.70 碰撞!) -> 实证 RAM 单独砍掉 -0.1896 PC！3) Phase-2 免额 USA/chart_cnn_alpha 首波即出 rK0mNeX8 (Sh=1.45, 2Y=2.74, TO=51.9%)、RR5LemNg (1.36/2.72)、MPgAe0wa (1.33/2.48)，已转 S3-r20 免额 FULL 降换手。",
+      "reusable_rule": "EUR 跨集互补 3 支融合必须锁定 REVERSION_AND_MOMENTUM (RAM) 维持 PC<0.60（切忌回退 SUBINDUSTRY 引发 140+ 拥挤碰撞）；若需提 Margin，留在 RAM 下微调 decay=3..5 + 超轻 adv20>0.08..0.12 + 后置 d5/d10（S3-r20）。"
     }
   ],
   "ineffective_cases": [

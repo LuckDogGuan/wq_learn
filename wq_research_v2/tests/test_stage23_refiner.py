@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from wq_research_v2.expr_validator import ExprValidator
+from wq_research_v2.pc_breakout_lab import S3_ALPHA0_VERIFIED_FIELDS
 from wq_research_v2.stage23_refiner import build_all_stage23_refiner_specs
 
 
@@ -36,6 +37,7 @@ def test_stage23_refiner_specs_pass_all_static_gates_and_balance() -> None:
         "raw_volume_indicator_3": 0,
         "raw_volume_indicator_5": 0,
         "normalized_volume_indicator_2": 0,
+        **S3_ALPHA0_VERIFIED_FIELDS,
     }
     validator = ExprValidator()
     admin_cnt = 0

@@ -60,6 +60,7 @@ def _pack(
     dataset_id: str,
     settings: dict[str, Any],
     items: list[dict[str, Any]],
+    queue_type: str = "NORMAL",
 ) -> dict[str, Any]:
     return {
         "batch_id": batch_id,
@@ -68,7 +69,7 @@ def _pack(
         "region": region,
         "universe": universe,
         "dataset_id": dataset_id,
-        "queue_type": "NORMAL",
+        "queue_type": queue_type,
         "settings": settings,
         "items": items,
     }
@@ -1211,10 +1212,112 @@ def build_asi_eur_s3r19_breakout_specs() -> list[dict[str, Any]]:
     return specs
 
 
+# Live-verified alphaCount==0 fields used in UNUSED_ALPHA0 Stage-3 FULL batches (2026-11-27 02:55 CST).
+S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
+    "img30d_return_tercile_confidence0_zackbatch": 0,
+    "img30d_return_tercile_confidence2_zackbatch": 0,
+    "img30d_return_quartile_confidence0_zackbatch": 0,
+}
+
+
+def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
+    """S3-r20: Phase-2 FREE USA/chart_cnn_alpha High-TO FULL Rescue (32 FULL) + EUR 1YG578aX High-Margin RAM Upgrade (16 FULL).
+
+    Triggered by 2-hour Audit #13 (2026-11-27 02:56 CST):
+      - Pack A (32 FULL, UNUSED_ALPHA0 FREE — runs immediately in Phase-2 at ZERO quota cost!):
+        USA/chart_cnn_alpha exploded on Wave 1 with rK0mNeX8 (Sh=1.45, 2Y=2.74, TO=51.9%),
+        RR5LemNg (Sh=1.36, 2Y=2.72, TO=51.4%), MPgAe0wa (Sh=1.33, 2Y=2.48, TO=56.4%) — ALL 3 fields
+        live-verified alphaCount=0, cov=0.9964! Applies Universal High-TO Reduction Ladder
+        (ts_decay_linear 5/10, ts_mean 5/10, ts_target_tvr_decay 0.15, hump 0.01, complementary CNN consensus).
+      - Pack B (16 FULL, NORMAL — runs after Phase-2 / EST reset):
+        1YG578aX (EUR/TOP2500/model77 x model110, RAM d=0) passed ALL official /check items 0-FAIL
+        (Sh=2.39, 2Y=2.25, Fit=1.46, SC=0.260, PC=0.590, 0 collisions, Useful tagged!). Its SUBINDUSTRY
+        sibling O06vZ7md hit 16.12bp but PC=0.779 (142 collisions!), proving RAM is the essential PC crusher.
+        Meanwhile wpNVlEP1 (RAM d=5) already hit 11.09bp (Sh=2.20, 2Y=2.20, Fit=1.31) missing Sub-Uni by ONLY 0.04!
+        Stay strictly on RAM d={3,5} with ultra-gentle adv20>{0.08,0.10,0.12} + post-min d5/d10 to push Margin 7.44->11-13bp!
+    """
+    specs: list[dict[str, Any]] = []
+    ci = "group_cartesian_product(country, industry)"
+
+    # --- Pack A (32 FULL, UNUSED_ALPHA0 FREE): USA/TOP3000/chart_cnn_alpha Universal High-TO Reduction ---
+    t0 = "ts_backfill(img30d_return_tercile_confidence0_zackbatch, 21)"
+    t2 = "ts_backfill(img30d_return_tercile_confidence2_zackbatch, 21)"
+    q0 = "ts_backfill(img30d_return_quartile_confidence0_zackbatch, 21)"
+
+    usa_cnn_exprs: list[tuple[str, str, str, str]] = [
+        ("PC20-C1-t0-d5-ind", "ADMIN_ORIGINAL", "WL13229", f"reverse(group_zscore(ts_decay_linear({t0}, 5), industry))"),
+        ("PC20-C2-t0-d10-ind", "ADMIN_ORIGINAL", "WL13229", f"reverse(group_zscore(ts_decay_linear({t0}, 10), industry))"),
+        ("PC20-C3-t0-m5-ind", "ADMIN_ORIGINAL", "KH94146", f"reverse(group_zscore(ts_mean({t0}, 5), industry))"),
+        ("PC20-C4-t0-m10-sub", "ADMIN_ORIGINAL", "KH94146", f"reverse(group_zscore(ts_mean({t0}, 10), subindustry))"),
+        ("PC20-C5-t0-tvr15", "TOP100_2026Q4", "JX79797", f"ts_target_tvr_decay(reverse(group_zscore({t0}, industry)), lambda_min=0, lambda_max=0.9, target_tvr=0.15)"),
+        ("PC20-C6-t0-hump01", "TOP100_2026Q4", "ZS59763", f"hump(reverse(group_zscore(ts_decay_linear({t0}, 5), industry)), hump=0.01)"),
+        ("PC20-C7-t0-t2-d10", "TOP100_2026Q4", "SZ83096", f"group_zscore(ts_decay_linear(min(rank(reverse({t0})), rank({t2})), 10), subindustry)"),
+        ("PC20-C8-t0-q0-d10", "TOP100_2026Q4", "LD22811", f"group_zscore(ts_decay_linear(min(rank(reverse({t0})), rank(reverse({q0}))), 10), subindustry)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("sub_d4_t06", "SUBINDUSTRY", 4, 0.06),
+        ("sub_d8_t08", "SUBINDUSTRY", 8, 0.08),
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("crd_d6_t08", "CROWDING", 6, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r20-USA-CNN-FREE-{tag}",
+                campaign_id="S3_USA_CNN_ALPHA0_TOFIX",
+                hypothesis_id="HYP-S3R20-USA-CHARTCNN-ALPHA0-2Y274-TO52-TO-15",
+                region="USA",
+                universe="TOP3000",
+                dataset_id="chart_cnn_alpha",
+                queue_type="UNUSED_ALPHA0",
+                settings=_make_settings("USA", "TOP3000", neut, decay=dec, truncation=trunc),
+                items=_build_items(usa_cnn_exprs, dataset_id="chart_cnn_alpha", primary_field_id="img30d_return_tercile_confidence0_zackbatch", tag_suffix=tag),
+            )
+        )
+
+    # --- Pack B (16 FULL, NORMAL): EUR/TOP2500 1YG578aX (PC=0.590 Useful) RAM High-Margin Upgrade (7.44->11-13bp) ---
+    dvm_gfp = "reverse(ts_backfill(mdl177_dvm_ttmgfp_alt, 21))"
+    emm_eps = "reverse(ts_backfill(mdl177_emm_fc_epsrm_alt, 21))"
+    m110_sc = "ts_backfill(mdl110_score, 21)"
+    anl_sent = "ts_backfill(mdl110_analyst_sentiment, 21)"
+    core_sc = f"min(rank({dvm_gfp}), min(rank({emm_eps}), rank({m110_sc})))"
+    core_as = f"min(rank({dvm_gfp}), min(rank({emm_eps}), rank({anl_sent})))"
+
+    eur_mgn_exprs: list[tuple[str, str, str, str]] = [
+        ("PC20-E1-sc-adv08", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.08, group_zscore({core_sc}, {ci}), 0)"),
+        ("PC20-E2-sc-adv10", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.1, group_zscore({core_sc}, {ci}), 0)"),
+        ("PC20-E3-sc-adv12", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.12, group_zscore({core_sc}, {ci}), 0)"),
+        ("PC20-E4-sc-postd5", "ADMIN_ORIGINAL", "KH94146", f"group_zscore(ts_decay_linear({core_sc}, 5), {ci})"),
+        ("PC20-E5-sc-postd10", "TOP100_2026Q4", "ZS59763", f"group_zscore(ts_decay_linear({core_sc}, 10), {ci})"),
+        ("PC20-E6-sc-d5-adv10", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.1, group_zscore(ts_decay_linear({core_sc}, 5), {ci}), 0)"),
+        ("PC20-E7-sc-sp125", "TOP100_2026Q4", "SZ83096", f"signed_power(group_zscore({core_sc}, {ci}), 1.25)"),
+        ("PC20-E8-as-adv10", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.1, group_zscore({core_as}, {ci}), 0)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("ram_d3_t08", "REVERSION_AND_MOMENTUM", 3, 0.08),
+        ("ram_d5_t08", "REVERSION_AND_MOMENTUM", 5, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r20-EUR-1YG-HIGHMGN-{tag}",
+                campaign_id="S3_EUR_1YG_RAM_HIGHMGN",
+                hypothesis_id="HYP-S3R20-EUR-1YG578AX-RAM-KEEP-PC059-LIFT-11BP",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model77",
+                queue_type="NORMAL",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=_build_items(eur_mgn_exprs, dataset_id="model77", primary_field_id="mdl177_dvm_ttmgfp_alt", tag_suffix=tag),
+            )
+        )
+
+    return specs
+
+
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r19 (56 FULL) -> S3-r18 (48 FULL) -> S3-r17 (64 FULL) -> ... -> S3-r10b (160 FULL)."""
+    """Return ordered S3-r20 (48 FULL) -> S3-r19 (56 FULL) -> S3-r18 (48 FULL) -> ... -> S3-r10b (160 FULL)."""
     return (
-        build_asi_eur_s3r19_breakout_specs()
+        build_s3r20_free_and_eur_margin_specs()
+        + build_asi_eur_s3r19_breakout_specs()
         + build_eur_s3r18_ortho_strike_specs()
         + build_eur_asi_s3r17_orthogonal_specs()
         + build_asi_eur_s3r16_controlled_specs()

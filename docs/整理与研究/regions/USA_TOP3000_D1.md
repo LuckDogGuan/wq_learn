@@ -151,3 +151,10 @@
     - **`USA/multi_source_model`**：`184 QUICK` 产出 `32` 条 S1（`maxSh=1.17, 11.49bp`）；
     - **`USA/news_sentiment_transfer`**：`48 QUICK` 仅 `0/48`（`max=0.55`），已由守护进程**自动早停降权**，零浪费额度。
   - **Phase-2 自动切换倒计时**：当前 `normal_done = 3,576 / 4,000`（仅差 `424` 条常规回测 ≈ 45 分钟），已确认 `resolve_quota_queue_policy()` 按 `normal_done` 而非总日回数判定，不会被 `day_est=4,202/4,500` 提前打断；满 `4,000` 后将自动切入 `USA` `139` 批免费 `Alphas=0` 队列（含 `analyst_revision_horizons`、`board_network`、`chart_cnn_alpha`）！
+- **2026-11-27 02:57（2 小时定时审计 #13 · Phase-2 免额自动切换无缝达成（日总回测冲破 `5,452`！）+ 免额 `USA/chart_cnn_alpha` 首波爆发 `Sh=1.45 / 2Y=2.74` → 立即上线 `S3-r20-USA-CNN-FREE` 零额度 `FULL` 降换手！）**：
+  - **Phase-2 无缝切入与黑马爆发**：常规额度满 `4,018 >= 4,000` 后守护进程自动切换 `ALPHA0_EXEMPT_ONLY`，近 2h 免费跑完 **`476`** 条（日官方总回测达 **`5,452`**，`0` 次 `HTTP 429`！）；
+    - **`USA/chart_cnn_alpha`（100% `Alphas=0` FREE）首波 128 QUICK 爆出高 2Y 强矿**：**`rK0mNeX8`**（`img30d_return_tercile_confidence0_zackbatch`, `Sh=1.45, 2Y=2.74, TO=51.9%`）、`RR5LemNg`（`Sh=1.36, 2Y=2.72, TO=51.4%`）、`MPgAe0wa`（`Sh=1.33, 2Y=2.48, TO=56.4%`），均属典型超高 2Y + 高换手信号；
+    - **`USA/ai_news_scores`（NORMAL）** 进一步抬升至 **`xAla3EOW Sh=1.41, 2Y=2.22, TO=27.5%`**（留待次轮常规降换手）。
+  - **立即热部署零额度 Stage-3 + 新免费矿脉**：
+    1. **`S3-r20-USA-CNN-FREE`（32 FULL `UNUSED_ALPHA0` FREE）**：在 `rK0mNeX8 / RR5LemNg / MPgAe0wa` 上立即跑通用高换手降换手梯队（`ts_decay_linear 5/10`、`ts_mean 5/10`、`ts_target_tvr_decay 0.15`、`hump 0.01`、底/顶三分位与四分位互补双支，零额度消耗直冲美股免费 `Useful`！）；
+    2. **`USA_OPTCHART_FREE`（`option_chart_model`, `model 1.3×`, `val=5.0, cov=0.865–0.954, 8/8 Alphas=0`）**：与 `chart_cnn_alpha` 同源的期权图谱 CNN 预测免费蓝海集！
