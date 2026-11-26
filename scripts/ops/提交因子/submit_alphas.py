@@ -13,7 +13,7 @@ from Core.api.submission import run_submission_group
 
 
 # 填写 ID 后手动运行即可；检查通过后会提交，也支持命令行传入 ID。
-ALPHA_IDS = ["bl8LnbA6"]
+ALPHA_IDS = ["RR5QjWYz"]
 
 
 def parse_ids(values: list[str]) -> list[str]:
@@ -30,12 +30,32 @@ def parse_ids(values: list[str]) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="手动运行，检查并提交指定 Alpha")
     parser.add_argument("ids", nargs="*", help="Alpha ID，支持空格、逗号或分号分隔")
+    parser.add_argument(
+        "--check-only",
+        action="store_true",
+        help="只读查询当前提交状态与 /check 检查结果，不发送 POST /submit",
+    )
+    parser.add_argument(
+        "--poll-timeout",
+        type=float,
+        default=180.0,
+        help="POST /submit 受理后轮询 GET /submit 的最长等待秒数（默认 180 秒）",
+    )
     args = parser.parse_args()
     alpha_ids = parse_ids(args.ids)
-    print(f"提交数量：{len(alpha_ids)}；ID：{', '.join(alpha_ids)}")
+    mode_label = "只读复核" if args.check_only else "检查并提交"
+    print(f"模式：{mode_label}；数量：{len(alpha_ids)}；ID：{', '.join(alpha_ids)}")
+    if args.check_only:
+        return 0 if run_submission_group(
+            alpha_ids,
+            check_only=True,
+            poll_max_wait_seconds=args.poll_timeout,
+        ) else 1
     # 用户手动启动此入口即为本次授权；服务层仍阻止未授权的其他调用方。
     return 0 if run_submission_group(
-        alpha_ids, confirmed_ids=set(alpha_ids)
+        alpha_ids,
+        confirmed_ids=set(alpha_ids),
+        poll_max_wait_seconds=args.poll_timeout,
     ) else 1
 
 
