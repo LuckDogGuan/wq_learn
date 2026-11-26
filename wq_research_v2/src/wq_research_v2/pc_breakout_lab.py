@@ -546,10 +546,70 @@ def build_usa_stat_3ds_pc_finisher_s3r12_specs() -> list[dict[str, Any]]:
     return specs
 
 
+def build_usa_e5m_highmgn_s3r13_specs() -> list[dict[str, Any]]:
+    """S3-r13 High-Margin Upgrade for Orthogonal 3-Dataset USA Useful Champion E5mWLW0J (Sh=1.83, SC=0.344, Mgn=7.99bp).
+
+    E5mWLW0J passed official /check 0-FAIL with ultra-low 95-OS SC=0.3443 and PC=0.7531 PASS (Sh=1.83),
+    but daily 22d-return vector_neut raised turnover to 11.5% (Margin=7.99bp).
+    To strictly honor the user's Margin-First preference (higher Margin = better), this 32-FULL pack
+    replaces fast 22d return neutralization with slower 66d/126d returns, longer 33d/44d post-min decay,
+    hump(0.01), ts_target_tvr_decay(target_tvr=0.05), and higher-Margin ass_tvr_prior_y/last_qtr variants
+    to lift Margin 7.99bp -> 12-18bp+ while preserving SC < 0.42 and Sh >= 1.75!
+    """
+    at_pq = "ts_backfill(mdl31_ab1_ass_tvr_prior_qtr, 21)"
+    at_lq = "ts_backfill(mdl31_ab1_ass_tvr_last_qtr, 21)"
+    at_py = "ts_backfill(mdl31_ab1_ass_tvr_prior_y, 21)"
+    eps1 = "ts_backfill(star_eps_surprise_prediction_fq1, 21)"
+    eps2 = "ts_backfill(star_eps_surprise_prediction_fq2, 21)"
+    dtd = "ts_backfill(mdl28_sm_structural2_v14_0_0_nd_credit_structural_distance_to_default, 21)"
+
+    core_pq = f"min(rank({at_pq}), min(rank({eps1}), rank({dtd})))"
+    core_lq = f"min(rank({at_lq}), min(rank({eps1}), rank({dtd})))"
+    core_py = f"min(rank({at_py}), min(rank({eps1}), rank({dtd})))"
+    core_e2 = f"min(rank({at_pq}), min(rank({eps2}), rank({dtd})))"
+
+    ret22 = "rank(ts_mean(returns, 22))"
+    ret66 = "rank(ts_mean(returns, 66))"
+    ret126 = "rank(ts_mean(returns, 126))"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC13-M1-e5m-ret66", "ADMIN_ORIGINAL", "WL13229", f"tail(vector_neut(group_rank(ts_decay_linear({core_pq}, 22), subindustry), {ret66}), lower=-0.25, upper=0.25, newval=0)"),
+        ("PC13-M2-e5m-ret126", "ADMIN_ORIGINAL", "WL13229", f"tail(vector_neut(group_rank(ts_decay_linear({core_pq}, 22), subindustry), {ret126}), lower=-0.25, upper=0.25, newval=0)"),
+        ("PC13-M3-e5m-d33-ret66", "ADMIN_ORIGINAL", "WL13229", f"tail(vector_neut(group_rank(ts_decay_linear({core_pq}, 33), subindustry), {ret66}), lower=-0.25, upper=0.25, newval=0)"),
+        ("PC13-M4-e5m-hump01", "ADMIN_ORIGINAL", "WL13229", f"hump(tail(vector_neut(group_rank(ts_decay_linear({core_pq}, 22), subindustry), {ret22}), lower=-0.25, upper=0.25, newval=0), hump=0.01)"),
+        ("PC13-M5-e5m-tvr05", "TOP100_2026Q4", "JX79797", f"ts_target_tvr_decay(tail(vector_neut(group_rank(ts_decay_linear({core_pq}, 22), subindustry), {ret66}), lower=-0.25, upper=0.25, newval=0), lambda_min=0, lambda_max=0.9, target_tvr=0.05)"),
+        ("PC13-M6-e5m-atpy-ret66", "TOP100_2026Q4", "SZ83096", f"tail(vector_neut(group_rank(ts_decay_linear({core_py}, 22), subindustry), {ret66}), lower=-0.25, upper=0.25, newval=0)"),
+        ("PC13-M7-e5m-atlq-d44", "TOP100_2026Q4", "ZS59763", f"tail(vector_neut(group_rank(ts_decay_linear({core_lq}, 44), subindustry), {ret66}), lower=-0.25, upper=0.25, newval=0)"),
+        ("PC13-M8-e5m-eps2-ret66", "TOP100_2026Q4", "LD22811", f"tail(vector_neut(group_rank(ts_decay_linear({core_e2}, 33), subindustry), {ret66}), lower=-0.25, upper=0.25, newval=0)"),
+    ]
+
+    specs: list[dict[str, Any]] = []
+    for tag, neut, dec, trunc in [
+        ("stat_d5_t08", "STATISTICAL", 5, 0.08),
+        ("stat_d6_t08", "STATISTICAL", 6, 0.08),
+        ("crd_d6_t08", "CROWDING", 6, 0.08),
+        ("ram_d6_t08", "REVERSION_AND_MOMENTUM", 6, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r13-USA-E5M-HIGHMGN-{tag}",
+                campaign_id="S3_PCLAB_USA_E5M_HIGHMGN",
+                hypothesis_id="HYP-PC13-E5MWLW0J-MARGIN-15BP-ORTHO",
+                region="USA",
+                universe="TOP3000",
+                dataset_id="model31",
+                settings=_make_settings("USA", "TOP3000", neut, decay=dec, truncation=trunc),
+                items=_build_items(exprs, dataset_id="model31", primary_field_id="mdl31_ab1_ass_tvr_prior_qtr", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r12 (48 FULL) -> S3-r11 (96 FULL) -> S3-r10b (160 FULL)."""
+    """Return ordered S3-r13 (32 FULL) -> S3-r12 (48 FULL) -> S3-r11 (96 FULL) -> S3-r10b (160 FULL)."""
     return (
-        build_usa_stat_3ds_pc_finisher_s3r12_specs()
+        build_usa_e5m_highmgn_s3r13_specs()
+        + build_usa_stat_3ds_pc_finisher_s3r12_specs()
         + build_ortho_pc_breakout_s3r11_specs()
         + build_usa_pc_angle_ab_dist_specs()
         + build_usa_pc_angle_c_time_specs()

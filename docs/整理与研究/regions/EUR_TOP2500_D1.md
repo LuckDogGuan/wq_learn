@@ -110,3 +110,9 @@
 - **2026-11-26 10:55（2 小时定时审计 #6 · 修复 `S3-r10-EUR` `clamp`/`group_median` 算子报错并重发 `S3-r10b-EUR-PC-M25 / M77` 48 FULL！）**：
   - 根因定位：`S3-r10-EUR-PC-M25-*`（24 FULL）与 `S3-r10-EUR-PC-M77-*`（24 FULL）此前因含本账号不可用的 `clamp` 与 `group_median` 全部 `RESULTS_UNOBSERVED`；
   - 已在 `S3-r10b` 中分别替换为真实可用 Gold-81 算子 `tail(..., lower=0.2, upper=0.8, newval=0.5)` 与 `winsorize(divide(group_neutralize(...), group_std_dev(...)), std=3)`，并在广州热重启开跑，主攻 **`EUR/model25`（非 `val_mom` `OpEff × emm` 正交簇 + L6 `tail`）** 与 **`EUR/model77` 连续流动性倾斜（无硬切悬崖）**，冲刺 `EUR` 第 2 条正交高 Margin `Useful`！
+- **2026-11-26 12:55（2 小时定时审计 #7 · EST `2026-11-26` 美东新一天 `EUR` 全新纯 `MATRIX` 机构四连发上新！）**：
+  - `S3-r10b/r11` 复盘：`EUR / model77` 连续流动性倾斜打出 `wpNx22Gd`（`22.47bp, Sh=1.62, Fit=1.01`）与 `24.87bp`，但 `Sub-Uni` 仍停在 `0.52`；为跳出 `model25`（`RR5QjWYz` 已入 OS）与 `model77` 中小盘约束，美东新一天（`13:00 CST`）直接为 `EUR:1` 槽位前置 **4 个全新实盘核验纯 `MATRIX` 机构大集（零 `VECTOR` 停滞）**：
+    1. **`EUR / model36`**（StarMine SmartRatios 信用风险，`cov=0.764–0.941, aCnt=0..4`）；
+    2. **`EUR / model28`**（StarMine 结构性信用风险，`cov=0.911–0.930, aCnt=0..1`）；
+    3. **`EUR / predictive_starmine`**（StarMine 预测性分析师修正，**7/7 `Alphas=0` 免额**, `cov=0.756–0.949`）；
+    4. **`EUR / model27`**（StarMine 综合信用风险 CCR，`cov=0.779–0.967, aCnt=0..6`）。
