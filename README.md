@@ -4,6 +4,7 @@
 
 ## 快速入口
 
+- **三条正式路线与日志一一对应手册**：[docs/TRACKS_AND_LOGS_GUIDE.md](docs/TRACKS_AND_LOGS_GUIDE.md)（① `基础优化路径` / ② `多域星阵路径` / ③ `亚太孤岛实验线`）
 - **全局研究索引与排期**：[docs/整理与研究/00_索引.md](docs/整理与研究/00_索引.md)
 - **活跃引擎文档**：[wq_research_v2/README.md](wq_research_v2/README.md)
 - **领域术语规范**：[CONTEXT.md](CONTEXT.md) · [docs/整理与研究/09_术语表与交接协议.md](docs/整理与研究/09_术语表与交接协议.md)

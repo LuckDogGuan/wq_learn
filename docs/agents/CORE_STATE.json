@@ -1,6 +1,13 @@
 {
   "schema_version": "wq_d1_compact_core_state_v1",
-  "updated_at": "2026-11-26T14:53:00+08:00",
+  "active_track_name": "多域星阵路径 (Multi-Region Matrix v2.0)",
+  "track_registry": {
+    "baseline_v1": "基础优化路径 (Baseline v1.0 · 冻结于 d1_ra_baseline_v1_frozen.json)",
+    "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >4000切Alphas=0)",
+    "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)"
+  },
+  "updated_at": "2026-11-26T17:05:00+08:00",
+  "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "context_compaction_rule": "任何 AI 工具（Antigravity / Claude Code / Codex / Cursor）启动或上下文超长重置（/compact）后，只读本文件 + docs/agents/OPTIMIZATION_LEDGER.json + AGENTS.md（总计 < 8KB），绝不重读数万行历史聊天记录！",
   "immutable_red_lines": {
     "delay": 1,
@@ -49,10 +56,10 @@
         }
       ],
       "current_seed_campaigns": [
-        "S3-r14-USA-E5M-1AX (严格单轴对照：冻结 ret22 单独验 d33/d44/ret33/ret44/tail/tvr08，禁止 tail 外套 hump)",
-        "USA/model39 (StarMine Valuation-Momentum 美股孪生, aCnt=1..4, cov=0.95-0.97!)",
-        "USA/analyst_revision_horizons V2 (8/8 Alphas=0 FREE: EPS净修正扩散度 estimate_diffusion + 上调簇; V1 已出 A1LMJpeg Sh=1.28!)",
-        "USA/model227 (Alphas=0 FREE, 已出 22bp 种子) & USA/model36 (已出 25.7bp 种子)"
+        "USA/analyst_revision_horizons (Alphas=0 FREE · admin_ts_regime 模板族已验出 RR5nb5oj Sh=1.41 / 2Y=2.23!)",
+        "USA/board_network (4/4 Alphas=0 FREE 纯MATRIX, val=6.0, cov=0.789) × [core_50_50, admin_ts_regime]",
+        "USA/chart_cnn_alpha (8/8 Alphas=0 FREE 纯MATRIX, val=4.0, cov=0.996) × [core_50_50, nonlinear_tail_group]",
+        "USA/model39 & USA/model227 (Alphas=0 FREE) & USA/model36"
       ]
     },
     {
@@ -76,13 +83,39 @@
         }
       ],
       "current_seed_campaigns": [
-        "EUR/model110 (机构多因子纯MATRIX: quality/value/growth/analyst_sentiment/alternative/tree, cov=0.853!)",
-        "EUR/model39 (StarMine Valuation-Momentum 纯MATRIX, cov=0.77-0.85)",
-        "EUR/analyst39 (分析师盈利预测与财务比率纯MATRIX, cov=0.77-0.92)",
-        "EUR/shortinterest6 (SmartHoldings 纯MATRIX, cov=1.000, aCnt=5..25)"
+        "EUR/model110 (vRY3kp13 首波 0-FAIL Sh=1.79/SC=0.320 但 PC=0.8664 拥挤归档 -> 切 nonlinear_tail_group 与低 aCnt 子字段)",
+        "EUR/analyst_revision_horizons (Alphas=0 FREE 纯MATRIX) × [core_50_50, admin_ts_regime]",
+        "EUR/model39 & EUR/shortinterest6 & EUR/model238"
+      ]
+    },
+    {
+      "region": "GLB+ASI+KOR (Multi-Region Seed x Diverse-Template Rotation)",
+      "universe": "GLB:TOP3000 / ASI:MINVOL1M / KOR:TOP600",
+      "slots": 1,
+      "active_useful_champions": [],
+      "current_seed_campaigns": [
+        "GLB/model39 (cov=0.925-0.955, aCnt=1..7) & GLB/model110 × [core_50_50, nonlinear_tail_group]",
+        "ASI/model39 (D1 RA, maxTrade=ON) & ASI/analyst_revision_horizons (Alphas=0 FREE) × [core_50_50, admin_ts_regime/nonlinear_tail_group]",
+        "KOR/fundamental93 (6/6 Alphas=0 FREE 纯MATRIX, pyr=1.6x, 0 OS) × [core_50_50, admin_ts_regime]"
       ]
     }
   ],
+  "quota_and_isolated_experiments": {
+    "today_est_2026_11_26_official_sims": 1516,
+    "alpha0_auto_switch_threshold": 4000,
+    "policy": "严格先后次序（不混跑）：先跑满 4,000 个常规额度（NORMAL_ONLY），跑完后再自动切入运行 UNUSED_ALPHA0 豁免字段队列（有效期至 2026-12-06）。",
+    "universal_turnover_policy": "全路线通用：TO > 18% 执行单变量降换手梯队（decay/平滑/tvr_decay/无tail0时hump，禁trade_when）；TO < 8% 跳过降换手。",
+    "relaxed_pc_policy": "Useful 交付仍要求 PC < 0.70；但降 PC 准入放宽至 pc_max<=0.78、>=0.70<=10、>=0.80<=2，专项优化最多 3 轮（多优化 1 轮）。",
+    "review_schedule": "每 3-4 小时自动复查（cron: 0 */3 * * *）",
+    "asi_d0_d1_isolated_package": {
+      "track_name": "亚太孤岛实验线 (ASI Isolated Track)",
+      "dir": "docs/asi_d0_d1_isolated/",
+      "log_file": "docs/asi_d0_d1_isolated/asi_experiment_log.md",
+      "status": "COMPLETELY_ISOLATED_FROM_MAIN_D1_RA",
+      "platform_fact": "实测 ASI 目前无 Delay=0（仅 Delay=1，帖子 45233242695703 为官方 ASI/D1 Power Pool Workshop 03）",
+      "d0_override": false
+    }
+  },
   "stage_settings_contract": {
     "stage_1_and_2": {
       "simulation_mode_allowed": ["QUICK", "FULL"],

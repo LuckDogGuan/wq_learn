@@ -44,23 +44,24 @@ def parse_pc_histogram_records(
     payload: dict[str, Any],
     *,
     pc_hard_lt: float = 0.70,
-    near_pc_max: float = 0.75,
-    sparse_count_max: int = 5,
+    near_pc_max: float = 0.78,
+    sparse_count_max: int = 10,
+    max_ge_080_count: int = 2,
     prior_pc_opt_rounds: int = 0,
-    max_pc_opt_rounds: int = 2,
+    max_pc_opt_rounds: int = 3,
 ) -> dict[str, Any]:
     """Parse GET /alphas/{alphaId}/correlations/prod histogram table (`records`: [min, max, alphas]).
 
-    Implements the user's quantitative PC range-table rule:
+    Implements the relaxed quantitative PC range-table rule (allows 1 extra optimization round):
     - If pc_max < 0.70 -> `PC_PASS_STRICT` (true low-PC pass).
     - Note: Even if official /check grants +10% Sharpe outperformance exemption at PC >= 0.70,
       we advise rarely submitting PC > 0.70 (`PC_HIGH_ADVISE_HOLD`).
-    - If range is close (0.70 <= pc_max <= 0.75) AND colliding prod alpha count in >=0.70 is small
-      (<= 5 alphas in [0.7, 0.8] and 0 in >=0.8) AND prior_pc_opt_rounds < max_pc_opt_rounds (1-2 rounds):
-      -> `PC_RESCUE_NEAR_SPARSE` (worth 1-2 dedicated PC optimization rounds).
-    - If data count in >=0.70 is large (> 5), or bucket reaches >=0.80 (pc_max > 0.75), or 1-2 optimization
-      rounds already failed to move PC < 0.70:
-      -> `PC_ABANDON_CROWDED_OR_STALLED` (stop optimizing, tag & shelve for future methods).
+    - If range is moderately close (0.70 <= pc_max <= 0.78) AND colliding prod alpha count in >=0.70
+      is manageable (<= 10 alphas total in >=0.70 and <= 2 in >=0.80) AND prior_pc_opt_rounds < max_pc_opt_rounds (up to 3 rounds):
+      -> `PC_RESCUE_NEAR_SPARSE` (worth 2-3 dedicated PC optimization rounds).
+    - If data count in >=0.70 is crowded (> 10), or >=0.80 has > 2 alphas, or pc_max > 0.78, or 3 rounds
+      already failed to move PC < 0.70:
+      -> `PC_ABANDON_CROWDED_OR_FAR` / `PC_ABANDON_MAX_ROUNDS_REACHED` (stop optimizing, tag & shelve).
     """
     raw_records = payload.get("records")
     schema_props = ((payload.get("schema") or {}).get("properties")) or []
@@ -115,7 +116,7 @@ def parse_pc_histogram_records(
         decision = "PC_PASS_STRICT"
     elif prior_pc_opt_rounds >= max_pc_opt_rounds:
         decision = "PC_ABANDON_MAX_ROUNDS_REACHED"
-    elif pc_val <= near_pc_max and alphas_ge_080 == 0 and alphas_ge_070 <= sparse_count_max:
+    elif pc_val <= near_pc_max and alphas_ge_080 <= max_ge_080_count and alphas_ge_070 <= sparse_count_max:
         decision = "PC_RESCUE_NEAR_SPARSE"
     else:
         decision = "PC_ABANDON_CROWDED_OR_FAR"

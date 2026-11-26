@@ -8,7 +8,7 @@ import pytest
 from wq_research_v2.ablation_engine import build_dual_branch_ablation, build_sign_flip_expression
 from wq_research_v2.blacklist_registry import BlacklistRegistry
 from wq_research_v2.ledger_store import LedgerStore
-from wq_research_v2.ra_evaluator import D1RAEvaluator, margin_to_bps
+from wq_research_v2.ra_evaluator import D1RAEvaluator, evaluate_turnover_action, margin_to_bps
 
 
 def test_ra_evaluator_d1_gates_flat_kill_and_margin_bps() -> None:
@@ -97,3 +97,28 @@ def test_blacklist_registry_forbids_operator_and_supports_scoped_restore(tmp_pat
     assert restored["status"] == "RESTORED"
     assert not bl.is_blocked(region="DEU", universe="TOP500", field_id="f_test", method_id="S0-A1", param_axis="decay=0")[0]
     ledger.close()
+
+
+def test_evaluate_turnover_action_high_vs_low_skip_and_tail_guard() -> None:
+    # Low turnover (< 8%) -> MUST skip turnover reduction!
+    low = evaluate_turnover_action(0.052, expression="group_rank(x, subindustry)", region="USA")
+    assert low["action"] == "SKIP_LOW_TURNOVER"
+    assert low["recommended_steps"] == []
+
+    # Normal turnover (8%..18%) -> KEEP_NORMAL
+    mid = evaluate_turnover_action(0.12, expression="group_rank(x, subindustry)", region="EUR")
+    assert mid["action"] == "KEEP_NORMAL"
+
+    # High turnover (> 18%) -> REDUCE_HIGH_TURNOVER, and blocks hump when tail(newval=0) or ASI
+    hi_ok = evaluate_turnover_action(0.28, expression="group_rank(x, subindustry)", region="USA")
+    assert hi_ok["action"] == "REDUCE_HIGH_TURNOVER"
+    assert any("hump" in s for s in hi_ok["recommended_steps"])
+    assert "trade_when" in hi_ok["forbidden_ops"]
+
+    hi_tail = evaluate_turnover_action(0.28, expression="tail(vector_neut(x, y), lower=-0.25, upper=0.25, newval=0)", region="USA")
+    assert hi_tail["action"] == "REDUCE_HIGH_TURNOVER"
+    assert not any("hump" in s for s in hi_tail["recommended_steps"])
+
+    hi_asi = evaluate_turnover_action(0.32, expression="group_rank(x, country)", region="ASI")
+    assert hi_asi["action"] == "REDUCE_HIGH_TURNOVER"
+    assert not any("hump" in s for s in hi_asi["recommended_steps"])

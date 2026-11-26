@@ -1,0 +1,231 @@
+{
+  "schema_version": "asi_d0_d1_isolated_config_v1",
+  "created_at": "2026-11-26",
+  "source_post": {
+    "post_id": "45233242695703",
+    "title": "Getting Started with ASI/D1 Power Pool (Workshop 03)",
+    "url": "https://support.worldquantbrain.com/hc/en-us/community/posts/45233242695703"
+  },
+  "isolation_policy": {
+    "attached_to_main_scheduler": false,
+    "launch_mode": "MANUAL_EXPLICIT_ONLY",
+    "dedicated_ledger_db": "data/asi_isolated_ledger.db",
+    "read_only_sc_cache_db": "data/sc_cache_v2/os_pnl_cache.db",
+    "dedicated_report_dir": "docs/asi_d0_d1_isolated/runs",
+    "forbidden_write_paths": [
+      "wq_research_v2/",
+      "goal/",
+      "docs/agents/",
+      "data/wq_v2_ledger.db",
+      "reference/",
+      "AGENTS.md",
+      "Password/config.yaml"
+    ]
+  },
+  "hard_safety_rules": {
+    "auto_submit": false,
+    "require_confirm_for_patch_tags": true,
+    "forbidden_operators_decision_3": ["add", "multiply", "trade_when", "+", "*"],
+    "dual_branch_canonical": "min(rank(expr_A), rank(expr_B))",
+    "max_reconcile_attempts_on_error": 1,
+    "memory_max_mb": 512,
+    "sqlite_wal_checkpoint": true,
+    "auth_refresh_minutes": 10,
+    "reconnect_interval_seconds": 10
+  },
+  "quota_guard": {
+    "check_endpoint": "GET /users/self/activities/simulations",
+    "min_total_daily_quota_for_normal_sims": 4000,
+    "reserve_daily_quota_for_main_ra_track": 3200,
+    "asi_d1_daily_normal_sim_cap": 400,
+    "asi_d0_daily_sim_cap_if_unlocked": 100,
+    "max_candidates_per_round": 4,
+    "stop_loss_empty_probe_limit": 32,
+    "stop_loss_review_hours": 2,
+    "alpha0_free_window": {
+      "enabled": true,
+      "freeze_expiry_date": "2026-12-06",
+      "allow_when_main_busy_with_rate_limit_backoff": true
+    }
+  },
+  "branches": {
+    "asi_d1": {
+      "enabled": false,
+      "manual_activation_ready": true,
+      "platform_supported_verified_at": "2026-11-26",
+      "platform_supported": true,
+      "branch_id": "ASI_D1",
+      "delay": 1,
+      "instrument_type": "EQUITY",
+      "region": "ASI",
+      "valid_universes": ["MINVOL1M", "MINVOL10M", "TOP500"],
+      "default_universe": "MINVOL1M",
+      "valid_neutralizations": [
+        "NONE",
+        "REVERSION_AND_MOMENTUM",
+        "STATISTICAL",
+        "CROWDING",
+        "FAST",
+        "SLOW",
+        "MARKET",
+        "SECTOR",
+        "INDUSTRY",
+        "SUBINDUSTRY",
+        "COUNTRY",
+        "SLOW_AND_FAST"
+      ],
+      "default_settings": {
+        "neutralization": "SLOW",
+        "secondary_baseline_neutralization": "COUNTRY",
+        "decay": 4,
+        "truncation": 0.08,
+        "maxTrade": "ON",
+        "pasteurization": "ON",
+        "nanHandling": "OFF",
+        "unitHandling": "VERIFY",
+        "simulationMode": "FULL",
+        "testPeriod": "P0Y0M"
+      },
+      "tags": {
+        "exploration_staging": "ASI_EXP_D1",
+        "ppa_manual_review_ready": "PPA_Useful",
+        "never_auto_apply_ra_useful": true
+      },
+      "active_theme": {
+        "name": "ASI/D1 Power Pool Dec'26",
+        "start_date": "2026-11-23",
+        "end_date": "2026-12-20",
+        "require_atom_single_dataset": true,
+        "require_english_description_min_chars": 100
+      },
+      "gates": {
+        "ppa_structural": {
+          "max_operators_counting_repeats": 8,
+          "exempt_operators": ["ts_backfill", "group_backfill"],
+          "max_unique_non_exempt_fields": 3,
+          "exempt_group_fields": [
+            "country",
+            "currency",
+            "exchange",
+            "industry",
+            "market",
+            "sector",
+            "subindustry"
+          ]
+        },
+        "asi_mandatory": {
+          "min_is_sharpe_ppa": 1.0,
+          "min_is_sharpe_hybrid_ra": 1.58,
+          "min_2y_sharpe_hybrid_ra": 1.58,
+          "min_robust_universe_ratio": 0.90,
+          "min_japan_robustness_sharpe": 1.0,
+          "turnover_min": 0.01,
+          "turnover_max": 0.70,
+          "recommended_turnover_target_max": 0.30,
+          "recommended_margin_bps_min": 15.0,
+          "local_ppac_max": 0.48,
+          "platform_ppac_hard_max": 0.50,
+          "local_sc_max_hybrid_ra": 0.65,
+          "remote_pc_max_hybrid_ra": 0.70,
+          "prefer_higher_margin_on_tie": true
+        }
+      },
+      "verified_datasets_2026_11_26": {
+        "low_crowding_theme_priority": [
+          {
+            "id": "price_signal_dl",
+            "category": "model",
+            "multiplier": 1.3,
+            "coverage": 0.9129,
+            "value_score": 5.0,
+            "type_note": "MATRIX"
+          },
+          {
+            "id": "behavioral_signals",
+            "category": "model",
+            "multiplier": 1.3,
+            "coverage": 0.8754,
+            "value_score": 5.0,
+            "type_note": "LIKELY_FAKE_SINGLE_VECTOR_USE_VEC_AVG_ONLY"
+          },
+          {
+            "id": "mmp_nlp_sentiment",
+            "category": "other",
+            "multiplier": 1.3,
+            "coverage": 0.7742,
+            "value_score": 5.0,
+            "type_note": "MATRIX"
+          }
+        ],
+        "alpha0_free_probe_priority": [
+          {
+            "id": "model25",
+            "category": "model",
+            "multiplier": 1.3,
+            "coverage": 0.7663,
+            "sample_alpha0_fields": [
+              "ev_to_sales_relative_score",
+              "intrinsic_value_projection_currency"
+            ]
+          },
+          {
+            "id": "model26",
+            "category": "model",
+            "multiplier": 1.3,
+            "coverage": 0.7105,
+            "sample_alpha0_fields": [
+              "avg_pct_change_estimate_next_year_earnings_30d"
+            ]
+          },
+          {
+            "id": "model307",
+            "category": "model",
+            "multiplier": 1.3,
+            "coverage": 0.7822,
+            "type_note": "VECTOR_EXCLUDE_4_METADATA_IDS"
+          },
+          {
+            "id": "ai_news_scores",
+            "category": "other",
+            "multiplier": 1.3,
+            "coverage": 0.5007,
+            "type_note": "PRIORITIZE_PURE_ASI_D1_SUFFIX_2_SHORT_BACKFILL"
+          }
+        ],
+        "workshop03_verified_unlocked": [
+          {"id": "analyst69", "category": "analyst", "multiplier": 1.5, "coverage": 0.8154, "type_note": "MIXED_MATRIX_VECTOR"},
+          {"id": "model138", "category": "model", "multiplier": 1.3, "coverage": 0.8713, "value_score": 2.0, "type_note": "ALL_VECTOR"},
+          {"id": "model38", "category": "model", "multiplier": 1.3, "coverage": 0.8398, "type_note": "MATRIX"},
+          {"id": "fundamental17", "category": "fundamental", "multiplier": 1.1, "coverage": 0.7730, "type_note": "MATRIX"},
+          {"id": "fundamental23", "category": "fundamental", "multiplier": 1.1, "coverage": 0.7543, "type_note": "MATRIX_HIGH_CROWDING"},
+          {"id": "imbalance5", "category": "imbalance", "multiplier": 1.0, "coverage": 0.8698, "type_note": "2_FIELDS_HIGH_CROWDING"},
+          {"id": "shortinterest5", "category": "shortinterest", "multiplier": 1.3, "coverage": 0.9624, "type_note": "ACCOUNT_AVAILABLE_SI_ALTERNATIVE"}
+        ],
+        "blocked_or_unavailable_on_this_account": [
+          {"id": "shortinterest3", "reason": "API_COUNT_0_NOT_ENTITLED_2026_11_26"},
+          {"id": "model77", "reason": "API_COUNT_0_NOT_ENTITLED_2026_11_26"},
+          {"id": "analyst15", "reason": "LOW_ASI_COVERAGE_0.3947"},
+          {"id": "earnings6", "reason": "LOW_ASI_COVERAGE_0.4577"}
+        ]
+      }
+    },
+    "asi_d0": {
+      "enabled": false,
+      "allow_d0_override": false,
+      "platform_supported_verified_at": "2026-11-26",
+      "platform_supported": false,
+      "platform_status_note": "Officially unavailable as of 2026-11-26: Post 45233242695703 explicitly states Delay 0 is not available in ASI; live get_platform_setting_options and get_datasets(ASI, delay=0) both return 0.",
+      "branch_id": "ASI_D0",
+      "delay": 0,
+      "instrument_type": "EQUITY",
+      "region": "ASI",
+      "require_platform_preflight_pass": true,
+      "require_explicit_human_approval": true,
+      "required_cli_flag": "--confirm-d0-isolated",
+      "tags": {
+        "exploration_staging": "ASI_EXP_D0",
+        "never_mix_with_d1_tags": true
+      }
+    }
+  }
+}

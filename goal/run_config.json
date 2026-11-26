@@ -1,17 +1,54 @@
 {
   "schema_version": "wq_d1_goal_run_config_v1",
-  "updated_at": "2026-11-26T16:10:00+08:00",
+  "active_track_name": "多域星阵路径 (Multi-Region Matrix v2.0)",
+  "track_registry": {
+    "baseline_v1": "基础优化路径 (Baseline v1.0 · EUR/USA 双区单模板冻结版)",
+    "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × 5地区轮巡 × 3模板族配对 × >4000自动切免额)",
+    "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · 独立文档/台账/标签，不接入主调度器)"
+  },
+  "updated_at": "2026-11-26T17:05:00+08:00",
+  "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "schedule_and_redundancy": {
-    "check_interval_hours": "2-4",
+    "check_interval_hours": "3-4",
     "cron_expression": "0 */3 * * *",
     "queue_redundancy_multiplier": 1.5,
     "min_runnable_batches_per_cycle_with_50pct_redundancy": 240,
     "min_runnable_sims_with_50pct_redundancy": 1920,
-    "note": "定时每 2-4 小时（默认 3 小时）巡检一轮；任务队列常备 1.5 倍（+50% 冗余，>= 240 批 / 1,920+ 条候选），确保 4 并发槽在长达 4 小时无人值守及部分死集 48 条早停时也绝不跑空断流。"
+    "note": "定时每 3-4 小时（默认 3 小时 cron: 0 */3 * * *）巡检优化结果；任务队列常备 1.5 倍（+50% 冗余，>= 240 批 / 1,920+ 条候选），确保 4 并发槽在长达 4 小时无人值守及部分死集 48 条早停时也绝不跑空断流。"
   },
-  "description": "WorldQuant BRAIN D1-Only RA 统一启动与方向配置文件（支持自定义地区、宇宙、数据集分类、研究方式、Stage 1-2 QUICK 快筛、管理员模板 5:5->8:2 演进及子代理模型/思考强度配置）。",
+  "quota_alpha0_switch": {
+    "execution_order": "SEQUENTIAL_NORMAL_FIRST_NO_CONCURRENT_MIX",
+    "alpha0_switch_threshold": 4000,
+    "daily_target": 4500,
+    "below_threshold_mode": "NORMAL_ONLY（不要同步混跑！先跑完 4,000 个常规额度）",
+    "at_or_above_threshold_mode": "ALPHA0_EXEMPT_ONLY（跑完 4,000 常规额度后，再自动切入运行 Alphas=0 豁免字段队列）",
+    "alpha0_free_until": "2026-12-06",
+    "asi_isolated_experiment_config": "docs/asi_d0_d1_isolated/asi_isolated_config.json（路线 ③ 亚太孤岛实验线：完全隔离，不接入主线调度器）"
+  },
+  "universal_turnover_policy": {
+    "applies_to_all_tracks": true,
+    "low_turnover_skip_lt": 0.08,
+    "high_turnover_reduce_gt": 0.18,
+    "low_turnover_rule": "换手率 < 8% 跳过降换手步骤，严禁强行套 hump/tvr_decay/大 decay 以免稀释 Sharpe 或触发 LOW_TURNOVER",
+    "high_turnover_ladder": [
+      "1) 控制变量扫频 decay ∈ {0, 5, 20}（王哥防断崖检验）",
+      "2) 前置或融合后平滑 ts_decay_linear(..., 10/22) / ts_mean(..., 5/10/22)",
+      "3) 软约束 ts_target_tvr_decay(..., lambda_min=0, lambda_max=0.9, target_tvr=0.08..0.15)",
+      "4) 温和防抖 hump(..., hump=0.01)（仅限无 tail(..., newval=0) 外壳且非 ASI MINVOL1M）"
+    ],
+    "forbidden_ops": ["trade_when", "ts_target_tvr_decay(lambda_max>1)", "hump(outside tail newval=0)"]
+  },
+  "description": "WorldQuant BRAIN D1-Only RA 统一启动与方向配置文件（多地区精选种子 × 多模板族配对、额度 >4000 自动切免额字段、Stage 1-2 QUICK 快筛、3-4 小时定时复查）。",
   "direction": {
-    "regions": ["USA", "EUR"],
+    "regions": ["EUR", "USA", "GLB", "ASI", "KOR"],
+    "region_caps": {
+      "EUR": 1,
+      "USA": 2,
+      "GLB": 1,
+      "ASI": 1,
+      "KOR": 1
+    },
+    "diverse_template_packs": ["core_50_50", "admin_ts_regime", "nonlinear_tail_group"],
     "universes": {
       "USA": "TOP3000",
       "EUR": "TOP2500",
@@ -101,8 +138,8 @@
         "hard_preference": "PC < 0.70 才标为主力可交 Useful；PC >= 0.70 即使触发 +10% Sharpe 官方豁免也建议少交（标记 `PC_EXEMPT_HIGH_PC_HOLD` 供人工谨慎定夺）。",
         "histogram_api_endpoint": "GET /alphas/{alphaId}/correlations/prod",
         "histogram_schema": "records: [[min, max, alphas], ...], top-level: {min, max}",
-        "rescue_condition_near_and_sparse": "0.70 <= pc_max <= 0.75 且 [0.7, 0.8] 桶内生产因子数 alphas <= 5 且 [0.8, 1.0] 桶 alphas == 0 -> 判定 `PC_RESCUE_NEAR_SPARSE`，值得专项优化 1-2 轮",
-        "abandon_condition_crowded_or_stalled": "pc_max > 0.75 或 >=0.70 桶内 alphas > 5（数据很多、高度拥挤）或专项优化 1-2 轮后 PC 无明显下降 -> 判定 `PC_ABANDON_CROWDED_OR_STALLED`，不再继续优化，打标 `PC_STUCK_DORMANT` 归档休眠"
+        "rescue_condition_near_and_sparse": "适当放宽以多优化 1 轮：0.70 <= pc_max <= 0.78 且 >=0.70 桶内生产因子总数 alphas <= 10 且 >=0.80 桶 alphas <= 2 -> 判定 `PC_RESCUE_NEAR_SPARSE`，允许专项降 PC 优化 2-3 轮（最多 3 轮）",
+        "abandon_condition_crowded_or_stalled": "pc_max > 0.78 或 >=0.70 桶内 alphas > 10 或 >=0.80 桶 alphas > 2 或专项优化满 3 轮仍无明显下降 -> 判定 `PC_ABANDON_CROWDED_OR_STALLED`，不再继续优化，打标 `PC_STUCK_DORMANT` 归档休眠"
       }
     },
     "deferred_strict_switches": {

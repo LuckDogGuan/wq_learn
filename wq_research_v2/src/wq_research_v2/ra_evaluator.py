@@ -27,6 +27,68 @@ def margin_to_bps(margin_decimal: Optional[float]) -> Optional[float]:
     return round(float(margin_decimal) * 10_000.0, 2)
 
 
+def evaluate_turnover_action(
+    turnover: Optional[float],
+    *,
+    expression: str = "",
+    region: str = "USA",
+    high_turnover_trigger: float = 0.18,
+    low_turnover_skip: float = 0.08,
+) -> dict[str, Any]:
+    """Universal Turnover Reduction Decision Rule (applies across ALL tracks/workflows).
+
+    Synthesizes Wang Ge skill + Top100 Advisors + BRAIN AlphaTest rules + Decision #3 red lines:
+    - `turnover < low_turnover_skip` (default < 8%): `SKIP_LOW_TURNOVER` — do NOT add extra decay/hump/tvr ops
+      (avoids diluting Sharpe or hitting LOW_TURNOVER < 1% failure).
+    - `low_turnover_skip <= turnover <= high_turnover_trigger` (8%..18%): `KEEP_NORMAL` — no mandatory reduction.
+    - `turnover > high_turnover_trigger` (> 18%): `REDUCE_HIGH_TURNOVER` — apply controlled-variable single-axis
+      reduction ladder:
+        1) Decay sweep `decay in {0, 5, 20}` (Wang Ge anti-cliff check)
+        2) Pre-rank or post-min smoothing (`ts_decay_linear(..., 10/22)` / `ts_mean(..., 5/10/22)`)
+        3) `ts_target_tvr_decay(..., lambda_min=0, lambda_max=0.9, target_tvr=0.08..0.15)` (never lambda_max > 1)
+        4) `hump(..., hump=0.01)` ONLY if expression does NOT contain `tail(..., newval=0)` and region != ASI.
+      NEVER uses `trade_when` (permanently banned by Decision #3).
+    """
+    if turnover is None or not math.isfinite(float(turnover)):
+        return {"action": "UNKNOWN_TURNOVER", "turnover": None, "recommended_steps": [], "forbidden_ops": ["trade_when"]}
+    tvr = float(turnover)
+    if tvr < float(low_turnover_skip):
+        return {
+            "action": "SKIP_LOW_TURNOVER",
+            "turnover": round(tvr, 4),
+            "reason": f"TO={tvr:.4f} < {low_turnover_skip:.2f}（换手率已偏低，跳过降换手步骤以防稀释 Sharpe 或触发 LOW_TURNOVER）",
+            "recommended_steps": [],
+            "forbidden_ops": ["trade_when", "hump", "ts_target_tvr_decay"],
+        }
+    if tvr <= float(high_turnover_trigger):
+        return {
+            "action": "KEEP_NORMAL",
+            "turnover": round(tvr, 4),
+            "reason": f"TO={tvr:.4f} 处于健康区间 [{low_turnover_skip:.2f}, {high_turnover_trigger:.2f}]，仅在 Fitness<1.0 且 TO>0.125 时轻试 decay",
+            "recommended_steps": ["optional_decay_poll_0_5"],
+            "forbidden_ops": ["trade_when"],
+        }
+    expr_low = (expression or "").lower()
+    has_tail_zero = "tail(" in expr_low and "newval=0" in expr_low.replace(" ", "")
+    steps = [
+        "1) 控制变量扫频 decay ∈ {0, 5, 20}（检验无断崖下跌）",
+        "2) 前置/融合后平滑 ts_decay_linear(..., 10/22) 或 ts_mean(..., 5/10/22)",
+        "3) 软约束 ts_target_tvr_decay(..., lambda_min=0, lambda_max=0.9, target_tvr=0.08..0.15)",
+    ]
+    forbidden = ["trade_when", "ts_target_tvr_decay(lambda_max>1)"]
+    if has_tail_zero or region.upper() == "ASI":
+        forbidden.append("hump(outside tail newval=0 or ASI MINVOL1M)")
+    else:
+        steps.append("4) 温和防抖 hump(..., hump=0.01)（仅限无 tail(..., newval=0) 外壳时使用）")
+    return {
+        "action": "REDUCE_HIGH_TURNOVER",
+        "turnover": round(tvr, 4),
+        "reason": f"TO={tvr:.4f} > {high_turnover_trigger:.2f}（高换手拖累 Fitness/Margin，执行单变量降换手梯队）",
+        "recommended_steps": steps,
+        "forbidden_ops": forbidden,
+    }
+
+
 def detect_flat_pnl_streak(pnl_series: Optional[pd.Series]) -> int:
     """Return longest run of consecutive identical non-zero daily PnL (diff == 0)."""
     if pnl_series is None or len(pnl_series) < 2:

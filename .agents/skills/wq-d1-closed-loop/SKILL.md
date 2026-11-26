@@ -29,7 +29,7 @@ description: "WorldQuant BRAIN D1-Only RA 跨 AI 工具通用闭环技能（主 
    - 按 **`Margin (bp)` 降序** 做池内两两正交剪枝（`< 0.68`）；
    - 串行查远程 PC（`pc_poller.py` 调用 `GET /alphas/{id}/correlations/prod` 解析 `records: [[min, max, alphas], ...]` 范围分布表）与官方 `/check`：
      - **严控 `PC < 0.70`**：仅当 `pc_max < 0.70`（且 RA 0-FAIL + SC < 0.65 + 池内正交最高 Margin）才打主力 **`Useful`** + 别名 `SC 0.xxx PC 0.xxx`；若 `PC >= 0.70` 即使触发 `+10%` Sharpe 官方豁免也建议少交（标记 `PC_EXEMPT_HIGH_PC_HOLD`）；
-     - **PC 范围分布表定量判据（`parse_pc_histogram_records`）**：若 `0.70 <= pc_max <= 0.75` 且 `[0.7, 0.8]` 桶内生产因子数 `alphas <= 5`、`>=0.8` 桶为 `0`（范围近、碰撞少），判定 `PC_RESCUE_NEAR_SPARSE`，值得回 Stage 3 专项优化 `1–2` 轮；若 `>=0.7` 区间数据很多（`alphas > 5`）或 `pc_max > 0.75` 或优化 `1–2` 轮无改变，判定 `PC_ABANDON_CROWDED_OR_STALLED`，果断放弃继续压 PC，打 `SC_PASS` + 内部标记 `PC_STUCK_DORMANT` 休眠归档（严禁调 `/submit`）。
+     - **PC 范围分布表定量判据（`parse_pc_histogram_records` · 已适当放宽多优化 1 轮）**：若 `0.70 <= pc_max <= 0.78` 且 `>= 0.70` 桶内生产因子总数 `alphas <= 10`、`>= 0.80` 桶 `alphas <= 2`，判定 `PC_RESCUE_NEAR_SPARSE`，值得回 Stage 3 专项优化 **`2–3` 轮（最多 3 轮）**；若 `>= 0.70` 区间数据很多（`alphas > 10`）或 `>= 0.80` 桶 `> 2` 或 `pc_max > 0.78` 或优化满 `3` 轮无改变，判定 `PC_ABANDON_CROWDED_OR_STALLED`，果断放弃继续压 PC，打 `SC_PASS` + 内部标记 `PC_STUCK_DORMANT` 休眠归档（严禁调 `/submit`）。
 
 ### Step B · 种子因子（Seed Factor）采集与 Stage 1–2 标准化快筛
 1. **种子筛选固定规则**（`wq_research_v2/src/wq_research_v2/field_screener.py` · 融合华子哥四差距 + 顾问课堂 53 课 `worldquant-classroom-reference`）：
@@ -49,7 +49,7 @@ description: "WorldQuant BRAIN D1-Only RA 跨 AI 工具通用闭环技能（主 
    - **标准参数轮询序列**：
      - 轴 1（Decay 轮询）：固定母版表达式与中性化，轮询 **`decay ∈ {0, 5, 20}`**（默认 `0` 起步，胜出点邻域再细扫 `{2, 4, 6}`）；
      - 轴 2（Neutralization 轮询）：固定最优 Decay，轮询 `SUBINDUSTRY` → `INDUSTRY` / `REVERSION_AND_MOMENTUM` / `CROWDING` / `STATISTICAL`；
-     - 轴 3（单一短板手术）：按 8:2 优先级（80% 王哥 + Top100 顾问 + 管理员/课堂53课）针对唯一 FAIL 项做单步改造（如后置 `ts_decay_linear(22)` 救 2Y/Margin、`adv20` 门控+`country*industry` 救 Sub-Uni、王哥 `L6 tail(0.25,0.75,0.5)` 或同集/跨集 `min(rank,rank)` 降 PC）。
+     - 轴 3（单一短板手术 & **通用降换手规则**）：按 8:2 优先级（80% 王哥 + Top100 顾问 + 管理员/课堂53课）针对唯一 FAIL 项做单步改造；**所有流程必须检查换手率（`evaluate_turnover_action`）**：若 `TO > 18%` 则执行单变量降换手梯队（`decay ∈ {0, 5, 20}` → 前置/后置 `ts_decay_linear(10/22)`/`ts_mean(5/10/22)` → `ts_target_tvr_decay(lambda_max<=0.9)` → 仅无 `tail(newval=0)` 外壳时试 `hump(0.01)`，永久禁 `trade_when`）；**若 `TO < 8%`（换手偏低）则跳过降换手步骤**，避免稀释 Sharpe 或触发 `LOW_TURNOVER`。
    - **2–3 轮止损休眠铁律（`should_shelve_stalled_seed`）**：若某种子连续专一优化 **2–3 轮** 仍无有效提升，立刻停止消耗额度，打上 `STALLED_DORMANT_AFTER_3_ROUNDS` 标签连同瓶颈原因归档，留待未来找到新优化方法再定向唤醒。
    - **子代理默认配置**：默认使用 Google Neon 模型（`Model="inherit"`），思考强度默认设为 **中 (`medium`)**（兼容在 ChatGPT / Codex / Claude Code 中按 `goal/run_config.json` 切换模型）。
 3. **嵌套层数治理**：

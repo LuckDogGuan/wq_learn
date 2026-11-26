@@ -4,9 +4,11 @@ from __future__ import annotations
 from wq_research_v2.daemon_ra_runner import (
     ADMIN_WL13229_KH94146_CANDIDATE_TEMPLATES,
     CURATED_RA_D1_CAMPAIGNS,
+    DIVERSE_STAGE12_TEMPLATE_PACKS,
     HIGH_BASE_MULTI_MARKET_ORDER,
     build_ra_campaign_specs,
     interleave_specs_by_campaign_waves,
+    resolve_quota_queue_policy,
     select_stage12_templates,
     should_early_stop_dataset,
     should_shelve_stalled_seed,
@@ -187,3 +189,35 @@ def test_admin_template_ratio_5_5_to_8_2_and_stalled_seed_stop_loss() -> None:
     assert shelve2 and tag2 == "STALLED_DORMANT_AFTER_3_ROUNDS"
     shelve3, tag3 = should_shelve_stalled_seed(3, True, max_opt_rounds=3)
     assert not shelve3 and tag3 == "ACTIVE_ELIGIBLE"
+
+
+def test_diverse_template_packs_and_quota_4000_alpha0_switch() -> None:
+    validator = ExprValidator()
+    for pack_name in ("admin_ts_regime", "nonlinear_tail_group"):
+        assert pack_name in DIVERSE_STAGE12_TEMPLATE_PACKS
+        tpls = select_stage12_templates("5:5", template_pack=pack_name)
+        assert len(tpls) == 8
+        assert sum(1 for t in tpls if t["side"] == "ADMIN_ORIGINAL") == 4
+        assert sum(1 for t in tpls if t["side"] == "TOP100_2026Q4") == 4
+        for t in tpls:
+            rep = validator.validate(
+                t["fmt"].format(x="ts_backfill(mdl110_value, 21)"),
+                {"region": "EUR", "universe": "TOP2500", "delay": 1, "neutralization": "SUBINDUSTRY", "decay": 0, "truncation": 0.04},
+            )
+            assert rep.valid, f"Diverse template invalid: {pack_name}/{t['id']} -> {rep.errors}"
+
+    # Strictly sequential: below 4000 normal -> NORMAL_ONLY (NO concurrent mixing with Alphas=0!)
+    m1, _ = resolve_quota_queue_policy(1500, normal_done=950, alpha0_switch_threshold=4000, daily_target=4500, has_pending_normal=True, has_pending_alpha0=True)
+    assert m1 == "NORMAL_ONLY"
+    # Even if total day_done >= 4000 (due to prior alpha0), if normal_done < 4000 -> still NORMAL_ONLY!
+    m1b, _ = resolve_quota_queue_policy(4100, normal_done=3500, alpha0_switch_threshold=4000, daily_target=4500, has_pending_normal=True, has_pending_alpha0=True)
+    assert m1b == "NORMAL_ONLY"
+    # Once normal_done >= 4000 with pending Alphas=0 -> switch to ALPHA0_EXEMPT_ONLY!
+    m2, _ = resolve_quota_queue_policy(4050, normal_done=4000, alpha0_switch_threshold=4000, daily_target=4500, has_pending_normal=True, has_pending_alpha0=True)
+    assert m2 == "ALPHA0_EXEMPT_ONLY"
+    # API remaining <= 80 -> safety sleep
+    m3, _ = resolve_quota_queue_policy(4050, normal_done=4000, alpha0_switch_threshold=4000, daily_target=4500, api_remaining=60, has_pending_normal=True, has_pending_alpha0=True)
+    assert m3 == "SLEEP_CAP_REACHED"
+    # Above daily_target and NO pending Alphas=0 -> sleep
+    m4, _ = resolve_quota_queue_policy(4500, normal_done=4500, alpha0_switch_threshold=4000, daily_target=4500, has_pending_normal=True, has_pending_alpha0=False)
+    assert m4 == "SLEEP_CAP_REACHED"

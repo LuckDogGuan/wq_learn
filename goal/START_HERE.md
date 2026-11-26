@@ -19,6 +19,7 @@
 
 ## 3. 关联真源（均已同步保存至 GitHub）
 
+- **三条正式路线与日志一一对应手册**：[docs/TRACKS_AND_LOGS_GUIDE.md](file:///c:/Wq/WorldQuant%20Brain/docs/TRACKS_AND_LOGS_GUIDE.md)（① `基础优化路径` · ② `多域星阵路径` · ③ `亚太孤岛实验线`）
 - 方向与冗余参数配置：[goal/run_config.json](file:///c:/Wq/WorldQuant%20Brain/goal/run_config.json)
 - 动态闭环流程图：[goal/PIPELINE_FLOWCHART.md](file:///c:/Wq/WorldQuant%20Brain/goal/PIPELINE_FLOWCHART.md)
 - 核心状态脉搏：[docs/agents/CORE_STATE.json](file:///c:/Wq/WorldQuant%20Brain/docs/agents/CORE_STATE.json)

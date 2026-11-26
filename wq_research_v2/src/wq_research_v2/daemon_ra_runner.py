@@ -126,6 +126,7 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
         "dataset_id": "model110",
         "queue_type": "NORMAL",
         "field_type": "MATRIX",
+        "template_packs": ["core_50_50", "nonlinear_tail_group"],
         "default_neut": "REVERSION_AND_MOMENTUM",
         "alt_neuts": ["CROWDING", "COUNTRY", "SUBINDUSTRY"],
         "fields": [
@@ -137,6 +138,161 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
             "mdl110_growth",
             "mdl110_analyst_sentiment",
             "mdl110_score",
+        ],
+    },
+    # ==================== DAY-2 AUDIT #9 MULTI-REGION SEED + MULTI-TEMPLATE + ALPHA0 EXPANSION (2026-11-26 16:30) ====================
+    {
+        "campaign_id": "EUR_ANLREV_FREE",
+        "region": "EUR",
+        "universe": "TOP2500",
+        "dataset_id": "analyst_revision_horizons",
+        "queue_type": "UNUSED_ALPHA0",
+        "field_type": "MATRIX",
+        "template_packs": ["core_50_50", "admin_ts_regime"],
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING"],
+        "fields": [
+            "analyst_count_decreasing_next_quarter2_ebitda_14d_medium_3",
+            "analyst_count_decreasing_next_quarter2_revenue_7d_short_3",
+            "analyst_count_decreasing_next_quarter_earnings_7d_long_3",
+            "analyst_count_decreasing_next_quarter_ebitda_14d_long_3",
+        ],
+    },
+    {
+        "campaign_id": "USA_BOARDNET_FREE",
+        "region": "USA",
+        "universe": "TOP3000",
+        "dataset_id": "board_network",
+        "queue_type": "UNUSED_ALPHA0",
+        "field_type": "MATRIX",
+        "template_packs": ["core_50_50", "admin_ts_regime"],
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING"],
+        "fields": [
+            "count_connected_companies",
+            "count_external_board_connections",
+            "network_inward_coreness_metric",
+            "mean_connected_company_market_value",
+        ],
+    },
+    {
+        "campaign_id": "USA_CHARTCNN_FREE",
+        "region": "USA",
+        "universe": "TOP3000",
+        "dataset_id": "chart_cnn_alpha",
+        "queue_type": "UNUSED_ALPHA0",
+        "field_type": "MATRIX",
+        "template_packs": ["core_50_50", "nonlinear_tail_group"],
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING"],
+        "fields": [
+            "img30d_return_quartile_confidence0_zackbatch",
+            "img30d_return_quintile_confidence2_zackbatch",
+            "img30d_return_quintile_confidence3_zackbatch",
+            "img30d_return_quintile_prob2_zackbatch",
+            "img30d_return_quintile_prob3_zackbatch",
+            "img30d_return_tercile_confidence0_zackbatch",
+            "img30d_return_tercile_confidence1_zackbatch",
+            "img30d_return_tercile_confidence2_zackbatch",
+        ],
+    },
+    {
+        "campaign_id": "GLB_M39_VALMOM_NORM",
+        "region": "GLB",
+        "universe": "TOP3000",
+        "dataset_id": "model39",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "template_packs": ["core_50_50", "nonlinear_tail_group"],
+        "default_neut": "COUNTRY",
+        "alt_neuts": ["SUBINDUSTRY", "REVERSION_AND_MOMENTUM"],
+        "fields": [
+            "long_term_price_momentum_score_2",
+            "global_price_momentum_percentile_2",
+            "regional_price_momentum_percentile_2",
+            "region_value_momentum_rank",
+            "industry_price_momentum_score_2",
+            "mid_term_price_momentum_score_2",
+            "region_value_momentum_rank_float",
+            "global_value_momentum_rank_float",
+        ],
+    },
+    {
+        "campaign_id": "GLB_M110_MULTIFACTOR_NORM",
+        "region": "GLB",
+        "universe": "TOP3000",
+        "dataset_id": "model110",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "template_packs": ["core_50_50", "nonlinear_tail_group"],
+        "default_neut": "COUNTRY",
+        "alt_neuts": ["SUBINDUSTRY", "REVERSION_AND_MOMENTUM"],
+        "fields": [
+            "mdl110_alternative",
+            "mdl110_tree",
+            "mdl110_price_momentum_reversal",
+            "mdl110_quality",
+            "mdl110_value",
+            "mdl110_growth",
+            "mdl110_analyst_sentiment",
+            "mdl110_score",
+        ],
+    },
+    {
+        "campaign_id": "ASI_M39_VALMOM_NORM",
+        "region": "ASI",
+        "universe": "MINVOL1M",
+        "dataset_id": "model39",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "max_trade": "ON",
+        "template_packs": ["core_50_50", "nonlinear_tail_group"],
+        "default_neut": "COUNTRY",
+        "alt_neuts": ["SUBINDUSTRY", "REVERSION_AND_MOMENTUM"],
+        "fields": [
+            "regional_price_momentum_percentile_2",
+            "industry_price_momentum_score_2",
+            "long_term_price_momentum_score_2",
+            "global_price_momentum_percentile_2",
+            "mid_term_price_momentum_score_2",
+            "region_value_momentum_rank",
+            "industry_value_momentum_rank_float",
+            "region_value_momentum_rank_float",
+        ],
+    },
+    {
+        "campaign_id": "ASI_ANLREV_FREE",
+        "region": "ASI",
+        "universe": "MINVOL1M",
+        "dataset_id": "analyst_revision_horizons",
+        "queue_type": "UNUSED_ALPHA0",
+        "field_type": "MATRIX",
+        "max_trade": "ON",
+        "template_packs": ["core_50_50", "admin_ts_regime"],
+        "default_neut": "COUNTRY",
+        "alt_neuts": ["SUBINDUSTRY", "REVERSION_AND_MOMENTUM"],
+        "fields": [
+            "analyst_count_decreasing_current_year_ebitda_30d_medium_3",
+        ],
+    },
+    {
+        "campaign_id": "KOR_FND93_FREE",
+        "region": "KOR",
+        "universe": "TOP600",
+        "dataset_id": "fundamental93",
+        "queue_type": "UNUSED_ALPHA0",
+        "field_type": "MATRIX",
+        "max_trade": "ON",
+        "template_packs": ["core_50_50", "admin_ts_regime"],
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["INDUSTRY", "REVERSION_AND_MOMENTUM"],
+        "fields": [
+            "fnd93_liability_d1_asset_change",
+            "fnd93_expense_d1_asset_change",
+            "fnd93_expense_d1_mean",
+            "fnd93_deferred_tax_liability_12",
+            "fnd93_deferred_tax_liability_31",
+            "fnd93_tax_accruals_12",
         ],
     },
     {
@@ -700,15 +856,76 @@ ADMIN_WL13229_KH94146_CANDIDATE_TEMPLATES: list[dict[str, str]] = [
     {"id": "RA-ADM-08-rev-sub-grank-tsrank252", "side": "ADMIN_ORIGINAL", "author": "KH94146", "fmt": "reverse(group_rank(ts_rank({x}, 252), subindustry))"},
 ]
 
+# Diverse Stage-1/2 Template Packs (strict 4:4 Admin:Top100, 100% Decision #3 & Gold-81 compliant)
+# Enables pairing different curated seed factors with distinct template families (ts-regime vs nonlinear-tail-group).
+DIVERSE_STAGE12_TEMPLATE_PACKS: dict[str, list[dict[str, str]]] = {
+    "admin_ts_regime": [
+        {"id": "RA-TSR-01-sub-grank-avdiff66-pos", "side": "ADMIN_ORIGINAL", "author": "WL13229", "fmt": "group_rank(ts_av_diff({x}, 66), subindustry)"},
+        {"id": "RA-TSR-02-rev-sub-grank-avdiff66", "side": "ADMIN_ORIGINAL", "author": "WL13229", "fmt": "reverse(group_rank(ts_av_diff({x}, 66), subindustry))"},
+        {"id": "RA-TSR-03-sub-grank-tsrank252-pos", "side": "ADMIN_ORIGINAL", "author": "KH94146", "fmt": "group_rank(ts_rank({x}, 252), subindustry)"},
+        {"id": "RA-TSR-04-rev-sub-grank-tsrank252", "side": "ADMIN_ORIGINAL", "author": "KH94146", "fmt": "reverse(group_rank(ts_rank({x}, 252), subindustry))"},
+        {"id": "RA-TSR-05-sub-gz-delta22-pos", "side": "TOP100_2026Q4", "author": "ZS59763", "fmt": "group_zscore(ts_delta({x}, 22), subindustry)"},
+        {"id": "RA-TSR-06-rev-sub-gz-delta22", "side": "TOP100_2026Q4", "author": "ZS59763", "fmt": "reverse(group_zscore(ts_delta({x}, 22), subindustry))"},
+        {"id": "RA-TSR-07-ind-grank-z120-pos", "side": "TOP100_2026Q4", "author": "LD22811", "fmt": "group_rank(ts_zscore({x}, 120), industry)"},
+        {"id": "RA-TSR-08-rev-ind-grank-z120", "side": "TOP100_2026Q4", "author": "LD22811", "fmt": "reverse(group_rank(ts_zscore({x}, 120), industry))"},
+    ],
+    "nonlinear_tail_group": [
+        {"id": "RA-NLG-01-tail25-d22-sub-pos", "side": "ADMIN_ORIGINAL", "author": "WL13229", "fmt": "tail(group_rank(ts_decay_linear({x}, 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"},
+        {"id": "RA-NLG-02-rev-tail25-d22-sub", "side": "ADMIN_ORIGINAL", "author": "WL13229", "fmt": "reverse(tail(group_rank(ts_decay_linear({x}, 22), subindustry), lower=0.25, upper=0.75, newval=0.5))"},
+        {"id": "RA-NLG-03-gneut-dec10-sub-pos", "side": "ADMIN_ORIGINAL", "author": "KH94146", "fmt": "group_neutralize(ts_decay_linear({x}, 10), subindustry)"},
+        {"id": "RA-NLG-04-rev-gneut-dec10-sub", "side": "ADMIN_ORIGINAL", "author": "KH94146", "fmt": "reverse(group_neutralize(ts_decay_linear({x}, 10), subindustry))"},
+        {"id": "RA-NLG-05-sp15-ind-gz-pos", "side": "TOP100_2026Q4", "author": "SZ83096", "fmt": "signed_power(group_zscore({x}, industry), 1.5)"},
+        {"id": "RA-NLG-06-rev-sp15-ind-gz", "side": "TOP100_2026Q4", "author": "SZ83096", "fmt": "reverse(signed_power(group_zscore({x}, industry), 1.5))"},
+        {"id": "RA-NLG-07-sec-grank-m22-pos", "side": "TOP100_2026Q4", "author": "SZ83096", "fmt": "group_rank(ts_mean({x}, 22), sector)"},
+        {"id": "RA-NLG-08-rev-sec-grank-m22", "side": "TOP100_2026Q4", "author": "SZ83096", "fmt": "reverse(group_rank(ts_mean({x}, 22), sector))"},
+    ],
+}
 
-def select_stage12_templates(template_ratio: str = "5:5") -> list[dict[str, str]]:
-    """Return 8 Stage-1/2 templates matching '5:5' (4 Admin : 4 Top100, current default)
-    or '8:2' (6 Admin : 2 Top100, target once Admin templates are validated).
-    """
+
+def select_stage12_templates(template_ratio: str = "5:5", *, template_pack: str = "core_50_50") -> list[dict[str, str]]:
+    """Return 8 Stage-1/2 templates for the requested pack & ratio ('5:5' or '8:2')."""
+    pack_key = str(template_pack or "core_50_50").strip()
+    if pack_key in DIVERSE_STAGE12_TEMPLATE_PACKS:
+        return list(DIVERSE_STAGE12_TEMPLATE_PACKS[pack_key])
     ratio = str(template_ratio or "5:5").strip()
     if ratio == "8:2":
         return STAGE12_TEMPLATES_8[:4] + ADMIN_WL13229_KH94146_CANDIDATE_TEMPLATES[:2] + STAGE12_TEMPLATES_8[4:6]
     return list(STAGE12_TEMPLATES_8)
+
+
+def resolve_quota_queue_policy(
+    day_done: int,
+    *,
+    normal_done: Optional[int] = None,
+    alpha0_switch_threshold: int = 4000,
+    daily_target: int = 4500,
+    api_remaining: Optional[int] = None,
+    has_pending_normal: bool = True,
+    has_pending_alpha0: bool = True,
+) -> tuple[str, str]:
+    """Strictly sequential daily quota policy (NO concurrent mixing of normal & exempt Alphas=0):
+
+    - Phase 1 (`normal_done < alpha0_switch_threshold`, default < 4000):
+      Run ONLY `NORMAL` queue (`NORMAL_ONLY`). Do NOT run `UNUSED_ALPHA0` concurrently!
+    - Phase 2 (`normal_done >= alpha0_switch_threshold`, default >= 4000):
+      Once 4,000 normal simulations are finished, switch cleanly to `ALPHA0_EXEMPT_ONLY`
+      to run `UNUSED_ALPHA0` exempt fields (valid until 2026-12-06) while API remaining > 80.
+    - When `api_remaining <= 80` or both queues exhausted / daily target reached: `SLEEP_CAP_REACHED`.
+    """
+    if api_remaining is not None and int(api_remaining) <= 80:
+        return "SLEEP_CAP_REACHED", f"api_rem={api_remaining}<=80"
+    eff_norm = int(day_done if normal_done is None else normal_done)
+    if int(alpha0_switch_threshold) > 0 and eff_norm < int(alpha0_switch_threshold):
+        if has_pending_normal:
+            return "NORMAL_ONLY", f"normal={eff_norm}<{alpha0_switch_threshold} -> Phase-1 NORMAL_ONLY (先跑完4000常规额度再跑豁免)"
+        if has_pending_alpha0:
+            return "ALPHA0_EXEMPT_ONLY", f"normal queue exhausted at {eff_norm} -> fallback to Alphas=0 exempt"
+        return "SLEEP_CAP_REACHED", f"no pending specs at normal={eff_norm}"
+    if has_pending_alpha0:
+        return "ALPHA0_EXEMPT_ONLY", f"normal={eff_norm}>={alpha0_switch_threshold} -> Phase-2 ALPHA0_EXEMPT_ONLY"
+    if eff_norm < int(daily_target) and has_pending_normal:
+        return "NORMAL_ONLY", f"no pending Alphas=0; normal={eff_norm}<{daily_target}"
+    return "SLEEP_CAP_REACHED", f"normal={eff_norm}/{daily_target} and no pending Alphas=0"
 
 
 def should_shelve_stalled_seed(
@@ -786,82 +1003,86 @@ def build_ra_campaign_specs(
             continue
 
         fields = camp.get("fields") or []
-        for neut in neuts:
-            for f_idx, fid in enumerate(fields):
-                wrapped = _wrap_field(fid, ftype)
-                items = [
-                    {
-                        "expression": t["fmt"].format(x=wrapped),
-                        "template_id": f"{t['id']}_{neut}",
-                        "source_side": t["side"],
-                        "author_id": t["author"],
-                        "dataset_id": ds,
-                        "primary_field_id": fid,
-                    }
-                    for t in templates_8
-                ]
-                specs.append({
-                    "batch_id": f"RA-{TEMPLATE_SET_VER}-{cid}-{f_idx:02d}-{fid[-16:]}-{neut}",
-                    "campaign_id": cid,
-                    "hypothesis_id": f"HYP-{cid}",
-                    "queue_type": qtype,
-                    "source_side": "MIXED_4_4",
-                    "region": reg,
-                    "universe": uni,
-                    "dataset_id": ds,
-                    "settings": {
-                        "region": reg, "universe": uni, "delay": 1,
-                        "neutralization": neut, "decay": 0, "truncation": 0.04,
-                        "pasteurization": "ON", "unitHandling": "VERIFY", "nanHandling": "ON",
-                        "maxTrade": max_trade, "visualization": False,
-                    },
-                    "items": items,
-                })
-
-            # Decision #3 canonical dual-branch pairs (same dataset -> keeps ATOM!)
-            if include_dual_branch and len(fields) >= 2:
-                pair_items = []
-                for f1, f2 in list(itertools.combinations(fields[:8], 2))[:8]:
-                    w1 = _wrap_field(f1, ftype)
-                    w2 = _wrap_field(f2, ftype)
-                    expr_a = f"ts_decay_linear({w1}, 10)"
-                    expr_b = f"ts_decay_linear({w2}, 10)"
-                    pair_items.append({
-                        "expression": f"group_rank(min(rank({expr_a}), rank({expr_b})), subindustry)",
-                        "template_id": f"RA-DUAL-GRANK-MIN-{neut}",
-                        "source_side": "ADMIN_ORIGINAL",
-                        "author_id": "WL13229",
-                        "dataset_id": ds,
-                        "primary_field_id": f1,
-                    })
-                    pair_items.append({
-                        "expression": f"reverse(group_rank(min(rank({expr_a}), rank({expr_b})), subindustry))",
-                        "template_id": f"RA-DUAL-REV-GRANK-MIN-{neut}",
-                        "source_side": "TOP100_2026Q4",
-                        "author_id": "SZ83096",
-                        "dataset_id": ds,
-                        "primary_field_id": f1,
-                    })
-                for chunk_i in range(0, len(pair_items), 8):
-                    sub = pair_items[chunk_i : chunk_i + 8]
-                    if len(sub) >= 2:
-                        specs.append({
-                            "batch_id": f"RA-{TEMPLATE_SET_VER}-{cid}-DUAL-{neut}-{chunk_i//8:02d}",
-                            "campaign_id": cid,
-                            "hypothesis_id": f"HYP-{cid}-DUAL",
-                            "queue_type": qtype,
-                            "source_side": "MIXED_4_4",
-                            "region": reg,
-                            "universe": uni,
+        pack_names = list(camp.get("template_packs") or ["core_50_50"])
+        for pack_name in pack_names:
+            pack_templates = select_stage12_templates(template_ratio, template_pack=pack_name)
+            pack_prefix = "" if pack_name == "core_50_50" else f"{pack_name[:6]}-"
+            for neut in neuts:
+                for f_idx, fid in enumerate(fields):
+                    wrapped = _wrap_field(fid, ftype)
+                    items = [
+                        {
+                            "expression": t["fmt"].format(x=wrapped),
+                            "template_id": f"{t['id']}_{neut}",
+                            "source_side": t["side"],
+                            "author_id": t["author"],
                             "dataset_id": ds,
-                            "settings": {
-                                "region": reg, "universe": uni, "delay": 1,
-                                "neutralization": neut, "decay": 0, "truncation": 0.04,
-                                "pasteurization": "ON", "unitHandling": "VERIFY", "nanHandling": "ON",
-                                "maxTrade": max_trade, "visualization": False,
-                            },
-                            "items": sub,
+                            "primary_field_id": fid,
+                        }
+                        for t in pack_templates
+                    ]
+                    specs.append({
+                        "batch_id": f"RA-{TEMPLATE_SET_VER}-{cid}-{pack_prefix}{f_idx:02d}-{fid[-16:]}-{neut}",
+                        "campaign_id": cid,
+                        "hypothesis_id": f"HYP-{cid}",
+                        "queue_type": qtype,
+                        "source_side": "MIXED_4_4",
+                        "region": reg,
+                        "universe": uni,
+                        "dataset_id": ds,
+                        "settings": {
+                            "region": reg, "universe": uni, "delay": 1,
+                            "neutralization": neut, "decay": 0, "truncation": 0.04,
+                            "pasteurization": "ON", "unitHandling": "VERIFY", "nanHandling": "ON",
+                            "maxTrade": max_trade, "visualization": False,
+                        },
+                        "items": items,
+                    })
+
+                # Decision #3 canonical dual-branch pairs (same dataset -> keeps ATOM!)
+                if pack_name == "core_50_50" and include_dual_branch and len(fields) >= 2:
+                    pair_items = []
+                    for f1, f2 in list(itertools.combinations(fields[:8], 2))[:8]:
+                        w1 = _wrap_field(f1, ftype)
+                        w2 = _wrap_field(f2, ftype)
+                        expr_a = f"ts_decay_linear({w1}, 10)"
+                        expr_b = f"ts_decay_linear({w2}, 10)"
+                        pair_items.append({
+                            "expression": f"group_rank(min(rank({expr_a}), rank({expr_b})), subindustry)",
+                            "template_id": f"RA-DUAL-GRANK-MIN-{neut}",
+                            "source_side": "ADMIN_ORIGINAL",
+                            "author_id": "WL13229",
+                            "dataset_id": ds,
+                            "primary_field_id": f1,
                         })
+                        pair_items.append({
+                            "expression": f"reverse(group_rank(min(rank({expr_a}), rank({expr_b})), subindustry))",
+                            "template_id": f"RA-DUAL-REV-GRANK-MIN-{neut}",
+                            "source_side": "TOP100_2026Q4",
+                            "author_id": "SZ83096",
+                            "dataset_id": ds,
+                            "primary_field_id": f1,
+                        })
+                    for chunk_i in range(0, len(pair_items), 8):
+                        sub = pair_items[chunk_i : chunk_i + 8]
+                        if len(sub) >= 2:
+                            specs.append({
+                                "batch_id": f"RA-{TEMPLATE_SET_VER}-{cid}-DUAL-{neut}-{chunk_i//8:02d}",
+                                "campaign_id": cid,
+                                "hypothesis_id": f"HYP-{cid}-DUAL",
+                                "queue_type": qtype,
+                                "source_side": "MIXED_4_4",
+                                "region": reg,
+                                "universe": uni,
+                                "dataset_id": ds,
+                                "settings": {
+                                    "region": reg, "universe": uni, "delay": 1,
+                                    "neutralization": neut, "decay": 0, "truncation": 0.04,
+                                    "pasteurization": "ON", "unitHandling": "VERIFY", "nanHandling": "ON",
+                                    "maxTrade": max_trade, "visualization": False,
+                                },
+                                "items": sub,
+                            })
 
     return specs
 
@@ -1075,6 +1296,8 @@ def run_ra_production_loop(
     stage12_simulation_mode: Optional[str] = None,
     template_ratio: str = "5:5",
     daily_target: int = 4500,
+    alpha0_switch_threshold: int = 4000,
+    track_name: str = "multi_region_matrix_v2",
     max_batches: Optional[int] = None,
     sleep_between_batches_sec: float = 1.0,
     only_free_alpha0: bool = False,
@@ -1162,15 +1385,15 @@ def run_ra_production_loop(
     early_stopped_keys: set[tuple[str, str]] = set()
 
     print(
-        f"[RA-DAEMON] Started Continuous Rolling D1-Only RA runner | regions={regions or 'HIGH_BASE_ALL'} | specs={len(specs)} | "
+        f"[RA-DAEMON] [TRACK:{track_name}] Started Continuous Rolling D1-Only RA runner | regions={regions or 'HIGH_BASE_ALL'} | specs={len(specs)} | "
         f"slots={max_slots} (max_per_region={max_per_region}, region_caps={clean_region_caps or 'default'}) | "
-        f"batch={batch_size} | stagger={post_stagger_sec}s | mode={simulation_mode} | daily_target={daily_target} | early_stop_sims={early_stop_min_sims}",
+        f"batch={batch_size} | stagger={post_stagger_sec}s | mode={simulation_mode} | daily_target={daily_target} | "
+        f"alpha0_after_normal={alpha0_switch_threshold} | early_stop_sims={early_stop_min_sims}",
         flush=True,
     )
 
     try:
-        # Interleave batches proportionally to per-region caps (e.g. 1 EUR : 3 USA) so continuous pool
-        # keeps all 4 threads saturated with zero idle slots and zero EUR compute-node thrashing!
+        # Interleave batches proportionally to per-region caps (e.g. EUR:1, USA:2, GLB:1, ASI:1, KOR:1)
         by_reg_q: dict[str, deque[dict[str, Any]]] = {}
         reg_cycle: list[str] = []
         for s in specs:
@@ -1191,35 +1414,63 @@ def run_ra_production_loop(
             if by_reg_q[r]:
                 active_r.append(r)
 
-        # Process in rolling super-windows of 16 specs (up to 128 alphas) so early-stop & daily-target
-        # stay responsive while eliminating wave barriers completely!
+        # Strictly separate NORMAL vs UNUSED_ALPHA0 queues (NO concurrent mixing: finish 4,000 normal first, then Alphas=0!)
+        normal_specs = [s for s in interleaved_specs if s.get("queue_type") != "UNUSED_ALPHA0"]
+        alpha0_specs = [s for s in interleaved_specs if s.get("queue_type") == "UNUSED_ALPHA0"]
+        normal_idx = 0
+        alpha0_idx = 0
+
+        # Process in rolling super-windows of 16 specs (up to 128 alphas)
         window_size = max(8, max_slots * 4)
-        idx = 0
-        while idx < len(interleaved_specs):
+        while normal_idx < len(normal_specs) or alpha0_idx < len(alpha0_specs):
             est_day = current_est_platform_date()
             day_stats = ledger.compute_daily_summary(est_day)
             day_done = int(day_stats.get("full_valid_completed_count", 0)) + int(day_stats.get("quick_screened_count", 0))
+            normal_done = int(day_stats.get("normal_completed", 0))
             last_rem = quota.last_snapshot.remaining_val if (quota.last_snapshot and quota.last_snapshot.endpoint == "/simulations") else None
-            if day_done >= daily_target or (last_rem is not None and last_rem <= 80):
+            has_pending_normal = normal_idx < len(normal_specs)
+            has_pending_alpha0 = alpha0_idx < len(alpha0_specs)
+            q_mode, q_reason = resolve_quota_queue_policy(
+                day_done,
+                normal_done=normal_done,
+                alpha0_switch_threshold=0 if only_free_alpha0 else alpha0_switch_threshold,
+                daily_target=daily_target,
+                api_remaining=last_rem,
+                has_pending_normal=has_pending_normal and not only_free_alpha0,
+                has_pending_alpha0=has_pending_alpha0,
+            )
+            if q_mode == "SLEEP_CAP_REACHED":
                 print(
-                    f"[RA-DAEMON] Daily target/safety cap reached (day_done={day_done}/{daily_target}, "
-                    f"api_rem={last_rem}) on EST {est_day}; sleeping 300s.",
+                    f"[RA-DAEMON] [TRACK:{track_name}] Daily target/safety cap reached ({q_reason}) on EST {est_day}; sleeping 300s.",
                     flush=True,
                 )
                 if max_batches is not None:
                     break
                 time.sleep(300)
                 continue
+            if q_mode == "ALPHA0_EXEMPT_ONLY":
+                print(
+                    f"[RA-DAEMON] [TRACK:{track_name}] Phase-2 Alphas=0 exempt active ({q_reason}).",
+                    flush=True,
+                )
 
             if max_batches is not None and batches_executed >= max_batches:
                 break
 
             prepared_window: list[dict[str, Any]] = []
-            while idx < len(interleaved_specs) and len(prepared_window) < window_size:
+            while len(prepared_window) < window_size:
                 if max_batches is not None and (batches_executed + len(prepared_window)) >= max_batches:
                     break
-                spec = interleaved_specs[idx]
-                idx += 1
+                if q_mode == "NORMAL_ONLY":
+                    if normal_idx >= len(normal_specs):
+                        break
+                    spec = normal_specs[normal_idx]
+                    normal_idx += 1
+                else:
+                    if alpha0_idx >= len(alpha0_specs):
+                        break
+                    spec = alpha0_specs[alpha0_idx]
+                    alpha0_idx += 1
                 reg = str(spec["region"]).upper()
                 ds = str(spec.get("dataset_id") or "")
                 ds_key = (reg, ds)
@@ -1235,7 +1486,7 @@ def run_ra_production_loop(
                 if stop_now:
                     early_stopped_keys.add(ds_key)
                     print(
-                        f"[EARLY-STOP] Demoting weak direction {reg}/{ds}: "
+                        f"[EARLY-STOP] [TRACK:{track_name}] Demoting weak direction {reg}/{ds}: "
                         f"completed={ds_stats['completed']} pos_hits(sh>={early_stop_min_pos_sharpe})={ds_stats['hits_08']} "
                         f"max_pos_sh={ds_stats['max_pos_sh']} -> pivoting to next dataset/market!",
                         flush=True,
@@ -1263,7 +1514,9 @@ def run_ra_production_loop(
                 rem_snap = quota.last_snapshot
                 if rem_snap and rem_snap.endpoint == "/simulations" and rem_snap.remaining_val is not None and rem_snap.remaining_val <= 80:
                     return True
-                return (day_done + completed_in_win) >= daily_target
+                if q_mode == "ALPHA0_EXEMPT_ONLY":
+                    return False
+                return (normal_done + completed_in_win) >= alpha0_switch_threshold if has_pending_alpha0 else (normal_done + completed_in_win) >= daily_target
 
             def _on_done(bid: str, reg: str, n_items: int, res: dict[str, int], elapsed: float) -> None:
                 nonlocal batches_executed, total_completed, gate1_hits, gate3_hits, completed_in_win
@@ -1353,6 +1606,8 @@ def main(argv: Optional[list[str]] = None) -> int:
     p.add_argument("--template-ratio", default="5:5", choices=["5:5", "8:2"], help="Stage 1-2 Admin:Top100 template ratio (default 5:5; switch to 8:2 after validation)")
     p.add_argument("--goal-config", default="", help="Optional path to goal/run_config.json to load direction defaults")
     p.add_argument("--daily-target", type=int, default=4500)
+    p.add_argument("--alpha0-switch-threshold", type=int, default=4000, help="Finish this many NORMAL sims first, then switch to UNUSED_ALPHA0 exempt fields")
+    p.add_argument("--track-name", default="multi_region_matrix_v2", help="Formal track ID printed in logs for 1-to-1 log tracking")
     p.add_argument("--max-batches", type=int, default=None)
     p.add_argument("--only-free-alpha0", action="store_true")
     p.add_argument("--round-robin-waves", type=int, default=1, help="Waves per campaign before rotating to next market (0=sequential)")
@@ -1383,6 +1638,8 @@ def main(argv: Optional[list[str]] = None) -> int:
             stage12_simulation_mode=args.stage12_mode,
             template_ratio=args.template_ratio,
             daily_target=args.daily_target,
+            alpha0_switch_threshold=args.alpha0_switch_threshold,
+            track_name=args.track_name,
             max_batches=args.max_batches,
             only_free_alpha0=args.only_free_alpha0,
             round_robin_waves=args.round_robin_waves,

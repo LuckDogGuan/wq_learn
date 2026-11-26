@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-26T14:52:00+08:00",
+  "updated_at": "2026-11-26T16:36:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -42,6 +42,22 @@
       "verdict": "EFFECTIVE_FOR_MARGIN（对提 Margin 与 2Y 有效，但 Fitness 略降至 0.88-0.95）",
       "metric_delta": "Margin 从 7.99bp -> 8.71bp / 9.14bp / 9.56bp (pwWrLpaV)，Turnover 从 11.5% -> 8.6-9.0%，2Y Sharpe 从 2.38 -> 2.61-2.63",
       "reusable_rule": "放慢 vector_neut 的参考向量窗口（22d->66d）可稳定降换手、提 Margin 与 2Y，但会轻微稀释全期 Sharpe（1.83->1.61-1.65）。"
+    },
+    {
+      "case_id": "EFF-06",
+      "region_dataset": "USA/TOP3000/model31+model30+model28 (S3-r14 严格单轴对照)",
+      "controlled_change": "冻结 E5mWLW0J 核心，严格单改 1 轴：d22->d33/d44（blx5PQ9q / Jj3ZXp7A / A1LMaw0g）、ret22->ret33（legbzWV2 / E5mXawvm）、或外加 ts_target_tvr_decay(target_tvr=0.08)（kq82m3gL，零 hump）",
+      "verdict": "EFFECTIVE（单轴稳健有效 · 15/16 保持 0-FAIL）",
+      "metric_delta": "d33/d44/ret33 将 Sh 1.83->1.86-1.87、2Y 2.38->2.48-2.49、Fit 1.11->1.14；tvr08 将 Margin 7.99bp->10.28bp (+2.29bp)、TO 11.5%->8.30%，95-OS Local SC=0.3509（但 E5mWLW0J 簇因 PC>=0.75 且 >=7 层仍按保守规则归档 SC_PASS 休眠）",
+      "reusable_rule": "严格单变量微调（尤其 ts_target_tvr_decay(0.08) 与轻拉后置衰减 22->33/44）远优于多变量同改，且绝不触发 tail+hump 崩盘。"
+    },
+    {
+      "case_id": "EFF-07",
+      "region_dataset": "USA/TOP3000/analyst_revision_horizons (Alphas=0 FREE · ADMIN_TPL_BENCH QUICK)",
+      "controlled_change": "在免费 Alphas=0 种子上，用管理员 WL13229/KH94146 干净时序模板 ts_rank(..., 252) 与 ts_av_diff(..., 66) 替代默认 4 组模板，在 Stage 1-2 QUICK 模式下快筛",
+      "verdict": "EFFECTIVE（有效 · 验证多模板配对优质种子价值）",
+      "metric_delta": "RR5nb5oj (ts_rank 252) 打出 Sh=1.41, 2Y=2.23, Mgn=8.96bp；2rGbwx98 (ts_av_diff 66) 打出 Sh=1.36, 2Y=2.15，均超越默认模板基线 A1LMJpeg (Sh=1.28) 且免扣日额度",
+      "reusable_rule": "不同种子因子应按数据特征配对不同模板族（新增 admin_ts_regime 与 nonlinear_tail_group 模板族与 core_50_50 协同快筛）。"
     }
   ],
   "ineffective_cases": [
@@ -84,6 +100,22 @@
       "verdict": "INEFFECTIVE（单集独立初筛无效 · 及时止损换向）",
       "metric_delta": "USA/expected_move 0/64 (max=0.76); EUR/model28 0/32 (max=0.66); EUR/model27 0/24 (max=0.73); EUR/predictive_starmine 0/24 (max=0.26)；对比 USA/analyst_revision_horizons (Sh=1.28) 与 USA/model227 (22bp)/model36 (25.7bp)",
       "root_cause_and_ban": "单维信用风险（model28/27）适合作为跨集正交辅支（如 E5mWLW0J 里的 dtd），而非独立单因子主信号；期权绝对振幅无方向性。应及时止损并优先切入估值动量/会计选股/无偏分析师预期/净修正扩散度（model39/model138/biasfree_analyst/earnings6/analyst39/estimate_diffusion）。"
+    },
+    {
+      "case_id": "INEFF-06",
+      "region_dataset": "EUR/TOP2500/model110 (vRY3kp13 单字段直出 PC 分布表拥挤反例)",
+      "controlled_change": "单字段 1 算子 group_zscore(ts_backfill(mdl110_value, 21), industry)（vRY3kp13，aCnt=1478）虽首波即出 0-FAIL（Sh=1.79, Fit=1.09, Mgn=10.76bp, Local SC=0.3204），但远程 PC 分布表显示高度拥挤",
+      "verdict": "INEFFECTIVE_FOR_PC（PC_ABANDON_CROWDED_OR_FAR · 禁止继续微调单字段压 PC）",
+      "metric_delta": "pc_max=0.8664，[0.7,0.8]=9 个、[0.8,0.9]=7 个（>=0.70 共 16 个生产因子碰撞）",
+      "root_cause_and_ban": "对高 alphaCount 单字段直出因子，靠微调 decay/truncation 无法压穿 16 个碰撞体。按 PC 分布表法则立即打标 PC_STUCK_DORMANT 休眠，model110 后续优先用低 aCnt 子字段（alternative/tree）配 nonlinear_tail_group 或跨字段双支融合。"
+    },
+    {
+      "case_id": "INEFF-07",
+      "region_dataset": "S3-r15-EUR-CLEAN4L (EUR/model77 finstmtrank) & S3-r15-USA-CLEAN4L & S3-r14 ret44 & USA SLOW_AND_FAST",
+      "controlled_change": "1) 对 EUR/model77 finstmtrank 硬加 adv20>0.35/liqtilt；2) 对 USA/analyst_revision_horizons 硬拼双支+d22；3) S3-r14 单改 ret22->ret44；4) USA 跑 SLOW_AND_FAST 中性化",
+      "verdict": "INEFFECTIVE（均无效 · 及时止损/禁用）",
+      "metric_delta": "1) finstmtrank Sh 从 1.89-1.97 跌至 1.20-1.47 且 Sub-Uni 仍 0.29-0.44 全 FAIL；2) USA anlrev 双支 maxSh 仅 1.22（低于单支 ts_rank252 的 1.41）；3) ret44 使 Sh 1.83->1.68、Fit->0.98；4) USA SLOW_AND_FAST 8/8 RESULTS_UNOBSERVED（280.9s 超时）",
+      "root_cause_and_ban": "1) finstmtrank 驱动力在中小盘，硬切流动性无法修 Sub-Uni，止损休眠；2) 强单支先用 ts_rank252/avdiff66 提效再融合；3) vector_neut 收益参考窗以 22-33d 为宜，不宜拉到 44d+；4) USA 与 EUR 一律禁用 SLOW_AND_FAST。"
     }
   ]
 }

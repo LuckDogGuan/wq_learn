@@ -453,7 +453,12 @@ class LedgerStore:
             elif st == "RESULTS_UNOBSERVED":
                 unobserved += 1
             elif st == "COMPLETED_QUICK":
-                quick_keys.add(r["canonical_dedup_key"])
+                if r["canonical_dedup_key"] not in quick_keys:
+                    quick_keys.add(r["canonical_dedup_key"])
+                    if r["queue_type"] == "UNUSED_ALPHA0":
+                        alpha0_comp += 1
+                    else:
+                        normal_comp += 1
             elif st == "COMPLETED_FULL":
                 has_all_four = (
                     bool(r["alpha_id"])

@@ -43,7 +43,7 @@ def test_stage23_refiner_specs_pass_all_static_gates_and_balance() -> None:
     for spec in specs:
         assert spec["settings"]["delay"] == 1
         assert spec["settings"]["visualization"] is False
-        assert 0 <= int(spec["settings"]["decay"]) <= 6
+        assert 0 <= int(spec["settings"]["decay"]) <= 20
         assert 0.04 <= float(spec["settings"]["truncation"]) <= 0.08
         if spec["region"] == "ASI":
             assert spec["settings"]["maxTrade"] == "ON"

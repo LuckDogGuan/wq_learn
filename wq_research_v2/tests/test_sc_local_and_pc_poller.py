@@ -110,7 +110,16 @@ def test_pc_poller_handles_200_empty_body_and_rescue_band(tmp_path: Path) -> Non
     assert p3.pc_table_decision == "PC_RESCUE_NEAR_SPARSE"
     assert p3.alphas_ge_070 == 2 and p3.alphas_in_070_080 == 2 and p3.alphas_ge_080 == 0
 
-    # PC=0.73 with crowded [0.7, 0.8] bucket (25 alphas > 5) -> PC_ABANDON_CROWDED_OR_FAR
+    # PC=0.76 with moderate [0.7, 0.8] bucket (8 alphas <= 10, 1 in >=0.8 <= 2) -> PC_RESCUE_NEAR_SPARSE (relaxed!)
+    moderate_payload = {
+        "max": 0.76,
+        "min": -0.15,
+        "records": [[0.6, 0.7, 40], [0.7, 0.8, 7], [0.8, 0.9, 1]],
+    }
+    p3b = PCPoller(_PCMockClient(200, json.dumps(moderate_payload), 200, chk_ok), ledger).poll_once("AID3B", "GBR")
+    assert p3b.pc_table_decision == "PC_RESCUE_NEAR_SPARSE"
+
+    # PC=0.73 with crowded [0.7, 0.8] bucket (25 alphas > 10) -> PC_ABANDON_CROWDED_OR_FAR
     crowded_payload = {
         "max": 0.73,
         "min": -0.15,
@@ -120,7 +129,9 @@ def test_pc_poller_handles_200_empty_body_and_rescue_band(tmp_path: Path) -> Non
     assert p4.pc_table_decision == "PC_ABANDON_CROWDED_OR_FAR"
     assert p4.alphas_ge_070 == 25
 
-    # After 2 failed PC optimization rounds -> PC_ABANDON_MAX_ROUNDS_REACHED
-    h_stalled = parse_pc_histogram_records(sparse_payload, prior_pc_opt_rounds=2, max_pc_opt_rounds=2)
+    # Relaxed max rounds = 3 (allows 1 extra optimization round at prior_pc_opt_rounds=2!)
+    h_extra_round = parse_pc_histogram_records(sparse_payload, prior_pc_opt_rounds=2)
+    assert h_extra_round["decision"] == "PC_RESCUE_NEAR_SPARSE"
+    h_stalled = parse_pc_histogram_records(sparse_payload, prior_pc_opt_rounds=3)
     assert h_stalled["decision"] == "PC_ABANDON_MAX_ROUNDS_REACHED"
     ledger.close()
