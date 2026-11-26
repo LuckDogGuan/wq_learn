@@ -107,3 +107,6 @@
   - `S3-r7-EUR-M77V2` 在 `adv20 > 0.30` 下完整保住了高 Margin 与强 Sharpe：`wpNxbL9x`（`Sh=1.74, 2Y=2.03, Fit=1.25, Mgn=22.88bp`）、`58G0gkRJ`（`Sh=1.70, Mgn=26.07bp`）、`88G9P92o`（`Sh=1.74, Mgn=17.47bp`），但仍仅差 **`LOW_SUB_UNIVERSE_SHARPE(0.53–0.55)`**；
   - 上线 **`S3-r8-EUR-M77SUB-*`**（`32 FULL`）：直接对 `2.05` `dvm` / `1.95` `estrev` / `1.66` `emm(PC=0.698)` 对比测试 **`TOP2500` + `adv20 > 0.45/0.50`** 与 **原生 `TOP1200`**（缩小中小盘稀释效应），直攻 `EUR` 第二条 `20bp+` 正交 `Useful`！
   - **重要反证（`09:34` 实测）**：`S3-r8-EUR-M77SUB-u1200_crd_d4_t08`（原生 `TOP1200`）全部掉至 `Sh <= 0.76`（最高 `GrQAWPMJ Sh=0.76`），证实 `EUR / model77` 超额收益高度集中于 `TOP2500` 中小盘端、不适合直跑 `TOP1200`；后续 `EUR` 应回到 `TOP2500` 搭配更强多因子组合或低拥挤新机构大集。
+- **2026-11-26 10:55（2 小时定时审计 #6 · 修复 `S3-r10-EUR` `clamp`/`group_median` 算子报错并重发 `S3-r10b-EUR-PC-M25 / M77` 48 FULL！）**：
+  - 根因定位：`S3-r10-EUR-PC-M25-*`（24 FULL）与 `S3-r10-EUR-PC-M77-*`（24 FULL）此前因含本账号不可用的 `clamp` 与 `group_median` 全部 `RESULTS_UNOBSERVED`；
+  - 已在 `S3-r10b` 中分别替换为真实可用 Gold-81 算子 `tail(..., lower=0.2, upper=0.8, newval=0.5)` 与 `winsorize(divide(group_neutralize(...), group_std_dev(...)), std=3)`，并在广州热重启开跑，主攻 **`EUR/model25`（非 `val_mom` `OpEff × emm` 正交簇 + L6 `tail`）** 与 **`EUR/model77` 连续流动性倾斜（无硬切悬崖）**，冲刺 `EUR` 第 2 条正交高 Margin `Useful`！

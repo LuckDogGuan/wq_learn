@@ -62,6 +62,13 @@ def test_missing_gold_operators_blocked() -> None:
         "generalized_rank(x, m=1)",
         "hump_decay(x, p=0.1)",
         "ts_decay_exp_window(x, 20, factor=0.5)",
+        "clamp(rank(x), lower=0.2, upper=0.8)",
+        "tanh(zscore(x))",
+        "s_log_1p(zscore(x))",
+        "arc_tan(zscore(x))",
+        "group_median(x, subindustry)",
+        "keep(rank(x), y, period=45)",
+        "vector_proj(rank(x), rank(adv20))",
     ]:
         rep = v.validate(expr, _base_settings())
         assert not rep.valid, f"Expected Gold-level rejection for {expr}"

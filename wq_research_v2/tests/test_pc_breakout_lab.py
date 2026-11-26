@@ -42,16 +42,14 @@ def test_pc_breakout_lab_passes_all_static_gates_and_operator_diversity() -> Non
 
     assert admin_cnt == top_cnt == 80, f"50:50 imbalance: admin={admin_cnt}, top={top_cnt}"
 
-    # Verify genuinely diverse, previously under-used Gold-81 operators are exercised!
+    # Verify genuinely diverse, live-verified REGULAR Gold-81 operators are exercised!
     required_new_ops = {
         "quantile",
         "winsorize",
-        "clamp",
-        "tanh",
-        "s_log_1p",
-        "arc_tan",
+        "normalize",
+        "signed_power",
         "scale",
-        "group_median",
+        "group_neutralize",
         "group_std_dev",
         "group_scale",
         "ts_quantile",
@@ -59,11 +57,11 @@ def test_pc_breakout_lab_passes_all_static_gates_and_operator_diversity() -> Non
         "ts_av_diff",
         "ts_scale",
         "ts_ir",
-        "keep",
+        "last_diff_value",
         "ts_target_tvr_decay",
         "ts_target_tvr_hump",
         "ts_regression",
-        "vector_proj",
+        "vector_neut",
         "max",
         "divide",
         "subtract",

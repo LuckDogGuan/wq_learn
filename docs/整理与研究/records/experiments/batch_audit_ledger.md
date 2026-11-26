@@ -1,15 +1,15 @@
 # WorldQuant BRAIN D1 RA 批次复盘与阶段漏斗总账（自动生成）
 
-- **生成时间 (UTC)**：`2026-11-26T00:35:28.613998+00:00`
-- **总批次数**：`696`（等级分布：`{'BEST': 35, 'GOOD': 34, 'NORMAL': 352, 'BAD': 195, 'TIMEOUT_BUG': 80}`）
-- **全库阶段过关统计**：有效完成 `4179` · 未观测 `623` · **一阶段 (`Sh≥0.80`) 过 `606` 个** · **二阶段 (`Sh≥1.25`) 过 `270` 个** · **三阶段 (`Sh≥1.58 & Fit≥1.0`) 过 `109` 个**（已核 0-FAIL `43` 个）
+- **生成时间 (UTC)**：`2026-11-26T02:49:49.416412+00:00`
+- **总批次数**：`768`（等级分布：`{'BEST': 47, 'GOOD': 56, 'NORMAL': 384, 'BAD': 197, 'TIMEOUT_BUG': 84}`）
+- **全库阶段过关统计**：有效完成 `4657` · 未观测 `655` · **一阶段 (`Sh≥0.80`) 过 `848` 个** · **二阶段 (`Sh≥1.25`) 过 `388` 个** · **三阶段 (`Sh≥1.58 & Fit≥1.0`) 过 `144` 个**（已核 0-FAIL `75` 个）
 
 ## 1. 分地区阶段漏斗统计
 
 | 地区 | 完成数 | 未观测 | 一阶段过 (`≥0.80`) | 二阶段过 (`≥1.25`) | 三阶段过 (`≥1.58 & Fit≥1`) | 已核 0-FAIL |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
-| **USA** | 2184 | 104 | 221 | 18 | 1 | 1 |
-| **EUR** | 1004 | 432 | 367 | 252 | 108 | 42 |
+| **USA** | 2574 | 160 | 420 | 115 | 33 | 33 |
+| **EUR** | 1092 | 408 | 410 | 273 | 111 | 42 |
 | **DEU** | 430 | 8 | 2 | 0 | 0 | 0 |
 | **ASI** | 104 | 7 | 11 | 0 | 0 | 0 |
 | **KOR** | 98 | 16 | 0 | 0 | 0 | 0 |
@@ -70,12 +70,12 @@
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-07-yst_view_score_2-CROWDING` | EUR/`ai_equity_alpha` | `analyst_view_score_2` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-07-yst_view_score_2-REVERSION_AND_MOMENTUM` | EUR/`ai_equity_alpha` | `analyst_view_score_2` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.15 for 240s) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-DUAL-REVERSION_AND_MOMENTUM-00` | EUR/`ai_equity_alpha` | `analyst_opinion_metric` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll HTTP 500) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-01-lignment_rank_d1-CROWDING` | EUR/`model238` | `global_screening_factor_alignment_rank_d1` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.15 for 240s) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-01-lignment_rank_d1-STATISTICAL` | EUR/`model238` | `global_screening_factor_alignment_rank_d1` | `STATISTICAL|d=0|tr=0.04` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Unobserved after 1 reconcile: Poll timeout) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-02-eference_rank_d1-STATISTICAL` | EUR/`model238` | `regional_change_in_preference_rank_d1` | `STATISTICAL|d=0|tr=0.04` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Unobserved after 1 reconcile: Poll timeout) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-03-eference_rank_d1-REVERSION_AND_MOMENTUM` | EUR/`model238` | `regional_institutional_preference_rank_d1` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
+| **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-03-eference_rank_d1-STATISTICAL` | EUR/`model238` | `regional_institutional_preference_rank_d1` | `STATISTICAL|d=0|tr=0.04` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Unobserved after 1 reconcile: Poll timeout) |
 
-## 4. 全批次精简台账（展示前 120 / 696 批）
+## 4. 全批次精简台账（展示前 120 / 768 批）
 
 | 等级 | 地区 | 数据集 | 主字段 | 模板 | 配置 | 完成/未观测 | S1/S2/S3 | Max Sh | Avg Mgn |
 | :-: | :-: | --- | --- | --- | --- | :-: | :-: | :-: | :-: |
