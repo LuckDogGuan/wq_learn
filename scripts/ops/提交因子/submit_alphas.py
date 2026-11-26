@@ -13,7 +13,7 @@ from Core.api.submission import run_submission_group
 
 
 # 填写 ID 后手动运行即可；检查通过后会提交，也支持命令行传入 ID。
-ALPHA_IDS = ["RR5QjWYz"]
+ALPHA_IDS = ["Jj88vq2e"]
 
 
 def parse_ids(values: list[str]) -> list[str]:
