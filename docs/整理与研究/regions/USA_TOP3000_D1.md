@@ -104,3 +104,11 @@
   - **关键物理规律 + 80% 王哥 Skill 精准手术（`S3-r9-USA-M31-WG-*`, `32 FULL`）**：
     - `d=6 → d=4 → d=2` 单调降 PC（`0.7047 → 0.7031 → 0.7020`），且后置 `ts_decay_linear(22)` 全面碾压前置 `10d`；
     - 严格按 8:2 原则调用 `worldquant-brain-cyber-game-king`（王哥 Skill）核心降 PC 算子：**`d=0` 外推 + `d44` 长衰减 + L6 `tail(0.25/0.75)` & `tail(0.35/0.65)` 尾部浓缩 + 动态 `bucket(rank(cap), range="0,1,0.1")` & `sector*cap` 分组 + `industry` 分组 + `vector_neut(..., rank(ts_std_dev(returns, 66)))`**，直击 `-0.01 ~ -0.08` PC 降幅，锁定 `19–25bp` USA 首条 `Useful`！
+- **2026-11-26 09:53（🏆 历史级里程碑：**首条 `USA / TOP3000` `Useful` 冠军 `e71w5Qrl`（`Margin = 18.58bp`）正式通过官方 `/check` `0-FAIL` 全绿通关！**）**：
+  - **王哥 80% Skill `L6 tail(0.25, 0.75, 0.5)` 精准斩首成功**：`S3-r9-USA-M31-WG` 仅用 `30` 次有效回测狂出 **`18` 条 `0-FAIL POOL_S`（`60%` 命中率！）**，其中 **全部 4 条 `tail(lower=0.25, upper=0.75, newval=0.5)` 在 `decay = 0 / 2 / 4` 全扫频区间无一例外全部打穿 `PC < 0.70` 且官方 `/check` `0 FAIL`**（完美符合王哥稳定性扫频铁律！）：
+    - **🏆 美股 `Useful` 最高 Margin 冠军：`e71w5Qrl`**（`USA / TOP3000 / model31`, `model 1.3× 0 OS 空白塔`, `RAM d=4 tr=0.08`）：
+      - 表达式：`tail(group_rank(ts_decay_linear(min(rank(ts_backfill(mdl31_ab1_ass_tvr_last_qtr, 21)), rank(ts_backfill(mdl31_ab1_acc_prior_qtr, 21))), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)`
+      - 官方 `/check` 全绿指标：**`Margin = 18.58bp`**, **`Sharpe = 1.71`**, **`2Y Sharpe = 2.63`**, **`Fitness = 1.07`**, `TO = 5.2%`, `Sub-Uni = PASS (0.84/0.74)`, **`官方 SC = 0.5358 (本地 0.5350)`**, **`官方 PC = 0.6936 (< 0.70!)`**, **`fails = []`**！已打 **`Useful`** 标签 + 别名 **`SC 0.536 PC 0.694`**（严守零 `/submit`）！
+    - **3 条全绿同簇备胎（均已通过官方 `/check` `0 FAIL`，因 Margin 低于 `e71w5Qrl` 且相关 `0.999` 归入 `SC_PASS`）**：`KPVdJ7px`（`17.74bp, d=2, SC 0.534 PC 0.692`）、`xAl8rjnW`（`17.12bp, d=0 t04, SC 0.533 PC 0.692`）、`legOAj1x`（`17.12bp, d=0 t06, SC 0.533 PC 0.692`）。
+    - **另 14 条 `0-FAIL + SC < 0.65` 高 Margin 候选（最高 `omP5EWYl 21.95bp`）** 均已完成 `SC_PASS` 打标 + `SC 0.xxx PC 0.xxx` 别名落盘。
+  - **可复用核心方法论固化**：`tail(group_rank(...), lower=0.25, upper=0.75, newval=0.5)` 同步降 PC **`-0.010`** + 降 SC **`-0.005`** + 提 `2Y Sharpe (+0.08)` 与 `Fitness (+0.02)`，将在美东新一天（`13:00 CST`）直接推广至 `e71w5Qrl (d=6 冲 20bp+)`、正交 `STATISTICAL` 簇（`1YGbjW96` 冲美股第 2 条正交 `Useful`！）及 `EUR` 近门槛 `SC_PASS` 因子！

@@ -1,7 +1,29 @@
 {
-  "updated_at": "2026-11-26T09:40:00+08:00",
+  "updated_at": "2026-11-26T09:53:00+08:00",
   "policy": "All RA 0-FAIL + SC < 0.65 receive alias 'SC 0.xxx PC 0.xxx'. All-pass (PC < 0.70 + pairwise < 0.68, ranked by Margin DESC) receive Useful tag; PC >= 0.70 or correlated siblings (>=0.68 vs higher-Margin Useful) receive SC_PASS tag.",
   "useful_all_pass_tagged": [
+    {
+      "alpha_id": "e71w5Qrl",
+      "region": "USA",
+      "universe": "TOP3000",
+      "dataset_id": "model31",
+      "tag": "Useful",
+      "alias": "SC 0.536 PC 0.694",
+      "margin_bp": 18.58,
+      "sharpe": 1.71,
+      "sharpe_2y": 2.63,
+      "fitness": 1.07,
+      "turnover": 0.052,
+      "sub_universe": "PASS (0.84/0.74)",
+      "official_check": "0_FAIL_ALL_GREEN",
+      "local_sc": 0.5350,
+      "official_sc": 0.5358,
+      "remote_pc": 0.6936,
+      "neutralization": "REVERSION_AND_MOMENTUM",
+      "decay": 4,
+      "truncation": 0.08,
+      "expression": "tail(group_rank(ts_decay_linear(min(rank(ts_backfill(mdl31_ab1_ass_tvr_last_qtr, 21)), rank(ts_backfill(mdl31_ab1_acc_prior_qtr, 21))), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    },
     {
       "alpha_id": "RR5QjWYz",
       "region": "EUR",
@@ -25,6 +47,48 @@
     }
   ],
   "all_green_pc_lt_070_correlated_backups": [
+    {
+      "alpha_id": "KPVdJ7px",
+      "region": "USA",
+      "tag": "SC_PASS",
+      "alias": "SC 0.534 PC 0.692",
+      "margin_bp": 17.74,
+      "sharpe": 1.69,
+      "sharpe_2y": 2.58,
+      "fitness": 1.05,
+      "official_sc": 0.5341,
+      "remote_pc": 0.6921,
+      "pairwise_vs_e71w5Qrl": 0.9996,
+      "note": "S3-r9 d=2 tr=0.06 all-green official 0-FAIL sibling of USA Useful champion e71w5Qrl (18.58bp wins Margin-First)"
+    },
+    {
+      "alpha_id": "xAl8rjnW",
+      "region": "USA",
+      "tag": "SC_PASS",
+      "alias": "SC 0.533 PC 0.692",
+      "margin_bp": 17.12,
+      "sharpe": 1.68,
+      "sharpe_2y": 2.58,
+      "fitness": 1.04,
+      "official_sc": 0.5331,
+      "remote_pc": 0.6915,
+      "pairwise_vs_e71w5Qrl": 0.9989,
+      "note": "S3-r9 d=0 tr=0.04 all-green official 0-FAIL sibling of USA Useful champion e71w5Qrl (proves smooth decay=0->2->4 stability!)"
+    },
+    {
+      "alpha_id": "legOAj1x",
+      "region": "USA",
+      "tag": "SC_PASS",
+      "alias": "SC 0.533 PC 0.692",
+      "margin_bp": 17.12,
+      "sharpe": 1.68,
+      "sharpe_2y": 2.58,
+      "fitness": 1.04,
+      "official_sc": 0.5331,
+      "remote_pc": 0.6915,
+      "pairwise_vs_e71w5Qrl": 0.9989,
+      "note": "S3-r9 d=0 tr=0.06 all-green official 0-FAIL sibling of USA Useful champion e71w5Qrl"
+    },
     {
       "alpha_id": "1YGb19Gm",
       "tag": "SC_PASS",
