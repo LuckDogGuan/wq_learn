@@ -1,0 +1,2635 @@
+{
+  "collected_at": "2026-11-26T16:40:00+08:00",
+  "note": "Read-only research snapshot collected via cnhkmcp without modifying any running D1-Only pipeline or settings.",
+  "user_context": {
+    "user_id": "JG81923",
+    "genius_level": "GOLD",
+    "sa_unlocked": false,
+    "sa_unlock_requirement": "100 submitted Alphas (Gold level only supports own Alphas as SA components)",
+    "formulated_pyramids_ge3": 14,
+    "nonzero_pyramids_total": 20,
+    "pyramid_alpha_hits_by_region_delay": {
+      "EUR_D1": 28,
+      "GBR_D1": 35,
+      "GLB_D1": 20,
+      "USA_D1": 15
+    },
+    "top_user_pyramids": [
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "alphaCount": 23
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "alphaCount": 12
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "alphaCount": 9
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "USA",
+        "delay": 1,
+        "alphaCount": 8
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "USA",
+        "delay": 1,
+        "alphaCount": 6
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "alphaCount": 5
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "alphaCount": 5
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "alphaCount": 4
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "alphaCount": 3
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "alphaCount": 3
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "alphaCount": 3
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "alphaCount": 3
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "alphaCount": 3
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "alphaCount": 3
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "alphaCount": 2
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "alphaCount": 2
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "USA",
+        "delay": 1,
+        "alphaCount": 1
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "alphaCount": 1
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "alphaCount": 1
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "alphaCount": 1
+      }
+    ]
+  },
+  "pyramid_multipliers_analysis": {
+    "total_entries": 216,
+    "by_delay": {
+      "D0": {
+        "count": 66,
+        "avg_multiplier": 1.6333,
+        "max_multiplier": 1.9,
+        "min_multiplier": 1.0,
+        "ge_1_5_count": 50,
+        "ge_1_5_pct": 75.8,
+        "ge_1_8_count": 29,
+        "ge_1_8_pct": 43.9
+      },
+      "D1": {
+        "count": 150,
+        "avg_multiplier": 1.332,
+        "max_multiplier": 1.9,
+        "min_multiplier": 1.0,
+        "ge_1_5_count": 48,
+        "ge_1_5_pct": 32.0,
+        "ge_1_8_count": 10,
+        "ge_1_8_pct": 6.7
+      }
+    },
+    "dual_delay_regions_comparison": {
+      "AMR": {
+        "D0_avg": 1.7,
+        "D1_avg": 1.55,
+        "diff_D0_minus_D1": 0.15,
+        "D0_max": 1.9,
+        "D1_max": 1.7
+      },
+      "CHN": {
+        "D0_avg": 1.738,
+        "D1_avg": 1.608,
+        "diff_D0_minus_D1": 0.129,
+        "D0_max": 1.9,
+        "D1_max": 1.9
+      },
+      "DEU": {
+        "D0_avg": 1.85,
+        "D1_avg": 1.613,
+        "diff_D0_minus_D1": 0.237,
+        "D0_max": 1.9,
+        "D1_max": 1.8
+      },
+      "EUR": {
+        "D0_avg": 1.408,
+        "D1_avg": 1.207,
+        "diff_D0_minus_D1": 0.201,
+        "D0_max": 1.7,
+        "D1_max": 1.5
+      },
+      "GBR": {
+        "D0_avg": 1.664,
+        "D1_avg": 1.406,
+        "diff_D0_minus_D1": 0.258,
+        "D0_max": 1.9,
+        "D1_max": 1.7
+      },
+      "USA": {
+        "D0_avg": 1.533,
+        "D1_avg": 1.188,
+        "diff_D0_minus_D1": 0.346,
+        "D0_max": 1.8,
+        "D1_max": 1.5
+      }
+    },
+    "by_region_delay": {
+      "AMR_D0": {
+        "count": 2,
+        "avg_multiplier": 1.7,
+        "max_multiplier": 1.9,
+        "min_multiplier": 1.5
+      },
+      "AMR_D1": {
+        "count": 2,
+        "avg_multiplier": 1.55,
+        "max_multiplier": 1.7,
+        "min_multiplier": 1.4
+      },
+      "ASI_D1": {
+        "count": 16,
+        "avg_multiplier": 1.175,
+        "max_multiplier": 1.5,
+        "min_multiplier": 1.0
+      },
+      "CHN_D0": {
+        "count": 8,
+        "avg_multiplier": 1.7375,
+        "max_multiplier": 1.9,
+        "min_multiplier": 1.2
+      },
+      "CHN_D1": {
+        "count": 12,
+        "avg_multiplier": 1.6083,
+        "max_multiplier": 1.9,
+        "min_multiplier": 1.1
+      },
+      "DEU_D0": {
+        "count": 14,
+        "avg_multiplier": 1.85,
+        "max_multiplier": 1.9,
+        "min_multiplier": 1.7
+      },
+      "DEU_D1": {
+        "count": 16,
+        "avg_multiplier": 1.6125,
+        "max_multiplier": 1.8,
+        "min_multiplier": 1.2
+      },
+      "EUR_D0": {
+        "count": 13,
+        "avg_multiplier": 1.4077,
+        "max_multiplier": 1.7,
+        "min_multiplier": 1.0
+      },
+      "EUR_D1": {
+        "count": 14,
+        "avg_multiplier": 1.2071,
+        "max_multiplier": 1.5,
+        "min_multiplier": 1.0
+      },
+      "GBR_D0": {
+        "count": 14,
+        "avg_multiplier": 1.6643,
+        "max_multiplier": 1.9,
+        "min_multiplier": 1.1
+      },
+      "GBR_D1": {
+        "count": 16,
+        "avg_multiplier": 1.4062,
+        "max_multiplier": 1.7,
+        "min_multiplier": 1.0
+      },
+      "GLB_D1": {
+        "count": 13,
+        "avg_multiplier": 1.1692,
+        "max_multiplier": 1.4,
+        "min_multiplier": 1.0
+      },
+      "HKG_D1": {
+        "count": 15,
+        "avg_multiplier": 1.4133,
+        "max_multiplier": 1.7,
+        "min_multiplier": 1.0
+      },
+      "IND_D1": {
+        "count": 15,
+        "avg_multiplier": 1.1467,
+        "max_multiplier": 1.4,
+        "min_multiplier": 1.0
+      },
+      "KOR_D1": {
+        "count": 15,
+        "avg_multiplier": 1.3867,
+        "max_multiplier": 1.6,
+        "min_multiplier": 1.0
+      },
+      "USA_D0": {
+        "count": 15,
+        "avg_multiplier": 1.5333,
+        "max_multiplier": 1.8,
+        "min_multiplier": 1.1
+      },
+      "USA_D1": {
+        "count": 16,
+        "avg_multiplier": 1.1875,
+        "max_multiplier": 1.5,
+        "min_multiplier": 1.0
+      }
+    },
+    "top_25_multipliers": [
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "CHN",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "CHN",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "CHN",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "AMR",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "earnings",
+          "name": "Earnings"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "insiders",
+          "name": "Insiders"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "CHN",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "CHN",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "CHN",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "macro",
+          "name": "Macro"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.8
+      }
+    ],
+    "raw_pyramids": [
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "socialmedia",
+          "name": "Social Media"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.7
+      },
+      {
+        "category": {
+          "id": "option",
+          "name": "Option"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.7
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.7
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "macro",
+          "name": "Macro"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "insiders",
+          "name": "Insiders"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "shortinterest",
+          "name": "Short Interest"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.7
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "earnings",
+          "name": "Earnings"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "institutions",
+          "name": "Institutions"
+        },
+        "region": "USA",
+        "delay": 0,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "socialmedia",
+          "name": "Social Media"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "option",
+          "name": "Option"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "macro",
+          "name": "Macro"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "insiders",
+          "name": "Insiders"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "shortinterest",
+          "name": "Short Interest"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "institutions",
+          "name": "Institutions"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "imbalance",
+          "name": "Imbalance"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "earnings",
+          "name": "Earnings"
+        },
+        "region": "USA",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "macro",
+          "name": "Macro"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "earnings",
+          "name": "Earnings"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "institutions",
+          "name": "Institutions"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "socialmedia",
+          "name": "Social Media"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "insiders",
+          "name": "Insiders"
+        },
+        "region": "GLB",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "socialmedia",
+          "name": "Social Media"
+        },
+        "region": "EUR",
+        "delay": 0,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "EUR",
+        "delay": 0,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "EUR",
+        "delay": 0,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "EUR",
+        "delay": 0,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "insiders",
+          "name": "Insiders"
+        },
+        "region": "EUR",
+        "delay": 0,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "EUR",
+        "delay": 0,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "EUR",
+        "delay": 0,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "EUR",
+        "delay": 0,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "EUR",
+        "delay": 0,
+        "multiplier": 1.7
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "EUR",
+        "delay": 0,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "imbalance",
+          "name": "Imbalance"
+        },
+        "region": "EUR",
+        "delay": 0,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "earnings",
+          "name": "Earnings"
+        },
+        "region": "EUR",
+        "delay": 0,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "institutions",
+          "name": "Institutions"
+        },
+        "region": "EUR",
+        "delay": 0,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "socialmedia",
+          "name": "Social Media"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "macro",
+          "name": "Macro"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "insiders",
+          "name": "Insiders"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "imbalance",
+          "name": "Imbalance"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "earnings",
+          "name": "Earnings"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "institutions",
+          "name": "Institutions"
+        },
+        "region": "EUR",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "socialmedia",
+          "name": "Social Media"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "insiders",
+          "name": "Insiders"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "broker",
+          "name": "Broker"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "imbalance",
+          "name": "Imbalance"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "earnings",
+          "name": "Earnings"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "macro",
+          "name": "Macro"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "institutions",
+          "name": "Institutions"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "shortinterest",
+          "name": "Short Interest"
+        },
+        "region": "ASI",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "CHN",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "CHN",
+        "delay": 0,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "CHN",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "CHN",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "CHN",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "CHN",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "CHN",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "shortinterest",
+          "name": "Short Interest"
+        },
+        "region": "CHN",
+        "delay": 0,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.7
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.7
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "macro",
+          "name": "Macro"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "shortinterest",
+          "name": "Short Interest"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "socialmedia",
+          "name": "Social Media"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "institutions",
+          "name": "Institutions"
+        },
+        "region": "CHN",
+        "delay": 1,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "KOR",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "earnings",
+          "name": "Earnings"
+        },
+        "region": "KOR",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "KOR",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "KOR",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "imbalance",
+          "name": "Imbalance"
+        },
+        "region": "KOR",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "insiders",
+          "name": "Insiders"
+        },
+        "region": "KOR",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "institutions",
+          "name": "Institutions"
+        },
+        "region": "KOR",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "macro",
+          "name": "Macro"
+        },
+        "region": "KOR",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "KOR",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "socialmedia",
+          "name": "Social Media"
+        },
+        "region": "KOR",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "KOR",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "KOR",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "KOR",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "KOR",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "shortinterest",
+          "name": "Short Interest"
+        },
+        "region": "KOR",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "HKG",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "HKG",
+        "delay": 1,
+        "multiplier": 1.7
+      },
+      {
+        "category": {
+          "id": "earnings",
+          "name": "Earnings"
+        },
+        "region": "HKG",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "HKG",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "HKG",
+        "delay": 1,
+        "multiplier": 1.7
+      },
+      {
+        "category": {
+          "id": "imbalance",
+          "name": "Imbalance"
+        },
+        "region": "HKG",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "insiders",
+          "name": "Insiders"
+        },
+        "region": "HKG",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "institutions",
+          "name": "Institutions"
+        },
+        "region": "HKG",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "macro",
+          "name": "Macro"
+        },
+        "region": "HKG",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "HKG",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "socialmedia",
+          "name": "Social Media"
+        },
+        "region": "HKG",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "HKG",
+        "delay": 1,
+        "multiplier": 1.7
+      },
+      {
+        "category": {
+          "id": "shortinterest",
+          "name": "Short Interest"
+        },
+        "region": "HKG",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "HKG",
+        "delay": 1,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "HKG",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "AMR",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "AMR",
+        "delay": 0,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "AMR",
+        "delay": 1,
+        "multiplier": 1.7
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "AMR",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "insiders",
+          "name": "Insiders"
+        },
+        "region": "IND",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "IND",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "IND",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "IND",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "IND",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "IND",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "macro",
+          "name": "Macro"
+        },
+        "region": "IND",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "imbalance",
+          "name": "Imbalance"
+        },
+        "region": "IND",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "IND",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "option",
+          "name": "Option"
+        },
+        "region": "IND",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "IND",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "shortinterest",
+          "name": "Short Interest"
+        },
+        "region": "IND",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "earnings",
+          "name": "Earnings"
+        },
+        "region": "IND",
+        "delay": 1,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "IND",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "institutions",
+          "name": "Institutions"
+        },
+        "region": "IND",
+        "delay": 1,
+        "multiplier": 1.0
+      },
+      {
+        "category": {
+          "id": "institutions",
+          "name": "Institutions"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "earnings",
+          "name": "Earnings"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "insiders",
+          "name": "Insiders"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "socialmedia",
+          "name": "Social Media"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "shortinterest",
+          "name": "Short Interest"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "imbalance",
+          "name": "Imbalance"
+        },
+        "region": "DEU",
+        "delay": 0,
+        "multiplier": 1.7
+      },
+      {
+        "category": {
+          "id": "institutions",
+          "name": "Institutions"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "insiders",
+          "name": "Insiders"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "earnings",
+          "name": "Earnings"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "option",
+          "name": "Option"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.7
+      },
+      {
+        "category": {
+          "id": "macro",
+          "name": "Macro"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "socialmedia",
+          "name": "Social Media"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "shortinterest",
+          "name": "Short Interest"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "imbalance",
+          "name": "Imbalance"
+        },
+        "region": "DEU",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "institutions",
+          "name": "Institutions"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.7
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "earnings",
+          "name": "Earnings"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "insiders",
+          "name": "Insiders"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "socialmedia",
+          "name": "Social Media"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.8
+      },
+      {
+        "category": {
+          "id": "shortinterest",
+          "name": "Short Interest"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.1
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.9
+      },
+      {
+        "category": {
+          "id": "imbalance",
+          "name": "Imbalance"
+        },
+        "region": "GBR",
+        "delay": 0,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "institutions",
+          "name": "Institutions"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "insiders",
+          "name": "Insiders"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "model",
+          "name": "Model"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "news",
+          "name": "News"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "other",
+          "name": "Other"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "analyst",
+          "name": "Analyst"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.6
+      },
+      {
+        "category": {
+          "id": "pv",
+          "name": "Price Volume"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.4
+      },
+      {
+        "category": {
+          "id": "earnings",
+          "name": "Earnings"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "fundamental",
+          "name": "Fundamental"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "sentiment",
+          "name": "Sentiment"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.7
+      },
+      {
+        "category": {
+          "id": "risk",
+          "name": "Risk"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "option",
+          "name": "Option"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.5
+      },
+      {
+        "category": {
+          "id": "socialmedia",
+          "name": "Social Media"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "macro",
+          "name": "Macro"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.3
+      },
+      {
+        "category": {
+          "id": "shortinterest",
+          "name": "Short Interest"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.2
+      },
+      {
+        "category": {
+          "id": "imbalance",
+          "name": "Imbalance"
+        },
+        "region": "GBR",
+        "delay": 1,
+        "multiplier": 1.0
+      }
+    ]
+  },
+  "key_platform_announcements": [
+    {
+      "id": "7l6ZzrR",
+      "date": "2026-11-25",
+      "title": "💡 Learn – A new forum post – PowerPool Alpha-ASI Theme Handbook for consultants",
+      "summary": "🚪 Opportunity to learn! Here comes a new forum post - Power Pool Alphas ASI Handbook. You can view this on the Global Consultant Community at https://support.worldquantbrain.com/hc/en-us/community/posts/45233242695703 . Please read it to aid your working on PPA ASI alphas. Happy learning!"
+    },
+    {
+      "id": "7MZJV8A",
+      "date": "2026-11-22",
+      "title": "📢 Launching a new ASI/D1 Power Pool Dec'26 theme for Consultants",
+      "summary": "🎉 Exciting news! We have launched a new ASI/D1 Power Pool Dec'26 theme.\nDuration: 23rd November'26 - 20th December'26 (4 weeks)\nMultiplier: 1X for regular Power Pool Alphas\nRequirements: a Power Pool Alpha must meet all of the following:\n                \n                    ASI region, Delay 1\n                \n        Recommended datasets for this theme: ai_news_scores, mmp_nlp_sentiment, model207, sentiment7, behavioral_signals, fundamental4, model307, news85, price_signal_dl, corporate_news_index\nAlphas that match the theme are eligible for the Power Pool Thematic Competition. Total stipend pool of up to USD 15,000:\n                \n                Rank 1: USD 600\n                Rank 2: USD 500\n                Rank 3: USD 400\n                Rank 4–8: USD 300 each\n                Rank 9–15: USD 250 each\n                Rank 16–20: USD 220 each\n                Rank 21–30: USD 190 each\n                Rank 31–40: USD 175 each\n                Rank 41–50: USD 160 each\n                Rank 51–60: USD 145 each\n                Rank 61–70: USD 130 each\n                Rank 71–80: USD 115 each\n              \n        Learn more about Power Pool Alphas Thematic Competition:\nFAQ"
+    },
+    {
+      "id": "Rb2e5LR",
+      "date": "2026-11-19",
+      "title": "BRAIN Tips 004｜你过去30天日均回测仅约 100 次，限时日均回测挑战赢取100积分",
+      "summary": "BRAIN TIPS 004 · SIMULATION\n每日回测资源 5,000 次，不用就是浪费\n用批量回测 + Quick Mode 提升产出\nHi，\n我们注意到，最近很多顾问每天的回测数量偏少。先看一组数字：\n你 · 过去 30 天\n日均回测\n约 100 次/天\nGrand Master · 过去 30 天\n日均回测\n4,300 次/天\n你的数字为约数（按百位取整）；Grand Master 为前 25% 的水平。\n01\n为什么回测量很重要？\nAlpha 的产出数量和质量，都建立在足够多的回测上：回测越多，能验证的研究想法、数据集和区域就越多，越有机会找到逻辑清晰、表现稳健的 Alpha。\n如果完全依赖串行的工作流——想一个、跑一个、看一个——每天能完成的回测非常有限，产出自然也受限。\n注意：多回测是为了覆盖更多不同的想法，不是对同一个表达式反复调参数。过度调参得到的 Alpha 往往在样本外失效。\n02\n在现有工作流上，加一个批量回测器\n建议在你现有工作流的基础上，增加一条并行的流水线：\n① 由 AI 或 Agent 批量生成表达式\n根据你的研究思路、模板和字段列表，一次生成成百上千条候选表达式\n② 用一个专门的回测器批量跑\n通过 API 自动提交回测、收集结果，不需要手动一条条点\n③ 只把表现好的候选拿出来细看\n人的精力放在筛选和改进上，而不是重复操作\n可以用的工具：\nACE API 库（官方）\nLearn 文档中的 Alpha Creation Engine - API library，包含登录、回测、取结果等示例代码\nwqb Python 包（社区）\npip install wqb 一键安装，基于异步实现，自动认证、日志完善，覆盖 Datasets / Fields / Simulate / Check / Submit 等方法。详见 社区帖子\n用 AI 搭一个回测器，只需要 5 步：\n① 准备环境\n安装 Python 3.9 以上版本，运行 pip install wqb；账号密码设为环境变量，不要写进代码，也不要发给 AI\n② 准备表达式清单\n用 AI 或 Agent 按你的研究思路和字段列表批量生成表达式，存成 expressions.txt，一行一条；先去重，并确认用到的字段在对应数据集中存在\n③ 让 AI 写回测脚本\n把下面的 prompt 发给你常用的 AI 助手，它会生成一个可以直接运行的批量回测脚本\n④ 小批量试跑\n先用 20 条表达式试跑，确认能正常返回结果，再放大批量；并发数按你账号允许的上限设置\n⑤ 筛选复核\n按 Sharpe、Fitness、Turnover 等指标排序 results.csv，把表现好的挑出来，用 Full Mode 回测并检查 Theme 和提交条件\n可以直接复制的 prompt：\n你是一名熟悉 Wo"
+    },
+    {
+      "id": "R9E6wkR",
+      "date": "2026-11-17",
+      "title": "BRAIN Tips 003｜什么是Theme？每种theme有什么用？如何找到theme？",
+      "summary": "BRAIN TIPS 003 · THEME\n什么是 Theme？每种 Theme 有什么用？如何找到 Theme？\n是什么 · 有几种 · 怎么查看 · 怎么计算\nHi，\n前两期我们分享了 ATOM 模板和数据选择。这一期来讲一个直接影响每日收入的机制：Theme。\n01\n什么是 Theme？它怎么影响每日收入？\nTheme（主题）是平台在一段时间内鼓励大家研究的方向，例如某个区域、某类数据集。提交命中 Theme 的 Alpha，可以获得 Theme Multiplier（倍数加成）。\n每日基础报酬（Base Payment）由 4 个因子组成：\nQuality Factor（质量因子）\nTheme 作用在这里：命中 Theme 的 Alpha 会放大质量因子\nQuantity Factor（数量因子）\n提交数量相关\nSelf Growth Factor（自我成长因子）\n和自己过去的表现比较\nValue Factor（价值因子）\nAlpha 的价值贡献\n所以链条是：命中 Theme → Multiplier 提高 Quality Factor → 影响每日 Base Payment。\n注意：质量因子和数量因子都是相对其他顾问缩放的，Multiplier 不等于收入直接翻倍——3 倍加成不代表 10 美元变 30 美元。另外，Theme 只影响 Base Payment 的质量因子，不影响季度奖金。\n02\n有几种 Theme？\n类型是什么对你的影响\n日常 Alpha Theme分两种：\n· 全平台 Theme：所有人适用的主题活动\n· 个人 Theme：分配给你个人的主题，别人的不一定适用于你命中后获得 Theme Multiplier，放大质量因子\nPower Pool Theme每期规定 Power Pool Alpha 的区域、Delay、数据类别等条件（例如当前的 GLB · Delay 1 · AMER Sharpe > 1）决定纯 Power Pool Alpha 能否提交（必须匹配当前 theme），并参与 Power Pool 主题竞赛排名；Multiplier 为 1X\nPyramid Theme按「区域 × Delay × 数据集类别」划分，使用率越低的组合倍数越高，可能每天变化、不另行通知命中后获得 Pyramid Multiplier，放大质量因子\n03\n怎么查看 Theme？\n方法 1：看 Announcement\n每次 Theme 更新，平台都会发公告通知\n方法 2：看 Alpha 回测结果里的 IS Testing Status\n任意一个已经完整回测（full simulation）的 Alpha，打开 IS Testing Status，会写明它命中了哪些 Theme、没有命中哪些。没有命中的会显示在 WARNING 下面，"
+    },
+    {
+      "id": "yjwedz7",
+      "date": "2026-11-17",
+      "title": "🆕 Introducing unlimited simulations for unused data fields!",
+      "summary": "Starting today, a simulation does NOT count toward your daily 5,000 limit if its Alpha uses ONLY data fields with Alphas = 0.\n\r\nFind eligible data fields on Data Page by applying the Alphas = 0 filter.\n\r\n\r\nImportant:\n\r\n\r\n\r\n\tIf your Alpha uses even 1 data field with Alphas > 0, the simulation counts toward your daily 5,000 limit.\n\r\n\tYou may use PV1 support fields (currency, country, exchange, sector, industry, subindustry, market, split, adjfactor) together with an Alphas = 0 data field without using your daily simulation limit.\n\r\n\tThe Alphas = 0 list is locked as of today through 6 Dec. If a data field is on this list today, it will continue to show Alphas = 0 on the Data page through 6 Dec, even if it receives Alpha submissions.\n\r\n\tThe list may change with the next Theme.\n\r\n\tLimits on concurrent simulations remain as-is: up to 8 concurrent simulations, with GLB Alphas taking 2 slots.\n\r\n\r\n\r\n\r\n\r\nExplore unused data fields without worrying about simulation limits.\n\r\nLearn more:\n\r\n\r\n\r\n\tUnderstanding simulation limits\n\r\n\tHow to avoid duplicate simulations\n\r\n\tTroubleshooting common error messages"
+    },
+    {
+      "id": "7GNvo8y",
+      "date": "2026-11-09",
+      "title": "BRAIN Tips｜Power Pool + ATOM Alpha 不受提交配额限制",
+      "summary": "Hi，\n你好！分享一个关于 Power Pool 提交配额的小贴士，希望对你有帮助。\n01｜哪些 Power Pool Alpha 受配额限制？\n目前的 Power Pool 提交配额是：每天最多 1 个，以及每个自然月在同一个范围内最多 10 个（范围指 USA D0/D1、EUR D0/D1、ASI D1、GLB D1、OTHER D0/D1 等）。\n这两项配额只针对「纯」Power Pool Alpha。如果一个 Power Pool Alpha 同时满足 ATOM 或 Regular Alpha 的提交标准，就不受这两项配额限制：\n• 纯 Power Pool Alpha：受每日、每月配额限制\n• Power Pool + ATOM：不受限\n• Power Pool + Regular：不受限\nATOM Alpha 即单一数据集 Alpha：整个表达式只使用同一个数据集中的字段（country、exchange、market、sector、industry、subindustry 等分组字段除外）。详见 Theme #2: ATOM；配额规则详见 官方 FAQ。\n02｜当前 Power Pool Theme\n• 名称：GLB/D1 Power Pool Nov'26\n• 时间：2026 年 10 月 26 日 – 11 月 22 日\n• 要求：GLB 区域 · Delay 1 · AMER Sharpe > 1\n• 推荐数据集：pv1、model77、model110、model26、analyst15、fundamental23、model38 等 33 个\n纯 Power Pool Alpha 必须匹配当前 theme 才能提交。所以最划算的方向是：在 GLB D1 上做单一数据集（ATOM）的 Power Pool Alpha——既能匹配当前 theme，又不占用纯 Power Pool 配额。\n03｜模板详解：短期 vs 长期中位数正交\n经济直觉：分析师预期、估值模型这类指标变化很慢，市场看的是「最近相对它自己的常态，发生了什么变化」。比如一家公司的分析师评分长期稳定在某个水平，最近一个月明显上调——这个变化就是新信息，而市场对这类缓慢更新的信息往往反应不足。\ngroup_neutralize(vector_neut(ts_median(ts_backfill(FIELD, 60), 20), ts_median(ts_backfill(FIELD, 60), 250)), country)\n• ts_backfill(FIELD, 60)：补齐缺失值。分析师、模型类数据常常不是每天更新，用最近一次的有效值填补空档（在 Power Pool 的「算子 ≤ 8」限制中，ts_backfill 不计入）\n• ts_median(…, 20)：近一"
+    },
+    {
+      "id": "R9EQM1R",
+      "date": "2026-11-06",
+      "title": "📢 Launching a new \"D0 Theme\"",
+      "summary": "🎉 Exciting news! We have launched a new \"D0 Theme\".\n\r\nDuration: November 9`th - December 6`th (4 weeks)\n\r\nMultiplier:\n\r\n- 2X for Alphas that meet the theme requirements\n\r\n- 3X for Single Dataset Alphas that meet the theme requirements and use at least one datafield not yet used in Alphas (browse unused datafields: USA, EUR, CHN, JPN, AMR, DEU, GBR)\n\r\nRequirements: Delay-0 Alphas in any region (USA, EUR, CHN, JPN, AMR, DEU, GBR).\n\r\nRecommended datasets for this theme (DEU): ai_news_scores, analyst47, analyst83, model252, model257\n\r\nRecommended datasets for this theme (USA): insider_trx_matrix, news_sentiment_nlp, event_sentiment_signals, insider_agg_matrix, quant_factor_lib\n\r\nRecommended datasets for this theme (GBR): analyst8, analyst83, analyst9, london_sentiment, model239\n\r\nRecommended datasets for this theme (EUR): pv13, pv29, quant_factor_lib, equity_forum_data, acquisition_model\n\r\nPlease note that the monthly quota of 30 Delay 0 Alphas is lifted for the duration of the theme - the D0 quota test will still be shown, but after 30 submissions it only turns into a warning and will not block submission. The daily quota of 4 Alphas remains in place.\n\r\nLearn more:\n\r\n- Getting Started"
+    },
+    {
+      "id": "A19OvZA",
+      "date": "2026-10-09",
+      "title": "📢 Launching a new \"USA/D1 TOP1000 Theme\"",
+      "summary": "🎉 Exciting news! We have launched a new \"USA/D1 TOP1000 Theme\".\nDuration: October 12`th - November 8`th (4 weeks)\nMultiplier: 2X for regular alphas that meet the theme requirements and 3X for Python alphas.\nRequirements: Delay-1 alphas in the USA region on the TOP1000 universe.\nRecommended datasets for this theme: other696, fundamental91, other416, analyst69, model267, other510, model53, model250, other176, model237, risk82, model262, other432, analyst82, model211, earnings4, institutions7, analyst44, model33, model31, analyst83, news87, model15, news3, pv87, model36, model38, other143, macro38, analyst11, option9, model10\nLearn more:\n- Getting Started with BRAIN Python Alphas\n- How to Translate a Fast Expression Alpha to a Python Alpha"
+    },
+    {
+      "id": "RowJnqR",
+      "date": "2026-09-28",
+      "title": "📢 Temporary Region Access for Consultants",
+      "summary": "🎉 Exciting news! If you have an active theme, check your simulation settings - you may have been granted temporary Genius-level dataset access for additional regions. This access is valid for the duration of the theme and will be automatically removed once it ends. You can explore the available datasets on the Data page. For research tips visit Forum."
+    },
+    {
+      "id": "AvB9j3A",
+      "date": "2026-09-21",
+      "title": "🆕 Introducing Brain Quick Mode and Full Mode for Consultants!",
+      "summary": "We are happy to announce the launch of Brain Quick Mode and Full Mode for our consultants.\n\r\n\r\nQuick Mode is designed for fast feedback and rapid iteration. It provides the essential simulation results such as PnL, Sub-universe PnL, Weight Concentration, Fitness, IS Ladder, Sharpe, Returns, and Turnover, while skipping visualizations. Please note that Quick Mode has no visualizations, no checks for Theme, Competition or correlation, and is not submittable directly.\n\r\n\r\nFull Mode is similar to current simulations and includes everything in Quick Mode. It includes the checks for Theme, Competition, Cluster Alpha, etc. It is best suited for near validated ideas, deep-dive analysis, and near-submission-ready alphas.\n\r\n\r\nIn Brain API, the new modes are also supported through the /simulations endpoint. Set simulationMode to 'QUICK' or 'FULL' in the simulation settings. For Quick Mode, use simulationMode: 'QUICK' and visualization: false. Please refer to the updated Brain API documentation for more details: BRAIN API\n\r\n\r\nWe have also introduced it in our sample BRAIN ACE Notebooks on the Learn page too."
+    },
+    {
+      "id": "ygwKrOy",
+      "date": "2026-09-11",
+      "title": "📢 Launching a new \"DEU/D1 GBR/D1 Theme\"",
+      "summary": "🎉 Exciting news! We have launched a new \"DEU/D1 GBR/D1 Theme\" theme.\nDuration: 14th Sep’26 - 11th Oct’26 (4 weeks)\nMultiplier: 2X for regular alphas and 3X for Python alphas.\nDetails: The Alpha must be simulated in the DEU,GBR Region(s) using Delay 1.\nLearn more here"
+    },
+    {
+      "id": "RowMWmR",
+      "date": "2026-09-02",
+      "title": "Great news for new consultants!",
+      "summary": "Effective immediately, consultants within their first 3 months from the date of their first Power Pool Alpha submission are eligible to submit Power Pool Alphas across all Region × Delay combinations.\n\r\nDuring this initial 3-month period, new consultants will not be restricted by the ongoing Pure Power Pool theme and will also have no monthly submission limit for Power Pool Alphas.\n\r\n\r\nPlease note that these benefits apply only during the first 3 months. Consultants who have crossed 3 months since their first Power Pool submission will continue to follow the standard Power Pool guidelines, including applicable theme and monthly submission limits.\n\r\n\r\nHow to submit Power Pool alphas? Read more: Power Pool Alphas\n\r\n\r\nHappy Alpha Research!"
+    }
+  ],
+  "multiplier_formula": {
+    "combined_multiplier": "sum(applicable_multipliers) - count(applicable_multipliers) + 1",
+    "final_quality_factor_multiplier": "combined_multiplier * osmosis_multiplier (1.0 to 2.0)",
+    "scope": "Affects Base Payment Quality Factor only (relative scaling across consultants); does NOT directly multiply Quarterly Payment.",
+    "example": "Pyramid 2x + Theme 2x = 2 + 2 - 2 + 1 = 3x (NOT 2*2=4x); then * Osmosis."
+  },
+  "simulation_quota_rules": {
+    "daily_limit": 5000,
+    "reset_time_utc_minus_5": "00:00 EST (Beijing 13:00 in winter / 12:00 in summer)",
+    "concurrency_limit": "8 concurrent simulations (GLB takes 2 slots); SA typically run at 3 workers in advisor scripts",
+    "super_alpha_counts_toward_5000": true,
+    "super_alpha_quota_evidence": "Official doc understanding-simulation-limits states ALL successful simulations are counted via /simulations; Rank 6 advisor JR23144 confirms daily 5000 cap applies to SA brute-force backtesting too.",
+    "unused_field_exemption": "Alphas=0 fields (plus 9 PV1 support fields only) do NOT count toward the daily 5,000 limit; list locked through 2026-12-06.",
+    "sa_daily_submission_limit": "1 SuperAlpha per day (separate from 4 Regular Alphas/day); Expert/Master/GM expanded pool uses 1:1 own-SA earned quota."
+  }
+}
