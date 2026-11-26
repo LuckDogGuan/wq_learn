@@ -42,6 +42,11 @@ python -u -m wq_research_v2.daemon_ra_runner --region EUR,USA,GLB,ASI,DEU,HKG,KO
 
 # 9. 只读审计广州服务器实时进展（30 分钟巡检脚本）
 Get-Content -Raw scripts/ops/check_guangzhou_v2.py | ssh guangzhou "/root/miniconda3/bin/python -"
+
+# 10. 只读流式合并 legacy_core/Core/runtime_data 历史库至 wq_v2_ledger.db 并分层筛选 D1 候选
+python -m wq_research_v2 legacy merge
+python -m wq_research_v2 legacy stats
+python -m wq_research_v2 legacy screen --region USA,EUR,GLB --tier TIER_S_READY_CHECK,TIER_A_PARAM_TUNE --top 25
 ```
 
 ## 模块清单

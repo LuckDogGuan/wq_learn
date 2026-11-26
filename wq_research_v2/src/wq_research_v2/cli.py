@@ -13,6 +13,11 @@ from wq_research_v2.blacklist_registry import BlacklistRegistry
 from wq_research_v2.expr_validator import ExprValidator
 from wq_research_v2.field_screener import FieldScreener
 from wq_research_v2.ledger_store import LedgerStore
+from wq_research_v2.legacy_merger import (
+    merge_all_legacy_to_v2,
+    query_legacy_candidates,
+    summarize_legacy_pool,
+)
 from wq_research_v2.pc_poller import PCPoller
 from wq_research_v2.pyramid_planner import build_stage0_probe_spec
 from wq_research_v2.quota_tracker import QuotaTracker, current_est_platform_date
@@ -112,6 +117,16 @@ def build_parser() -> argparse.ArgumentParser:
     p_sim.add_argument("--slots", type=int, default=2)
     p_sim.add_argument("--batch-size", type=int, default=8)
 
+    # legacy (read-only merge from legacy_core/Core/runtime_data into wq_v2_ledger.db + D1 screening)
+    p_leg = sub.add_parser("legacy", help="Read-only merge and D1 screening of legacy_core historical data")
+    p_leg.add_argument("action", choices=["merge", "screen", "stats"])
+    p_leg.add_argument("--region", default="", help="Comma-separated regions (e.g. USA,EUR,GBR,GLB)")
+    p_leg.add_argument("--tier", default="", help="Comma-separated opt_tiers")
+    p_leg.add_argument("--min-sharpe", type=float, default=1.40)
+    p_leg.add_argument("--max-sc", type=float, default=0.68)
+    p_leg.add_argument("--only-compliant", action="store_true")
+    p_leg.add_argument("--top", type=int, default=25)
+
     return p
 
 
@@ -204,6 +219,26 @@ def main(argv: Optional[list[str]] = None) -> int:
             return 0
         finally:
             ledger.close()
+
+    if args.cmd == "legacy":
+        if args.action == "merge":
+            res = merge_all_legacy_to_v2()
+            print(json.dumps(res, indent=2, ensure_ascii=False))
+            return 0
+        if args.action == "stats":
+            print(json.dumps(summarize_legacy_pool(), indent=2, ensure_ascii=False))
+            return 0
+        if args.action == "screen":
+            rows = query_legacy_candidates(
+                regions=_parse_csv(args.region) if args.region else None,
+                tiers=_parse_csv(args.tier) if args.tier else None,
+                min_sharpe=args.min_sharpe,
+                max_sc=args.max_sc,
+                only_compliant=bool(args.only_compliant),
+                limit=args.top,
+            )
+            print(json.dumps(rows, indent=2, ensure_ascii=False))
+            return 0
 
     # Live read-only / authenticated commands
     ledger = LedgerStore()
