@@ -6,7 +6,7 @@
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >4000切Alphas=0)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)"
   },
-  "updated_at": "2026-11-26T19:03:00+08:00",
+  "updated_at": "2026-11-26T21:10:00+08:00",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "context_compaction_rule": "任何 AI 工具（Antigravity / Claude Code / Codex / Cursor）启动或上下文超长重置（/compact）后，只读本文件 + docs/agents/OPTIMIZATION_LEDGER.json + AGENTS.md（总计 < 8KB），绝不重读数万行历史聊天记录！",
   "immutable_red_lines": {
@@ -80,7 +80,7 @@
     {
       "region": "EUR",
       "universe": "TOP2500",
-      "slots": 1,
+      "slots": 2,
       "active_useful_champions": [
         {
           "alpha_id": "RR5QjWYz",
@@ -98,25 +98,27 @@
         }
       ],
       "current_seed_campaigns": [
-        "EUR/model110 (vRY3kp13 首波 0-FAIL Sh=1.79/SC=0.320 但 PC=0.8664 拥挤归档 -> 切 nonlinear_tail_group 与低 aCnt 子字段)",
-        "EUR/analyst_revision_horizons (Alphas=0 FREE 纯MATRIX) × [core_50_50, admin_ts_regime]",
-        "EUR/model39 & EUR/shortinterest6 & EUR/model238"
+        "S3-r17-EUR-M238-ORTHO (24 FULL · 78GbxbA1 Sh=1.73/2Y=2.21/Fit=0.99, corr=0.205 vs RR5QjWYz, PC=0.608! 配 EFF-03 adv20门控+country*industry+d10/15/22 冲第 2 条 EUR 正交 Useful!)",
+        "S3-r17-EUR-SI6-PROMO (16 FULL · shortinterest6 1YGQzpGR Sh=1.47/2Y=1.91 + P0PdGrlJ 1.37/1.84 配 adv20+country*industry+model238 跨集冲 S3)",
+        "EUR/model110 (S3-r16 value x tree 仅 Sh=1.47/2Y=1.05，降级观察；已防 PPA-First 假 0-FAIL 误判)",
+        "EUR/analyst_revision_horizons (Alphas=0 FREE · 4,000 常规额度后自动切换跑免额)"
       ]
     },
     {
-      "region": "GLB+ASI+KOR (Multi-Region Seed x Diverse-Template Rotation)",
-      "universe": "GLB:TOP3000 / ASI:MINVOL1M / KOR:TOP600",
+      "region": "ASI+KOR (ASI:1 单槽控停滞 · COUNTRY+JPN 定向诊断)",
+      "universe": "ASI:MINVOL1M / KOR:TOP600",
       "slots": 1,
       "active_useful_champions": [],
       "current_seed_campaigns": [
-        "GLB/model39 (cov=0.925-0.955, aCnt=1..7) & GLB/model110 × [core_50_50, nonlinear_tail_group]",
-        "ASI/model39 (D1 RA, maxTrade=ON) & ASI/analyst_revision_horizons (Alphas=0 FREE) × [core_50_50, admin_ts_regime/nonlinear_tail_group]",
-        "KOR/fundamental93 (6/6 Alphas=0 FREE 纯MATRIX, pyr=1.6x, 0 OS) × [core_50_50, admin_ts_regime]"
+        "S3-r17-ASI-M39-JPNFIX (24 FULL · ASI:1 单槽 + stall_timeout=360s；控制变量测 COUNTRY 中性化 + 国家内排序 + d∈{0,5,15} 诊断/解救 LOW_ASI_JPN_SHARPE 0.01..0.35 -> >=1.00，若仍 <0.70 即止损)",
+        "S3-r16 复盘：ASI QUICK 跳过 JPN/Robust 检查导致 16/16 FULL 全败 LOW_ASI_JPN_SHARPE；ASI:2 引发 53% progress=0.35 停滞，已永久降回 ASI:1 且修复去重后多区均衡组窗 Bug",
+        "GLB/TOP3000 暂撤（INEFF-08）；KOR/equity_forum_data 已自动早停，KOR/fundamental93 留待 Phase-2 (>4,000 后) 跑免额"
       ]
     }
   ],
   "quota_and_isolated_experiments": {
-    "today_est_2026_11_26_official_sims": 1516,
+    "today_est_2026_11_26_official_sims": 2392,
+    "today_normal_completed_est": 2202,
     "alpha0_auto_switch_threshold": 4000,
     "policy": "严格先后次序（不混跑）：先跑满 4,000 个常规额度（NORMAL_ONLY），跑完后再自动切入运行 UNUSED_ALPHA0 豁免字段队列（有效期至 2026-12-06）。",
     "universal_turnover_policy": "全路线通用：TO > 18% 执行单变量降换手梯队（decay/平滑/tvr_decay/无tail0时hump，禁trade_when）；TO < 8% 跳过降换手。",

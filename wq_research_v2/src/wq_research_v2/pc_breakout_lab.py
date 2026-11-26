@@ -527,7 +527,6 @@ def build_usa_stat_3ds_pc_finisher_s3r12_specs() -> list[dict[str, Any]]:
         ("stat_d5_t08", "STATISTICAL", 5, 0.08),
         ("stat_d6_t08", "STATISTICAL", 6, 0.08),
         ("stat_d6_t06", "STATISTICAL", 6, 0.06),
-        ("snf_d5_t08", "SLOW_AND_FAST", 5, 0.08),
         ("crd_d6_t08", "CROWDING", 6, 0.08),
         ("ram_d6_t08", "REVERSION_AND_MOMENTUM", 6, 0.08),
     ]:
@@ -760,10 +759,286 @@ def build_clean_lowpc_controlled_s3r15_specs() -> list[dict[str, Any]]:
     return specs
 
 
+def build_asi_eur_s3r16_controlled_specs() -> list[dict[str, Any]]:
+    """S3-r16 Multi-Region Stage-3 FULL Controlled-Variable Strike (12 batches = 96 FULL: 72 ASI + 24 EUR).
+
+    Triggered by 3-hour Audit #2 (2026-11-26 20:12 CST):
+      - Pack A (32 FULL, ASI/MINVOL1M/model39): 11/104 QUICK winners hit Sh=1.61..2.35, Fit=1.04..1.91,
+        Margin=12.65..35.56bp, nonPASS=[]! Since P0Pdk9Gq (TO=5.6%), akRqpR1v (TO=5.6%), zqA1lpRG (TO=2.9%)
+        have TO < 8% (SKIP_LOW_TURNOVER), we confirm them in FULL mode at decay=0 & decay=5 across
+        COUNTRY/SUBINDUSTRY/SLOW/RAM + country*industry + Wang Ge tail25 + signed_power(1.5) for low PC & high Margin!
+      - Pack B (24 FULL, ASI/MINVOL1M/behavioral_signals): Direct execution of Universal High-Turnover Reduction
+        on N1K9mOG7 (Sh=1.60, TO=35.8%) & xAlg8npq (Sh=1.49, TO=91.9%) using decay in {0, 5, 20},
+        pre-rank ts_mean/ts_decay_linear, and ts_target_tvr_decay(lambda_max=0.9, target_tvr=0.12) (NO hump on ASI!).
+      - Pack C (16 FULL, ASI/MINVOL1M/price_signal_dl): Confirms d59AaaMg (Sh=1.74, 2Y=2.56, Fit=1.00) &
+        58GoJJmX (Sh=1.63, 2Y=2.59) in FULL mode with gentle smoothing to lift Margin 6.6bp -> 15bp+.
+      - Pack D (24 FULL, EUR/TOP2500/model110): Pivots away from crowded mdl110_value (vRY3kp13 PC=0.8664)
+        to low-crowding mdl110_alternative/tree/price_momentum_reversal/quality + dual-branch & tail25/signed_power!
+    """
+    specs: list[dict[str, Any]] = []
+    ci = "group_cartesian_product(country, industry)"
+
+    # --- Pack A (32 FULL): ASI/MINVOL1M/model39 (SKIP_LOW_TURNOVER -> preserve 21-36bp Margin!) ---
+    ind_vm = "ts_backfill(industry_value_momentum_rank_float, 21)"
+    reg_vm = "ts_backfill(region_value_momentum_rank, 21)"
+    mid_pm = "ts_backfill(mid_term_price_momentum_score_2, 21)"
+
+    asi_m39_exprs: list[tuple[str, str, str, str]] = [
+        ("PC16-A1-indvm-d10-sub", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({ind_vm}, 10), subindustry)"),
+        ("PC16-A2-regvm-d10-sub", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({reg_vm}, 10), subindustry)"),
+        ("PC16-A3-indvm-m22-sub", "ADMIN_ORIGINAL", "KH94146", f"group_zscore(ts_mean({ind_vm}, 22), subindustry)"),
+        ("PC16-A4-indvm-d10-ci", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear({ind_vm}, 10), {ci})"),
+        ("PC16-A5-indvm-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear({ind_vm}, 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC16-A6-regvm-tail25-ci", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear({reg_vm}, 10), {ci}), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC16-A7-indvm-sp15-ind", "TOP100_2026Q4", "SZ83096", f"signed_power(group_zscore({ind_vm}, industry), 1.5)"),
+        ("PC16-A8-vm-pm-dual-ci", "TOP100_2026Q4", "LD22811", f"group_rank(ts_decay_linear(min(rank({ind_vm}), rank({mid_pm})), 10), {ci})"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d0_t08", "COUNTRY", 0, 0.08),
+        ("sub_d0_t08", "SUBINDUSTRY", 0, 0.08),
+        ("slow_d0_t08", "SLOW", 0, 0.08),
+        ("ram_d5_t08", "REVERSION_AND_MOMENTUM", 5, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r16-ASI-M39-FULL-{tag}",
+                campaign_id="S3_ASI_M39_FULL_CHAMPION",
+                hypothesis_id="HYP-S3R16-ASI-M39-0OS-USEFUL",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="model39",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(asi_m39_exprs, dataset_id="model39", primary_field_id="industry_value_momentum_rank_float", tag_suffix=tag),
+            )
+        )
+
+    # --- Pack B (24 FULL): ASI/MINVOL1M/behavioral_signals (REDUCE_HIGH_TURNOVER: TO 35.8%-91.9% -> <18%) ---
+    streak = "ts_backfill(vec_avg(consecutive_return_streak_length), 21)"
+    salience = "ts_backfill(vec_avg(salience_weighted_return_score), 21)"
+    ext_ret = "ts_backfill(vec_avg(extreme_daily_return_indicator), 21)"
+
+    asi_behav_exprs: list[tuple[str, str, str, str]] = [
+        ("PC16-B1-strk-m10-z66", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_zscore(ts_mean({streak}, 10), 66), subindustry)"),
+        ("PC16-B2-strk-m22-z66", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_zscore(ts_mean({streak}, 22), 66), subindustry)"),
+        ("PC16-B3-strk-d22-ci", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear({streak}, 22), {ci})"),
+        ("PC16-B4-strk-m22-cty", "ADMIN_ORIGINAL", "KH94146", f"group_zscore(ts_mean({streak}, 22), country)"),
+        ("PC16-B5-strk-tvr12", "TOP100_2026Q4", "JX79797", f"ts_target_tvr_decay(group_rank(ts_zscore(ts_mean({streak}, 5), 66), subindustry), lambda_min=0, lambda_max=0.9, target_tvr=0.12)"),
+        ("PC16-B6-strk-postd22", "TOP100_2026Q4", "ZS59763", f"group_rank(ts_decay_linear(ts_zscore(ts_mean({streak}, 5), 66), 22), {ci})"),
+        ("PC16-B7-strk-sal-d22", "TOP100_2026Q4", "SZ83096", f"group_rank(ts_decay_linear(min(rank(ts_mean({streak}, 10)), rank(ts_mean({salience}, 10))), 22), {ci})"),
+        ("PC16-B8-strk-ext-d22", "TOP100_2026Q4", "LD22811", f"group_rank(ts_decay_linear(min(rank(ts_mean({streak}, 10)), rank(ts_mean({ext_ret}, 10))), 22), {ci})"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d5_t08", "COUNTRY", 5, 0.08),
+        ("cty_d20_t08", "COUNTRY", 20, 0.08),
+        ("slow_d5_t08", "SLOW", 5, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r16-ASI-BEHAV-TOFIX-{tag}",
+                campaign_id="S3_ASI_BEHAV_TO_REDUCTION",
+                hypothesis_id="HYP-S3R16-ASI-BEHAV-HIGHTO-RESCUE",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="behavioral_signals",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(asi_behav_exprs, dataset_id="behavioral_signals", primary_field_id="consecutive_return_streak_length", tag_suffix=tag),
+            )
+        )
+
+    # --- Pack C (16 FULL): ASI/MINVOL1M/price_signal_dl (Confirm d59AaaMg Sh=1.74 in FULL + lift Margin) ---
+    nv1 = "ts_backfill(normalized_volume_indicator_1, 21)"
+    nv2 = "ts_backfill(normalized_volume_indicator_2, 21)"
+    rt4 = "ts_backfill(raw_trend_indicator_4, 21)"
+    dual_nv = f"min(rank(ts_decay_linear({nv1}, 10)), rank(ts_decay_linear({nv2}, 10)))"
+
+    asi_psd_exprs: list[tuple[str, str, str, str]] = [
+        ("PC16-C1-nv2-d10-ci", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({nv2}, 10), {ci})"),
+        ("PC16-C2-nv2-d22-ci", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({nv2}, 22), {ci})"),
+        ("PC16-C3-dualnv-ci", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear({dual_nv}, 15), {ci})"),
+        ("PC16-C4-dualnv-d22-sub", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear({dual_nv}, 22), subindustry)"),
+        ("PC16-C5-nv2-tail25-ci", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear({nv2}, 15), {ci}), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC16-C6-dualnv-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear({dual_nv}, 15), {ci}), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC16-C7-nv2-tvr10", "TOP100_2026Q4", "JX79797", f"ts_target_tvr_decay(group_rank(ts_decay_linear({nv2}, 10), {ci}), lambda_min=0, lambda_max=0.9, target_tvr=0.10)"),
+        ("PC16-C8-nv2-rt4-d22", "TOP100_2026Q4", "SZ83096", f"group_rank(ts_decay_linear(min(rank({nv2}), rank({rt4})), 22), {ci})"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("ram_d5_t08", "REVERSION_AND_MOMENTUM", 5, 0.08),
+        ("cty_d10_t08", "COUNTRY", 10, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r16-ASI-PSD-FULL-{tag}",
+                campaign_id="S3_ASI_PSD_FULL_CONFIRM",
+                hypothesis_id="HYP-S3R16-ASI-PSD-174-MARGIN15BP",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="price_signal_dl",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(asi_psd_exprs, dataset_id="price_signal_dl", primary_field_id="normalized_volume_indicator_2", tag_suffix=tag),
+            )
+        )
+
+    # --- Pack D (24 FULL): EUR/TOP2500/model110 Low-PC Multi-Field & Nonlinear Tail (bypass crowded mdl110_value) ---
+    m_alt = "ts_backfill(mdl110_alternative, 21)"
+    m_tree = "ts_backfill(mdl110_tree, 21)"
+    m_pmr = "ts_backfill(mdl110_price_momentum_reversal, 21)"
+    m_qual = "ts_backfill(mdl110_quality, 21)"
+    m_val = "ts_backfill(mdl110_value, 21)"
+
+    eur_m110_exprs: list[tuple[str, str, str, str]] = [
+        ("PC16-D1-alt-tree-ci", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear(min(rank({m_alt}), rank({m_tree})), 10), {ci})"),
+        ("PC16-D2-val-alt-ci", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear(min(rank({m_val}), rank({m_alt})), 10), {ci})"),
+        ("PC16-D3-val-tree-ci", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear(min(rank({m_val}), rank({m_tree})), 10), {ci})"),
+        ("PC16-D4-qual-alt-ci", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear(min(rank({m_qual}), rank({m_alt})), 10), {ci})"),
+        ("PC16-D5-val-alt-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank({m_val}), rank({m_alt})), 15), {ci}), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC16-D6-val-pmr-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank({m_val}), rank({m_pmr})), 15), {ci}), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC16-D7-val-qual-sp15", "TOP100_2026Q4", "SZ83096", f"signed_power(group_zscore(min(rank({m_val}), rank({m_qual})), {ci}), 1.5)"),
+        ("PC16-D8-tree-pmr-ci", "TOP100_2026Q4", "LD22811", f"group_rank(ts_decay_linear(min(rank({m_tree}), rank({m_pmr})), 10), {ci})"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("ram_d0_t06", "REVERSION_AND_MOMENTUM", 0, 0.06),
+        ("ram_d5_t08", "REVERSION_AND_MOMENTUM", 5, 0.08),
+        ("crd_d5_t08", "CROWDING", 5, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r16-EUR-M110-LOWPC-{tag}",
+                campaign_id="S3_EUR_M110_LOWPC",
+                hypothesis_id="HYP-S3R16-EUR-M110-BYPASS-VAL-PC086",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model110",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=_build_items(eur_m110_exprs, dataset_id="model110", primary_field_id="mdl110_alternative", tag_suffix=tag),
+            )
+        )
+
+    return specs
+
+
+def build_eur_asi_s3r17_orthogonal_specs() -> list[dict[str, Any]]:
+    """S3-r17 Orthogonal EUR Useful Strike & ASI COUNTRY-JPN Controlled-Variable Rescue (8 batches = 64 FULL).
+
+    Triggered by 2-hour Audit #10 (2026-11-26 21:00 CST):
+      - Pack A (24 FULL, EUR/TOP2500/model238): Rescues orthogonal seed 78GbxbA1 (Sh=1.73, 2Y=2.21, Fit=0.99,
+        corr=0.205 vs EUR Useful RR5QjWYz, proven PC=0.608 < 0.70!) via EFF-03 adv20 gate + country*industry
+        + post-min decay(10/15/22) + tail25 across RAM d={4,6} & CROWDING d=5 (clean <=4 layers).
+      - Pack B (16 FULL, EUR/TOP2500/shortinterest6): Promotes 1YGQzpGR (Sh=1.47, 2Y=1.91) & P0PdGrlJ
+        (Sh=1.37, 2Y=1.84) with adv20 gate + country*industry + cross-DS model238 orthogonal branch.
+      - Pack C (24 FULL, ASI/MINVOL1M/model39): Controlled-variable COUNTRY neutralization decay ladder
+        (d in {0, 5, 15}) + country-equalized ranking (group_rank(..., country) / country*industry / winsorize)
+        to diagnose & rescue LOW_ASI_JPN_SHARPE (0.01..0.35 -> >=1.00) & LOW_ROBUST_UNIVERSE_SHARPE after
+        fixing the ASI:2 stall_timeout=240s bug (now ASI:1 + stall_timeout=360s).
+    """
+    specs: list[dict[str, Any]] = []
+    ci = "group_cartesian_product(country, industry)"
+    cs = "group_cartesian_product(country, sector)"
+
+    # --- Pack A (24 FULL): EUR/TOP2500/model238 (Orthogonal corr=0.205, PC=0.608!) ---
+    pref = "ts_backfill(regional_change_in_preference_rank_d1, 21)"
+    align = "ts_backfill(global_screening_factor_alignment_rank_d1, 21)"
+    crel = "ts_backfill(country_relative_investment_rank_d1, 21)"
+    si_ind = "ts_backfill(star_hold_industry_rank, 21)"
+
+    eur_m238_exprs: list[tuple[str, str, str, str]] = [
+        ("PC17-A1-pref-align-adv35-d10", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_zscore(ts_decay_linear(min(rank({pref}), rank({align})), 10), {ci}), 0)"),
+        ("PC17-A2-pref-align-adv40-d10", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.4, group_zscore(ts_decay_linear(min(rank({pref}), rank({align})), 10), {ci}), 0)"),
+        ("PC17-A3-pref-align-adv40-d22", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.4, group_zscore(ts_decay_linear(min(rank({pref}), rank({align})), 22), {ci}), 0)"),
+        ("PC17-A4-pref-crel-adv40-d15", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.4, group_zscore(ts_decay_linear(min(rank({pref}), rank({crel})), 15), {ci}), 0)"),
+        ("PC17-A5-pref-align-tail25", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.4, tail(group_rank(ts_decay_linear(min(rank({pref}), rank({align})), 15), {ci}), lower=0.25, upper=0.75, newval=0.5), 0)"),
+        ("PC17-A6-pref-align-adv45-d15", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.45, group_zscore(ts_decay_linear(min(rank({pref}), rank({align})), 15), {ci}), 0)"),
+        ("PC17-A7-pref-siind-adv40-d15", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.4, group_zscore(ts_decay_linear(min(rank({pref}), rank({si_ind})), 15), {ci}), 0)"),
+        ("PC17-A8-pref-align-sp15-adv40", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.4, signed_power(group_zscore(ts_decay_linear(min(rank({pref}), rank({align})), 10), {ci}), 1.5), 0)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("ram_d6_t08", "REVERSION_AND_MOMENTUM", 6, 0.08),
+        ("crd_d5_t08", "CROWDING", 5, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r17-EUR-M238-ORTHO-{tag}",
+                campaign_id="S3_EUR_M238_ORTHO_USEFUL",
+                hypothesis_id="HYP-S3R17-EUR-M238-PC061-SUBUNI-FIX",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model238",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=_build_items(eur_m238_exprs, dataset_id="model238", primary_field_id="regional_change_in_preference_rank_d1", tag_suffix=tag),
+            )
+        )
+
+    # --- Pack B (16 FULL): EUR/TOP2500/shortinterest6 Stage-3 Promotion ---
+    si_glb = "ts_backfill(star_hold_global_screening_rank, 21)"
+    si_reg = "ts_backfill(star_hold_region_owner_rank, 21)"
+
+    eur_si6_exprs: list[tuple[str, str, str, str]] = [
+        ("PC17-B1-siind-adv35-d10", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_zscore(ts_decay_linear({si_ind}, 10), {ci}), 0)"),
+        ("PC17-B2-siind-adv40-d22", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.4, group_zscore(ts_decay_linear({si_ind}, 22), {ci}), 0)"),
+        ("PC17-B3-siind-siglb-adv40-d15", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.4, group_zscore(ts_decay_linear(min(rank({si_ind}), rank({si_glb})), 15), {ci}), 0)"),
+        ("PC17-B4-siind-sireg-adv40-d15", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.4, group_zscore(ts_decay_linear(min(rank({si_ind}), rank({si_reg})), 15), {ci}), 0)"),
+        ("PC17-B5-siind-siglb-tail25", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.4, tail(group_rank(ts_decay_linear(min(rank({si_ind}), rank({si_glb})), 15), {ci}), lower=0.25, upper=0.75, newval=0.5), 0)"),
+        ("PC17-B6-siglb-pref-adv40-d15", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.4, group_zscore(ts_decay_linear(min(rank({si_glb}), rank({pref})), 15), {ci}), 0)"),
+        ("PC17-B7-siind-align-adv40-d15", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.4, group_zscore(ts_decay_linear(min(rank({si_ind}), rank({align})), 15), {ci}), 0)"),
+        ("PC17-B8-siind-siglb-sp15", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.4, signed_power(group_zscore(ts_decay_linear(min(rank({si_ind}), rank({si_glb})), 10), {ci}), 1.5), 0)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("crd_d5_t08", "CROWDING", 5, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r17-EUR-SI6-PROMO-{tag}",
+                campaign_id="S3_EUR_SI6_PROMO",
+                hypothesis_id="HYP-S3R17-EUR-SI6-147-TO-165",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="shortinterest6",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=_build_items(eur_si6_exprs, dataset_id="shortinterest6", primary_field_id="star_hold_industry_rank", tag_suffix=tag),
+            )
+        )
+
+    # --- Pack C (24 FULL): ASI/MINVOL1M/model39 COUNTRY + Japan-Equalized Rescue ---
+    ind_vm = "ts_backfill(industry_value_momentum_rank_float, 21)"
+    reg_vm = "ts_backfill(region_value_momentum_rank, 21)"
+    asi_m39_jpn_exprs: list[tuple[str, str, str, str]] = [
+        ("PC17-C1-indvm-d10-cty", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({ind_vm}, 10), country)"),
+        ("PC17-C2-regvm-d10-cty", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({reg_vm}, 10), country)"),
+        ("PC17-C3-indvm-d10-cs", "ADMIN_ORIGINAL", "KH94146", f"group_zscore(ts_decay_linear({ind_vm}, 10), {cs})"),
+        ("PC17-C4-regvm-d10-ci", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear({reg_vm}, 10), {ci})"),
+        ("PC17-C5-indvm-win3-ci", "TOP100_2026Q4", "JX79797", f"winsorize(group_zscore(ts_decay_linear({ind_vm}, 10), {ci}), std=3)"),
+        ("PC17-C6-regvm-tail25-cs", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear({reg_vm}, 10), {cs}), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC17-C7-indvm-m22-cty", "TOP100_2026Q4", "SZ83096", f"group_zscore(ts_mean({ind_vm}, 22), country)"),
+        ("PC17-C8-indvm-sp05-ci", "TOP100_2026Q4", "SZ83096", f"signed_power(group_zscore(ts_decay_linear({ind_vm}, 10), {ci}), 0.5)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d0_t08", "COUNTRY", 0, 0.08),
+        ("cty_d5_t08", "COUNTRY", 5, 0.08),
+        ("cty_d15_t08", "COUNTRY", 15, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r17-ASI-M39-JPNFIX-{tag}",
+                campaign_id="S3_ASI_M39_COUNTRY_JPNFIX",
+                hypothesis_id="HYP-S3R17-ASI-M39-COUNTRY-DECAY-JPN-ROBUST",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="model39",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(asi_m39_jpn_exprs, dataset_id="model39", primary_field_id="industry_value_momentum_rank_float", tag_suffix=tag),
+            )
+        )
+
+    return specs
+
+
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r15 (64 FULL) -> S3-r14 (16 FULL) -> S3-r13 (32 FULL) -> S3-r12 (48 FULL) -> S3-r11 (96 FULL) -> S3-r10b (160 FULL)."""
+    """Return ordered S3-r17 (64 FULL) -> S3-r16 (96 FULL) -> S3-r15 (64 FULL) -> ... -> S3-r10b (160 FULL)."""
     return (
-        build_clean_lowpc_controlled_s3r15_specs()
+        build_eur_asi_s3r17_orthogonal_specs()
+        + build_asi_eur_s3r16_controlled_specs()
+        + build_clean_lowpc_controlled_s3r15_specs()
         + build_usa_e5m_1ax_margin_s3r14_specs()
         + build_usa_e5m_highmgn_s3r13_specs()
         + build_usa_stat_3ds_pc_finisher_s3r12_specs()

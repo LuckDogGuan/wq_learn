@@ -7,12 +7,18 @@ from wq_research_v2.pc_breakout_lab import build_pc_breakout_lab_s3r10_specs
 
 def test_pc_breakout_lab_passes_all_static_gates_and_operator_diversity() -> None:
     specs = build_pc_breakout_lab_s3r10_specs()
-    assert len(specs) == 52
+    assert len(specs) == 71
     total_items = sum(len(s["items"]) for s in specs)
-    assert total_items == 416
+    assert total_items == 568
 
     batch_ids = [s["batch_id"] for s in specs]
     assert len(batch_ids) == len(set(batch_ids)), "Duplicate batch_id in pc_breakout_lab!"
+    assert any(b.startswith("S3-r17-EUR-M238-ORTHO-") for b in batch_ids), "Missing S3-r17 EUR model238 orthogonal!"
+    assert any(b.startswith("S3-r17-EUR-SI6-PROMO-") for b in batch_ids), "Missing S3-r17 EUR shortinterest6 promo!"
+    assert any(b.startswith("S3-r17-ASI-M39-JPNFIX-") for b in batch_ids), "Missing S3-r17 ASI model39 JPN fix!"
+    assert any(b.startswith("S3-r16-ASI-M39-FULL-") for b in batch_ids), "Missing S3-r16 ASI model39 FULL!"
+    assert any(b.startswith("S3-r16-ASI-BEHAV-TOFIX-") for b in batch_ids), "Missing S3-r16 ASI behavioral TOFIX!"
+    assert any(b.startswith("S3-r16-EUR-M110-LOWPC-") for b in batch_ids), "Missing S3-r16 EUR model110 Low-PC!"
     assert any(b.startswith("S3-r15-EUR-CLEAN4L-") for b in batch_ids), "Missing S3-r15 EUR Clean4L!"
     assert any(b.startswith("S3-r15-USA-CLEAN4L-") for b in batch_ids), "Missing S3-r15 USA Clean4L!"
     assert any(b.startswith("S3-r14-USA-E5M-1AX-") for b in batch_ids), "Missing S3-r14 Single-Axis E5mWLW0J Finisher!"
@@ -28,7 +34,7 @@ def test_pc_breakout_lab_passes_all_static_gates_and_operator_diversity() -> Non
         assert spec["settings"]["visualization"] is False
         assert 0 <= int(spec["settings"]["decay"]) <= 20
         assert 0.04 <= float(spec["settings"]["truncation"]) <= 0.08
-        if spec["region"] == "EUR":
+        if spec["region"] in ("EUR", "USA"):
             assert spec["settings"]["neutralization"] not in ("FAST", "SLOW_AND_FAST")
 
         for item in spec["items"]:
@@ -44,7 +50,7 @@ def test_pc_breakout_lab_passes_all_static_gates_and_operator_diversity() -> Non
             elif item["source_side"] == "TOP100_2026Q4":
                 top_cnt += 1
 
-    assert admin_cnt == top_cnt == 208, f"50:50 imbalance: admin={admin_cnt}, top={top_cnt}"
+    assert admin_cnt == top_cnt == 284, f"50:50 imbalance: admin={admin_cnt}, top={top_cnt}"
 
     # Verify genuinely diverse, live-verified REGULAR Gold-81 operators are exercised!
     required_new_ops = {

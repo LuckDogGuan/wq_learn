@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-26T19:03:00+08:00",
+  "updated_at": "2026-11-26T21:10:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -58,6 +58,22 @@
       "verdict": "EFFECTIVE（有效 · 验证多模板配对优质种子价值）",
       "metric_delta": "RR5nb5oj (ts_rank 252) 打出 Sh=1.41, 2Y=2.23, Mgn=8.96bp；2rGbwx98 (ts_av_diff 66) 打出 Sh=1.36, 2Y=2.15，均超越默认模板基线 A1LMJpeg (Sh=1.28) 且免扣日额度",
       "reusable_rule": "不同种子因子应按数据特征配对不同模板族（新增 admin_ts_regime 与 nonlinear_tail_group 模板族与 core_50_50 协同快筛）。"
+    },
+    {
+      "case_id": "EFF-08",
+      "region_dataset": "ASI/MINVOL1M/model39 & price_signal_dl & behavioral_signals (多域星阵路径 3h 巡检 #2)",
+      "controlled_change": "扩展至 0-OS 高 Base 地区 ASI/MINVOL1M，在 Stage 1-2 QUICK 模式下引入纯 MATRIX 机构估值动量集 model39 + price_signal_dl + behavioral_signals（maxTrade=ON）",
+      "verdict": "EFFECTIVE（重大突破 · ASI 首次批量打穿 S3 门槛）",
+      "metric_delta": "ASI/model39 104/104 零超时完成，产出 18 条 Sh>=1.25、11 条 S3（RR5nGWmg Sh=2.35/Fit=1.87、vRY3QYjr Sh=2.21/17.7bp、P0Pdk9Gq Sh=2.10/2Y=2.21/21.3bp/TO=5.6%、akRqpR1v Sh=1.98/24.2bp/TO=5.6%、zqA1lpRG Sh=1.61/35.6bp/TO=2.9%，全部 nonPASS=[]）；ASI/price_signal_dl 出 d59AaaMg (Sh=1.74/2Y=2.56)；ASI/behavioral_signals 出 N1K9mOG7 (Sh=1.60, TO=35.8% 高换手降换手靶点)",
+      "reusable_rule": "在 0-OS 的 ASI/MINVOL1M 上，StarMine model39 估值动量信号天然低换手（2.9%-5.6%，严格触发 SKIP_LOW_TURNOVER 跳过降换手）且高 Margin；behavioral_signals 信号强但换手 35.8%-91.9%，正好进入通用高换手降换手梯队（禁 hump/trade_when）。"
+    },
+    {
+      "case_id": "EFF-09",
+      "region_dataset": "USA/TOP3000/model31+model30+model28 (S3-r14 反悬崖验证) + 多域星阵均衡调度",
+      "controlled_change": "串行核验 Useful #3 kq82m3gL (d=6) 与同构 d=4 姊妹 3qGZ6peg 及 ret33 姊妹 E5mXawvm，并在 daemon_ra_runner.py 落地去重后分域均衡选窗 collect_balanced_runnable_window() + stall_timeout=360s + EUR:2,USA:2,ASI:1",
+      "verdict": "EFFECTIVE（验证 kq82m3gL 平滑无悬崖，且彻底修复单区饿死 2 槽闲置 Bug）",
+      "metric_delta": "d=4 (3qGZ6peg: Sh=1.78, Fit=1.05, 9.85bp, SC=0.347, PC=0.712, >=0.70仅1个) -> d=6 (kq82m3gL: Sh=1.78, Fit=1.04, 10.28bp, SC=0.351, PC=0.699, >=0.70=0个) 单调平滑无断崖；热部署后 10s 内恢复 2 EUR + 1 USA + 1 ASI 四槽满载（RAM 71MB << 512M）",
+      "reusable_rule": "多区调度必须在去重过滤（dedup/early-stop）之后再按 region_caps 轮询组窗，防止已完成前缀区饿死并发槽；ASI 严格锁定单槽 (ASI:1) + 360s 停滞阈值。"
     }
   ],
   "ineffective_cases": [
@@ -116,6 +132,22 @@
       "verdict": "INEFFECTIVE（均无效 · 及时止损/禁用）",
       "metric_delta": "1) finstmtrank Sh 从 1.89-1.97 跌至 1.20-1.47 且 Sub-Uni 仍 0.29-0.44 全 FAIL；2) USA anlrev 双支 maxSh 仅 1.22（低于单支 ts_rank252 的 1.41）；3) ret44 使 Sh 1.83->1.68、Fit->0.98；4) USA SLOW_AND_FAST 8/8 RESULTS_UNOBSERVED（280.9s 超时）",
       "root_cause_and_ban": "1) finstmtrank 驱动力在中小盘，硬切流动性无法修 Sub-Uni，止损休眠；2) 强单支先用 ts_rank252/avdiff66 提效再融合；3) vector_neut 收益参考窗以 22-33d 为宜，不宜拉到 44d+；4) USA 与 EUR 一律禁用 SLOW_AND_FAST。"
+    },
+    {
+      "case_id": "INEFF-08",
+      "region_dataset": "GLB/TOP3000 多集并发（model110 / model39 / sentiment26 / model239 / analyst15）",
+      "controlled_change": "在 4 并发槽内纳入 GLB/TOP3000（每次占 2 个后端槽）与 ASI/EUR/USA 并行快筛",
+      "verdict": "INEFFECTIVE（33% 超时/资源报错拖垮吞吐 · 暂缓 GLB 换向 ASI/EUR/USA）",
+      "metric_delta": "GLB 过去 3 小时完成 260 条但产出 0 条 Sh>=1.25（maxSh=1.10），却造成 128 条 RESULTS_UNOBSERVED（33% 失败率，多次报 Sim ERROR: too much resource 与 progress=0.35 停滞），将 3 小时整体吞吐压至 257/小时",
+      "root_cause_and_ban": "GLB/TOP3000 跨全球算力开销极大且占双槽，低产期不应拖慢 4,000 常规额度爬坡；暂撤 GLB，改为 ASI:2 + EUR:1 + USA:1 集中攻坚 ASI/model39 与 EUR/model110 Stage-3 FULL。"
+    },
+    {
+      "case_id": "INEFF-09",
+      "region_dataset": "ASI/MINVOL1M/model39 & behavioral_signals & price_signal_dl (S3-r16 FULL 复盘 + ASI:2 并发停滞)",
+      "controlled_change": "1) 在 SUBINDUSTRY/RAM 下将 ASI/model39 晋级 FULL；2) region_caps 设为 ASI:2 且 stall_timeout=240s；3) EUR/model110 跨子字段 (value x tree/alt) 压 PC",
+      "verdict": "INEFFECTIVE（暴露 ASI QUICK 漏检日本子市场陷阱 + ASI:2 导致 53% 超时 + EUR/model110 2Y 偏弱）",
+      "metric_delta": "1) ASI/model39 在 QUICK 标 0-FAIL，但 FULL 实测 16/16 全员败于 LOW_ASI_JPN_SHARPE(-0.19~0.35/1.0) + LOW_ROBUST_UNIVERSE_SHARPE(0.75x/0.90x)；ASI/behavioral d=20 压至 Sh=0.59；ASI/psd cty d=10 压至 Sh=0.63；2) ASI:2 + 240s 停滞超时在 30 分钟内造成 64 条 progress=0.35 误杀；3) EUR/model110 value x tree 仅 Sh=1.47 / 2Y=1.05（仅因 <=3 字段触发 PPA-First 显示 FAIL=[]，未过 RA）",
+      "root_cause_and_ban": "1) ASI 的 QUICK 模式不跑 JPN 与 Robust 检查，严禁把 ASI QUICK 的 fails=[] 误作真实 0-FAIL；2) ASI 永久限单槽 (ASI:1) + stall_timeout=360s（S3-r17-ASI-M39-JPNFIX-cty_d0_t08 实测 8/8 零超时完成！）；3) S3-r17 实证已定案：即便叠加 COUNTRY 中性化与国家内排序，ASI/model39 仍仅得 LOW_ASI_JPN_SHARPE=0.08~0.30/1.00（日本区结构性无信号），且 EUR/model238 (1.73->0.59) 与 EUR/shortinterest6 (1.47->0.37) 与 model77 同属中小盘驱动、严禁套用 adv20>0.35 硬门控！后续聚焦全新宽覆盖大盘有效集与冲过 4,000 常规额解锁 Alphas=0 蓝海。"
     }
   ]
 }

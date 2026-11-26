@@ -7,6 +7,7 @@ from wq_research_v2.daemon_ra_runner import (
     DIVERSE_STAGE12_TEMPLATE_PACKS,
     HIGH_BASE_MULTI_MARKET_ORDER,
     build_ra_campaign_specs,
+    collect_balanced_runnable_window,
     interleave_specs_by_campaign_waves,
     resolve_quota_queue_policy,
     select_stage12_templates,
@@ -221,3 +222,26 @@ def test_diverse_template_packs_and_quota_4000_alpha0_switch() -> None:
     # Above daily_target and NO pending Alphas=0 -> sleep
     m4, _ = resolve_quota_queue_policy(4500, normal_done=4500, alpha0_switch_threshold=4000, daily_target=4500, has_pending_normal=True, has_pending_alpha0=False)
     assert m4 == "SLEEP_CAP_REACHED"
+
+
+def test_collect_balanced_runnable_window_prevents_dedup_starvation() -> None:
+    from collections import deque
+
+    # Simulate EUR & USA having 20 already-completed (deduped) prefix specs before runnable specs,
+    # while ASI has runnable specs immediately at index 0.
+    queues = {
+        "EUR": deque([{"region": "EUR", "runnable": False}] * 20 + [{"region": "EUR", "runnable": True, "id": i} for i in range(6)]),
+        "USA": deque([{"region": "USA", "runnable": False}] * 15 + [{"region": "USA", "runnable": True, "id": i} for i in range(4)]),
+        "ASI": deque([{"region": "ASI", "runnable": True, "id": i} for i in range(10)]),
+    }
+    win = collect_balanced_runnable_window(
+        queues,
+        ["EUR", "USA", "ASI"],
+        region_caps={"EUR": 2, "USA": 1, "ASI": 1},
+        default_per_region=1,
+        window_size=8,
+        prepare_fn=lambda sp: sp if sp["runnable"] else None,
+    )
+    assert len(win) == 8
+    regs = [w["region"] for w in win]
+    assert regs == ["EUR", "EUR", "USA", "ASI", "EUR", "EUR", "USA", "ASI"]

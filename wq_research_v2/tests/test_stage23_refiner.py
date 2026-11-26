@@ -26,9 +26,9 @@ def test_stage23_refiner_specs_pass_all_static_gates_and_balance() -> None:
     assert any(b.startswith("S3-r3b-USA-1AX-") for b in batch_ids), "Missing USA Single-Axis Stage-3 Rescue!"
     assert any(b.startswith("S3-r2-EUR-M25PCA-") for b in batch_ids), "Missing EUR PC-Crush Pack A!"
     assert any(b.startswith("S3-r2-EUR-M25PCB-") for b in batch_ids), "Missing EUR PC-Crush Pack B (model25 x model238)!"
-    # Ensure timeout-prone FAST / SLOW_AND_FAST are removed from EUR wide-universe specs
+    # Ensure timeout-prone FAST / SLOW_AND_FAST are removed from EUR & USA wide-universe specs (INEFF-04 & INEFF-07)
     for s in specs:
-        if s["region"] == "EUR":
+        if s["region"] in ("EUR", "USA"):
             assert s["settings"]["neutralization"] not in ("FAST", "SLOW_AND_FAST")
 
     alpha0_map = {

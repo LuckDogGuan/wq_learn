@@ -466,7 +466,6 @@ def build_usa_pricedl_stage3_rescue_specs() -> list[dict[str, Any]]:
         ("ram_d4_t06", "REVERSION_AND_MOMENTUM", 4, 0.06),
         ("ram_d6_t06", "REVERSION_AND_MOMENTUM", 6, 0.06),
         ("stat_d4_t06", "STATISTICAL", 4, 0.06),
-        ("snf_d4_t06", "SLOW_AND_FAST", 4, 0.06),
         ("crd_d4_t06", "CROWDING", 4, 0.06),
         ("sub_d6_t08", "SUBINDUSTRY", 6, 0.08),
     ]
@@ -1001,7 +1000,6 @@ def build_usa_model31_pc_crush_s3r7_specs() -> list[dict[str, Any]]:
         ("crd_d2_t06", "CROWDING", 2, 0.06),
         ("crd_d4_t08", "CROWDING", 4, 0.08),
         ("stat_d3_t06", "STATISTICAL", 3, 0.06),
-        ("snf_d3_t06", "SLOW_AND_FAST", 3, 0.06),
     ]:
         specs.append(
             _pack_items_into_spec(

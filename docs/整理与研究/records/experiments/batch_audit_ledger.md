@@ -1,18 +1,18 @@
 # WorldQuant BRAIN D1 RA 批次复盘与阶段漏斗总账（自动生成）
 
-- **生成时间 (UTC)**：`2026-11-26T10:49:16.431005+00:00`
-- **总批次数**：`1058`（等级分布：`{'BEST': 62, 'GOOD': 97, 'NORMAL': 554, 'BAD': 238, 'TIMEOUT_BUG': 107}`）
-- **全库阶段过关统计**：有效完成 `6677` · 未观测 `839` · **一阶段 (`Sh≥0.80`) 过 `1288` 个** · **二阶段 (`Sh≥1.25`) 过 `576` 个** · **三阶段 (`Sh≥1.58 & Fit≥1.0`) 过 `181` 个**（已核 0-FAIL `105` 个）
+- **生成时间 (UTC)**：`2026-11-26T12:51:15.717812+00:00`
+- **总批次数**：`1117`（等级分布：`{'BEST': 66, 'GOOD': 101, 'NORMAL': 581, 'BAD': 253, 'TIMEOUT_BUG': 116}`）
+- **全库阶段过关统计**：有效完成 `7069` · 未观测 `911` · **一阶段 (`Sh≥0.80`) 过 `1346` 个** · **二阶段 (`Sh≥1.25`) 过 `598` 个** · **三阶段 (`Sh≥1.58 & Fit≥1.0`) 过 `188` 个**（已核 0-FAIL `107` 个）
 
 ## 1. 分地区阶段漏斗统计
 
 | 地区 | 完成数 | 未观测 | 一阶段过 (`≥0.80`) | 二阶段过 (`≥1.25`) | 三阶段过 (`≥1.58 & Fit≥1`) | 已核 0-FAIL |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
 | **USA** | 3862 | 192 | 678 | 216 | 54 | 54 |
-| **EUR** | 1516 | 432 | 535 | 340 | 119 | 43 |
+| **EUR** | 1548 | 424 | 549 | 344 | 119 | 43 |
+| **ASI** | 480 | 71 | 92 | 38 | 15 | 10 |
 | **DEU** | 430 | 8 | 2 | 0 | 0 | 0 |
-| **ASI** | 264 | 31 | 58 | 20 | 8 | 8 |
-| **GLB** | 207 | 96 | 14 | 0 | 0 | 0 |
+| **GLB** | 351 | 136 | 24 | 0 | 0 | 0 |
 | **KOR** | 106 | 32 | 0 | 0 | 0 | 0 |
 | **CHN** | 90 | 24 | 0 | 0 | 0 | 0 |
 | **HKG** | 73 | 0 | 1 | 0 | 0 | 0 |
@@ -50,14 +50,18 @@
 | 等级 | 批次 ID | 地区/数据集 | 主字段 | 配置 | 完成/未观测 | Max Sh | 根因诊断与避坑建议 |
 | :-: | --- | --- | --- | --- | :-: | :-: | --- |
 | **TIMEOUT_BUG** | `RA-AMR_M239_FREE-mdl239_combo_deltacrossd-SUBINDUSTRY` | AMR/`model239` | `mdl239_combo_deltacrossdelta` | `SUBINDUSTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Missing child alpha_id) |
-| **TIMEOUT_BUG** | `RA-v4-ASI_BEHAV_RA-02-urvature_measure-COUNTRY` | ASI/`behavioral_signals` | `price_path_curvature_measure` | `COUNTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll exception: ReadTimeout) |
-| **TIMEOUT_BUG** | `RA-v4-ASI_PRICEDL_DUAL_LOWTO-04-asi_dual_nv2_rt4-REVERSION_AND_MOMENTUM` | ASI/`price_signal_dl` | `asi_dual_nv2_rt4` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 240s [zombie DEL) |
+| **TIMEOUT_BUG** | `RA-v4-ASI_BEHAV_RA-02-urvature_measure-COUNTRY` | ASI/`behavioral_signals` | `price_path_curvature_measure` | `COUNTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 240s [zombie DEL) |
+| **TIMEOUT_BUG** | `RA-v4-ASI_PRICEDL_DUAL_LOWTO-00-asi_nv2_m22-COUNTRY` | ASI/`price_signal_dl` | `asi_nv2_m22` | `COUNTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 240s [zombie DEL) |
 | **TIMEOUT_BUG** | `S2-r1-ASI-PSD-mv1m_cty_d2_t04` | ASI/`price_signal_dl` | `normalized_volume_indicator_1` | `COUNTRY|d=2|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 240s [zombie DEL) |
+| **TIMEOUT_BUG** | `S3-r16-ASI-BEHAV-TOFIX-cty_d5_t08` | ASI/`behavioral_signals` | `consecutive_return_streak_length` | `COUNTRY|d=5|tr=0.08` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 240s [zombie DEL) |
+| **TIMEOUT_BUG** | `S3-r16-ASI-BEHAV-TOFIX-slow_d5_t08` | ASI/`behavioral_signals` | `consecutive_return_streak_length` | `SLOW|d=5|tr=0.08` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 240s [zombie DEL) |
+| **TIMEOUT_BUG** | `S3-r16-ASI-M39-FULL-cty_d0_t08` | ASI/`model39` | `industry_value_momentum_rank_float` | `COUNTRY|d=0|tr=0.08` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 240s [zombie DEL) |
+| **TIMEOUT_BUG** | `S3-r16-ASI-M39-FULL-slow_d0_t08` | ASI/`model39` | `industry_value_momentum_rank_float` | `SLOW|d=0|tr=0.08` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 240s [zombie DEL) |
+| **TIMEOUT_BUG** | `S3-r16-ASI-PSD-FULL-ram_d5_t08` | ASI/`price_signal_dl` | `normalized_volume_indicator_2` | `REVERSION_AND_MOMENTUM|d=5|tr=0.08` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 240s [zombie DEL) |
 | **TIMEOUT_BUG** | `RA-CHN_OTH496_RATIOS_FREE-oth496_curr_ratio-SUBINDUSTRY` | CHN/`other496` | `oth496_curr_ratio` | `SUBINDUSTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll timeout) |
 | **TIMEOUT_BUG** | `RA-CHN_OTH496_RATIOS_FREE-oth496_lt_lev-SUBINDUSTRY` | CHN/`other496` | `oth496_lt_lev` | `SUBINDUSTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll timeout) |
 | **TIMEOUT_BUG** | `RA-v3-CHN_ANL45_FREE-06-urn_excluding_fx-SUBINDUSTRY` | CHN/`analyst45` | `aggregate_return_excluding_fx` | `SUBINDUSTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: POST exception: ConnectionError) |
 | **TIMEOUT_BUG** | `RA-DEU_M264_FREE-mdl264_1l_ovp-INDUSTRY` | DEU/`model264` | `mdl264_1l_ovp` | `INDUSTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Missing child alpha_id) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_ADMIN_TPL_BENCH_NORM-02-adm_avdiff66_siglb-SUBINDUSTRY` | EUR/`shortinterest6` | `adm_avdiff66_siglb` | `SUBINDUSTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 240s [zombie DEL) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-00-t_opinion_metric-CROWDING` | EUR/`ai_equity_alpha` | `analyst_opinion_metric` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.15 for 240s) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-00-t_opinion_metric-REVERSION_AND_MOMENTUM` | EUR/`ai_equity_alpha` | `analyst_opinion_metric` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-01-evision_factor_3-CROWDING` | EUR/`ai_equity_alpha` | `analyst_forecast_revision_factor_3` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.15 for 240s) |
@@ -70,12 +74,8 @@
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-05-evision_factor_4-CROWDING` | EUR/`ai_equity_alpha` | `analyst_forecast_revision_factor_4` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-05-evision_factor_4-REVERSION_AND_MOMENTUM` | EUR/`ai_equity_alpha` | `analyst_forecast_revision_factor_4` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-06-opinion_metric_7-CROWDING` | EUR/`ai_equity_alpha` | `analyst_opinion_metric_7` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-06-opinion_metric_7-REVERSION_AND_MOMENTUM` | EUR/`ai_equity_alpha` | `analyst_opinion_metric_7` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.15 for 240s) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-07-yst_view_score_2-CROWDING` | EUR/`ai_equity_alpha` | `analyst_view_score_2` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-07-yst_view_score_2-REVERSION_AND_MOMENTUM` | EUR/`ai_equity_alpha` | `analyst_view_score_2` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.15 for 240s) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-DUAL-REVERSION_AND_MOMENTUM-00` | EUR/`ai_equity_alpha` | `analyst_opinion_metric` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll HTTP 500) |
 
-## 4. 全批次精简台账（展示前 120 / 1058 批）
+## 4. 全批次精简台账（展示前 120 / 1117 批）
 
 | 等级 | 地区 | 数据集 | 主字段 | 模板 | 配置 | 完成/未观测 | S1/S2/S3 | Max Sh | Avg Mgn |
 | :-: | :-: | --- | --- | --- | --- | :-: | :-: | :-: | :-: |
@@ -86,15 +86,24 @@
 | BEST | ASI | `model39` | `industry_value_momentum_rank_float` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 4/4/3 | `2.35` | `0.0bp` |
 | BEST | ASI | `model39` | `region_value_momentum_rank` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 4/4/2 | `2.21` | `0.0bp` |
 | BEST | ASI | `model39` | `region_value_momentum_rank_float` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 4/4/2 | `2.21` | `0.0bp` |
+| BEST | ASI | `model39` | `region_value_momentum_rank` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 4/3/2 | `2.06` | `0.0bp` |
+| BEST | ASI | `behavioral_signals` | `consecutive_return_streak_length` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 3/2/0 | `1.93` | `0.0bp` |
+| BEST | ASI | `model39` | `industry_value_momentum_rank_float` | `PC16-A1-indvm-d10-sub, PC16-A2-regvm-d10-sub, PC16-A3-indvm-m22-sub (+5)` | `SUBINDUSTRY|d=0|tr=0.08` | 8/0 | 7/7/3 | `1.91` | `19.61bp` |
 | BEST | ASI | `price_signal_dl` | `normalized_volume_indicator_1` | `S2-ADM-01-nv1-ci-z66, S2-ADM-02-nv2-ci-dec10, S2-ADM-03-nv1-cs-dec15 (+5)` | `REVERSION_AND_MOMENTUM|d=4|tr=0.04` | 8/0 | 6/4/1 | `1.74` | `4.71bp` |
+| BEST | ASI | `model39` | `industry_price_momentum_score_2, regional_price_momentum_percentile_2` | `RA-DUAL-GRANK-MIN-COUNTRY, RA-DUAL-REV-GRANK-MIN-COUNTRY` | `COUNTRY|d=0|tr=0.04` | 8/0 | 3/3/2 | `1.62` | `0.0bp` |
 | GOOD | ASI | `behavioral_signals` | `consecutive_return_streak_length` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 3/2/0 | `1.6` | `0.0bp` |
+| GOOD | ASI | `model39` | `industry_value_momentum_rank_float` | `PC16-A1-indvm-d10-sub, PC16-A2-regvm-d10-sub, PC16-A3-indvm-m22-sub (+5)` | `REVERSION_AND_MOMENTUM|d=5|tr=0.08` | 8/0 | 7/3/0 | `1.48` | `13.38bp` |
 | GOOD | ASI | `price_signal_dl` | `normalized_volume_indicator_1` | `S2-ADM-01-nv1-ci-z66, S2-ADM-02-nv2-ci-dec10, S2-ADM-03-nv1-cs-dec15 (+5)` | `COUNTRY|d=6|tr=0.06` | 8/0 | 5/1/0 | `1.32` | `6.16bp` |
 | GOOD | ASI | `price_signal_dl` | `normalized_volume_indicator_1` | `S2-ADM-01-nv1-ci-z66, S2-ADM-02-nv2-ci-dec10, S2-ADM-03-nv1-cs-dec15 (+5)` | `SUBINDUSTRY|d=4|tr=0.06` | 8/0 | 5/1/0 | `1.26` | `4.64bp` |
+| NORMAL | ASI | `price_signal_dl` | `asi_dual_nv2_rt4` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 8/0 | 2/0/0 | `1.22` | `0.0bp` |
 | NORMAL | ASI | `price_signal_dl` | `asi_nv1_m22` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 8/0 | 1/0/0 | `1.21` | `0.0bp` |
+| NORMAL | ASI | `behavioral_signals` | `extreme_daily_return_indicator, salience_weighted_return_score` | `RA-DUAL-GRANK-MIN-COUNTRY, RA-DUAL-REV-GRANK-MIN-COUNTRY` | `COUNTRY|d=0|tr=0.04` | 8/0 | 4/0/0 | `1.19` | `0.0bp` |
 | NORMAL | ASI | `price_signal_dl` | `normalized_volume_indicator_2` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 2/0/0 | `1.13` | `0.2bp` |
 | NORMAL | ASI | `price_signal_dl` | `asi_dual_nv0_nt3` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 8/0 | 2/0/0 | `1.09` | `0.0bp` |
 | NORMAL | ASI | `price_signal_dl` | `asi_dual_nv2_nt5` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 8/0 | 2/0/0 | `1.07` | `0.0bp` |
+| NORMAL | ASI | `behavioral_signals` | `visual_price_path_shape_score` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 1/0/0 | `1.05` | `0.0bp` |
 | NORMAL | ASI | `behavioral_signals` | `chronological_return_sequence_correlation` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 3/0/0 | `1.05` | `0.0bp` |
+| NORMAL | ASI | `behavioral_signals` | `chronological_return_sequence_correlation` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 1/0/0 | `1.04` | `0.0bp` |
 | NORMAL | ASI | `price_signal_dl` | `asi_nv2_m22` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 8/0 | 1/0/0 | `1.04` | `0.0bp` |
 | NORMAL | ASI | `model39` | `long_term_price_momentum_score_2` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 2/0/0 | `1.03` | `0.0bp` |
 | NORMAL | ASI | `price_signal_dl` | `asi_nv2_m22` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 2/0/0 | `1.02` | `1.25bp` |
@@ -102,19 +111,37 @@
 | NORMAL | ASI | `price_signal_dl` | `asi_nv0_m22` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 8/0 | 1/0/0 | `0.97` | `0.0bp` |
 | NORMAL | ASI | `price_signal_dl` | `normalized_volume_indicator_1` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 1/0/0 | `0.96` | `0.91bp` |
 | NORMAL | ASI | `behavioral_signals` | `extreme_daily_return_indicator` | `RA-DUAL-GRANK-MIN-COUNTRY, RA-DUAL-REV-GRANK-MIN-COUNTRY` | `COUNTRY|d=0|tr=0.04` | 8/0 | 4/0/0 | `0.94` | `0.0bp` |
+| NORMAL | ASI | `behavioral_signals` | `price_path_curvature_measure` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 1/0/0 | `0.92` | `0.0bp` |
 | NORMAL | ASI | `model39` | `regional_price_momentum_percentile_2` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 1/0/0 | `0.9` | `0.0bp` |
 | NORMAL | ASI | `price_signal_dl` | `asi_nv1_m22` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 1/0/0 | `0.88` | `1.11bp` |
+| NORMAL | ASI | `price_signal_dl` | `asi_nv1_m22` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 1/0/0 | `0.88` | `0.0bp` |
 | NORMAL | ASI | `price_signal_dl` | `normalized_volume_indicator_5` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `COUNTRY|d=0|tr=0.04` | 7/0 | 2/0/0 | `0.83` | `0.97bp` |
 | NORMAL | ASI | `behavioral_signals` | `extreme_daily_return_indicator` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 1/0/0 | `0.83` | `0.0bp` |
 | NORMAL | ASI | `behavioral_signals` | `visual_price_path_shape_score` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.79` | `0.0bp` |
+| NORMAL | ASI | `model39` | `regional_price_momentum_percentile_2` | `RA-DUAL-GRANK-MIN-COUNTRY, RA-DUAL-REV-GRANK-MIN-COUNTRY` | `COUNTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.79` | `0.0bp` |
+| NORMAL | ASI | `behavioral_signals` | `salience_weighted_return_score` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.77` | `0.0bp` |
 | NORMAL | ASI | `model39` | `global_price_momentum_percentile_2` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.77` | `0.0bp` |
 | NORMAL | ASI | `price_signal_dl` | `normalized_volume_indicator_0` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.75` | `1.03bp` |
+| NORMAL | ASI | `price_signal_dl` | `asi_nv0_m22` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.74` | `0.0bp` |
+| NORMAL | ASI | `price_signal_dl` | `asi_nv0_m22` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.73` | `0.0bp` |
 | NORMAL | ASI | `price_signal_dl` | `asi_nv2_m22` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.69` | `0.0bp` |
+| NORMAL | ASI | `price_signal_dl` | `asi_dual_nv2_rt4` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.69` | `0.0bp` |
+| NORMAL | ASI | `price_signal_dl` | `asi_dual_nv0_nt3` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.68` | `0.0bp` |
 | NORMAL | ASI | `price_signal_dl` | `asi_nv0_m22` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.65` | `0.71bp` |
+| NORMAL | ASI | `price_signal_dl` | `normalized_volume_indicator_2` | `PC16-C1-nv2-d10-ci, PC16-C2-nv2-d22-ci, PC16-C3-dualnv-ci (+5)` | `COUNTRY|d=10|tr=0.08` | 8/0 | 0/0/0 | `0.63` | `2.84bp` |
+| NORMAL | ASI | `behavioral_signals` | `extreme_daily_return_indicator` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.62` | `0.0bp` |
+| NORMAL | ASI | `model39` | `regional_price_momentum_percentile_2` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.61` | `0.0bp` |
+| NORMAL | ASI | `price_signal_dl` | `asi_dual_nv2_nt5` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.61` | `0.0bp` |
+| BAD | ASI | `behavioral_signals` | `consecutive_return_streak_length` | `PC16-B1-strk-m10-z66, PC16-B2-strk-m22-z66, PC16-B3-strk-d22-ci (+5)` | `COUNTRY|d=20|tr=0.08` | 8/0 | 0/0/0 | `0.59` | `1.8bp` |
 | BAD | ASI | `price_signal_dl` | `normalized_volume_indicator_1` | `S2-ADM-01-nv1-ci-z66, S2-ADM-02-nv2-ci-dec10, S2-ADM-03-nv1-cs-dec15 (+5)` | `COUNTRY|d=4|tr=0.06` | 8/0 | 0/0/0 | `0.58` | `2.16bp` |
 | BAD | ASI | `price_signal_dl` | `asi_rt4_m22` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.53` | `0.0bp` |
+| BAD | ASI | `model39` | `global_price_momentum_percentile_2` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.49` | `0.0bp` |
+| BAD | ASI | `model39` | `long_term_price_momentum_score_2` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.45` | `0.0bp` |
 | BAD | ASI | `price_signal_dl` | `asi_rt4_m22` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.38` | `1.06bp` |
+| BAD | ASI | `price_signal_dl` | `asi_rt4_m22` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.35` | `0.0bp` |
 | BAD | ASI | `model39` | `mid_term_price_momentum_score_2` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.34` | `0.0bp` |
+| BAD | ASI | `model39` | `mid_term_price_momentum_score_2` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.34` | `0.0bp` |
+| BAD | ASI | `model39` | `industry_price_momentum_score_2` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.28` | `0.0bp` |
 | BAD | ASI | `model39` | `industry_price_momentum_score_2` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.18` | `0.0bp` |
 | NORMAL | ASI | `price_signal_dl` | `normalized_volume_indicator_0, normalized_volume_indicator_1, normalized_volume_indicator_5` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `COUNTRY|d=0|tr=0.04` | 1/7 | 0/0/0 | `-0.34` | `-1.22bp` |
 | NORMAL | ASI | `price_signal_dl` | `normalized_volume_indicator_2` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `COUNTRY|d=0|tr=0.04` | 0/0 | 0/0/0 | `None` | `Nonebp` |
@@ -123,9 +150,16 @@
 | NORMAL | ASI | `price_signal_dl` | `normalized_volume_indicator_5` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `COUNTRY|d=0|tr=0.04` | 0/0 | 0/0/0 | `None` | `Nonebp` |
 | NORMAL | ASI | `analyst_revision_horizons` | `analyst_count_decreasing_current_year_ebitda_30d_medium_3` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 0/0 | 0/0/0 | `None` | `Nonebp` |
 | TIMEOUT_BUG | ASI | `behavioral_signals` | `price_path_curvature_measure` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 0/8 | 0/0/0 | `None` | `Nonebp` |
-| NORMAL | ASI | `behavioral_signals` | `extreme_daily_return_indicator, salience_weighted_return_score` | `RA-DUAL-GRANK-MIN-COUNTRY, RA-DUAL-REV-GRANK-MIN-COUNTRY` | `COUNTRY|d=0|tr=0.04` | 0/0 | 0/0/0 | `None` | `Nonebp` |
-| TIMEOUT_BUG | ASI | `price_signal_dl` | `asi_dual_nv2_rt4` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | 0/0/0 | `None` | `Nonebp` |
+| NORMAL | ASI | `behavioral_signals` | `extreme_daily_return_indicator` | `RA-DUAL-GRANK-MIN-SUBINDUSTRY, RA-DUAL-REV-GRANK-MIN-SUBINDUSTRY` | `SUBINDUSTRY|d=0|tr=0.04` | 0/0 | 0/0/0 | `None` | `Nonebp` |
+| NORMAL | ASI | `behavioral_signals` | `extreme_daily_return_indicator, salience_weighted_return_score` | `RA-DUAL-GRANK-MIN-SUBINDUSTRY, RA-DUAL-REV-GRANK-MIN-SUBINDUSTRY` | `SUBINDUSTRY|d=0|tr=0.04` | 0/0 | 0/0/0 | `None` | `Nonebp` |
+| NORMAL | ASI | `model39` | `industry_value_momentum_rank_float` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 0/0 | 0/0/0 | `None` | `Nonebp` |
+| TIMEOUT_BUG | ASI | `price_signal_dl` | `asi_nv2_m22` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `COUNTRY|d=0|tr=0.04` | 0/8 | 0/0/0 | `None` | `Nonebp` |
 | TIMEOUT_BUG | ASI | `price_signal_dl` | `normalized_volume_indicator_1` | `S2-ADM-01-nv1-ci-z66, S2-ADM-02-nv2-ci-dec10, S2-ADM-03-nv1-cs-dec15 (+5)` | `COUNTRY|d=2|tr=0.04` | 0/8 | 0/0/0 | `None` | `Nonebp` |
+| TIMEOUT_BUG | ASI | `behavioral_signals` | `consecutive_return_streak_length` | `PC16-B1-strk-m10-z66, PC16-B2-strk-m22-z66, PC16-B3-strk-d22-ci (+5)` | `COUNTRY|d=5|tr=0.08` | 0/8 | 0/0/0 | `None` | `Nonebp` |
+| TIMEOUT_BUG | ASI | `behavioral_signals` | `consecutive_return_streak_length` | `PC16-B1-strk-m10-z66, PC16-B2-strk-m22-z66, PC16-B3-strk-d22-ci (+5)` | `SLOW|d=5|tr=0.08` | 0/8 | 0/0/0 | `None` | `Nonebp` |
+| TIMEOUT_BUG | ASI | `model39` | `industry_value_momentum_rank_float` | `PC16-A1-indvm-d10-sub, PC16-A2-regvm-d10-sub, PC16-A3-indvm-m22-sub (+5)` | `COUNTRY|d=0|tr=0.08` | 0/8 | 0/0/0 | `None` | `Nonebp` |
+| TIMEOUT_BUG | ASI | `model39` | `industry_value_momentum_rank_float` | `PC16-A1-indvm-d10-sub, PC16-A2-regvm-d10-sub, PC16-A3-indvm-m22-sub (+5)` | `SLOW|d=0|tr=0.08` | 0/8 | 0/0/0 | `None` | `Nonebp` |
+| TIMEOUT_BUG | ASI | `price_signal_dl` | `normalized_volume_indicator_2` | `PC16-C1-nv2-d10-ci, PC16-C2-nv2-d22-ci, PC16-C3-dualnv-ci (+5)` | `REVERSION_AND_MOMENTUM|d=5|tr=0.08` | 0/8 | 0/0/0 | `None` | `Nonebp` |
 | BAD | CHN | `analyst45` | `risk_adjusted_return_treynor` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.39` | `-3.58bp` |
 | BAD | CHN | `analyst45` | `relative_index_return_value_2` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.26` | `-4.73bp` |
 | BAD | CHN | `analyst45` | `aggregate_return_percentage` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.22` | `-4.76bp` |
@@ -165,37 +199,3 @@
 | BAD | DEU | `fundamental6` | `fnd6_gp_at` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.54` | `-5.93bp` |
 | BAD | DEU | `model264` | `mdl264_1l_rta` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `INDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.53` | `-3.5bp` |
 | BAD | DEU | `model264` | `mdl264_1l_rta` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.53` | `-3.77bp` |
-| BAD | DEU | `model264` | `mdl264_1l_os` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `INDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.52` | `-2.0bp` |
-| BAD | DEU | `model264` | `mdl264_1l_os` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.52` | `-2.06bp` |
-| BAD | DEU | `analyst93` | `anl93_profitabilityprev_analyst_profitability2_60d` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.51` | `-3.49bp` |
-| BAD | DEU | `model264` | `mdl264_1l_m1d_1yf_spd_se` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.51` | `-4.31bp` |
-| BAD | DEU | `model264` | `mdl264_1l_ovp` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.51` | `-3.51bp` |
-| BAD | DEU | `model264` | `mdl264_1l_m1d_gtl_se` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.5` | `-3.92bp` |
-| BAD | DEU | `model264` | `mdl264_1l_m1r_mtn_spd_se` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.5` | `-4.3bp` |
-| BAD | DEU | `model264` | `mdl264_1l_m3d_1yf_van_se` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.48` | `-2.18bp` |
-| NORMAL | DEU | `fundamental6` | `fnd6_gp_at` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 4/0 | 0/0/0 | `0.48` | `6.79bp` |
-| BAD | DEU | `model264` | `mdl264_1l_ips` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `INDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.47` | `-3.31bp` |
-| BAD | DEU | `fundamental6` | `fnd6_roa` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.46` | `-11.02bp` |
-| BAD | DEU | `fundamental6` | `fnd6_cash_at` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.46` | `-6.5bp` |
-| BAD | DEU | `model264` | `mdl264_1l_lda` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `INDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.45` | `-3.09bp` |
-| BAD | DEU | `model264` | `mdl264_1l_lda` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.45` | `-3.46bp` |
-| BAD | DEU | `model264` | `mdl264_1l_m1r_gtl_se` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.44` | `-3.28bp` |
-| BAD | DEU | `model264` | `mdl264_1l_m1d_cer_se` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `INDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.42` | `-2.82bp` |
-| BAD | DEU | `model264` | `mdl264_1l_m1d_cer_se` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.42` | `-3.04bp` |
-| BAD | DEU | `fundamental6` | `fnd6_roe` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.39` | `-8.47bp` |
-| BAD | DEU | `model264` | `mdl264_1l_fmc` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `INDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.38` | `-3.22bp` |
-| BAD | DEU | `model264` | `mdl264_1l_fmc` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.38` | `-3.5bp` |
-| BAD | DEU | `model264` | `mdl264_1l_m1d_pt_se` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.37` | `-3.21bp` |
-| BAD | DEU | `analyst93` | `anl93_profitabilityprev_estimator_profitability1` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.36` | `1.85bp` |
-| BAD | DEU | `model264` | `mdl264_1l_ips` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.35` | `-3.52bp` |
-| BAD | DEU | `model264` | `mdl264_1l_od` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `INDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.35` | `-3.41bp` |
-| BAD | DEU | `model264` | `mdl264_1l_od` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.35` | `-3.72bp` |
-| BAD | DEU | `other250` | `sales_position_rank` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.35` | `0.41bp` |
-| BAD | DEU | `other250` | `oth250_item_display_price` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.33` | `0.36bp` |
-| NORMAL | DEU | `fundamental6` | `fnd6_cash_at` | `RA-ADM-01-sub-gz-m22-pos, RA-ADM-02-rev-sub-gz-m22, RA-ADM-03-sub-grank-dec10-pos (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 4/0 | 0/0/0 | `0.27` | `6.44bp` |
-| BAD | DEU | `other250` | `oth250_item_review_count` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.23` | `-0.33bp` |
-| BAD | DEU | `other250` | `total_review_number` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.23` | `-0.33bp` |
-| BAD | DEU | `model264` | `mdl264_1l_m1d_1yf_van_se` | `RA-ADM-01-rank-m22, RA-ADM-02-rev-rank-m22, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.2` | `-0.13bp` |
-| BAD | DEU | `analyst93` | `anl93_profitabilityprev_analyst_profitability1_60d` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 8/0 | 0/0/0 | `0.16` | `-2.85bp` |
-| NORMAL | DEU | `analyst93` | `anl93_profitabilityprev_estimator_profitability1` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 3/0 | 0/0/0 | `-0.29` | `-4.71bp` |
-| NORMAL | DEU | `analyst93` | `anl93_recprofitabilityprev_analyst_profitability1` | `RA-ADM-01-sub-grank-z66-pos, RA-ADM-02-rev-sub-grank-z66, RA-ADM-03-sub-grank-dec10 (+5)` | `SUBINDUSTRY|d=0|tr=0.04` | 3/0 | 0/0/0 | `-0.55` | `-7.24bp` |

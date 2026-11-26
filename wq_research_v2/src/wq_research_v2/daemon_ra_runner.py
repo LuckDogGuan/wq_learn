@@ -1284,6 +1284,45 @@ def parse_region_caps(spec_str: Optional[str]) -> dict[str, int]:
     return caps
 
 
+def collect_balanced_runnable_window(
+    queues_by_region: dict[str, deque[dict[str, Any]]],
+    region_order: list[str],
+    *,
+    region_caps: dict[str, int],
+    default_per_region: int,
+    window_size: int,
+    prepare_fn: Any,
+) -> list[dict[str, Any]]:
+    """Build a multi-region runnable window by round-robin pulling *after* dedup/early-stop filtering.
+
+    Prevents single-region starvation when one region has many already-completed prefix specs
+    (which return runnable=[] during dedup) while another region has unrun specs at the front.
+    """
+    window: list[dict[str, Any]] = []
+    target_n = max(1, int(window_size))
+    active_regions = [r for r in region_order if queues_by_region.get(r)]
+    while len(window) < target_n and active_regions:
+        next_active: list[str] = []
+        for reg in active_regions:
+            q = queues_by_region[reg]
+            if not q:
+                continue
+            take_n = max(1, int(region_caps.get(reg, default_per_region)))
+            taken = 0
+            while taken < take_n and len(window) < target_n and q:
+                spec = q.popleft()
+                prepared = prepare_fn(spec)
+                if prepared is not None:
+                    window.append(prepared)
+                    taken += 1
+            if q:
+                next_active.append(reg)
+            if len(window) >= target_n:
+                break
+        active_regions = next_active
+    return window
+
+
 def run_ra_production_loop(
     *,
     regions: Optional[list[str]] = None,
@@ -1325,7 +1364,7 @@ def run_ra_production_loop(
         max_post_429_retries=4,
         poll_interval_sec=4.0,
         poll_timeout_sec=720.0,
-        stall_timeout_sec=240.0,
+        stall_timeout_sec=360.0,
     )
     evaluator = D1RAEvaluator()
 
@@ -1393,43 +1432,65 @@ def run_ra_production_loop(
     )
 
     try:
-        # Interleave batches proportionally to per-region caps (e.g. EUR:1, USA:2, GLB:1, ASI:1, KOR:1)
-        by_reg_q: dict[str, deque[dict[str, Any]]] = {}
+        # Strictly separate NORMAL vs UNUSED_ALPHA0 queues per region (NO concurrent mixing:
+        # finish 4,000 normal first, then Alphas=0; balance runnable batches across regions AFTER dedup!).
+        normal_by_reg: dict[str, deque[dict[str, Any]]] = {}
+        alpha0_by_reg: dict[str, deque[dict[str, Any]]] = {}
         reg_cycle: list[str] = []
         for s in specs:
             r = str(s["region"]).upper()
-            if r not in by_reg_q:
-                by_reg_q[r] = deque()
+            if r not in reg_cycle:
                 reg_cycle.append(r)
-            by_reg_q[r].append(s)
+                normal_by_reg[r] = deque()
+                alpha0_by_reg[r] = deque()
+            if s.get("queue_type") == "UNUSED_ALPHA0":
+                alpha0_by_reg[r].append(s)
+            else:
+                normal_by_reg[r].append(s)
 
-        interleaved_specs: list[dict[str, Any]] = []
-        active_r = deque(reg_cycle)
-        while active_r:
-            r = active_r.popleft()
-            take_n = max(1, int(clean_region_caps.get(r, max_per_region)))
-            for _ in range(take_n):
-                if by_reg_q[r]:
-                    interleaved_specs.append(by_reg_q[r].popleft())
-            if by_reg_q[r]:
-                active_r.append(r)
-
-        # Strictly separate NORMAL vs UNUSED_ALPHA0 queues (NO concurrent mixing: finish 4,000 normal first, then Alphas=0!)
-        normal_specs = [s for s in interleaved_specs if s.get("queue_type") != "UNUSED_ALPHA0"]
-        alpha0_specs = [s for s in interleaved_specs if s.get("queue_type") == "UNUSED_ALPHA0"]
-        normal_idx = 0
-        alpha0_idx = 0
+        def _prepare_spec_if_runnable(spec: dict[str, Any]) -> Optional[dict[str, Any]]:
+            reg = str(spec["region"]).upper()
+            ds = str(spec.get("dataset_id") or "")
+            ds_key = (reg, ds)
+            if ds_key in early_stopped_keys:
+                return None
+            stop_now, ds_stats = should_early_stop_dataset(
+                ledger,
+                region=reg,
+                dataset_id=ds,
+                min_completed=early_stop_min_sims,
+                min_pos_sharpe=early_stop_min_pos_sharpe,
+            )
+            if stop_now:
+                early_stopped_keys.add(ds_key)
+                print(
+                    f"[EARLY-STOP] [TRACK:{track_name}] Demoting weak direction {reg}/{ds}: "
+                    f"completed={ds_stats['completed']} pos_hits(sh>={early_stop_min_pos_sharpe})={ds_stats['hits_08']} "
+                    f"max_pos_sh={ds_stats['max_pos_sh']} -> pivoting to next dataset/market!",
+                    flush=True,
+                )
+                return None
+            is_stage3_spec = str(spec.get("batch_id") or "").startswith("S3-")
+            effective_mode = "FULL" if is_stage3_spec else (stage12_simulation_mode or simulation_mode).upper()
+            bid, runnable, _ = runner.prepare_batch_tasks(
+                spec,
+                simulation_mode=effective_mode,
+                field_alpha_counts=alpha0_map if spec["queue_type"] == "UNUSED_ALPHA0" else None,
+            )
+            if runnable:
+                return {"batch_id": bid, "region": reg, "dataset_id": ds, "tasks": runnable}
+            return None
 
         # Process in rolling super-windows of 16 specs (up to 128 alphas)
         window_size = max(8, max_slots * 4)
-        while normal_idx < len(normal_specs) or alpha0_idx < len(alpha0_specs):
+        while any(normal_by_reg.values()) or any(alpha0_by_reg.values()):
             est_day = current_est_platform_date()
             day_stats = ledger.compute_daily_summary(est_day)
             day_done = int(day_stats.get("full_valid_completed_count", 0)) + int(day_stats.get("quick_screened_count", 0))
             normal_done = int(day_stats.get("normal_completed", 0))
             last_rem = quota.last_snapshot.remaining_val if (quota.last_snapshot and quota.last_snapshot.endpoint == "/simulations") else None
-            has_pending_normal = normal_idx < len(normal_specs)
-            has_pending_alpha0 = alpha0_idx < len(alpha0_specs)
+            has_pending_normal = any(bool(q) for q in normal_by_reg.values())
+            has_pending_alpha0 = any(bool(q) for q in alpha0_by_reg.values())
             q_mode, q_reason = resolve_quota_queue_policy(
                 day_done,
                 normal_done=normal_done,
@@ -1457,50 +1518,18 @@ def run_ra_production_loop(
             if max_batches is not None and batches_executed >= max_batches:
                 break
 
-            prepared_window: list[dict[str, Any]] = []
-            while len(prepared_window) < window_size:
-                if max_batches is not None and (batches_executed + len(prepared_window)) >= max_batches:
-                    break
-                if q_mode == "NORMAL_ONLY":
-                    if normal_idx >= len(normal_specs):
-                        break
-                    spec = normal_specs[normal_idx]
-                    normal_idx += 1
-                else:
-                    if alpha0_idx >= len(alpha0_specs):
-                        break
-                    spec = alpha0_specs[alpha0_idx]
-                    alpha0_idx += 1
-                reg = str(spec["region"]).upper()
-                ds = str(spec.get("dataset_id") or "")
-                ds_key = (reg, ds)
-                if ds_key in early_stopped_keys:
-                    continue
-                stop_now, ds_stats = should_early_stop_dataset(
-                    ledger,
-                    region=reg,
-                    dataset_id=ds,
-                    min_completed=early_stop_min_sims,
-                    min_pos_sharpe=early_stop_min_pos_sharpe,
-                )
-                if stop_now:
-                    early_stopped_keys.add(ds_key)
-                    print(
-                        f"[EARLY-STOP] [TRACK:{track_name}] Demoting weak direction {reg}/{ds}: "
-                        f"completed={ds_stats['completed']} pos_hits(sh>={early_stop_min_pos_sharpe})={ds_stats['hits_08']} "
-                        f"max_pos_sh={ds_stats['max_pos_sh']} -> pivoting to next dataset/market!",
-                        flush=True,
-                    )
-                    continue
-                is_stage3_spec = str(spec.get("batch_id") or "").startswith("S3-")
-                effective_mode = "FULL" if is_stage3_spec else (stage12_simulation_mode or simulation_mode).upper()
-                bid, runnable, _ = runner.prepare_batch_tasks(
-                    spec,
-                    simulation_mode=effective_mode,
-                    field_alpha_counts=alpha0_map if spec["queue_type"] == "UNUSED_ALPHA0" else None,
-                )
-                if runnable:
-                    prepared_window.append({"batch_id": bid, "region": reg, "dataset_id": ds, "tasks": runnable})
+            active_queues = normal_by_reg if q_mode == "NORMAL_ONLY" else alpha0_by_reg
+            win_limit = window_size if max_batches is None else min(window_size, max(0, max_batches - batches_executed))
+            if win_limit <= 0:
+                break
+            prepared_window = collect_balanced_runnable_window(
+                active_queues,
+                reg_cycle,
+                region_caps=clean_region_caps,
+                default_per_region=max_per_region,
+                window_size=win_limit,
+                prepare_fn=_prepare_spec_if_runnable,
+            )
 
             if not prepared_window:
                 continue

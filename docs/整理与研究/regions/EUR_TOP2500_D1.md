@@ -119,3 +119,8 @@
 - **2026-11-26 14:53（2 小时定时审计 #8 · 果断止损 3 个欧股弱集，全速换装 `model110` 机构多因子 + `model39` + `analyst39` + `shortinterest6`！）**：
   - **快速止损（已记入 `INEFF-05`）**：`EUR / model28`（`0/32, max=0.66`）、`EUR / predictive_starmine`（`0/24, max=0.26`）、`EUR / model27`（`0/24, max=0.73`）全部清出主队列；保留 `EUR / model36`（`4/32, max=0.89, 12.09bp`）观察。
   - **欧股纯 `MATRIX` 机构四王牌置顶**：换入 **`EUR / model110`**（`quality / value / growth / analyst_sentiment / alternative / tree / price_momentum_reversal / score` 8 大机构复合因子，纯 `MATRIX, cov=0.853`）、**`EUR / model39`**（StarMine Valuation-Momentum 纯 `MATRIX`）、**`EUR / analyst39`**（分析师盈利与财务比率 `cov=0.77–0.92`）、**`EUR / shortinterest6`**（SmartHoldings `cov=1.000, aCnt=5..25`），零 `VECTOR` 停滞直冲 `EUR` 正交高 Margin `Useful #2`！
+- **2026-11-26 21:05（2 小时定时审计 #10 · 修复多区饿死调度 Bug 恢复 `EUR:2` 满载 + 上线 `S3-r17` 攻打正交低 PC 矿脉 `model238 (PC=0.608)` 与 `shortinterest6`！）**：
+  - **`S3-r16-EUR-M110-LOWPC` 复盘（24/24 FULL 零超时）**：`mdl110_value × mdl110_tree` 最高 `P0P93QrM`（`Sh=1.47, 2Y=1.05, Fit=0.70`）与 `zqApRpJX`（`Sh=1.44, 2Y=0.97`）——注意因仅含 2 字段触发平台 **PPA-First** 检查显示 `FAIL=[]`，实为未达 RA `1.58` 且 `2Y` 偏弱，已严守规则不误标。
+  - **高 ROI 正交升级 (`S3-r17`, 40 FULL) + `EUR:2` 恢复满载**：修复 `daemon_ra_runner.py` 去重前缀饿死 Bug（`collect_balanced_runnable_window()`），将 `EUR` 升回 **`EUR:2`** 并发并置顶两路低 PC 高 2Y 正交冲刺：
+    1. **`S3-r17-EUR-M238-ORTHO`（24 FULL）**：直救仅差 `Fit=0.99` 与 `Sub-Uni` 的超低相关王牌 `78GbxbA1`（`Sh=1.73, 2Y=2.21, corr=0.205 vs RR5QjWYz, PC=0.608 < 0.70!`），叠 `EFF-03` (`adv20 > 0.35/0.40/0.45` + `country*industry` + 后置 `d10/15/22` + `tail25`) 冲刺 `EUR` 第 2 条完全正交 `Useful`；
+    2. **`S3-r17-EUR-SI6-PROMO`（16 FULL）**：将 `shortinterest6` 首波 `1YGQzpGR`（`Sh=1.47, 2Y=1.91`）与 `P0PdGrlJ`（`1.37, 2Y=1.84`）配 `adv20` 门控 + `country*industry` + 跨集 `model238` 推向 Stage-3 `1.60+`。
