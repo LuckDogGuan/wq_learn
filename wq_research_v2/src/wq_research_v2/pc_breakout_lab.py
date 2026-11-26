@@ -1033,10 +1033,99 @@ def build_eur_asi_s3r17_orthogonal_specs() -> list[dict[str, Any]]:
     return specs
 
 
+def build_eur_s3r18_ortho_strike_specs() -> list[dict[str, Any]]:
+    """S3-r18 EUR Ultra-Orthogonal Complementary Strike (97-OS SC=0.12..0.33, 6 batches = 48 FULL).
+
+    Triggered by 2-hour Audit #11 (2026-11-26 22:55 CST) after user submitted E5mWLW0J + Jj88vq2e -> 97/100 OS:
+      - Pack A (32 FULL, EUR/TOP2500/model77 x model110): Pairs high-2Y/high-Margin model77
+        (zqApnwdR dvm_ttmgfp_alt 20.3bp Sh=2.05/2Y=2.21/Sub=0.90/1.07 SC=0.336; GrQJ50gP 23.6bp 2Y=2.52)
+        with large-cap Sub-Uni strong ultra-orthogonal model110 & emm
+        (P0P95bbx mdl110_analyst_sentiment Sh=2.30/Sub=1.16/1.20 SC=0.123!; RR5W58Qg mdl110_score Sh=2.02 Sub PASS!;
+        78G9RNAZ emm_fc_epsrm_alt Sh=1.90/Sub=0.90/0.99 SC=0.149!).
+        Strictly aligns reverse() on negative model77 branches and avoids heavy adv20>0.40 cuts (INEFF-09).
+      - Pack B (16 FULL, EUR/TOP2500/shortinterest6): Universal High-Turnover Reduction (TO 28.9% -> 8-15%)
+        on 1YGE0pEz (Sh=1.80, 2Y=1.61, SC=0.216) & VkMJ5KqY (Sh=1.76, 2Y=1.68) & XgN6M3gl (Sh=1.58, 2Y=2.02)
+        with ZERO heavy adv20 gate (uses ts_decay_linear, ts_mean, ts_target_tvr_decay, hump, cross-DS model77/110).
+    """
+    specs: list[dict[str, Any]] = []
+    ci = "group_cartesian_product(country, industry)"
+
+    # --- Pack A (32 FULL): EUR/TOP2500 model77 x model110 Complementary Orthogonal Fusion ---
+    dvm_gfp = "reverse(ts_backfill(mdl177_dvm_ttmgfp_alt, 21))"
+    dvm_gfp_m22 = "reverse(ts_mean(ts_backfill(mdl177_dvm_ttmgfp_alt, 21), 22))"
+    emm_eps = "reverse(ts_backfill(mdl177_emm_fc_epsrm_alt, 21))"
+    anl_sent = "ts_backfill(mdl110_analyst_sentiment, 21)"
+    m110_sc = "ts_backfill(mdl110_score, 21)"
+
+    eur_m77_m110_exprs: list[tuple[str, str, str, str]] = [
+        ("PC18-A1-dvm-anlsent-ci", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(min(rank({dvm_gfp}), rank({anl_sent})), {ci})"),
+        ("PC18-A2-dvmm22-anlsent-ci", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(min(rank({dvm_gfp_m22}), rank({anl_sent})), {ci})"),
+        ("PC18-A3-dvm-m110sc-ci", "ADMIN_ORIGINAL", "KH94146", f"group_zscore(min(rank({dvm_gfp}), rank({m110_sc})), {ci})"),
+        ("PC18-A4-dvm-emmeps-ci", "ADMIN_ORIGINAL", "KH94146", f"group_zscore(min(rank({dvm_gfp}), rank({emm_eps})), {ci})"),
+        ("PC18-A5-dvm-anlsent-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank({dvm_gfp}), rank({anl_sent})), 10), {ci}), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC18-A6-dvm-m110sc-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank({dvm_gfp}), rank({m110_sc})), 10), {ci}), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC18-A7-dvm-anlsent-adv25", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.25, group_zscore(min(rank({dvm_gfp}), rank({anl_sent})), {ci}), 0)"),
+        ("PC18-A8-dvm-emmeps-sp15", "TOP100_2026Q4", "LD22811", f"signed_power(group_zscore(min(rank({dvm_gfp}), rank({emm_eps})), {ci}), 1.5)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("ram_d0_t06", "REVERSION_AND_MOMENTUM", 0, 0.06),
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("crd_d4_t08", "CROWDING", 4, 0.08),
+        ("crd_d6_t08", "CROWDING", 6, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r18-EUR-M77M110-ORTHO-{tag}",
+                campaign_id="S3_EUR_M77_M110_ORTHO",
+                hypothesis_id="HYP-S3R18-EUR-M77-2Y25-X-M110-SUBPASS-SC012",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model77",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=_build_items(eur_m77_m110_exprs, dataset_id="model77", primary_field_id="mdl177_dvm_ttmgfp_alt", tag_suffix=tag),
+            )
+        )
+
+    # --- Pack B (16 FULL): EUR/TOP2500/shortinterest6 Universal High-TO Reduction (ZERO adv20 hard cut!) ---
+    sh_gchg = "ts_backfill(star_hold_global_change_rank, 21)"
+    sh_rchg = "ts_backfill(star_hold_region_change_rank, 21)"
+    sh_rrnk = "ts_backfill(star_hold_region_rank, 21)"
+
+    eur_si6_tofix_exprs: list[tuple[str, str, str, str]] = [
+        ("PC18-B1-gchg-d10-ci", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(ts_decay_linear({sh_gchg}, 10), {ci})"),
+        ("PC18-B2-rchg-d10-ci", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(ts_decay_linear({sh_rchg}, 10), {ci})"),
+        ("PC18-B3-gchg-m22-ind", "ADMIN_ORIGINAL", "KH94146", f"group_zscore(ts_mean({sh_gchg}, 22), industry)"),
+        ("PC18-B4-rrnk-d10-ci", "ADMIN_ORIGINAL", "KH94146", f"group_zscore(ts_decay_linear({sh_rrnk}, 10), {ci})"),
+        ("PC18-B5-gchg-tvr12", "TOP100_2026Q4", "JX79797", f"ts_target_tvr_decay(group_zscore({sh_gchg}, {ci}), lambda_min=0, lambda_max=0.9, target_tvr=0.12)"),
+        ("PC18-B6-gchg-hump01", "TOP100_2026Q4", "ZS59763", f"hump(group_zscore(ts_decay_linear({sh_gchg}, 5), {ci}), hump=0.01)"),
+        ("PC18-B7-gchg-dvm-ci", "TOP100_2026Q4", "SZ83096", f"group_zscore(ts_decay_linear(min(rank({sh_gchg}), rank({dvm_gfp})), 10), {ci})"),
+        ("PC18-B8-rrnk-anlsent-ci", "TOP100_2026Q4", "LD22811", f"group_zscore(ts_decay_linear(min(rank({sh_rrnk}), rank({anl_sent})), 10), {ci})"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("crd_d6_t08", "CROWDING", 6, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r18-EUR-SI6-TOFIX-{tag}",
+                campaign_id="S3_EUR_SI6_HIGHTO_FIX",
+                hypothesis_id="HYP-S3R18-EUR-SI6-TO28-TO-12-NO-ADV20CUT",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="shortinterest6",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=_build_items(eur_si6_tofix_exprs, dataset_id="shortinterest6", primary_field_id="star_hold_global_change_rank", tag_suffix=tag),
+            )
+        )
+
+    return specs
+
+
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r17 (64 FULL) -> S3-r16 (96 FULL) -> S3-r15 (64 FULL) -> ... -> S3-r10b (160 FULL)."""
+    """Return ordered S3-r18 (48 FULL) -> S3-r17 (64 FULL) -> S3-r16 (96 FULL) -> ... -> S3-r10b (160 FULL)."""
     return (
-        build_eur_asi_s3r17_orthogonal_specs()
+        build_eur_s3r18_ortho_strike_specs()
+        + build_eur_asi_s3r17_orthogonal_specs()
         + build_asi_eur_s3r16_controlled_specs()
         + build_clean_lowpc_controlled_s3r15_specs()
         + build_usa_e5m_1ax_margin_s3r14_specs()

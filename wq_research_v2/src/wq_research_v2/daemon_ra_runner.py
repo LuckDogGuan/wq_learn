@@ -35,7 +35,7 @@ from wq_research_v2.ledger_store import LedgerStore
 from wq_research_v2.quota_tracker import QuotaTracker, current_est_platform_date
 from wq_research_v2.ra_evaluator import D1RAEvaluator
 from wq_research_v2.seed_pruner import PruningConfig, prune_similar_seeds
-from wq_research_v2.sim_runner import SimRunner
+from wq_research_v2.sim_runner import SimRunner, max_threads_for_region
 from wq_research_v2.stage23_refiner import build_all_stage23_refiner_specs
 
 # Default high-Base institutional-alpha-first D1 exploration order (every region tracked independently!)
@@ -76,6 +76,93 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
             ("adm_tsrank126_siind", "ts_rank(ts_backfill(star_hold_industry_rank, 21), 126)"),
             ("adm_avdiff66_siglb", "ts_av_diff(ts_backfill(star_hold_global_screening_rank, 21), 66)"),
             ("adm_tsir22_siglb", "ts_ir(ts_backfill(star_hold_global_screening_rank, 21), 22)"),
+        ],
+    },
+    # ==================== AUDIT #11 FRESH ORTHOGONAL PURE-MATRIX NORMAL MINES (USA:2 REFILL + ASI/model25) ====================
+    # Added 2026-11-26 22:58 CST: USA had only 7 NORMAL batches left; refill with blank-pyramid pure-MATRIX sets
+    # (sentiment 1.5x, other 1.4x, model 1.3x) & replace Japan-dead ASI/model39 (INEFF-09) with ASI/model25!
+    {
+        "campaign_id": "USA_MULTISRC_NORM",
+        "region": "USA",
+        "universe": "TOP3000",
+        "dataset_id": "multi_source_model",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "template_packs": ["core_50_50", "admin_ts_regime"],
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING"],
+        "fields": [
+            "long_term_quantile5_confidence_120d_pred",
+            "long_term_regime4_quantile1_60d_pred",
+            "price_volume_quantile5_confidence_5d_pred",
+            "price_volume_quantile5_confidence_60d_pred",
+            "event_embedding_quantile2_confidence_60d_pred",
+            "long_term_seasonal_quantile1_120d_pred",
+            "long_term_seasonal_quantile1_60d_pred",
+        ],
+    },
+    {
+        "campaign_id": "USA_NEWS_TRANS_NORM",
+        "region": "USA",
+        "universe": "TOP3000",
+        "dataset_id": "news_sentiment_transfer",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "template_packs": ["core_50_50", "admin_ts_regime"],
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING"],
+        "fields": [
+            "secondary_sentiment_maximum",
+            "secondary_sentiment_middle_value",
+            "sentiment_score_maximum",
+            "primary_sentiment_skewness_2",
+            "sentiment_distribution_skewness_2",
+            "primary_sentiment_total_2",
+            "secondary_sentiment_skewness_2",
+            "primary_sentiment_maximum",
+        ],
+    },
+    {
+        "campaign_id": "USA_AINEWS_NORM",
+        "region": "USA",
+        "universe": "TOP3000",
+        "dataset_id": "ai_news_scores",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "template_packs": ["core_50_50", "nonlinear_tail_group"],
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING"],
+        "fields": [
+            "negative_sentiment_peak_value_3",
+            "neutral_score_average_value_4",
+            "neutral_score_average_value_5",
+            "neutral_score_confidence_lower_bound_3",
+            "neutral_score_confidence_lower_bound_4",
+            "neutral_score_confidence_lower_bound_5",
+            "neutral_score_confidence_upper_bound_4",
+            "negative_score_confidence_upper_bound_4",
+        ],
+    },
+    {
+        "campaign_id": "ASI_M25_VALMOM_NORM",
+        "region": "ASI",
+        "universe": "MINVOL1M",
+        "dataset_id": "model25",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "max_trade": "ON",
+        "template_packs": ["core_50_50", "nonlinear_tail_group"],
+        "default_neut": "COUNTRY",
+        "alt_neuts": ["SUBINDUSTRY", "REVERSION_AND_MOMENTUM"],
+        "fields": [
+            "industry_credit_risk_percentile",
+            "industry_price_momentum_percentile",
+            "long_term_momentum_percentile",
+            "global_momentum_percentile",
+            "ev_to_ebitda_relative_score",
+            "forward_10yr_eps_cagr",
+            "forward_five_year_eps_growth_rate",
+            "market_implied_10yr_eps_cagr_3",
         ],
     },
     # ==================== DAY-2 AUDIT #8 PIVOT: TIER-S PURE-MATRIX INSTITUTIONAL MINES (2026-11-26 14:52) ====================
@@ -238,28 +325,8 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
             "mdl110_score",
         ],
     },
-    {
-        "campaign_id": "ASI_M39_VALMOM_NORM",
-        "region": "ASI",
-        "universe": "MINVOL1M",
-        "dataset_id": "model39",
-        "queue_type": "NORMAL",
-        "field_type": "MATRIX",
-        "max_trade": "ON",
-        "template_packs": ["core_50_50", "nonlinear_tail_group"],
-        "default_neut": "COUNTRY",
-        "alt_neuts": ["SUBINDUSTRY", "REVERSION_AND_MOMENTUM"],
-        "fields": [
-            "regional_price_momentum_percentile_2",
-            "industry_price_momentum_score_2",
-            "long_term_price_momentum_score_2",
-            "global_price_momentum_percentile_2",
-            "mid_term_price_momentum_score_2",
-            "region_value_momentum_rank",
-            "industry_value_momentum_rank_float",
-            "region_value_momentum_rank_float",
-        ],
-    },
+    # Retired at Audit #11 (INEFF-09): ASI/model39 fails LOW_ASI_JPN_SHARPE (0.08..0.36/1.00) across ALL neutralizations;
+    # replaced above by ASI_M25_VALMOM_NORM (model25, cov=0.80..1.00, aCnt=1..2).
     {
         "campaign_id": "ASI_ANLREV_FREE",
         "region": "ASI",
@@ -439,26 +506,7 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
         ],
     },
     # ==================== TIER 1: HIGH-BASE INSTITUTIONAL HEAVYWEIGHTS ====================
-    {
-        "campaign_id": "EUR_M25_PCT_NORM",
-        "region": "EUR",
-        "universe": "TOP2500",
-        "dataset_id": "model25",
-        "queue_type": "NORMAL",
-        "field_type": "MATRIX",
-        "default_neut": "INDUSTRY",
-        "alt_neuts": ["SUBINDUSTRY", "COUNTRY", "REVERSION_AND_MOMENTUM"],
-        "fields": [
-            "value_momentum_region_percentile",
-            "operating_efficiency_component_percentile",
-            "exclusions_component_percentile",
-            "regional_momentum_percentile",
-            "mid_term_momentum_percentile",
-            "long_term_momentum_percentile",
-            "global_momentum_percentile",
-            "mdl25_pcv421_81v",
-        ],
-    },
+    # Retired at Audit #11: EUR/model25 now LIVE in 97 OS (RR5QjWYz); new siblings collide SC=0.77..0.99.
     {
         "campaign_id": "EUR_M238_SMARTHOLDINGS_NORM",
         "region": "EUR",
@@ -1265,7 +1313,7 @@ def export_funnel_snapshot(
 
 
 def parse_region_caps(spec_str: Optional[str]) -> dict[str, int]:
-    """Parse CLI `--region-caps EUR:1,USA:3` into `{region: max_slots}`."""
+    """Parse CLI `--region-caps EUR:1,USA:3` into `{region: max_slots}`, hard-clamped to GLB<=3 and other<=4."""
     caps: dict[str, int] = {}
     if not spec_str:
         return caps
@@ -1280,7 +1328,7 @@ def parse_region_caps(spec_str: Optional[str]) -> dict[str, int]:
         except ValueError:
             continue
         if reg_u and n > 0:
-            caps[reg_u] = n
+            caps[reg_u] = min(n, max_threads_for_region(reg_u))
     return caps
 
 

@@ -22,13 +22,24 @@ from wq_research_v2.ledger_store import LedgerStore
 from wq_research_v2.quota_tracker import QuotaTracker, current_est_platform_date
 
 
+MAX_THREADS_GLB = 3
+MAX_THREADS_OTHER_REGION = 4
+
+
+def max_threads_for_region(region: Optional[str]) -> int:
+    """Hard per-region concurrent thread ceiling: GLB <= 3 threads, all other regions <= 4 threads."""
+    if str(region or "").strip().upper() == "GLB":
+        return MAX_THREADS_GLB
+    return MAX_THREADS_OTHER_REGION
+
+
 class WeightedSlotSemaphore:
     """Thread-safe global + per-region weighted semaphore.
 
     Enforces:
     - Global concurrent slot cap (`max_slots`, e.g. 4; GLB atomically consumes weight=2)
-    - Per-region concurrent slot cap (`max_per_region`, e.g. 2) so 2 EUR + 2 USA = 4 threads
-      run smoothly in parallel without triggering single-region concurrency 429s!
+    - Hard per-region thread cap: GLB <= 3 concurrent threads, all other regions <= 4 concurrent threads
+    - Optional tighter per-region caps (`max_per_region` / `region_caps`)
     """
 
     def __init__(
@@ -43,10 +54,13 @@ class WeightedSlotSemaphore:
         self.max_slots = int(max_slots)
         self.max_per_region = int(max_per_region) if max_per_region is not None and max_per_region > 0 else self.max_slots
         self.region_caps: dict[str, int] = {
-            str(k).upper(): max(1, int(v)) for k, v in (region_caps or {}).items() if int(v) > 0
+            str(k).upper(): min(max_threads_for_region(str(k)), max(1, int(v)))
+            for k, v in (region_caps or {}).items()
+            if int(v) > 0
         }
         self._available = int(max_slots)
         self._region_in_flight: dict[str, int] = {}
+        self._region_threads_in_flight: dict[str, int] = {}
         self._cond = threading.Condition()
 
     @property
@@ -58,14 +72,19 @@ class WeightedSlotSemaphore:
         with self._cond:
             return int(self._region_in_flight.get(str(region).upper(), 0))
 
+    def region_threads_in_flight(self, region: str) -> int:
+        with self._cond:
+            return int(self._region_threads_in_flight.get(str(region).upper(), 0))
+
     def _can_acquire_locked(self, weight: int, region: Optional[str]) -> bool:
         if self._available < weight:
             return False
         if region:
             reg = str(region).upper()
-            cap_val = self.region_caps.get(reg, self.max_per_region)
-            reg_cap = max(weight, cap_val)
-            if self._region_in_flight.get(reg, 0) + weight > reg_cap:
+            hard_thread_cap = max_threads_for_region(reg)
+            cfg_thread_cap = self.region_caps.get(reg, self.max_per_region)
+            eff_thread_cap = max(1, min(int(cfg_thread_cap), hard_thread_cap))
+            if self._region_threads_in_flight.get(reg, 0) + 1 > eff_thread_cap:
                 return False
         return True
 
@@ -87,6 +106,7 @@ class WeightedSlotSemaphore:
             self._available -= w
             if reg:
                 self._region_in_flight[reg] = self._region_in_flight.get(reg, 0) + w
+                self._region_threads_in_flight[reg] = self._region_threads_in_flight.get(reg, 0) + 1
             return True
 
     def try_acquire(self, weight: int = 1, *, region: Optional[str] = None) -> bool:
@@ -98,6 +118,7 @@ class WeightedSlotSemaphore:
             self._available -= w
             if reg:
                 self._region_in_flight[reg] = self._region_in_flight.get(reg, 0) + w
+                self._region_threads_in_flight[reg] = self._region_threads_in_flight.get(reg, 0) + 1
             return True
 
     def release(self, weight: int = 1, *, region: Optional[str] = None) -> None:
@@ -111,6 +132,11 @@ class WeightedSlotSemaphore:
                     self._region_in_flight.pop(reg, None)
                 else:
                     self._region_in_flight[reg] = cur
+                tcur = self._region_threads_in_flight.get(reg, 0) - 1
+                if tcur <= 0:
+                    self._region_threads_in_flight.pop(reg, None)
+                else:
+                    self._region_threads_in_flight[reg] = tcur
             self._cond.notify_all()
 
 

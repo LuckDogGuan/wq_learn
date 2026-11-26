@@ -88,6 +88,25 @@ def test_weighted_semaphore_enforces_global_and_per_region_caps() -> None:
     assert sem2.try_acquire(1, region="USA") is True
     assert sem2.try_acquire(1, region="USA") is True
     assert sem2.available == 0
+
+    # Hard thread ceiling: GLB <= 3 threads, other regions <= 4 threads (even with huge max_slots/max_per_region!)
+    sem3 = WeightedSlotSemaphore(max_slots=12, max_per_region=8, region_caps={"GLB": 6, "USA": 6})
+    assert sem3.region_caps["GLB"] == 3
+    assert sem3.region_caps["USA"] == 4
+    # GLB allows up to 3 concurrent threads (6 slots at weight=2), 4th GLB thread MUST be blocked!
+    assert sem3.try_acquire(2, region="GLB") is True
+    assert sem3.try_acquire(2, region="GLB") is True
+    assert sem3.try_acquire(2, region="GLB") is True
+    assert sem3.region_threads_in_flight("GLB") == 3
+    assert sem3.try_acquire(2, region="GLB") is False
+    sem3.release(2, region="GLB")
+    sem3.release(2, region="GLB")
+    sem3.release(2, region="GLB")
+    # Non-GLB (USA) allows up to 4 concurrent threads, 5th USA thread MUST be blocked!
+    for _ in range(4):
+        assert sem3.try_acquire(1, region="USA") is True
+    assert sem3.region_threads_in_flight("USA") == 4
+    assert sem3.try_acquire(1, region="USA") is False
     assert sem2.region_in_flight("EUR") == 1
     assert sem2.region_in_flight("USA") == 3
 
