@@ -127,7 +127,13 @@
       "rule_id": "IMP-05-WANGGE-L6-TAIL-PC-CUT",
       "symptom": "0-FAIL SC_PASS winner sits narrowly above PC=0.70 (e.g. PC=0.702-0.720) with strong 2Y/Margin; aggressive nonlinear ops (signed_power 1.5/2) hurt Sharpe",
       "action": "Apply Wang Ge 80%-skill ATLAS L6 conviction-tail transformation `tail(group_rank(ts_decay_linear(min(rank(A), rank(B)), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)` across decay={0,2,4,6} (verify smooth stability, no single-point cliff).",
-      "empirical_evidence": "On USA/TOP3000/model31, moving ts_decay_linear(..., 22) post-min + L6 tail(0.25,0.75,0.5) dropped PC -0.010 (0.7031->0.6936), dropped SC -0.005 (0.539->0.535), boosted 2Y Sharpe (2.55->2.63) & Fitness (1.05->1.07) smoothly across d=0/2/4, minting FIRST USA Useful champion e71w5Qrl (18.58bp, official 0-FAIL)!"
+      "empirical_evidence": "On USA/TOP3000/model31, moving ts_decay_linear(..., 22) post-min + L6 tail(0.25,0.75,0.5) dropped PC -0.010 (0.7031->0.6936), dropped SC -0.005 (0.539->0.535), boosted 2Y Sharpe (2.55->2.63) & Fitness (1.05->1.07) smoothly across d=0/2/4, minting FIRST USA Useful champion e71w5Qrl (18.58bp, official 0-FAIL, now live in OS!)!"
+    },
+    {
+      "rule_id": "IMP-06-FIRST-PRINCIPLES-PC-BREAKOUT",
+      "symptom": "Single-dataset nonlinear/time-series tweaks hit a hard PC floor (~0.75-0.87) once a parent champion enters live OS/Prod",
+      "action": "Break PC & OS-self-collision simultaneously via: (1) Cross-dataset nesting (e.g., model31 x model30 star_eps_surprise / model28 credit); (2) STATISTICAL + tail(vector_neut(..., rank(ts_mean(returns, 22))), -0.25, 0.25, 0) geometric orthogonalization; (3) Non-min combinator divide(rank(A), subtract(2, rank(B))) or quantile(cauchy); (4) NEVER use ts_quantile(252)/quantile(cauchy)/ts_target_tvr_hump(if_else) on EUR/TOP2500 (causes 240s compute stalls); strictly use exact 81 live-verified Gold REGULAR operators.",
+      "empirical_evidence": "S3-r10b 6-angle lab (112/112 USA clean) proved after e71w5Qrl entered OS: linear tvr_decay/hump/gaussian stayed at PC=0.864-0.874, divide() cut corr by -0.120 (0.7546), STATISTICAL+tail(vector_neut) crushed corr(e71) to 0.4397-0.4477 with 2 new 0-FAIL winners (1YGbl1EQ, legO522N), and 3-DS model31 x model30 (N1KmLbEg) broke BOTH PC=0.6654 < 0.70 AND corr(e71)=0.6655 < 0.68!"
     }
   ],
   "template_registry_explicit": [

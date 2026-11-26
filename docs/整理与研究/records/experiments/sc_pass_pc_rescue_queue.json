@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-11-26T09:53:00+08:00",
-  "policy": "All RA 0-FAIL + SC < 0.65 receive alias 'SC 0.xxx PC 0.xxx'. All-pass (PC < 0.70 + pairwise < 0.68, ranked by Margin DESC) receive Useful tag; PC >= 0.70 or correlated siblings (>=0.68 vs higher-Margin Useful) receive SC_PASS tag.",
+  "updated_at": "2026-11-26T11:18:00+08:00",
+  "policy": "All RA 0-FAIL + SC < 0.65 receive alias 'SC 0.xxx PC 0.xxx'. All-pass (PC < 0.70 + pairwise < 0.68, ranked by Margin DESC) receive Useful tag; PC >= 0.70 or correlated siblings (>=0.68 vs higher-Margin Useful) receive SC_PASS tag. Note: os_pnl_cache.db synced to 95 OS alphas (newly_synced=3, incl. e71w5Qrl live in OS!).",
   "useful_all_pass_tagged": [
     {
       "alpha_id": "e71w5Qrl",
@@ -182,6 +182,48 @@
     }
   ],
   "sc_pass_only_pc_high": [
+    {
+      "alpha_id": "1YGbl1EQ",
+      "region": "USA",
+      "universe": "TOP3000",
+      "dataset_id": "model31",
+      "mark": "SC_PASS",
+      "alias": "SC 0.448 PC 0.764",
+      "sharpe": 1.69,
+      "sharpe_2y": 2.40,
+      "fitness": 1.00,
+      "margin_bp": 8.31,
+      "hard_checks": "0_FAIL_OFFICIAL_CHECK_PASS",
+      "local_sc": 0.4303,
+      "official_sc": 0.4476,
+      "remote_pc": 0.7643,
+      "corr_vs_e71w5Qrl": 0.4477,
+      "neutralization": "STATISTICAL",
+      "decay": 5,
+      "truncation": 0.08,
+      "pc_rescue_plan": "S3-r10b Angle D STATISTICAL + tail(vector_neut(ass_tvr_prior_qtr, ret22)) 0-FAIL winner; COMPLETELY ORTHOGONAL to live OS e71w5Qrl (corr=0.4477!) and cut PC -0.025 vs qM5r0dxj (0.7896->0.7643). S3-r11 pairs this exact orthogonal template with model30 (PC=0.676) & model28 FREE!"
+    },
+    {
+      "alpha_id": "legO522N",
+      "region": "USA",
+      "universe": "TOP3000",
+      "dataset_id": "model31",
+      "mark": "SC_PASS",
+      "alias": "SC 0.440 PC 0.766",
+      "sharpe": 1.74,
+      "sharpe_2y": 2.48,
+      "fitness": 1.04,
+      "margin_bp": 7.10,
+      "hard_checks": "0_FAIL_OFFICIAL_CHECK_PASS",
+      "local_sc": 0.4374,
+      "official_sc": 0.4396,
+      "remote_pc": 0.7660,
+      "corr_vs_e71w5Qrl": 0.4397,
+      "neutralization": "STATISTICAL",
+      "decay": 3,
+      "truncation": 0.06,
+      "pc_rescue_plan": "d=3 sibling of 1YGbl1EQ (corr=0.9975); orthogonal to live OS e71w5Qrl (corr=0.4397)."
+    },
     {
       "alpha_id": "78GbojXL",
       "region": "USA",

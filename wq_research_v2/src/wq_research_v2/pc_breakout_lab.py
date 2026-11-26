@@ -349,10 +349,149 @@ def build_eur_pc_m77_breakout_specs() -> list[dict[str, Any]]:
     return specs
 
 
+def build_ortho_pc_breakout_s3r11_specs() -> list[dict[str, Any]]:
+    """S3-r11 Post-e71w5Qrl-OS Orthogonal PC-Breakout Strike (12 batches = 96 FULL: 64 USA + 32 Fast EUR).
+
+    Directly applies S3-r10b 6-angle quantitative proof (after e71w5Qrl entered live OS/Prod!):
+      1) S3-r10b proved any single-dataset RAM tweak of ass_tvr_last_qtr x acc_prior_qtr now collides at
+         PC == corr(e71w5Qrl) = 0.84-0.87.
+      2) Three mechanisms BROKE e71w5Qrl & PC:
+         - Cross-dataset model31 x model30 (N1KmLbEg): PC=0.6654 < 0.70, corr(e71)=0.6655 < 0.68, 2Y=2.82!
+         - STATISTICAL + tail(vector_neut(..., returns)) (1YGbl1EQ/legO522N): 0-FAIL, corr(e71)=0.440!
+         - divide(rank(A), subtract(2, rank(B))) & quantile(cauchy): cut corr by -0.120 vs linear decay!
+      3) EUR-M25/M77 stalls traced to ts_quantile(252), quantile(cauchy) & ts_target_tvr_hump(if_else) on EUR ->
+         removed for fast, zero-stall EUR continuous liquidity tilt!
+    """
+    specs: list[dict[str, Any]] = []
+
+    # --- USA Pack A (32 FULL): 100% ZERO ass_tvr_last_qtr/prior_qtr (fully detached from e71w5Qrl!) ---
+    eps1 = "ts_backfill(star_eps_surprise_prediction_fq1, 21)"
+    eps2 = "ts_backfill(star_eps_surprise_prediction_fq2, 21)"
+    epsy2 = "ts_backfill(star_eps_surprise_prediction_fy2, 21)"
+    acc_pq = "ts_backfill(mdl31_ab1_acc_prior_qtr, 21)"
+    roe_t4 = "ts_backfill(mdl31_ab1_roe_pct_t4q, 21)"
+    gm_lq = "ts_backfill(mdl31_ab1_gm_pct_last_qtr, 21)"
+    excl_c1 = "ts_backfill(mdl31_ab1_exclusions_chg_1_qtr, 21)"
+    avol = "ts_backfill(mdl28_sm_structural2_v14_0_0_nd_credit_structural_asset_volatility_pct, 21)"
+    dtd = "ts_backfill(mdl28_sm_structural2_v14_0_0_nd_credit_structural_distance_to_default, 21)"
+    trd1 = "ts_zscore(ts_mean(ts_backfill(raw_trend_indicator_1, 21), 5), 66)"
+    vol6 = "ts_decay_linear(ts_backfill(raw_volume_indicator_6, 21), 10)"
+
+    usa_detach_exprs: list[tuple[str, str, str, str]] = [
+        ("PC11-U1-eps1-acc-tail25", "ADMIN_ORIGINAL", "WL13229", f"tail(group_rank(ts_decay_linear(min(rank({eps1}), rank({acc_pq})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC11-U2-eps1-roe-div", "ADMIN_ORIGINAL", "WL13229", f"tail(group_rank(ts_decay_linear(divide(rank({eps1}), subtract(2, rank({roe_t4}))), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC11-U3-eps1-eps2-cauchy", "ADMIN_ORIGINAL", "WL13229", f'winsorize(quantile(group_rank(ts_decay_linear(min(rank({eps1}), rank({eps2})), 10), subindustry), driver="cauchy", sigma=1.0), std=3)'),
+        ("PC11-U4-eps1-dtd-tail25", "ADMIN_ORIGINAL", "WL13229", f"tail(group_rank(ts_decay_linear(min(rank({eps1}), rank({dtd})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC11-U5-eps1-trd1-sub", "TOP100_2026Q4", "SZ83096", f"group_rank(subtract(rank(ts_decay_linear({eps1}, 10)), rank(reverse({trd1}))), subindustry)"),
+        ("PC11-U6-eps2-vol6-tail", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(min(rank(ts_decay_linear({eps2}, 10)), rank({vol6})), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC11-U7-acc-gm-avol", "TOP100_2026Q4", "JX79797", f"tail(vector_neut(group_rank(ts_decay_linear(min(rank({acc_pq}), rank({gm_lq})), 22), subindustry), rank({avol})), lower=-0.25, upper=0.25, newval=0)"),
+        ("PC11-U8-epsy2-excl-vret", "TOP100_2026Q4", "LD22811", f"tail(vector_neut(group_rank(ts_decay_linear(min(rank({epsy2}), rank({excl_c1})), 10), subindustry), rank(ts_mean(returns, 22))), lower=-0.25, upper=0.25, newval=0)"),
+    ]
+
+    for tag, neut, dec, trunc in [
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("ram_d6_t08", "REVERSION_AND_MOMENTUM", 6, 0.08),
+        ("crd_d4_t08", "CROWDING", 4, 0.08),
+        ("stat_d3_t06", "STATISTICAL", 3, 0.06),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r11-USA-DETACH-{tag}",
+                campaign_id="S3_PCLAB_USA_DETACH",
+                hypothesis_id="HYP-PC11-ZERO-ASSTVR-ORTHO-USEFUL2",
+                region="USA",
+                universe="TOP3000",
+                dataset_id="model30",
+                settings=_make_settings("USA", "TOP3000", neut, decay=dec, truncation=trunc),
+                items=_build_items(usa_detach_exprs, dataset_id="model30", primary_field_id="star_eps_surprise_prediction_fq1", tag_suffix=tag),
+            )
+        )
+
+    # --- USA Pack B (32 FULL): Upgrade Proven PC=0.6654 (model31 x model30) & corr=0.44 (STATISTICAL+vret)! ---
+    at_lq = "ts_backfill(mdl31_ab1_ass_tvr_last_qtr, 21)"
+    at_pq = "ts_backfill(mdl31_ab1_ass_tvr_prior_qtr, 21)"
+    at_py = "ts_backfill(mdl31_ab1_ass_tvr_prior_y, 21)"
+
+    usa_cross_exprs: list[tuple[str, str, str, str]] = [
+        ("PC11-X1-atpq-eps1-d22", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear(min(rank({at_pq}), rank({eps1})), 22), subindustry)"),
+        ("PC11-X2-atpq-eps1-tail25", "ADMIN_ORIGINAL", "WL13229", f"tail(group_rank(ts_decay_linear(min(rank({at_pq}), rank({eps1})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC11-X3-atlq-eps1-hump", "ADMIN_ORIGINAL", "WL13229", f"hump(group_rank(ts_decay_linear(min(rank({at_lq}), rank({eps1})), 22), subindustry), hump=0.01)"),
+        ("PC11-X4-atpy-eps1-tail25", "ADMIN_ORIGINAL", "WL13229", f"tail(group_rank(ts_decay_linear(min(rank({at_py}), rank({eps1})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC11-X5-atpq-eps1-div", "TOP100_2026Q4", "SZ83096", f"tail(group_rank(ts_decay_linear(divide(rank({at_pq}), subtract(2, rank({eps1}))), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC11-X6-atpq-eps2-tail", "TOP100_2026Q4", "SZ83096", f"tail(group_rank(ts_decay_linear(min(rank({at_pq}), rank({eps2})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC11-X7-atpq-eps1-vret", "TOP100_2026Q4", "ZS59763", f"tail(vector_neut(group_rank(ts_decay_linear(min(rank({at_pq}), rank({eps1})), 15), subindustry), rank(ts_mean(returns, 22))), lower=-0.25, upper=0.25, newval=0)"),
+        ("PC11-X8-atpq-dtd-vret", "TOP100_2026Q4", "LD22811", f"tail(vector_neut(group_rank(ts_decay_linear(min(rank({at_pq}), rank({dtd})), 15), subindustry), rank(ts_mean(returns, 22))), lower=-0.25, upper=0.25, newval=0)"),
+    ]
+
+    for tag, neut, dec, trunc in [
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("ram_d6_t08", "REVERSION_AND_MOMENTUM", 6, 0.08),
+        ("stat_d3_t06", "STATISTICAL", 3, 0.06),
+        ("stat_d5_t08", "STATISTICAL", 5, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r11-USA-CROSS-{tag}",
+                campaign_id="S3_PCLAB_USA_CROSS_M31M30",
+                hypothesis_id="HYP-PC11-M31XM30-PC065-FIT105",
+                region="USA",
+                universe="TOP3000",
+                dataset_id="model31",
+                settings=_make_settings("USA", "TOP3000", neut, decay=dec, truncation=trunc),
+                items=_build_items(usa_cross_exprs, dataset_id="model31", primary_field_id="mdl31_ab1_ass_tvr_prior_qtr", tag_suffix=tag),
+            )
+        )
+
+    # --- EUR Pack C (32 FULL): Fast, Zero-Stall Continuous Liquidity Tilt (NO ts_quantile / cauchy / tvr_hump!) ---
+    dvm = "reverse(ts_backfill(mdl177_qvm_dvm_qvaeur_alt, 21))"
+    est = "reverse(ts_backfill(mdl177_qvm_estrevrank_qmaeur_alt, 21))"
+    emm = "reverse(ts_backfill(mdl177_emm_fc_rev3y2_alt, 21))"
+    ev = "reverse(ts_backfill(mdl177_qvm_ev_qvaeur_alt, 21))"
+    oe = "ts_backfill(operating_efficiency_component_percentile, 21)"
+    ci = "group_cartesian_product(country, industry)"
+
+    dvm_emm = f"min(rank({dvm}), rank({emm}))"
+    est_emm = f"min(rank({est}), rank({emm}))"
+    oe_emm = f"min(rank({oe}), rank({emm}))"
+
+    eur_fast_exprs: list[tuple[str, str, str, str]] = [
+        ("PC11-E1-dvm-liqtilt", "ADMIN_ORIGINAL", "WL13229", f"divide(subtract(group_rank({dvm}, {ci}), 0.5), subtract(1.5, rank(adv20)))"),
+        ("PC11-E2-est-liqtilt", "ADMIN_ORIGINAL", "WL13229", f"divide(subtract(group_rank({est}, {ci}), 0.5), subtract(1.5, rank(adv20)))"),
+        ("PC11-E3-dvm-emm-tilt", "ADMIN_ORIGINAL", "WL13229", f"divide(subtract(group_rank({dvm_emm}, {ci}), 0.5), subtract(1.5, rank(adv20)))"),
+        ("PC11-E4-dvm-emm-tail", "ADMIN_ORIGINAL", "WL13229", f"divide(subtract(tail(group_rank({dvm_emm}, {ci}), lower=0.25, upper=0.75, newval=0.5), 0.5), subtract(1.5, rank(adv20)))"),
+        ("PC11-E5-est-emm-tail", "TOP100_2026Q4", "SZ83096", f"divide(subtract(tail(group_rank({est_emm}, {ci}), lower=0.25, upper=0.75, newval=0.5), 0.5), subtract(1.5, rank(adv20)))"),
+        ("PC11-E6-oe-emm-tilt", "TOP100_2026Q4", "SZ83096", f"divide(subtract(tail(group_rank({oe_emm}, {ci}), lower=0.25, upper=0.75, newval=0.5), 0.5), subtract(1.5, rank(adv20)))"),
+        ("PC11-E7-ev-emm-sp15", "TOP100_2026Q4", "ZS59763", f"divide(signed_power(subtract(group_rank(min(rank({ev}), rank({emm})), {ci}), 0.5), 1.5), subtract(1.5, rank(adv20)))"),
+        ("PC11-E8-dvm-asym-tilt", "TOP100_2026Q4", "LD22811", f"divide(scale(subtract(group_rank({dvm_emm}, {ci}), 0.5), scale=1, longscale=1.4, shortscale=0.6), subtract(1.5, rank(adv20)))"),
+    ]
+
+    for tag, neut, dec, trunc in [
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("ram_d6_t08", "REVERSION_AND_MOMENTUM", 6, 0.08),
+        ("crd_d4_t08", "CROWDING", 4, 0.08),
+        ("crd_d6_t08", "CROWDING", 6, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r11-EUR-FASTTILT-{tag}",
+                campaign_id="S3_PCLAB_EUR_FAST_LIQTILT",
+                hypothesis_id="HYP-PC11-EUR-FAST-LIQTILT-USEFUL2",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model77",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=_build_items(eur_fast_exprs, dataset_id="model77", primary_field_id="mdl177_qvm_dvm_qvaeur_alt", tag_suffix=tag),
+            )
+        )
+
+    return specs
+
+
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return all 20 batches (160 FULL = 112 USA + 48 EUR) of the live-verified Gold-81 PC-Breakout Lab."""
+    """Return ordered S3-r11 Post-OS Orthogonal Breakout (96 FULL) + S3-r10b 6-Angle Lab (160 FULL)."""
     return (
-        build_usa_pc_angle_ab_dist_specs()
+        build_ortho_pc_breakout_s3r11_specs()
+        + build_usa_pc_angle_ab_dist_specs()
         + build_usa_pc_angle_c_time_specs()
         + build_usa_pc_angle_d_ortho_specs()
         + build_usa_pc_angle_ef_nest_specs()
