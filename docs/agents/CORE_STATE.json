@@ -45,7 +45,7 @@
           "op_count": 8,
           "nesting_tag": "OVER_NESTED_TEMP_PC_FIX",
           "exact_params": {"decay": 6, "truncation": 0.08, "neutralization": "STATISTICAL", "post_decay_days": 22, "vneut_ret_days": 22, "tail_bounds": [-0.25, 0.25, 0]},
-          "status": "READY_FOR_MANUAL_OS_96"
+          "status": "SHELVED_TO_SC_PASS_PC_GT_070_DO_NOT_SUBMIT"
         }
       ],
       "current_seed_campaigns": [

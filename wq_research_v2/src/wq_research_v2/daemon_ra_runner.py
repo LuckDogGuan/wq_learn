@@ -45,6 +45,39 @@ HIGH_BASE_MULTI_MARKET_ORDER: list[str] = [
 
 # Verified clean D1 RA seed pools (ALL live-checked against cnhkmcp get_datafields on 2026-11-25).
 CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
+    # ==================== 10% QUOTA ADMIN ORIGINAL (WL13229/KH94146) CLEAN TEMPLATE A/B BENCHMARK ====================
+    {
+        "campaign_id": "USA_ADMIN_TPL_BENCH_FREE",
+        "region": "USA",
+        "universe": "TOP3000",
+        "dataset_id": "analyst_revision_horizons",
+        "queue_type": "UNUSED_ALPHA0",
+        "field_type": "CUSTOM_EXPRS",
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["REVERSION_AND_MOMENTUM"],
+        "custom_base_exprs": [
+            ("adm_avdiff66_epsl", "ts_av_diff(ts_backfill(mean_revisioncluster_revision_pct_quarterly_eps_long, 21), 66)"),
+            ("adm_tsrank252_epsl", "ts_rank(ts_backfill(mean_revisioncluster_revision_pct_quarterly_eps_long, 21), 252)"),
+            ("adm_tsir22_ebit14", "ts_ir(ts_backfill(analyst_count_lowering_next_year_ebitda_14d_long_2, 21), 22)"),
+            ("adm_delta22_upg7", "ts_delta(ts_backfill(analyst_recommendation_upgrades_7d_medium, 21), 22)"),
+        ],
+    },
+    {
+        "campaign_id": "EUR_ADMIN_TPL_BENCH_NORM",
+        "region": "EUR",
+        "universe": "TOP2500",
+        "dataset_id": "shortinterest6",
+        "queue_type": "NORMAL",
+        "field_type": "CUSTOM_EXPRS",
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["REVERSION_AND_MOMENTUM"],
+        "custom_base_exprs": [
+            ("adm_avdiff66_siind", "ts_av_diff(ts_backfill(star_hold_industry_rank, 21), 66)"),
+            ("adm_tsrank126_siind", "ts_rank(ts_backfill(star_hold_industry_rank, 21), 126)"),
+            ("adm_avdiff66_siglb", "ts_av_diff(ts_backfill(star_hold_global_screening_rank, 21), 66)"),
+            ("adm_tsir22_siglb", "ts_ir(ts_backfill(star_hold_global_screening_rank, 21), 22)"),
+        ],
+    },
     # ==================== DAY-2 AUDIT #8 PIVOT: TIER-S PURE-MATRIX INSTITUTIONAL MINES (2026-11-26 14:52) ====================
     {
         "campaign_id": "USA_M39_VALMOM_NORM",
@@ -1114,6 +1147,9 @@ def run_ra_production_loop(
                         "normalized_volume_indicator_",
                         "put_call_",
                         "implied_volatility_",
+                        "mean_revisioncluster_",
+                        "analyst_count_lowering_",
+                        "analyst_recommendation_",
                     )):
                         alpha0_map[tok] = 0
 

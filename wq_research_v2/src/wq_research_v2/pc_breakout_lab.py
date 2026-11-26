@@ -657,10 +657,114 @@ def build_usa_e5m_1ax_margin_s3r14_specs() -> list[dict[str, Any]]:
     return specs
 
 
+
+
+def build_clean_lowpc_controlled_s3r15_specs() -> list[dict[str, Any]]:
+    """S3-r15 Clean <=4-Layer Controlled-Variable (decay in {0, 5, 20}) Low-PC Rescue & Day-2 Seed Upgrade (64 FULL = 8 batches).
+
+    Strictly implements user directives (2026-11-26 16:04):
+      1) E5mWLW0J (PC=0.7531 >= 0.70, 7-layer over-nested) is conservatively shelved to SC_PASS (no further optimization).
+      2) Focuses ONLY on clean <=4-layer expressions targeting true PC < 0.70 + high Margin:
+         - Pack A (EUR/TOP2500, 32 FULL across decay in {0, 5, 20}):
+           * Rescues near-threshold 0-FAIL SC_PASS soft targets np6RxVz3 (15.10bp, Sh=2.10, PC=0.720) &
+             MPgRMMJ8 (13.09bp, Sh=1.95, PC=0.713) via Wang Ge L6 tail(0.25, 0.75, 0.5) & shortinterest6 cross-DS;
+           * Upgrades today's new 29.34bp/22.33bp EUR/model77 finstmtrank (YPlGvEqv Sh=1.89, legbW5xN Sh=1.97,
+             only fail = LOW_SUB_UNIVERSE_SHARPE) x EUR/shortinterest6 (1YGQzpGR Sh=1.47, 2Y=1.91).
+         - Pack B (USA/TOP3000, 32 FULL across decay in {0, 5, 20}):
+           * Combines today's fresh Alphas=0 FREE winners from USA/analyst_revision_horizons
+             (O06EnNqJ Sh=1.30/2Y=1.78, A1LMJpeg Sh=1.28, vRY3j0VG Sh=1.28, LL8An92n Sh=1.24/2Y=1.83)
+             with high-Margin USA/model39 (1YGQd20M 30.0bp) & USA/model31 (ass_tvr_prior_qtr 19.95bp)
+             in clean 3-4 layer structures.
+    """
+    specs: list[dict[str, Any]] = []
+
+    # --- Pack A: EUR/TOP2500 Clean <=4-Layer Controlled-Variable (decay in {0, 5, 20}) ---
+    vm = "ts_backfill(value_momentum_region_percentile, 21)"
+    acc25 = "ts_backfill(mdl25_8v, 21)"
+    finst = "reverse(ts_backfill(mdl177_qvm_finstmtrank_qvaeur_alt, 21))"
+    finst_m22 = "reverse(ts_mean(ts_backfill(mdl177_qvm_finstmtrank_qvaeur_alt, 21), 22))"
+    si_ind = "ts_backfill(star_hold_industry_rank, 21)"
+    si_glb = "ts_backfill(star_hold_global_screening_rank, 21)"
+    ci = "group_cartesian_product(country, industry)"
+
+    eur_exprs: list[tuple[str, str, str, str]] = [
+        ("PC15-E1-np6-tail25", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.4, tail(group_rank(min(rank({vm}), rank({acc25})), {ci}), lower=0.25, upper=0.75, newval=0.5), 0)"),
+        ("PC15-E2-finst-m22-gate35", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_zscore({finst_m22}, {ci}), 0)"),
+        ("PC15-E3-finst-siind-ci", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_rank(min(rank({finst}), rank({si_ind})), {ci}), 0)"),
+        ("PC15-E4-finst-siglb-ci", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.35, group_rank(min(rank({finst}), rank({si_glb})), {ci}), 0)"),
+        ("PC15-E5-finst-siind-tail25", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.35, tail(group_rank(min(rank({finst}), rank({si_ind})), {ci}), lower=0.25, upper=0.75, newval=0.5), 0)"),
+        ("PC15-E6-finst-m22-liqtilt", "TOP100_2026Q4", "SZ83096", f"divide(subtract(group_rank({finst_m22}, {ci}), 0.5), subtract(1.5, rank(adv20)))"),
+        ("PC15-E7-finst-siind-tilt", "TOP100_2026Q4", "SZ83096", f"divide(subtract(group_rank(min(rank({finst}), rank({si_ind})), {ci}), 0.5), subtract(1.5, rank(adv20)))"),
+        ("PC15-E8-vm-siind-tail25", "TOP100_2026Q4", "JR23144", f"if_else(rank(adv20) > 0.4, tail(group_rank(min(rank({vm}), rank({si_ind})), {ci}), lower=0.25, upper=0.75, newval=0.5), 0)"),
+    ]
+
+    for tag, neut, dec, trunc in [
+        ("ram_d0_t06", "REVERSION_AND_MOMENTUM", 0, 0.06),
+        ("ram_d5_t08", "REVERSION_AND_MOMENTUM", 5, 0.08),
+        ("crd_d5_t08", "CROWDING", 5, 0.08),
+        ("crd_d20_t08", "CROWDING", 20, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r15-EUR-CLEAN4L-{tag}",
+                campaign_id="S3_PCLAB_EUR_CLEAN4L",
+                hypothesis_id="HYP-PC15-EUR-FINST-SI6-DECAY-0-5-20",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model77",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=_build_items(eur_exprs, dataset_id="model77", primary_field_id="mdl177_qvm_finstmtrank_qvaeur_alt", tag_suffix=tag),
+            )
+        )
+
+    # --- Pack B: USA/TOP3000 Clean <=4-Layer Controlled-Variable (decay in {0, 5, 20}) ---
+    rev_l = "ts_zscore(ts_mean(ts_backfill(mean_revisioncluster_revision_pct_quarterly_eps_long, 21), 5), 66)"
+    rev_s = "ts_zscore(ts_mean(ts_backfill(mean_revisioncluster_revision_pct_quarterly_eps_short, 21), 5), 66)"
+    ebit_low = "ts_decay_linear(ts_backfill(analyst_count_lowering_next_year_ebitda_14d_long_2, 21), 10)"
+    upg_7d = "ts_decay_linear(ts_backfill(analyst_recommendation_upgrades_7d_medium, 21), 10)"
+    m39_lt = "ts_backfill(long_term_price_momentum_score_3, 21)"
+    m39_reg = "ts_backfill(regional_price_momentum_percentile, 21)"
+    at_pq = "ts_backfill(mdl31_ab1_ass_tvr_prior_qtr, 21)"
+    dtd = "ts_backfill(mdl28_sm_structural2_v14_0_0_nd_credit_structural_distance_to_default, 21)"
+
+    usa_exprs: list[tuple[str, str, str, str]] = [
+        ("PC15-U1-revl-ebit-d22", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear(min(rank({rev_l}), rank({ebit_low})), 22), subindustry)"),
+        ("PC15-U2-revl-upg7-d22", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear(min(rank({rev_l}), rank({upg_7d})), 22), subindustry)"),
+        ("PC15-U3-revl-dtd-free", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear(min(rank({rev_l}), rank({dtd})), 22), subindustry)"),
+        ("PC15-U4-ebit-dtd-free", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear(min(rank({ebit_low}), rank({dtd})), 22), subindustry)"),
+        ("PC15-U5-revl-atpq-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank({at_pq}), rank({rev_l})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC15-U6-ebit-atpq-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank({at_pq}), rank({ebit_low})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC15-U7-m39lt-atpq-d22", "TOP100_2026Q4", "SZ83096", f"tail(group_rank(ts_decay_linear(min(rank({at_pq}), rank({m39_lt})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC15-U8-m39reg-revl-d22", "TOP100_2026Q4", "JR23144", f"group_rank(ts_decay_linear(min(rank({m39_reg}), rank({rev_s})), 22), subindustry)"),
+    ]
+
+    for tag, neut, dec, trunc in [
+        ("sub_d0_t04", "SUBINDUSTRY", 0, 0.04),
+        ("ram_d0_t06", "REVERSION_AND_MOMENTUM", 0, 0.06),
+        ("ram_d5_t08", "REVERSION_AND_MOMENTUM", 5, 0.08),
+        ("crd_d20_t08", "CROWDING", 20, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r15-USA-CLEAN4L-{tag}",
+                campaign_id="S3_PCLAB_USA_CLEAN4L",
+                hypothesis_id="HYP-PC15-USA-ANLREV-M39-DECAY-0-5-20",
+                region="USA",
+                universe="TOP3000",
+                dataset_id="analyst_revision_horizons",
+                settings=_make_settings("USA", "TOP3000", neut, decay=dec, truncation=trunc),
+                items=_build_items(usa_exprs, dataset_id="analyst_revision_horizons", primary_field_id="mean_revisioncluster_revision_pct_quarterly_eps_long", tag_suffix=tag),
+            )
+        )
+
+    return specs
+
+
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r14 (16 FULL) -> S3-r13 (32 FULL) -> S3-r12 (48 FULL) -> S3-r11 (96 FULL) -> S3-r10b (160 FULL)."""
+    """Return ordered S3-r15 (64 FULL) -> S3-r14 (16 FULL) -> S3-r13 (32 FULL) -> S3-r12 (48 FULL) -> S3-r11 (96 FULL) -> S3-r10b (160 FULL)."""
     return (
-        build_usa_e5m_1ax_margin_s3r14_specs()
+        build_clean_lowpc_controlled_s3r15_specs()
+        + build_usa_e5m_1ax_margin_s3r14_specs()
         + build_usa_e5m_highmgn_s3r13_specs()
         + build_usa_stat_3ds_pc_finisher_s3r12_specs()
         + build_ortho_pc_breakout_s3r11_specs()

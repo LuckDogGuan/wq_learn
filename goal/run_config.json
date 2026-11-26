@@ -1,6 +1,14 @@
 {
   "schema_version": "wq_d1_goal_run_config_v1",
-  "updated_at": "2026-11-26T15:46:00+08:00",
+  "updated_at": "2026-11-26T16:10:00+08:00",
+  "schedule_and_redundancy": {
+    "check_interval_hours": "2-4",
+    "cron_expression": "0 */3 * * *",
+    "queue_redundancy_multiplier": 1.5,
+    "min_runnable_batches_per_cycle_with_50pct_redundancy": 240,
+    "min_runnable_sims_with_50pct_redundancy": 1920,
+    "note": "定时每 2-4 小时（默认 3 小时）巡检一轮；任务队列常备 1.5 倍（+50% 冗余，>= 240 批 / 1,920+ 条候选），确保 4 并发槽在长达 4 小时无人值守及部分死集 48 条早停时也绝不跑空断流。"
+  },
   "description": "WorldQuant BRAIN D1-Only RA 统一启动与方向配置文件（支持自定义地区、宇宙、数据集分类、研究方式、Stage 1-2 QUICK 快筛、管理员模板 5:5->8:2 演进及子代理模型/思考强度配置）。",
   "direction": {
     "regions": ["USA", "EUR"],

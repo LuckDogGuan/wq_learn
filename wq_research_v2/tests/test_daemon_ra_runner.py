@@ -41,6 +41,9 @@ def test_all_curated_ra_d1_campaign_specs_pass_static_validator() -> None:
                         "normalized_volume_indicator_",
                         "put_call_",
                         "implied_volatility_",
+                        "mean_revisioncluster_",
+                        "analyst_count_lowering_",
+                        "analyst_recommendation_",
                     )):
                         alpha0_map[tok] = 0
 
