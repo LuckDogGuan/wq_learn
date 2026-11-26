@@ -21,6 +21,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from wq_research_v2.pc_breakout_lab import build_pc_breakout_lab_s3r10_specs
+
 REFINER_VER = "r1"
 
 
@@ -1289,9 +1291,10 @@ def build_usa_model31_wangge_pc002_s3r9_specs() -> list[dict[str, Any]]:
 
 
 def build_all_stage23_refiner_specs() -> list[dict[str, Any]]:
-    """Return ordered Stage-3 r9 USA-M31-WG -> r8 -> r7 -> r6 -> r5 -> r4 -> r3 -> r2 -> r1b -> Stage-2."""
+    """Return ordered Stage-3 r10 PC-Breakout Lab -> r9 -> r8 -> r7 -> r6 -> r5 -> r4 -> r3 -> r2 -> r1b -> Stage-2."""
     return (
-        build_usa_model31_wangge_pc002_s3r9_specs()
+        build_pc_breakout_lab_s3r10_specs()
+        + build_usa_model31_wangge_pc002_s3r9_specs()
         + build_usa_model31_qpw_useful_s3r8_specs()
         + build_eur_model77_qvm_subfix_s3r8_specs()
         + build_usa_model31_pc_crush_s3r7_specs()

@@ -1,0 +1,363 @@
+"""First-Principles Multi-Angle PC-Breakout Laboratory (S3-r10-PCLAB).
+
+Breaks out of repetitive `group_rank(ts_decay_linear(min(...)))` templates by systematically
+testing 6 orthogonal mathematical mechanisms to lower Prod Correlation (PC) while compressing
+noise and amplifying payoff (Margin & Sharpe), strictly obeying:
+  - D1-Only (delay == 1), RA-Primary (separated from PPA)
+  - Decision #3 (NO +, *, add, multiply, trade_when)
+  - Gold-81 operator whitelist (20+ previously unused operators verified against official catalog)
+  - 50:50 ADMIN_ORIGINAL : TOP100_2026Q4 source balance
+
+Six First-Principles Angles (160 FULL = 112 USA + 48 EUR):
+  Angle A (Dist Reshape): quantile(cauchy/gaussian), tanh, s_log_1p, arc_tan, clamp(inverse=true), tail(0.20,0.80)
+  Angle B (Asymmetric/Robust): scale(longscale, shortscale), group_scale, subtract/divide group_median+std_dev
+  Angle C (Time-Series/Event): ts_quantile(252), ts_rank(252), ts_av_diff(126), ts_scale(252), ts_ir(66),
+                               keep(period=45), ts_target_tvr_decay(lambda_max=0.9), ts_target_tvr_hump
+  Angle D (Geometric Ortho): ts_regression(rettype=0), vector_proj subtraction, vector_neut(cap/vol66/ret22) + tail
+  Angle E (Arithmetic/Cross-DS): max(rank,rank), divide(rank, subtract(2, rank)), subtract(rank, rank(reverse)),
+                                 3-dataset nesting (model31 x model30 PC=0.676 x model28 FREE)
+  Angle F (Dynamic Bucket & EUR): Wang Ge fundamental/credit bucket grouping + EUR/model25 & EUR/model77
+                                  continuous liquidity tilt (no hard adv20 cliff!)
+"""
+from __future__ import annotations
+
+from typing import Any
+
+
+def _make_settings(
+    region: str,
+    universe: str,
+    neutralization: str,
+    *,
+    decay: int,
+    truncation: float,
+    max_trade: str = "OFF",
+) -> dict[str, Any]:
+    return {
+        "instrumentType": "EQUITY",
+        "region": region,
+        "universe": universe,
+        "delay": 1,
+        "decay": int(decay),
+        "neutralization": neutralization,
+        "truncation": float(truncation),
+        "pasteurization": "ON",
+        "unitHandling": "VERIFY",
+        "nanHandling": "OFF",
+        "maxTrade": max_trade,
+        "language": "FASTEXPR",
+        "visualization": False,
+    }
+
+
+def _pack(
+    *,
+    batch_id: str,
+    campaign_id: str,
+    hypothesis_id: str,
+    region: str,
+    universe: str,
+    dataset_id: str,
+    settings: dict[str, Any],
+    items: list[dict[str, Any]],
+) -> dict[str, Any]:
+    return {
+        "batch_id": batch_id,
+        "campaign_id": campaign_id,
+        "hypothesis_id": hypothesis_id,
+        "region": region,
+        "universe": universe,
+        "dataset_id": dataset_id,
+        "queue_type": "NORMAL",
+        "settings": settings,
+        "items": items,
+    }
+
+
+def _build_items(
+    exprs: list[tuple[str, str, str, str]],
+    *,
+    dataset_id: str,
+    primary_field_id: str,
+    tag_suffix: str,
+) -> list[dict[str, Any]]:
+    return [
+        {
+            "expression": expr,
+            "template_id": f"{tid}_{tag_suffix}",
+            "source_side": side,
+            "author_id": auth,
+            "dataset_id": dataset_id,
+            "primary_field_id": primary_field_id,
+        }
+        for tid, side, auth, expr in exprs
+    ]
+
+
+def build_usa_pc_angle_ab_dist_specs() -> list[dict[str, Any]]:
+    """Pack 1 (24 FULL): Angles A & B — Nonlinear Distribution Reshape, Asymmetric Scale & Median-Zscore."""
+    at = "ts_backfill(mdl31_ab1_ass_tvr_last_qtr, 21)"
+    acc = "ts_backfill(mdl31_ab1_acc_prior_qtr, 21)"
+    core = f"ts_decay_linear(min(rank({at}), rank({acc})), 22)"
+    gr = f"group_rank({core}, subindustry)"
+    gz = f"group_zscore({core}, subindustry)"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        # Angle A: Heavy-tail amplification & S-curve compression
+        ("PC10-A1-cauchy-win", "ADMIN_ORIGINAL", "WL13229", f'winsorize(quantile({gr}, driver="cauchy", sigma=1.0), std=3)'),
+        ("PC10-A2-tail20-80", "ADMIN_ORIGINAL", "WL13229", f"tail({gr}, lower=0.2, upper=0.8, newval=0.5)"),
+        ("PC10-A3-clamp-inv", "ADMIN_ORIGINAL", "WL13229", f'clamp({gr}, lower=0.25, upper=0.75, inverse=true, mask="mean")'),
+        ("PC10-A4-tanh-gz", "ADMIN_ORIGINAL", "WL13229", f"tanh({gz})"),
+        ("PC10-A5-slog1p-gz", "TOP100_2026Q4", "SZ83096", f"s_log_1p({gz})"),
+        ("PC10-A6-arctan-gz", "TOP100_2026Q4", "SZ83096", f"arc_tan({gz})"),
+        # Angle B: Asymmetric long/short scaling & Median-robust standardization
+        ("PC10-B1-asym-short", "TOP100_2026Q4", "ZS59763", f"scale(subtract({gr}, 0.5), scale=1, longscale=0.6, shortscale=1.4)"),
+        ("PC10-B2-med-zscore", "TOP100_2026Q4", "JX79797", f"winsorize(divide(subtract({core}, group_median({core}, subindustry)), group_std_dev({core}, subindustry)), std=3)"),
+    ]
+
+    specs: list[dict[str, Any]] = []
+    for tag, neut, dec, trunc in [
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("ram_d6_t08", "REVERSION_AND_MOMENTUM", 6, 0.08),
+        ("crd_d4_t08", "CROWDING", 4, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r10-USA-PC-DIST-{tag}",
+                campaign_id="S3_PCLAB_USA_DIST",
+                hypothesis_id="HYP-PCLAB-AB-NONLINEAR-ASYM-MEDIAN",
+                region="USA",
+                universe="TOP3000",
+                dataset_id="model31",
+                settings=_make_settings("USA", "TOP3000", neut, decay=dec, truncation=trunc),
+                items=_build_items(exprs, dataset_id="model31", primary_field_id="mdl31_ab1_ass_tvr_last_qtr", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
+def build_usa_pc_angle_c_time_specs() -> list[dict[str, Any]]:
+    """Pack 2 (24 FULL): Angle C — Time-Series Self-Comparison, Event-Window `keep`, Adaptive TVR Control."""
+    at = "ts_backfill(mdl31_ab1_ass_tvr_last_qtr, 21)"
+    acc = "ts_backfill(mdl31_ab1_acc_prior_qtr, 21)"
+    base_min = f"min(rank({at}), rank({acc}))"
+    core = f"ts_decay_linear({base_min}, 22)"
+    gr = f"group_rank({core}, subindustry)"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC10-C1-tsq252", "ADMIN_ORIGINAL", "WL13229", f'group_rank(min(rank(ts_quantile({at}, 252, driver="gaussian")), rank(ts_quantile({acc}, 252, driver="gaussian"))), subindustry)'),
+        ("PC10-C2-tsrank252", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear(min(rank(ts_rank({at}, 252)), rank(ts_rank({acc}, 252))), 22), subindustry)"),
+        ("PC10-C3-tsavdiff126", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear(min(rank(ts_av_diff({at}, 126)), rank(ts_av_diff({acc}, 126))), 22), subindustry)"),
+        ("PC10-C4-keep45-evt", "ADMIN_ORIGINAL", "WL13229", f"keep({gr}, mdl31_ab1_ass_tvr_last_qtr, period=45)"),
+        ("PC10-C5-tsscale252", "TOP100_2026Q4", "SZ83096", f"group_rank(ts_decay_linear(min(rank(ts_scale({at}, 252)), rank(ts_scale({acc}, 252))), 22), subindustry)"),
+        ("PC10-C6-tsir66", "TOP100_2026Q4", "ZS59763", f"group_rank(min(rank(ts_ir({at}, 66)), rank(ts_ir({acc}, 66))), subindustry)"),
+        ("PC10-C7-tvr-decay", "TOP100_2026Q4", "JX79797", f"ts_target_tvr_decay(tail({gr}, lower=0.25, upper=0.75, newval=0.5), lambda_min=0, lambda_max=0.9, target_tvr=0.04)"),
+        ("PC10-C8-tvr-hump", "TOP100_2026Q4", "LW67640", f"ts_target_tvr_hump(tail({gr}, lower=0.25, upper=0.75, newval=0.5), lambda_min=0, lambda_max=0.9, target_tvr=0.04)"),
+    ]
+
+    specs: list[dict[str, Any]] = []
+    for tag, neut, dec, trunc in [
+        ("ram_d2_t06", "REVERSION_AND_MOMENTUM", 2, 0.06),
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("stat_d3_t06", "STATISTICAL", 3, 0.06),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r10-USA-PC-TIME-{tag}",
+                campaign_id="S3_PCLAB_USA_TIME",
+                hypothesis_id="HYP-PCLAB-C-TIMESERIES-EVENT-TVR",
+                region="USA",
+                universe="TOP3000",
+                dataset_id="model31",
+                settings=_make_settings("USA", "TOP3000", neut, decay=dec, truncation=trunc),
+                items=_build_items(exprs, dataset_id="model31", primary_field_id="mdl31_ab1_ass_tvr_last_qtr", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
+def build_usa_pc_angle_d_ortho_specs() -> list[dict[str, Any]]:
+    """Pack 3 (32 FULL): Angle D — Geometric Orthogonalization (`ts_regression`, `vector_proj`, `vector_neut`) + STATISTICAL Useful #2."""
+    at_lq = "ts_backfill(mdl31_ab1_ass_tvr_last_qtr, 21)"
+    at_pq = "ts_backfill(mdl31_ab1_ass_tvr_prior_qtr, 21)"
+    acc_pq = "ts_backfill(mdl31_ab1_acc_prior_qtr, 21)"
+    core = f"ts_decay_linear(min(rank({at_lq}), rank({acc_pq})), 22)"
+    gr = f"group_rank({core}, subindustry)"
+    gr_pq = f"group_rank(ts_decay_linear({at_pq}, 10), subindustry)"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        # Direct strike on orthogonal STATISTICAL cluster (1YGbjW96/qM5r0dxj corr=0.52 vs e71w5Qrl!)
+        ("PC10-D1-vret-tail25", "ADMIN_ORIGINAL", "WL13229", f"tail(vector_neut({gr}, rank(ts_mean(returns, 22))), lower=-0.25, upper=0.25, newval=0)"),
+        ("PC10-D2-vret-pq-tail", "ADMIN_ORIGINAL", "WL13229", f"tail(vector_neut({gr_pq}, rank(ts_mean(returns, 22))), lower=-0.25, upper=0.25, newval=0)"),
+        ("PC10-D3-vret-cauchy", "ADMIN_ORIGINAL", "WL13229", f'winsorize(quantile(vector_neut({gr}, rank(ts_mean(returns, 22))), driver="cauchy", sigma=1.0), std=3)'),
+        ("PC10-D4-tsreg-ret126", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_regression({core}, ts_mean(returns, 22), 126, lag=0, rettype=0), subindustry)"),
+        ("PC10-D5-tsreg-vol126", "TOP100_2026Q4", "SZ83096", f"group_rank(ts_regression({core}, ts_std_dev(returns, 22), 126, lag=0, rettype=0), subindustry)"),
+        ("PC10-D6-vproj-adv20", "TOP100_2026Q4", "ZS59763", f"tail(subtract({gr}, vector_proj({gr}, rank(adv20))), lower=-0.2, upper=0.2, newval=0)"),
+        ("PC10-D7-vneut-cap", "TOP100_2026Q4", "ZS59763", f"tail(vector_neut({gr}, rank(cap)), lower=-0.25, upper=0.25, newval=0)"),
+        ("PC10-D8-vneut-vol66", "TOP100_2026Q4", "LD22811", f"tail(vector_neut({gr}, rank(ts_std_dev(returns, 66))), lower=-0.25, upper=0.25, newval=0)"),
+    ]
+
+    specs: list[dict[str, Any]] = []
+    for tag, neut, dec, trunc in [
+        ("stat_d3_t06", "STATISTICAL", 3, 0.06),
+        ("stat_d5_t08", "STATISTICAL", 5, 0.08),
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("crd_d4_t08", "CROWDING", 4, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r10-USA-PC-ORTHO-{tag}",
+                campaign_id="S3_PCLAB_USA_ORTHO",
+                hypothesis_id="HYP-PCLAB-D-ORTHO-REGRESSION-USEFUL2",
+                region="USA",
+                universe="TOP3000",
+                dataset_id="model31",
+                settings=_make_settings("USA", "TOP3000", neut, decay=dec, truncation=trunc),
+                items=_build_items(exprs, dataset_id="model31", primary_field_id="mdl31_ab1_ass_tvr_last_qtr", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
+def build_usa_pc_angle_ef_nest_specs() -> list[dict[str, Any]]:
+    """Pack 4 (32 FULL): Angles E & F — Alternative Combinators (max/divide/subtract), 3-Dataset Nesting & Wang Ge Dynamic Buckets."""
+    at = "ts_backfill(mdl31_ab1_ass_tvr_last_qtr, 21)"
+    acc = "ts_backfill(mdl31_ab1_acc_prior_qtr, 21)"
+    erq = "ts_backfill(mdl31_ab1_erq_raw_prior_qtr, 21)"
+    eps1 = "ts_backfill(star_eps_surprise_prediction_fq1, 21)"
+    dtd = "ts_backfill(mdl28_sm_structural2_v14_0_0_nd_credit_structural_distance_to_default, 21)"
+    pd_pct = "ts_backfill(mdl28_sm_structural2_v14_0_0_nd_credit_structural_pd_pct, 21)"
+    core = f"ts_decay_linear(min(rank({at}), rank({acc})), 22)"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        # Angle E: Break out of min(rank, rank) using max / divide / subtract (Decision #3 safe!)
+        ("PC10-E1-max-tail25", "ADMIN_ORIGINAL", "WL13229", f"tail(group_rank(ts_decay_linear(max(rank({at}), rank({acc})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC10-E2-div-synergy", "ADMIN_ORIGINAL", "WL13229", f"tail(group_rank(ts_decay_linear(divide(rank({at}), subtract(2, rank({acc}))), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC10-E3-sub-rev-sum", "ADMIN_ORIGINAL", "WL13229", f"tail(group_rank(ts_decay_linear(subtract(rank({at}), rank(reverse({acc}))), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC10-E4-3ds-m31-m30", "ADMIN_ORIGINAL", "WL13229", f"tail(group_rank(ts_decay_linear(min(rank({core}), rank({eps1})), 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC10-E5-3ds-m31-m28", "TOP100_2026Q4", "SZ83096", f"tail(group_rank(ts_decay_linear(divide(rank({core}), subtract(2, rank({dtd}))), 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC10-E6-gscale-3ds", "TOP100_2026Q4", "JR23144", f"group_scale(ts_decay_linear(min(rank({at}), min(rank({acc}), rank({eps1}))), 22), subindustry)"),
+        # Angle F: Wang Ge fundamental/credit dynamic bucket grouping (replaces crowded subindustry!)
+        ("PC10-F1-bkt-erq-sec", "TOP100_2026Q4", "ZS59763", f'tail(group_rank({core}, densify(group_cartesian_product(sector, bucket(rank({erq}), range="0,1,0.2")))), lower=0.25, upper=0.75, newval=0.5)'),
+        ("PC10-F2-bkt-m28pd", "TOP100_2026Q4", "ZS59763", f'tail(group_rank({core}, densify(group_cartesian_product(sector, bucket(rank({pd_pct}), range="0,1,0.2")))), lower=0.25, upper=0.75, newval=0.5)'),
+    ]
+
+    specs: list[dict[str, Any]] = []
+    for tag, neut, dec, trunc in [
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("ram_d6_t08", "REVERSION_AND_MOMENTUM", 6, 0.08),
+        ("crd_d4_t08", "CROWDING", 4, 0.08),
+        ("stat_d3_t06", "STATISTICAL", 3, 0.06),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r10-USA-PC-NEST-{tag}",
+                campaign_id="S3_PCLAB_USA_NEST",
+                hypothesis_id="HYP-PCLAB-EF-CROSSDS-BUCKET-COMBINATORS",
+                region="USA",
+                universe="TOP3000",
+                dataset_id="model31",
+                settings=_make_settings("USA", "TOP3000", neut, decay=dec, truncation=trunc),
+                items=_build_items(exprs, dataset_id="model31", primary_field_id="mdl31_ab1_ass_tvr_last_qtr", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
+def build_eur_pc_m25_breakout_specs() -> list[dict[str, Any]]:
+    """Pack 5 (24 FULL): EUR/TOP2500/model25 PC-Breakout (L6 tail + cauchy + clamp + non-val_mom OpEff x model77)."""
+    vm = "ts_backfill(value_momentum_region_percentile, 21)"
+    acc = "ts_backfill(mdl25_8v, 21)"
+    oe = "ts_backfill(operating_efficiency_component_percentile, 21)"
+    emm = "reverse(ts_backfill(mdl177_emm_fc_rev3y2_alt, 21))"
+    ci = "group_cartesian_product(country, industry)"
+
+    vm_acc_gr = f"group_rank(min(rank({vm}), rank({acc})), {ci})"
+    oe_emm_gr = f"group_rank(min(rank({oe}), rank({emm})), {ci})"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC10-E25-1-tail25", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.4, tail({vm_acc_gr}, lower=0.25, upper=0.75, newval=0.5), 0)"),
+        ("PC10-E25-2-cauchy", "ADMIN_ORIGINAL", "WL13229", f'if_else(rank(adv20) > 0.4, winsorize(quantile({vm_acc_gr}, driver="cauchy", sigma=1.0), std=3), 0)'),
+        ("PC10-E25-3-clamp", "ADMIN_ORIGINAL", "WL13229", f'if_else(rank(adv20) > 0.4, clamp({vm_acc_gr}, lower=0.25, upper=0.75, inverse=true, mask="mean"), 0)'),
+        ("PC10-E25-4-oe-emm-tail", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, tail({oe_emm_gr}, lower=0.25, upper=0.75, newval=0.5), 0)"),
+        ("PC10-E25-5-oe-emm-div", "TOP100_2026Q4", "SZ83096", f"divide(subtract(group_rank(min(rank({oe}), rank({emm})), {ci}), 0.5), subtract(1.6, rank(adv20)))"),
+        ("PC10-E25-6-oe-tsq252", "TOP100_2026Q4", "ZS59763", f'if_else(rank(adv20) > 0.35, group_zscore(ts_quantile({oe}, 252, driver="gaussian"), {ci}), 0)'),
+        ("PC10-E25-7-asym-vm", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.4, scale(subtract({vm_acc_gr}, 0.5), scale=1, longscale=1.4, shortscale=0.6), 0)"),
+        ("PC10-E25-8-tvr-hump", "TOP100_2026Q4", "LW67640", f"ts_target_tvr_hump(if_else(rank(adv20) > 0.4, tail({vm_acc_gr}, lower=0.25, upper=0.75, newval=0.5), 0), lambda_min=0, lambda_max=0.9, target_tvr=0.05)"),
+    ]
+
+    specs: list[dict[str, Any]] = []
+    for tag, neut, dec, trunc in [
+        ("crd_d4_t08", "CROWDING", 4, 0.08),
+        ("crd_d6_t08", "CROWDING", 6, 0.08),
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r10-EUR-PC-M25-{tag}",
+                campaign_id="S3_PCLAB_EUR_M25",
+                hypothesis_id="HYP-PCLAB-EUR-M25-NONLINEAR-ORTHO",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model25",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=_build_items(exprs, dataset_id="model25", primary_field_id="operating_efficiency_component_percentile", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
+def build_eur_pc_m77_breakout_specs() -> list[dict[str, Any]]:
+    """Pack 6 (24 FULL): EUR/TOP2500/model77 Continuous Liquidity Tilt + Non-Standard PC-Breakout (NO hard adv20 cliff!)."""
+    dvm = "reverse(ts_backfill(mdl177_qvm_dvm_qvaeur_alt, 21))"
+    est = "reverse(ts_backfill(mdl177_qvm_estrevrank_qmaeur_alt, 21))"
+    emm = "reverse(ts_backfill(mdl177_emm_fc_rev3y2_alt, 21))"
+    ci = "group_cartesian_product(country, industry)"
+    cty_liq = 'densify(group_cartesian_product(country, bucket(rank(adv20), range="0,1,0.2")))'
+
+    dvm_emm = f"min(rank({dvm}), rank({emm}))"
+    est_emm = f"min(rank({est}), rank({emm}))"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        # Continuous liquidity tilt: amplifies TOP1200/800 without zeroing out mid-caps!
+        ("PC10-E77-1-dvm-liqtilt", "ADMIN_ORIGINAL", "WL13229", f"divide(subtract(group_rank({dvm}, {ci}), 0.5), subtract(1.5, rank(adv20)))"),
+        ("PC10-E77-2-est-liqtilt", "ADMIN_ORIGINAL", "WL13229", f"divide(subtract(group_rank({est}, {ci}), 0.5), subtract(1.5, rank(adv20)))"),
+        ("PC10-E77-3-dvm-emm-tilt", "ADMIN_ORIGINAL", "WL13229", f"divide(subtract(group_rank({dvm_emm}, {ci}), 0.5), subtract(1.5, rank(adv20)))"),
+        ("PC10-E77-4-est-emm-tail", "ADMIN_ORIGINAL", "WL13229", f"divide(subtract(tail(group_rank({est_emm}, {ci}), lower=0.25, upper=0.75, newval=0.5), 0.5), subtract(1.5, rank(adv20)))"),
+        ("PC10-E77-5-cty-liqbkt", "TOP100_2026Q4", "ZS59763", f"tail(group_rank({dvm_emm}, {cty_liq}), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC10-E77-6-cauchy-tilt", "TOP100_2026Q4", "SZ83096", f'divide(winsorize(quantile(group_rank({dvm_emm}, {ci}), driver="cauchy", sigma=1.0), std=3), subtract(1.5, rank(adv20)))'),
+        ("PC10-E77-7-tsq252-tilt", "TOP100_2026Q4", "JX79797", f'divide(subtract(group_rank(ts_quantile({dvm}, 252, driver="gaussian"), {ci}), 0.5), subtract(1.5, rank(adv20)))'),
+        ("PC10-E77-8-medz-tilt", "TOP100_2026Q4", "JX79797", f"divide(winsorize(divide(subtract({dvm_emm}, group_median({dvm_emm}, {ci})), group_std_dev({dvm_emm}, {ci})), std=3), subtract(1.5, rank(adv20)))"),
+    ]
+
+    specs: list[dict[str, Any]] = []
+    for tag, neut, dec, trunc in [
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("crd_d4_t08", "CROWDING", 4, 0.08),
+        ("ram_d6_t08", "REVERSION_AND_MOMENTUM", 6, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r10-EUR-PC-M77-{tag}",
+                campaign_id="S3_PCLAB_EUR_M77",
+                hypothesis_id="HYP-PCLAB-EUR-M77-LIQTILT-ORTHO-USEFUL2",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model77",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=_build_items(exprs, dataset_id="model77", primary_field_id="mdl177_qvm_dvm_qvaeur_alt", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
+def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
+    """Return all 20 batches (160 FULL = 112 USA + 48 EUR) of the 6-Angle First-Principles PC-Breakout Lab."""
+    return (
+        build_usa_pc_angle_ab_dist_specs()
+        + build_usa_pc_angle_c_time_specs()
+        + build_usa_pc_angle_d_ortho_specs()
+        + build_usa_pc_angle_ef_nest_specs()
+        + build_eur_pc_m25_breakout_specs()
+        + build_eur_pc_m77_breakout_specs()
+    )
