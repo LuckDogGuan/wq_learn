@@ -1087,10 +1087,150 @@ def build_eur_model77_v2_s3r7_specs() -> list[dict[str, Any]]:
     return specs
 
 
+def build_usa_model31_qpw_useful_s3r8_specs() -> list[dict[str, Any]]:
+    """Stage-3 r8 Laser-Focused First-USA-Useful Finisher on QPWkKAMX (PC=0.7055, ONLY 0.0055 above 0.70!).
+
+    Verified official /check results (2026-11-26 09:12 CST):
+      - QPWkKAMX (USA/TOP3000/model31, RAM d=0 tr=0.04):
+        group_rank(min(rank(ts_decay_linear(ts_backfill(mdl31_ab1_ass_tvr_last_qtr, 21), 10)),
+                       rank(ts_decay_linear(ts_backfill(mdl31_ab1_acc_prior_qtr, 21), 10))), subindustry)
+        -> Sh=1.72, 2Y=2.36, Fit=1.03, TO=5.1%, Mgn=17.58bp, Sub-Uni PASS (0.91/0.74),
+           Official SC=0.5423 PASS, Official PC=0.7055 (ONLY 0.0055 above 0.70 with d=0 and zero PC ops!).
+      - qM5r0dxj (USA/TOP3000/model31, STATISTICAL d=3 tr=0.06, vector_neut(..., returns)):
+        -> Sh=1.95, 2Y=2.69, Fit=1.26, Sub-Uni PASS (1.10/0.84), Official SC=0.4569 PASS,
+           Pairwise corr vs QPWkKAMX = ONLY 0.5208 (<0.68, completely orthogonal cluster!).
+    Sweeps QPWkKAMX + acc_prior_y + ass_tvr_prior_qtr/prior_y through mild decay {2,4,6},
+    signed_power(1.5), vector_neut(..., returns), hump(0.01), and post-min 22d decay across
+    RAM / CROWDING / STATISTICAL to crush PC 0.7055 -> 0.60-0.67 while boosting Margin 17.6->22+bp!
+    """
+    specs: list[dict[str, Any]] = []
+    at_lq = "ts_decay_linear(ts_backfill(mdl31_ab1_ass_tvr_last_qtr, 21), 10)"
+    at_pq = "ts_decay_linear(ts_backfill(mdl31_ab1_ass_tvr_prior_qtr, 21), 10)"
+    at_py = "ts_decay_linear(ts_backfill(mdl31_ab1_ass_tvr_prior_y, 21), 10)"
+    acc_pq = "ts_decay_linear(ts_backfill(mdl31_ab1_acc_prior_qtr, 21), 10)"
+    acc_py = "ts_decay_linear(ts_backfill(mdl31_ab1_acc_prior_y, 21), 10)"
+    at_lq_raw = "ts_backfill(mdl31_ab1_ass_tvr_last_qtr, 21)"
+    acc_pq_raw = "ts_backfill(mdl31_ab1_acc_prior_qtr, 21)"
+
+    qpw_exprs: list[tuple[str, str, str, str]] = [
+        ("S3QPW-ADM-01-exact-qpw", "ADMIN_ORIGINAL", "WL13229", f"group_rank(min(rank({at_lq}), rank({acc_pq})), subindustry)"),
+        ("S3QPW-ADM-02-qpw-sp15", "ADMIN_ORIGINAL", "WL13229", f"signed_power(group_zscore(min(rank({at_lq}), rank({acc_pq})), subindustry), 1.5)"),
+        ("S3QPW-ADM-03-qpw-vret", "ADMIN_ORIGINAL", "WL13229", f"vector_neut(group_rank(min(rank({at_lq}), rank({acc_pq})), subindustry), rank(ts_mean(returns, 22)))"),
+        ("S3QPW-ADM-04-atpq-accpq", "ADMIN_ORIGINAL", "WL13229", f"group_rank(min(rank({at_pq}), rank({acc_pq})), subindustry)"),
+        ("S3QPW-TOP-01-atlq-accpy", "TOP100_2026Q4", "SZ83096", f"group_rank(min(rank({at_lq}), rank({acc_py})), subindustry)"),
+        ("S3QPW-TOP-02-atpy-accpq", "TOP100_2026Q4", "SZ83096", f"group_rank(min(rank({at_py}), rank({acc_pq})), subindustry)"),
+        ("S3QPW-TOP-03-qpw-hump01", "TOP100_2026Q4", "ZS59763", f"hump(group_rank(min(rank({at_lq}), rank({acc_pq})), subindustry), hump=0.01)"),
+        ("S3QPW-TOP-04-qpw-postd22", "TOP100_2026Q4", "LD22811", f"group_rank(ts_decay_linear(min(rank({at_lq_raw}), rank({acc_pq_raw})), 22), subindustry)"),
+    ]
+
+    for tag, neut, dec, trunc in [
+        ("ram_d2_t06", "REVERSION_AND_MOMENTUM", 2, 0.06),
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("ram_d6_t08", "REVERSION_AND_MOMENTUM", 6, 0.08),
+        ("crd_d2_t06", "CROWDING", 2, 0.06),
+        ("stat_d3_t06", "STATISTICAL", 3, 0.06),
+        ("stat_d5_t08", "STATISTICAL", 5, 0.08),
+    ]:
+        specs.append(
+            _pack_items_into_spec(
+                batch_id=f"S3-r8-USA-M31-QPW-{tag}",
+                campaign_id="S3_USA_M31_QPW_USEFUL",
+                hypothesis_id="HYP-S3-USA-M31-QPW-PC0705-USEFUL",
+                region="USA",
+                universe="TOP3000",
+                dataset_id="model31",
+                queue_type="NORMAL",
+                settings=_make_settings("USA", "TOP3000", neut, decay=dec, truncation=trunc),
+                items=[
+                    {
+                        "expression": expr,
+                        "template_id": f"{tid}_{neut}_d{dec}",
+                        "source_side": side,
+                        "author_id": auth,
+                        "dataset_id": "model31",
+                        "primary_field_id": "mdl31_ab1_ass_tvr_last_qtr",
+                    }
+                    for tid, side, auth, expr in qpw_exprs
+                ],
+            )
+        )
+    return specs
+
+
+def build_eur_model77_qvm_subfix_s3r8_specs() -> list[dict[str, Any]]:
+    """Stage-3 r8 EUR/model77 Sub-Universe Fixer (adv20 > 0.45/0.50 on TOP2500 + native TOP1200).
+
+    S3-r7-EUR-M77V2 kept Sh=1.74, Fit=1.25, Mgn=22.9-26.1bp under adv20>0.30, failing ONLY
+    LOW_SUB_UNIVERSE_SHARPE(0.54). Raising liquidity gate to 0.45/0.50 (like RR5QjWYz) and testing
+    native EUR/TOP1200 targets a 20bp+ orthogonal EUR Useful #2 (corr 0.27-0.56 vs RR5QjWYz).
+    """
+    specs: list[dict[str, Any]] = []
+    dvm = "reverse(ts_backfill(mdl177_qvm_dvm_qvaeur_alt, 21))"
+    est = "reverse(ts_backfill(mdl177_qvm_estrevrank_qmaeur_alt, 21))"
+    emm = "reverse(ts_backfill(mdl177_emm_fc_rev3y2_alt, 21))"
+    ev = "reverse(ts_backfill(mdl177_qvm_ev_qvaeur_alt, 21))"
+    ci = "group_cartesian_product(country, industry)"
+
+    exprs_top2500: list[tuple[str, str, str, str]] = [
+        ("S3M77S-ADM-01-dvm-adv45-ci", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.45, group_zscore({dvm}, {ci}), 0)"),
+        ("S3M77S-ADM-02-dvm-adv50-ci", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.5, group_zscore({dvm}, {ci}), 0)"),
+        ("S3M77S-ADM-03-dvm-sp2-adv45", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.45, signed_power(group_zscore({dvm}, {ci}), 2), 0)"),
+        ("S3M77S-ADM-04-dvm-emm-adv45", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.45, group_zscore(min(rank({dvm}), rank({emm})), {ci}), 0)"),
+        ("S3M77S-TOP-01-est-adv45-ci", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.45, group_zscore({est}, {ci}), 0)"),
+        ("S3M77S-TOP-02-dvm-est-adv45", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.45, group_zscore(min(rank({dvm}), rank({est})), {ci}), 0)"),
+        ("S3M77S-TOP-03-ev-emm-adv50", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.5, group_zscore(min(rank({ev}), rank({emm})), {ci}), 0)"),
+        ("S3M77S-TOP-04-dvm-vret-adv45", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.45, vector_neut(group_zscore({dvm}, {ci}), rank(ts_mean(returns, 22))), 0)"),
+    ]
+
+    exprs_top1200: list[tuple[str, str, str, str]] = [
+        ("S3M7712-ADM-01-dvm-ci", "ADMIN_ORIGINAL", "WL13229", f"group_zscore({dvm}, {ci})"),
+        ("S3M7712-ADM-02-dvm-sp2-ci", "ADMIN_ORIGINAL", "WL13229", f"signed_power(group_zscore({dvm}, {ci}), 2)"),
+        ("S3M7712-ADM-03-dvm-emm-ci", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(min(rank({dvm}), rank({emm})), {ci})"),
+        ("S3M7712-ADM-04-dvm-est-ci", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(min(rank({dvm}), rank({est})), {ci})"),
+        ("S3M7712-TOP-01-est-ci", "TOP100_2026Q4", "SZ83096", f"group_zscore({est}, {ci})"),
+        ("S3M7712-TOP-02-est-emm-ci", "TOP100_2026Q4", "SZ83096", f"group_zscore(min(rank({est}), rank({emm})), {ci})"),
+        ("S3M7712-TOP-03-ev-emm-ci", "TOP100_2026Q4", "ZS59763", f"group_zscore(min(rank({ev}), rank({emm})), {ci})"),
+        ("S3M7712-TOP-04-dvm-sp15-ci", "TOP100_2026Q4", "LD22811", f"signed_power(group_zscore(min(rank({dvm}), rank({est})), {ci}), 1.5)"),
+    ]
+
+    for tag, uni, neut, dec, trunc, elist in [
+        ("u2500_ram_d4_t06", "TOP2500", "REVERSION_AND_MOMENTUM", 4, 0.06, exprs_top2500),
+        ("u2500_crd_d4_t08", "TOP2500", "CROWDING", 4, 0.08, exprs_top2500),
+        ("u1200_ram_d3_t06", "TOP1200", "REVERSION_AND_MOMENTUM", 3, 0.06, exprs_top1200),
+        ("u1200_crd_d4_t08", "TOP1200", "CROWDING", 4, 0.08, exprs_top1200),
+    ]:
+        specs.append(
+            _pack_items_into_spec(
+                batch_id=f"S3-r8-EUR-M77SUB-{tag}",
+                campaign_id="S3_EUR_M77_SUBFIX",
+                hypothesis_id="HYP-S3-EUR-M77-SUBFIX-ORTHO-USEFUL",
+                region="EUR",
+                universe=uni,
+                dataset_id="model77",
+                queue_type="NORMAL",
+                settings=_make_settings("EUR", uni, neut, decay=dec, truncation=trunc),
+                items=[
+                    {
+                        "expression": expr,
+                        "template_id": f"{tid}_{uni}_{neut}_d{dec}",
+                        "source_side": side,
+                        "author_id": auth,
+                        "dataset_id": "model77",
+                        "primary_field_id": "mdl177_qvm_dvm_qvaeur_alt",
+                    }
+                    for tid, side, auth, expr in elist
+                ],
+            )
+        )
+    return specs
+
+
 def build_all_stage23_refiner_specs() -> list[dict[str, Any]]:
-    """Return ordered Stage-3 r7 USA-M31 + EUR-M77V2 -> r6 -> r5 -> r4 -> r3 -> r2 -> r1b -> Stage-2."""
+    """Return ordered Stage-3 r8 USA-M31-QPW + EUR-M77-SUB -> r7 -> r6 -> r5 -> r4 -> r3 -> r2 -> r1b -> Stage-2."""
     return (
-        build_usa_model31_pc_crush_s3r7_specs()
+        build_usa_model31_qpw_useful_s3r8_specs()
+        + build_eur_model77_qvm_subfix_s3r8_specs()
+        + build_usa_model31_pc_crush_s3r7_specs()
         + build_eur_model77_v2_s3r7_specs()
         + build_eur_model77_stage3_useful_specs()
         + build_usa_pvtech_stage2_lowto_specs()

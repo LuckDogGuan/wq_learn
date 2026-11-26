@@ -103,3 +103,6 @@
     - **`88G93gMv`**（`mdl177_qvm_estrevrank_qmaeur_alt`, `RAM d=0`）：**`Sh = 1.95, 2Y = 1.63, Fit = 1.17, SC = 0.159, corr(RR5) = 0.271 (完全正交!), PC = 0.846`**，仅缺 `Sub-Uni(0.84)`（只差 `0.17`！）；
     - **`78GbZK6v`**（`mdl177_qvm_dvm_qvaeur_alt m22`）：**`Sh = 1.87, 2Y = 2.31, Fit = 1.24, TO = 3.7%, Mgn = 29.39bp`**！
   - **坏批次纠偏**：`S3-r6-EUR-M77` 对 `1.80` 的 `qvm_ev` 用 `adv20 > 0.40` 略重（降至 `1.47`）→ 新上线 **`S3-r7-EUR-M77V2-*`** 改以 `2.05 / 1.95` 更强基座配 **软门控 `adv20 > 0.25/0.30/0.35`** + `dvm × estrev × emm(PC=0.698) × model238` + `country*industry` + `signed_power(2)` 冲刺高 Margin 正交 `Useful`！
+- **2026-11-26 09:15（`S3-r7-EUR-M77V2` 复盘 + 上线 `S3-r8-EUR-M77SUB` 精修 `Sub-Universe`）**：
+  - `S3-r7-EUR-M77V2` 在 `adv20 > 0.30` 下完整保住了高 Margin 与强 Sharpe：`wpNxbL9x`（`Sh=1.74, 2Y=2.03, Fit=1.25, Mgn=22.88bp`）、`58G0gkRJ`（`Sh=1.70, Mgn=26.07bp`）、`88G9P92o`（`Sh=1.74, Mgn=17.47bp`），但仍仅差 **`LOW_SUB_UNIVERSE_SHARPE(0.53–0.55)`**；
+  - 上线 **`S3-r8-EUR-M77SUB-*`**（`32 FULL`）：直接对 `2.05` `dvm` / `1.95` `estrev` / `1.66` `emm(PC=0.698)` 对比测试 **`TOP2500` + `adv20 > 0.45/0.50`** 与 **原生 `TOP1200`**（缩小中小盘稀释效应），直攻 `EUR` 第二条 `20bp+` 正交 `Useful`！

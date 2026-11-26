@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-26T08:40:00+08:00",
+  "updated_at": "2026-11-26T09:15:00+08:00",
   "policy": "All RA 0-FAIL + SC < 0.65 receive alias 'SC 0.xxx PC 0.xxx'. All-pass (PC < 0.70 + pairwise < 0.68, ranked by Margin DESC) receive Useful tag; PC >= 0.70 or correlated siblings (>=0.68 vs higher-Margin Useful) receive SC_PASS tag.",
   "useful_all_pass_tagged": [
     {
@@ -118,6 +118,66 @@
     }
   ],
   "sc_pass_only_pc_high": [
+    {
+      "alpha_id": "QPWkKAMX",
+      "region": "USA",
+      "universe": "TOP3000",
+      "dataset_id": "model31",
+      "mark": "SC_PASS",
+      "alias": "SC 0.542 PC 0.706",
+      "sharpe": 1.72,
+      "sharpe_2y": 2.36,
+      "fitness": 1.03,
+      "margin_bp": 17.58,
+      "hard_checks": "0_FAIL_OFFICIAL_CHECK_PASS",
+      "local_sc": 0.5437,
+      "official_sc": 0.5423,
+      "remote_pc": 0.7055,
+      "neutralization": "REVERSION_AND_MOMENTUM",
+      "decay": 0,
+      "truncation": 0.04,
+      "pc_rescue_plan": "BREAKTHROUGH! ONLY 0.0055 above PC<0.70 with d=0 & zero PC ops! min(ass_tvr_last_qtr, acc_prior_qtr) crushed PC by -0.1003 vs MPgR3wQ6 while keeping 17.58bp Margin & Sh=1.72. Launched S3-r8-USA-M31-QPW (decay 2/4/6 + signed_power 1.5 + vector_neut(returns) + hump + acc_prior_y/ass_tvr_prior_y across RAM/CROWDING/STATISTICAL) to mint FIRST USA Useful!"
+    },
+    {
+      "alpha_id": "MPgR3wQ6",
+      "region": "USA",
+      "universe": "TOP3000",
+      "dataset_id": "model31",
+      "mark": "SC_PASS",
+      "alias": "SC 0.520 PC 0.806",
+      "sharpe": 1.63,
+      "sharpe_2y": 2.17,
+      "fitness": 1.04,
+      "margin_bp": 20.09,
+      "hard_checks": "0_FAIL_OFFICIAL_CHECK_PASS",
+      "local_sc": 0.5184,
+      "official_sc": 0.5203,
+      "remote_pc": 0.8058,
+      "neutralization": "REVERSION_AND_MOMENTUM",
+      "decay": 0,
+      "truncation": 0.04,
+      "pc_rescue_plan": "ass_tvr_last_qtr 20.09bp parent of QPWkKAMX (corr=0.9543 vs blxZQePZ); pairing with acc_prior_qtr already dropped PC 0.8058->0.7055."
+    },
+    {
+      "alpha_id": "qM5r0dxj",
+      "region": "USA",
+      "universe": "TOP3000",
+      "dataset_id": "model31",
+      "mark": "SC_PASS",
+      "alias": "SC 0.457 PC 0.790",
+      "sharpe": 1.95,
+      "sharpe_2y": 2.69,
+      "fitness": 1.26,
+      "margin_bp": 10.21,
+      "hard_checks": "0_FAIL_OFFICIAL_CHECK_PASS",
+      "local_sc": 0.4569,
+      "official_sc": 0.4569,
+      "remote_pc": 0.7896,
+      "neutralization": "STATISTICAL",
+      "decay": 3,
+      "truncation": 0.06,
+      "pc_rescue_plan": "STATISTICAL + vector_neut(returns) cluster is ORTHOGONAL to QPWkKAMX (pairwise corr=0.5208 < 0.68!) and blxZQePZ (0.6025); S3-r8 applies STATISTICAL d={3,5} + vector_neut(returns) directly onto QPWkKAMX dual-branch to mint a 2nd orthogonal USA Useful!"
+    },
     {
       "alpha_id": "blxZQePZ",
       "region": "USA",
