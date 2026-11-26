@@ -1,0 +1,110 @@
+{
+  "schema_version": "wq_d1_compact_core_state_v1",
+  "updated_at": "2026-11-26T14:38:00+08:00",
+  "context_compaction_rule": "任何 AI 工具（Antigravity / Claude Code / Codex / Cursor）启动或上下文超长重置（/compact）后，只读本文件 + docs/agents/OPTIMIZATION_LEDGER.json + AGENTS.md（总计 < 8KB），绝不重读数万行历史聊天记录！",
+  "immutable_red_lines": {
+    "delay": 1,
+    "ra_ppa_separated": true,
+    "forbidden_operators": ["add", "multiply", "trade_when", "+", "*"],
+    "canonical_dual_branch": "min(rank(expr_A), rank(expr_B)) / reverse(min(...))",
+    "gold_regular_operators_count": 81,
+    "never_auto_submit": true,
+    "margin_first_priority": "所有条件通过时，严格优先保留 Margin (bp) 更高的因子",
+    "alias_and_tag_rule": "凡 RA 0-FAIL + SC < 0.65 必写别名 'SC 0.xxx PC 0.xxx'；全过且正交(<0.68)打 'Useful'，仅 PC 未过或同簇次优打 'SC_PASS'"
+  },
+  "active_focus_markets_1_to_2": [
+    {
+      "region": "USA",
+      "universe": "TOP3000",
+      "slots": 3,
+      "active_useful_champions": [
+        {
+          "alpha_id": "e71w5Qrl",
+          "dataset_id": "model31",
+          "margin_bp": 18.58,
+          "sharpe": 1.71,
+          "sharpe_2y": 2.63,
+          "fitness": 1.07,
+          "official_sc": 0.5358,
+          "official_pc": 0.6936,
+          "nesting_depth": 4,
+          "op_count": 6,
+          "nesting_tag": "CLEAN_LE4_LAYERS",
+          "status": "LIVE_IN_95_OS"
+        },
+        {
+          "alpha_id": "E5mWLW0J",
+          "dataset_id": "model31+model30+model28",
+          "margin_bp": 7.99,
+          "sharpe": 1.83,
+          "sharpe_2y": 2.38,
+          "fitness": 1.11,
+          "official_sc": 0.3443,
+          "official_pc": 0.7531,
+          "nesting_depth": 7,
+          "op_count": 8,
+          "nesting_tag": "OVER_NESTED_TEMP_PC_FIX",
+          "exact_params": {"decay": 6, "truncation": 0.08, "neutralization": "STATISTICAL", "post_decay_days": 22, "vneut_ret_days": 22, "tail_bounds": [-0.25, 0.25, 0]},
+          "status": "READY_FOR_MANUAL_OS_96"
+        }
+      ],
+      "current_seed_campaigns": [
+        "USA/analyst_revision_horizons (Alphas=0 FREE, 已出 Jj3Zwmem/vRY3g5Y3 Sh=1.21!)",
+        "USA/model227 (Alphas=0 FREE, 已出 N1Kv178p Sh=1.05, Mgn=7.98bp)",
+        "USA/model36 (StarMine SmartRatios, cov=1.000)"
+      ]
+    },
+    {
+      "region": "EUR",
+      "universe": "TOP2500",
+      "slots": 1,
+      "active_useful_champions": [
+        {
+          "alpha_id": "RR5QjWYz",
+          "dataset_id": "model25",
+          "margin_bp": 14.10,
+          "sharpe": 1.74,
+          "sharpe_2y": 2.28,
+          "fitness": 1.04,
+          "official_sc": 0.2588,
+          "official_pc": 0.6680,
+          "nesting_depth": 4,
+          "op_count": 6,
+          "nesting_tag": "CLEAN_LE4_LAYERS",
+          "status": "LIVE_IN_95_OS"
+        }
+      ],
+      "current_seed_campaigns": [
+        "EUR/model36 (StarMine SmartRatios, 已出 YPlGGbnM Sh=0.86, Mgn=9.16bp)",
+        "EUR/model28 (StarMine Structural Credit Risk)",
+        "EUR/predictive_starmine (Alphas=0 FREE)",
+        "EUR/model27 (StarMine CCR)"
+      ]
+    }
+  ],
+  "stage_settings_contract": {
+    "stage_1_and_2": {
+      "simulation_mode_allowed": ["QUICK", "FULL"],
+      "default_decay": 0,
+      "default_neutralization": "SUBINDUSTRY",
+      "default_truncation": 0.04,
+      "test_period": "P0Y0M",
+      "max_trade": "OFF"
+    },
+    "stage_3_and_4": {
+      "simulation_mode_locked": "FULL",
+      "controlled_variable_limit": "每轮只允许修改 1-2 个参数（如固定表达式轮询 decay ∈ {0, 5, 20}，或固定 decay=0 轮询 neutralization）",
+      "max_recommended_nesting_depth": 4,
+      "max_recommended_op_count": 6
+    },
+    "deferred_strict_switches": {
+      "activate_on": "2026-12-10",
+      "switches": ["testPeriod='P2Y0M0D' (2Y Test)", "maxTrade='ON'"]
+    }
+  },
+  "baseline_rollback_pointer": {
+    "frozen_json": "docs/整理与研究/workflow/d1_ra_baseline_v1_frozen.json",
+    "manual_md": "docs/整理与研究/workflow/D1_RA_BASELINE_V1_MANUAL.md",
+    "git_commit": "50939d68abe0d6b329954bb2dadb9e8f504179d3"
+  }
+}

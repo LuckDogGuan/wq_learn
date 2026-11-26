@@ -4,8 +4,57 @@ from __future__ import annotations
 import pytest
 
 from wq_research_v2.config_loader import WDS_DATA_DIR
-from wq_research_v2.field_screener import FieldScreener, is_fake_single_vector_probe
+from wq_research_v2.expr_validator import ExprValidator
+from wq_research_v2.field_screener import (
+    CLASSROOM_HUAZIGE_SEED_RULES,
+    FieldScreener,
+    build_datafield_inspection_probes,
+    compute_expression_nesting_metrics,
+    is_fake_single_vector_probe,
+)
 from wq_research_v2.wds_adapter import compute_region_d1_gaps
+
+
+def test_classroom_huazige_seed_rules_probes_and_nesting_governance() -> None:
+    assert CLASSROOM_HUAZIGE_SEED_RULES["stage12_standardized_clean_defaults"]["default_decay"] == 0
+    assert CLASSROOM_HUAZIGE_SEED_RULES["stage12_standardized_clean_defaults"]["default_neutralization"] == "SUBINDUSTRY"
+    assert CLASSROOM_HUAZIGE_SEED_RULES["stage12_standardized_clean_defaults"]["fast_mode_allowed"] is True
+    assert CLASSROOM_HUAZIGE_SEED_RULES["stage3_controlled_variable_optimization"]["simulation_mode_locked"] == "FULL"
+    assert CLASSROOM_HUAZIGE_SEED_RULES["stage3_controlled_variable_optimization"]["standard_decay_poll"] == [0, 5, 20]
+    assert CLASSROOM_HUAZIGE_SEED_RULES["deferred_strict_switches"]["scheduled_activation_date"] == "2026-12-10"
+
+    probes = build_datafield_inspection_probes("mdl31_ab1_ass_tvr_last_qtr", "MATRIX")
+    assert len(probes) == 8
+    validator = ExprValidator()
+    for p in probes:
+        assert p["recommended_settings"]["delay"] == 1
+        assert p["recommended_settings"]["decay"] == 0
+        assert p["recommended_settings"]["neutralization"] == "NONE"
+        rep = validator.validate(
+            p["expression"],
+            {
+                "region": "USA",
+                "universe": "TOP3000",
+                "delay": 1,
+                "decay": 0,
+                "neutralization": "NONE",
+                "truncation": 0.04,
+            },
+        )
+        assert rep.valid, f"Probe invalid: {p['probe_id']} -> {rep.errors}"
+
+    clean_m = compute_expression_nesting_metrics(
+        "group_rank(ts_decay_linear(ts_backfill(mdl31_ab1_ass_tvr_prior_qtr, 21), 10), subindustry)"
+    )
+    assert clean_m["nesting_tag"] == "CLEAN_LE4_LAYERS"
+    assert clean_m["is_over_nested"] is False
+
+    deep_m = compute_expression_nesting_metrics(
+        "tail(vector_neut(group_rank(ts_decay_linear(min(rank(ts_backfill(a, 21)), min(rank(ts_backfill(b, 21)), rank(ts_backfill(c, 21)))), 22), subindustry), rank(ts_mean(returns, 22))), lower=-0.25, upper=0.25, newval=0)"
+    )
+    assert deep_m["nesting_tag"] == "OVER_NESTED_TEMP_PC_FIX"
+    assert deep_m["is_over_nested"] is True
+    assert deep_m["nesting_depth"] >= 6
 
 
 def test_blacklists_trap_fields_and_fake_vector_rule() -> None:

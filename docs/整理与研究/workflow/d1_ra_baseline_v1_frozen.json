@@ -1,0 +1,190 @@
+{
+  "schema_version": "d1_ra_baseline_v1_frozen",
+  "frozen_at": "2026-11-26T14:36:00+08:00",
+  "git_baseline_commit": "50939d68abe0d6b329954bb2dadb9e8f504179d3",
+  "edition_name": "WorldQuant BRAIN D1-Only RA 基础版/通用版流水线 (Baseline v1.0 Frozen + v1.1 Controlled-Variable Upgrade Spec)",
+  "purpose": "作为已实盘跑通 4,893 FULL/天（0次429）并产出 3 条官方 /check 0-FAIL 全绿 Useful 冠军（e71w5Qrl 18.58bp、RR5QjWYz 14.10bp、E5mWLW0J Sh=1.83/SC=0.344）的稳定基准版存档。后续任何流程修改若效果变差，可一键回退或对照本 JSON 真源。",
+  "hard_red_lines": {
+    "delay_locked": 1,
+    "ra_and_ppa_strictly_separated": true,
+    "decision_3_forbidden_operators": ["add", "multiply", "trade_when", "+", "*"],
+    "canonical_dual_branch_combinator": "min(rank(expr_A), rank(expr_B)) / reverse(min(rank(expr_A), rank(expr_B)))",
+    "exact_live_gold_regular_operators_count": 81,
+    "operators_whitelist_path": "wq_research_v2/config/operators_gold_81.json",
+    "auto_submit_forbidden": true,
+    "completed_full_ledger_immutable": true,
+    "reconcile_once_never_blind_resend": true,
+    "knowledge_priority_80_20": {
+      "primary_80_pct": [
+        "worldquant-brain-cyber-game-king (王哥 ZS59763 #32)",
+        "wq-top-advisors-skill (Top100 黄金顾问 2026Q4)",
+        "Admin Original Posts (WL13229 / KH94146) + 顾问课堂视频总结 (worldquant-classroom-reference 53课)"
+      ],
+      "fallback_20_pct": "普通论坛帖子（仅当前三者 80% 主栈无法解决时才查阅）"
+    }
+  },
+  "guangzhou_production_runtime_v1": {
+    "service_name": "worldquant-v2-deu-ra.service",
+    "cli_command": "/root/miniconda3/bin/python -u -m wq_research_v2.daemon_ra_runner --region EUR,USA --slots 4 --max-per-region 2 --region-caps EUR:1,USA:3 --batch-size 8 --post-stagger 2.0 --mode FULL --daily-target 4500 --round-robin-waves 1 --early-stop-sims 48 --prune-jaccard 0.78 --prune-max-per-field 2 --prune-max-per-dataset 6 --loop",
+    "sqlite_db_path": "/root/worldquont/data/wq_v2_ledger.db",
+    "memory_limit_mb": 512,
+    "observed_rss_mb": 70.5,
+    "observed_daily_throughput_full": 4893,
+    "observed_http_429_count": 0,
+    "zombie_simulation_guard": {
+      "stall_timeout_sec": 240.0,
+      "poll_timeout_sec": 720.0,
+      "action_on_stall": "DELETE /simulations/{id} to free slot immediately + record RESULTS_UNOBSERVED"
+    }
+  },
+  "fast_mode_and_deferred_settings_policy": {
+    "fast_mode_mechanism": {
+      "api_field_1_simulationMode": "settings.simulationMode ∈ {'QUICK', 'FULL'} with settings.visualization = false",
+      "api_field_2_testPeriod": "settings.testPeriod = 'P0Y0M' (or 'P0Y0M0D', zero holdout test period = fastest single-pass IS evaluation)",
+      "stage_1_and_2_policy": "允许在阶段 1（初筛找种子）和阶段 2（二阶爬坡）开启 FAST/QUICK 模式（simulationMode='QUICK', testPeriod='P0Y0M', visualization=false）快速过滤海量无意义字段，节省耗时与算力。",
+      "stage_3_and_4_policy": "阶段 3（单轴/控制变量达标精修）与阶段 4（终检打标）严禁使用 FAST/QUICK 模式，强制锁定 simulationMode='FULL'（获取完整 rn_sharpe、is.checks 与可提交全量指标）。"
+    },
+    "deferred_strict_settings_schedule": {
+      "two_year_test_period": {
+        "setting_key": "settings.testPeriod",
+        "current_value": "P0Y0M (未开启独立 2Y Test Period 切分)",
+        "future_strict_value": "P2Y0M0D",
+        "status": "DEFERRED_2_WEEKS",
+        "scheduled_activation_date": "2026-12-10",
+        "rationale": "当前先用常规 IS + LOW_2Y_SHARPE/IS_LADDER_SHARPE 跑通高确定性种子与 95->100 OS；两周后（2026-12-10）再尝试开启 testPeriod='P2Y0M0D' 做更严苛的泛化检验。"
+      },
+      "max_trade_constraint": {
+        "setting_key": "settings.maxTrade",
+        "current_value": "MATRIX 默认 OFF（仅 VECTOR 或 ASI/HKG/KOR 特定集按需 ON）",
+        "future_strict_value": "ON (全量开启最大交易量限制)",
+        "status": "DEFERRED_2_WEEKS",
+        "scheduled_activation_date": "2026-12-10",
+        "rationale": "当前阶段暂不全量强制开启 maxTrade=ON；两周后（2026-12-10）与 2Y Test 同步尝试开启。"
+      }
+    }
+  },
+  "pipeline_stages_detailed": [
+    {
+      "stage_index": 0,
+      "stage_id": "STAGE_0_SEED_SCREENING",
+      "name": "第 0 步 · 种子因子（Seed Factor）数据筛选与字段 6 步探查",
+      "code_modules": [
+        "wq_research_v2/src/wq_research_v2/field_screener.py",
+        "wq_research_v2/src/wq_research_v2/wds_adapter.py"
+      ],
+      "huazige_and_classroom_fixed_rules": {
+        "rule_1_new_and_blue_ocean_datasets": "优先选新上架数据集、Alphas=0 免额度集（2026-12-06 前）或华子哥 WebDataScope 蓝海四差距集：社区 Sharpe > 区域均值（GREEN）、产率 osis_count/info_count < 10%（WDS_BLUE_OCEAN_GAP）、100 <= info_count <= 3000 甜区（WDS_SWEET_SPOT）。",
+        "rule_2_economic_meaning_and_pyramid": "严格遵循顾问课堂第 01/12/36 课：先核对 Dataset 描述与字段经济含义（衡量什么基本面/预期/风险、更新时点、预期正负方向），优先瞄准高倍率空白/准达标金字塔（Value Factor > $1.5）与机构高信噪比类别（StarMine model25/27/28/30/31/36、S&P Capital IQ model77、基本面比率 model227、分析师多周期修正）。",
+        "rule_3_coverage_and_clean_type": "字段覆盖率 coverage >= 0.75（优选 >= 0.80）、dateCoverage >= 0.60（有效年份 >= 5-8 年）、剔除 *_det_excflag / *_anntime 等非数值元数据陷阱、剔除 JX79797 全局黑名单与 JX14975 近 2 年断更黑名单；高并发主线优先纯 MATRIX，伪单值 VECTOR 强制只测 vec_avg（省 80% 额度）。",
+        "rule_4_datafield_6_probes_when_needed": "对陌生新数据集/异常字段，按课堂第 04/06/46 课与 brain-datafield-exploration-general 执行『Neutralization=NONE, Decay=0, testPeriod=P0Y0M』6 步探查：①基础覆盖 x；②非零覆盖 x!=0；③更新频率 ts_std_dev(x, 5/22/66)!=0（决定时序窗口取 5/22/66）；④值域 abs(x)>X；⑤中心趋势；⑥分位集中度 ts_scale(x, 252) > 0.8（Gold-81 安全替代 scale_down）。"
+      }
+    },
+    {
+      "stage_index": 1,
+      "stage_id": "STAGE_1_SEED_DISCOVERY",
+      "name": "第 1 步 · 一阶段种子初筛（Sharpe >= 0.80）+ 标准化默认设置",
+      "code_modules": [
+        "wq_research_v2/src/wq_research_v2/daemon_ra_runner.py",
+        "wq_research_v2/src/wq_research_v2/ra_evaluator.py"
+      ],
+      "baseline_v1_settings": {
+        "delay": 1,
+        "decay": 0,
+        "truncation": 0.04,
+        "neutralization_v1": "战役 default_neut + alt_neuts（SUBINDUSTRY / INDUSTRY / REVERSION_AND_MOMENTUM / CROWDING）",
+        "neutralization_v1_1_standardized_default": "SUBINDUSTRY（按用户最新定调：1-2阶段默认固定 decay=0、neutralization=SUBINDUSTRY，后续优化再开 decay ∈ {0, 5, 20} 与风险模型中性化轮询！）",
+        "simulation_mode": "v1.0 为 FULL；v1.1 支持 Stage 1-2 开启 FAST/QUICK (simulationMode='QUICK', testPeriod='P0Y0M')"
+      },
+      "templates_used_8_symmetric": [
+        "RA-ADM-01: group_zscore(ts_mean(ts_backfill(x, 21), 22), subindustry)",
+        "RA-ADM-02: reverse(group_zscore(ts_mean(ts_backfill(x, 21), 22), subindustry))",
+        "RA-ADM-03: group_rank(ts_decay_linear(ts_backfill(x, 21), 10), subindustry)",
+        "RA-ADM-04: reverse(group_rank(ts_decay_linear(ts_backfill(x, 21), 10), subindustry))",
+        "RA-TOP-01: group_rank(ts_zscore(ts_mean(ts_backfill(x, 21), 5), 66), subindustry)",
+        "RA-TOP-02: reverse(group_rank(ts_zscore(ts_mean(ts_backfill(x, 21), 5), 66), subindustry))",
+        "RA-TOP-03: group_zscore(ts_backfill(x, 21), industry)",
+        "RA-TOP-04: reverse(group_zscore(ts_backfill(x, 21), industry))"
+      ],
+      "pass_threshold_pool_b": {
+        "positive_sharpe_ge": 0.80,
+        "anti_factory_check": "active_years >= 8 and max_flat_streak_days < 200",
+        "positive_early_stop": "某数据集跑满 48 条后，若正向 Sharpe >= 0.80 命中率 < 2% 且无 >= 1.25 种子，立即自动早停该集并切换下一集（免疫 CHN 融券成本双负假象）"
+      },
+      "is_sc_checked_here": "一阶段跑批中不阻塞回测槽位；凡晋级 POOL_B (Sharpe >= 0.80) 的种子，在落盘后可异步调用本地 os_pnl_cache.db (95 OS) 做毫秒级初筛（SC < 0.68 优先晋级）。"
+    },
+    {
+      "stage_index": 2,
+      "stage_id": "STAGE_1_5_AND_2_PRUNING_AND_CLIMB",
+      "name": "第 2 步 · 相似种子剪枝（Pruning）+ 二阶段确定性爬坡（Sharpe >= 1.25–1.45+）",
+      "code_modules": [
+        "wq_research_v2/src/wq_research_v2/seed_pruner.py",
+        "wq_research_v2/src/wq_research_v2/stage23_refiner.py"
+      ],
+      "pruning_mechanism_and_params": {
+        "non_destructive_sqlite": "剪枝绝不删除 SQLite 已完成记录，仅在从 POOL_B/POOL_A 挑选种子晋级下一阶段时剔除同质克隆，保留最优代表。",
+        "ranking_sort_key": "(sharpe DESC, sharpe_2y DESC, fitness DESC, margin DESC)",
+        "jaccard_max": 0.78,
+        "token_extraction_rule": "提取表达式中的算子与字段名集合（忽略数字窗口及 ts_backfill/group_backfill/分组键），若两表达式 Token Jaccard = |A∩B|/|A∪B| >= 0.78 则判定为结构同质克隆，仅保留排序更高者。",
+        "metric_sharpe_eps": 0.06,
+        "metric_to_eps": 0.02,
+        "metric_clone_rule": "同一主字段下，若 |ΔSharpe| <= 0.06 且 |ΔTurnover| <= 0.02，判定为数值克隆并剪枝。",
+        "max_per_field": 2,
+        "max_per_dataset": 6
+      },
+      "stage2_controlled_actions": [
+        "保持 decay=0、SUBINDUSTRY 默认基线或测试同集双强字段融合 min(rank(field_A), rank(field_B))",
+        "根据字段真实更新频率对齐时序窗口（日频 5/10/22，月/季频 22/66）",
+        "晋级 POOL_A 门槛：Sharpe >= 1.25（目标 1.30–1.45+）且 2Y Sharpe > 1.0，不强求一步跳至 1.58+"
+      ],
+      "is_sc_checked_here": "晋级 POOL_A 种子进入阶段 3 前，执行本地 95-OS SC 核查（重点标记 SC < 0.68 的低自相关种子优先精修）。"
+    },
+    {
+      "stage_index": 3,
+      "stage_id": "STAGE_3_CONTROLLED_VARIABLE_REFINEMENT",
+      "name": "第 3 步 · 控制变量法（每次 1–2 参数）定向精修冲刺 0-FAIL（强制 FULL 模式）",
+      "code_modules": [
+        "wq_research_v2/src/wq_research_v2/stage23_refiner.py",
+        "wq_research_v2/src/wq_research_v2/pc_breakout_lab.py"
+      ],
+      "simulation_mode_locked": "FULL (严禁在阶段 3 使用 QUICK/FAST)",
+      "controlled_variable_protocol": {
+        "max_changed_axes_per_round": 1,
+        "standard_decay_poll": [0, 5, 20],
+        "fine_decay_poll_around_winner": [0, 2, 4, 6],
+        "standard_neutralization_poll": ["SUBINDUSTRY", "INDUSTRY", "REVERSION_AND_MOMENTUM", "CROWDING", "STATISTICAL"],
+        "standard_truncation_poll": [0.04, 0.06, 0.08],
+        "bottleneck_routing_table": {
+          "LOW_2Y_SHARPE_or_IS_LADDER_SHARPE": "优先修 2Y：后置 ts_decay_linear(min(rank(A),rank(B)), 22) 或换近 2 年高景气互补字段双支 min(rank,rank)",
+          "LOW_SUB_UNIVERSE_SHARPE": "宽池内加流动性/规模软门控 if_else(rank(adv20) > 0.35..0.45, expr, 0) 或连续流动性倾斜 divide(subtract(expr,0.5), subtract(1.5,rank(adv20))) + 交叉分组 group_cartesian_product(country, industry)",
+          "LOW_FITNESS_or_LOW_MARGIN": "轮询 decay ∈ {0, 5, 20}（或 {2, 4, 6}）压降换手，或后置 ts_mean(22)/ts_decay_linear(22)（注意：已用 tail(..., newval=0) 置零的表达式严禁外包 hump(0.01)，实测 S3-r13 会将 Sharpe 从 1.83 砸至 0.83！）",
+          "HIGH_PC_ge_0.70": "①王哥 L6 tail(..., lower=0.25, upper=0.75, newval=0.5) [-0.010 PC]；②跨低拥挤数据集双支/三支 min(rank,rank) [-0.10~-0.16 PC]；③STATISTICAL/CROWDING + vector_neut(..., rank(ts_mean(returns, 22/66)))；④非 min 协同算子 divide(rank(A), subtract(2, rank(B)))"
+        },
+        "nesting_depth_and_op_count_governance": {
+          "recommended_op_count_max": 6,
+          "recommended_nesting_depth_max": 4,
+          "over_nested_handling": "对嵌套 >= 5 层或算子数 >= 7 的有效降 PC 因子（如 E5mWLW0J 7层嵌套），在台账中显式标记 `OVER_NESTED_TEMP_PC_FIX` 并详细保存每一层参数；新种子优先在 Stage 1-2 选好底层字段，用 <=4 层极简结构过关。"
+        }
+      },
+      "exit_gate_pool_s": "平台全部基础硬检 0 FAIL（Sharpe > 1.58, Fitness > 1.0, 2Y/IS_LADDER PASS, Sub-Universe PASS, 1% < TO < 70%, Weight < 10%）"
+    },
+    {
+      "stage_index": 4,
+      "stage_id": "STAGE_4_CORRELATION_AND_TAGGING",
+      "name": "第 4 步 · 本地 95-OS SC + 池内正交剪枝 + 远程串行 PC + Margin 优先打标（零自动提交）",
+      "code_modules": [
+        "wq_research_v2/src/wq_research_v2/sc_local.py",
+        "wq_research_v2/src/wq_research_v2/pc_poller.py",
+        "wq_research_v2/src/wq_research_v2/tagger.py"
+      ],
+      "step_4_1_local_sc": "先调用 LocalSCEngine.sync_os_alphas(client) 同步最新全量 OS PnL（当前 95 OS），对齐重叠交易日计算最大 Pearson SC。硬门槛：SC < 0.65（安全线 < 0.68）。",
+      "step_4_2_intra_pool_orthogonal_pruning": "对同批/同簇通过候选计算 N×N 两两相关性矩阵；严格按『Margin (bp) 由高到低 -> Sharpe 由高到低 -> Fitness 由高到低』排序，贪心保留两两相关性 < 0.68 的最高 Margin 代表因子！",
+      "step_4_3_remote_pc_and_official_check": "逐条串行调用 pc_poller.py 查询 GET /alphas/{id}/correlations/prod 与 GET /alphas/{id}/check（严防 HTTP 200 空体假通过；遇限流冷却后单条轮询）。通过条件：PC < 0.70，或触发官方高夏普 +10% 豁免（PROD_CORRELATION PASS）。",
+      "step_4_4_platform_tagging_and_alias_rules": {
+        "alias_rule_mandatory": "凡通过全部 RA 硬检（0 FAIL）且 SC < 0.65 者，统一通过 PATCH /alphas/{id} 写入别名 `name = 'SC 0.xxx PC 0.xxx'`。",
+        "tag_Useful": "RA 0-FAIL + SC < 0.65 + 池内两两正交 < 0.68（同簇最高 Margin 胜出者）+ 官方 PC PASS (< 0.70 或 +10% 豁免) -> 打标签 `Useful` + 别名 `SC 0.xxx PC 0.xxx`。",
+        "tag_SC_PASS": "RA 0-FAIL + SC < 0.65，但 PC >= 0.70 未过 或 属于高 Margin `Useful` 冠军的同簇高相关备胎 (>= 0.68) -> 打标签 `SC_PASS` + 别名 `SC 0.xxx PC 0.xxx`，并登记入 sc_pass_pc_rescue_queue.json。",
+        "never_submit": "绝对不调用 POST /alphas/{id}/submit；由用户在 BRAIN 网页端筛选 `Useful` 标签复核后手工提交。"
+      }
+    }
+  ]
+}

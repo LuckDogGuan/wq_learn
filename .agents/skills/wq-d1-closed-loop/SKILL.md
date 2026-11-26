@@ -1,0 +1,59 @@
+---
+name: wq-d1-closed-loop
+description: "WorldQuant BRAIN D1-Only RA 跨 AI 工具通用闭环技能（主 Agent 方向决策 + 子 Agent 控制变量优化 + 自动精简上下文）。在启动新一轮因子挖掘、2小时定时复盘、切换 AI 工具或执行 /compact 后调用。"
+---
+
+# WorldQuant BRAIN D1-Only 跨工具闭环技能 (`wq-d1-closed-loop`)
+
+本技能将研究状态与对话历史彻底解耦，确保在 **Antigravity、Claude Code、Cursor、Codex** 等任何 AI 工具中均以 `< 8 KB` 极简上下文启动「采集 → Stage 1-2 快筛剪枝 → Stage 3 控制变量精修 → Stage 4 终检打标 → 有效/无效归因闭环」。
+
+## 1. 启动第一步：只读加载轻量核心上下文（防上下文爆炸）
+
+每次启动或 `/compact` 后，**只读以下 3 个轻量文件**（绝不扫描历史长对话）：
+1. `AGENTS.md`（硬红线：严格 `delay==1`、禁用 `+/*/trade_when`、精确 81 个 Gold 算子、零自动 `/submit`、Margin 优先、`Useful`/`SC_PASS` + `SC 0.xxx PC 0.xxx` 别名、8:2 查资料优先级）
+2. `docs/agents/CORE_STATE.json`（当前专注的 1–2 个地区/数据集、现役 `Useful` 冠军、阶段 1–4 参数契约、Baseline v1.0 回退指针）
+3. `docs/agents/OPTIMIZATION_LEDGER.json`（上轮哪些优化**有效 `[EFFECTIVE]`**、哪些**无效 `[INEFFECTIVE]`**）
+
+> 若后续流程修改效果不如预期，随时对照或回退至冻结基准版：`docs/整理与研究/workflow/d1_ra_baseline_v1_frozen.json` 与 `docs/整理与研究/workflow/D1_RA_BASELINE_V1_MANUAL.md`。
+
+## 2. 主 Agent + 子 Agent 闭环四步法
+
+### Step A · 主 Agent 验真上轮结果并输出「有效 / 无效」归因
+1. 查询 SQLite 台账（本地 `data/wq_v2_ledger.db` 或广州 `/root/worldquont/data/wq_v2_ledger.db`）最新完成批次。
+2. 与母版基线（Parent Baseline）对比，必须明确归纳并追加写入 `docs/agents/OPTIMIZATION_LEDGER.json`：
+   - **`[有效] xxx 的情况是有效的`**：写明在什么 Region/Dataset/母版上，单改了哪 1–2 个参数，使 Sharpe / 2Y / Fitness / Margin / PC 改善了多少；
+   - **`[无效] yyy 的情况是无效的`**：写明什么改动导致指标劣化或超时，提取禁止重演规则。
+3. 对任何新产出的 RA 硬检 `0-FAIL` 候选，立即按 Stage-4 规程执行：
+   - 同步最新全量 OS（`LocalSCEngine.sync_os_alphas(client)`）算本地 SC `< 0.65`；
+   - 按 **`Margin (bp)` 降序** 做池内两两正交剪枝（`< 0.68`）；
+   - 串行查远程 PC（`pc_poller.py`）与官方 `/check`；
+   - 全过且正交最高 Margin 打 **`Useful`** + 别名 `SC 0.xxx PC 0.xxx`；仅 PC 未过或同簇次优打 **`SC_PASS`** + 别名 `SC 0.xxx PC 0.xxx`（严禁调 `/submit`）。
+
+### Step B · 种子因子（Seed Factor）采集与 Stage 1–2 标准化快筛
+1. **种子筛选固定规则**（`wq_research_v2/src/wq_research_v2/field_screener.py` · 融合华子哥四差距 + 顾问课堂 53 课 `worldquant-classroom-reference`）：
+   - **选新集/低拥挤**：优先 `Alphas=0` 免额集（`2026-12-06` 截止）或 `aCnt <= 10` 或 WDS 产率 `osis/info < 10%` & `Sharpe > region_mean`；
+   - **选有经济含义与高倍率塔**：先明确经济假设与预期正负方向，瞄准 `Value Factor > $1.5` 空白/高倍率金字塔；
+   - **硬覆盖与类型门槛**：`coverage >= 0.75`（优选 `>= 0.80`）、`dateCoverage >= 0.60`（`>= 5–8` 年）、纯 `MATRIX` 优先（伪单值 `VECTOR` 只测 `vec_avg`），剔除元数据陷阱与黑名单；
+   - **陌生字段 6 步探查**：必要时用 `build_datafield_inspection_probes()` 在 `Neutralization=NONE, Decay=0, testPeriod=P0Y0M` 下查真实非零覆盖与更新频率（`ts_std_dev(x, 5/22/66) != 0`）。
+2. **Stage 1–2 标准化默认设置与 `FAST/QUICK` 模式**：
+   - 默认固定 **`decay = 0`**、默认 **`neutralization = "SUBINDUSTRY"`**、**`testPeriod = "P0Y0M"`**、**`maxTrade = "OFF"`**（`2Y Test` 与全局 `maxTrade="ON"` 暂不开启，定于 **`2026-12-10`** 开启尝试）；
+   - **阶段 1 与阶段 2 允许使用 `FAST/QUICK` 模式**（`simulationMode="QUICK", visualization=false`）加速初筛；
+   - 满 48 条正向 `Sh >= 0.80` 命中率 `< 2%` 自动早停；晋级种子经 `seed_pruner.py`（`jaccard_max=0.78, max_per_field=2, max_per_dataset=6`）去重并做本地 SC `< 0.68` 初筛。
+
+### Step C · 主 Agent 派发子 Agent 执行 Stage 3 控制变量优化（强制 `FULL` 模式）
+1. 进入 Stage 3（`POOL_A` 种子 `Sh >= 1.25` 冲刺 `0-FAIL`）**严禁使用 `FAST/QUICK` 模式，强制锁定 `simulationMode="FULL"`**。
+2. 主 Agent 向子 Agent（`invoke_subagent` 或同会话模块化调用）下达明确指令：
+   - 冻结母版核心字段，**每轮只允许修改 1–2 个参数（控制变量法）**；
+   - **标准参数轮询序列**：
+     - 轴 1（Decay 轮询）：固定母版表达式与中性化，轮询 **`decay ∈ {0, 5, 20}`**（默认 `0` 起步，胜出点邻域再细扫 `{2, 4, 6}`）；
+     - 轴 2（Neutralization 轮询）：固定最优 Decay，轮询 `SUBINDUSTRY` → `INDUSTRY` / `REVERSION_AND_MOMENTUM` / `CROWDING` / `STATISTICAL`；
+     - 轴 3（单一短板手术）：按 8:2 优先级（80% 王哥 + Top100 顾问 + 管理员/课堂53课）针对唯一 FAIL 项做单步改造（如后置 `ts_decay_linear(22)` 救 2Y/Margin、`adv20` 门控+`country*industry` 救 Sub-Uni、王哥 `L6 tail(0.25,0.75,0.5)` 或同集/跨集 `min(rank,rank)` 降 PC）。
+3. **嵌套层数治理**：
+   - 调用 `compute_expression_nesting_metrics(expr)` 检查 `operator_count` 与 `nesting_depth`；
+   - 优先保持 `operator_count <= 6`、`nesting_depth <= 4`；若 `nesting_depth >= 5` 或 `operator_count >= 7`，必须打上 `OVER_NESTED_TEMP_PC_FIX` 标签并完整记录每一层参数。
+
+### Step D · 状态回写与上下文收敛
+每轮结束时，更新 `docs/agents/CORE_STATE.json`、`docs/agents/OPTIMIZATION_LEDGER.json` 及对应地区档案（`docs/整理与研究/regions/*.md`），向用户汇报：
+1. 上轮验证结论（**哪些有效 `[有效]`、哪些无效 `[无效]`**）；
+2. 新增 `Useful`（按 Margin 降序）与 `SC_PASS` 清单；
+3. 下轮主 Agent 锁定的 1–2 个控制变量优化方向。

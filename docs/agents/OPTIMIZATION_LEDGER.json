@@ -1,0 +1,81 @@
+{
+  "schema_version": "wq_d1_optimization_attribution_ledger_v1",
+  "updated_at": "2026-11-26T14:38:00+08:00",
+  "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
+  "effective_cases": [
+    {
+      "case_id": "EFF-01",
+      "region_dataset": "USA/TOP3000/model31",
+      "controlled_change": "将 ts_decay_linear(..., 22) 移至双支 min(rank(A), rank(B)) 之后 + 固定 SUBINDUSTRY 分组",
+      "verdict": "EFFECTIVE（有效）",
+      "metric_delta": "Sharpe 1.72 -> 1.75, 2Y Sharpe 2.36 -> 2.56 (+0.20), Fitness 1.03 -> 1.06, Margin 17.58bp -> 20.19bp (+2.61bp), PC 0.7055 -> 0.7020",
+      "reusable_rule": "双支 min(rank,rank) 融合会产生日频拐点换手，后置 22d 线性衰减可同时提 Margin、提 2Y、提 Fitness 并微降 PC。"
+    },
+    {
+      "case_id": "EFF-02",
+      "region_dataset": "USA/TOP3000/model31",
+      "controlled_change": "在 group_rank(..., subindustry) 外层单步增加王哥 L6 尾部浓缩 tail(..., lower=0.25, upper=0.75, newval=0.5)，并在 decay ∈ {0, 2, 4} 轮询",
+      "verdict": "EFFECTIVE（有效）",
+      "metric_delta": "PC 0.7031 -> 0.6936 (-0.0095 打穿 <0.70!), SC 0.539 -> 0.535, 2Y 2.55 -> 2.63, Fit 1.05 -> 1.07；且在 d=0/2/4 全区间 4/4 稳定 0-FAIL（诞生 e71w5Qrl 18.58bp Useful 冠军）",
+      "reusable_rule": "当 0-FAIL 候选 PC 卡在 0.701-0.715 临界区时，单步加 tail(0.25, 0.75, 0.5) 置中 0.5 是最平滑且不伤 Sharpe 的降 PC 手段。"
+    },
+    {
+      "case_id": "EFF-03",
+      "region_dataset": "EUR/TOP2500/model25",
+      "controlled_change": "宽池 TOP2500 内保持不切小池，单步加入大盘流动性门控 if_else(rank(adv20) > 0.40, expr, 0) + group_cartesian_product(country, industry) + CROWDING 中性化 + 应计项双支",
+      "verdict": "EFFECTIVE（有效）",
+      "metric_delta": "Sub-Universe Sharpe 从 FAIL(1.29) -> PASS(0.94/0.90)，PC 从 0.946 -> 0.782 -> 0.6680（诞生 RR5QjWYz 14.10bp Useful 冠军）",
+      "reusable_rule": "泛欧多国池遇 LOW_SUB_UNIVERSE_SHARPE 时，留在 TOP2500 加 adv20 门控 + country*industry 交叉分组远优于切 TOP1200。"
+    },
+    {
+      "case_id": "EFF-04",
+      "region_dataset": "USA/TOP3000/model31+model30+model28",
+      "controlled_change": "当 e71w5Qrl 进入 95-OS 导致同集因子 PC/SC 撞车 (0.86) 时，引入低拥挤跨集字段（model30 EPS Surprise + model28 免额违约距离）+ STATISTICAL + vector_neut(returns, 22)",
+      "verdict": "EFFECTIVE（有效，但嵌套偏深标 OVER_NESTED_TEMP_PC_FIX）",
+      "metric_delta": "95-OS 官方 SC 从 0.536 骤降至 0.3443，Sharpe 升至 1.83（触发 +10% 豁免使官方 PC=0.7531 PASS，诞生 E5mWLW0J Useful #3）",
+      "reusable_rule": "跨低拥挤数据集融合 + 几何正交 vector_neut 是打破既有 OS 自相关撞车的最强杠杆，但需控制嵌套层数。"
+    },
+    {
+      "case_id": "EFF-05",
+      "region_dataset": "USA/TOP3000/model31+model30+model28 (S3-r13 单变量对照)",
+      "controlled_change": "在 E5mWLW0J 上严格单变量将 vector_neut 收益窗口从 22d 拉慢至 66d（YPlKe9MR）或后置衰减从 22d 拉至 33d（9qG1n2EV）",
+      "verdict": "EFFECTIVE_FOR_MARGIN（对提 Margin 与 2Y 有效，但 Fitness 略降至 0.88-0.95）",
+      "metric_delta": "Margin 从 7.99bp -> 8.71bp / 9.14bp / 9.56bp (pwWrLpaV)，Turnover 从 11.5% -> 8.6-9.0%，2Y Sharpe 从 2.38 -> 2.61-2.63",
+      "reusable_rule": "放慢 vector_neut 的参考向量窗口（22d->66d）可稳定降换手、提 Margin 与 2Y，但会轻微稀释全期 Sharpe（1.83->1.61-1.65）。"
+    }
+  ],
+  "ineffective_cases": [
+    {
+      "case_id": "INEFF-01",
+      "region_dataset": "USA/TOP3000/model31+model30+model28 (S3-r13 过度嵌套反例)",
+      "controlled_change": "在已含 tail(..., lower=-0.25, upper=0.25, newval=0) 的 7 层表达式外层再套第 8 层 hump(..., hump=0.01)（WjYQ5xOQ / d59VGJxx）",
+      "verdict": "INEFFECTIVE（严重无效 · 禁止重演）",
+      "metric_delta": "Sharpe 从 1.83 暴跌至 0.83，Fitness 从 1.11 跌至 0.31，2Y 从 2.38 跌至 1.25",
+      "root_cause_and_ban": "tail(..., newval=0) 将中间 50% 股票置为 0，外层再套 hump(0.01) 会导致进入 0 区的仓位无法及时调仓换出，彻底破坏截面多空结构！铁律：tail 置零后严禁外包 hump！"
+    },
+    {
+      "case_id": "INEFF-02",
+      "region_dataset": "USA/TOP3000/price_signal_dl (S3-r2 多变量同时改动反例)",
+      "controlled_change": "同时修改时序窗口 (5->15/22) + 新增 adv20>0.35 硬门控 + 拉大 decay (0->4/6)",
+      "verdict": "INEFFECTIVE（严重无效 · 违反控制变量法）",
+      "metric_delta": "Sharpe 从 1.51 暴跌至 0.77；切回单轴微调 S3-r3b 后立刻恢复 Sh=1.51 / 2Y=2.89",
+      "root_cause_and_ban": "多变量同时改动既无法归因，又在中小盘驱动的量价信号上错误切除了有效样本。铁律：每轮只动 1-2 个参数！"
+    },
+    {
+      "case_id": "INEFF-03",
+      "region_dataset": "EUR/TOP1200 vs TOP2500 (model25 & model77 缩宇宙反例)",
+      "controlled_change": "为过 Sub-Universe 直接把 Universe 从 TOP2500 切到 TOP1200",
+      "verdict": "INEFFECTIVE（无效）",
+      "metric_delta": "model25 Sharpe 3.16 -> 1.26；model77 Sharpe 2.05 -> 0.76",
+      "root_cause_and_ban": "直接缩宇宙改变了截面排名分母与中盘股样本分布。应留在 TOP2500 内用软门控或连续流动性倾斜。"
+    },
+    {
+      "case_id": "INEFF-04",
+      "region_dataset": "EUR/TOP2500 (高耗时算子与 FAST/SLOW_AND_FAST 中性化)",
+      "controlled_change": "在 EUR/TOP2500 使用 ts_quantile(..., 252)、quantile(cauchy)、ts_target_tvr_hump(if_else) 或 FAST/SLOW_AND_FAST 风险模型中性化",
+      "verdict": "INEFFECTIVE（引发 240s 后端计算超时）",
+      "metric_delta": "整批 8 条仿真卡死在 progress=0.15/0.90 触发 RESULTS_UNOBSERVED",
+      "root_cause_and_ban": "EUR 2500 只跨国股票池对 252 日滚动分位与快慢因子矩阵求逆开销极大。EUR 严禁使用上述慢算子。"
+    }
+  ]
+}

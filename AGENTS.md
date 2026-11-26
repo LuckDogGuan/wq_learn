@@ -35,4 +35,13 @@
    - 生产直跑 `FULL`（`QUICK` 仅快 8% 且丢 `rn_sharpe`）；
    - 阶段 3 必先修 **`LOW_2Y_SHARPE ≥ 1.58`**（历史占 49% 失败），首选实证冠军分组算子 `group_zscore`/`group_rank`/`group_neutralize(..., subindustry)` 与前置平滑（`ts_mean 22`/`ts_decay_linear 10`）；
    - **`CHN/TOP2000U` 融券双负假象**：因 A 股高融券成本（~4–6%/年），零信号在 `+x` 与 `reverse(x)` 上可同时打出 `-1.5 ~ -2.5` Sharpe（如 `other496` 实测 `+x=-2.26` 且 `-x=-1.95`）！严禁单看负 Sharpe 误判翻转，早停与筛选须以**正向 Sharpe**及正反对称差为准；
-   - `Alphas=0` 免每日额度窗口于 **`2026-12-06`** 冻结截止；凭据加载须以 `Password/config.yaml` 优先于环境变量。
+   - `Alphas=0` 免每日额度窗口于 **`2026-12-06`** 冻结截止；`2Y Test (testPeriod='P2Y0M0D')` 与全局 `maxTrade='ON'` 暂不开启（定于 **`2026-12-10`** 两周后尝试）；凭据加载须以 `Password/config.yaml` 优先于环境变量。
+
+## 3. 跨 AI 工具续接与「主 Agent + 子 Agent」控制变量闭环 (`wq-d1-closed-loop`)
+
+- **防上下文爆炸启动协议**：切换任何 AI 工具（Claude Code / Cursor / Codex / Antigravity）或执行 `/compact` 后，**只读 3 个轻量真源（`< 8 KB`）**：本文件 + [CORE_STATE.json](docs/agents/CORE_STATE.json) + [OPTIMIZATION_LEDGER.json](docs/agents/OPTIMIZATION_LEDGER.json)（详细切换与启动口令见 [HANDOFF_GUIDE.md](docs/agents/HANDOFF_GUIDE.md)，跨工具技能见 [.agents/skills/wq-d1-closed-loop/SKILL.md](.agents/skills/wq-d1-closed-loop/SKILL.md)）。
+- **基础版/通用版冻结真源**：当前已跑通 `4,893 FULL/天` 的稳定流水线已完整冻结于 [d1_ra_baseline_v1_frozen.json](docs/整理与研究/workflow/d1_ra_baseline_v1_frozen.json) 与 [D1_RA_BASELINE_V1_MANUAL.md](docs/整理与研究/workflow/D1_RA_BASELINE_V1_MANUAL.md)；任何流程修改若劣化可一键回退。
+- **主从闭环与阶段纪律**：
+  1. **种子筛选固化**：严格执行华子哥 WDS 四差距 + 顾问课堂 53 课规则（[worldquant-classroom-reference](docs/顾问课堂视频总结/worldquant-classroom-reference/SKILL.md) / `field_screener.py`：选新集/`Alphas=0`、明确经济假设、`cov>=0.75`、`dateCov>=0.60`、必要时 6 步探查字段真实更新频率）。
+  2. **Stage 1–2 标准化快筛**：默认固定 `decay=0`、`neutralization=SUBINDUSTRY`，支持开启 `FAST/QUICK` 模式（`simulationMode="QUICK", testPeriod="P0Y0M"`）初筛与 `seed_pruner.py`（`jaccard=0.78`）剪枝。
+  3. **Stage 3–4 强制 `FULL` + 控制变量法**：Stage 3 严禁 `FAST/QUICK`；子 Agent 每轮只改 1–2 个参数（如 `decay ∈ {0, 5, 20}` 轮询），嵌套 `>=5` 层标 `OVER_NESTED_TEMP_PC_FIX`（严禁 `tail(..., newval=0)` 外套 `hump`）；下轮必先验真并将 **`[有效] xxx 情况有效`** / **`[无效] yyy 情况无效`** 写入 [OPTIMIZATION_LEDGER.json](docs/agents/OPTIMIZATION_LEDGER.json)。

@@ -22,6 +22,10 @@
       "neutralization": "REVERSION_AND_MOMENTUM",
       "decay": 4,
       "truncation": 0.08,
+      "nesting_depth": 4,
+      "op_count_excl_backfill": 5,
+      "nesting_tag": "CLEAN_LE4_LAYERS",
+      "exact_params": {"decay": 4, "truncation": 0.08, "neutralization": "REVERSION_AND_MOMENTUM", "post_decay_days": 22, "tail_bounds": [0.25, 0.75, 0.5]},
       "expression": "tail(group_rank(ts_decay_linear(min(rank(ts_backfill(mdl31_ab1_ass_tvr_last_qtr, 21)), rank(ts_backfill(mdl31_ab1_acc_prior_qtr, 21))), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"
     },
     {
@@ -44,6 +48,10 @@
       "neutralization": "CROWDING",
       "decay": 5,
       "truncation": 0.08,
+      "nesting_depth": 4,
+      "op_count_excl_backfill": 6,
+      "nesting_tag": "CLEAN_LE4_LAYERS",
+      "exact_params": {"decay": 5, "truncation": 0.08, "neutralization": "CROWDING", "adv20_gate": 0.4, "group": "country*industry"},
       "expression": "if_else(rank(adv20) > 0.4, group_zscore(min(rank(ts_backfill(value_momentum_region_percentile, 21)), rank(ts_backfill(mdl25_8v, 21))), group_cartesian_product(country, industry)), 0)"
     },
     {
@@ -69,6 +77,10 @@
       "neutralization": "STATISTICAL",
       "decay": 6,
       "truncation": 0.08,
+      "nesting_depth": 7,
+      "op_count_excl_backfill": 8,
+      "nesting_tag": "OVER_NESTED_TEMP_PC_FIX",
+      "exact_params": {"decay": 6, "truncation": 0.08, "neutralization": "STATISTICAL", "post_decay_days": 22, "vneut_ret_days": 22, "tail_bounds": [-0.25, 0.25, 0]},
       "expression": "tail(vector_neut(group_rank(ts_decay_linear(min(rank(ts_backfill(mdl31_ab1_ass_tvr_prior_qtr, 21)), min(rank(ts_backfill(star_eps_surprise_prediction_fq1, 21)), rank(ts_backfill(mdl28_sm_structural2_v14_0_0_nd_credit_structural_distance_to_default, 21)))), 22), subindustry), rank(ts_mean(returns, 22))), lower=-0.25, upper=0.25, newval=0)"
     }
   ],

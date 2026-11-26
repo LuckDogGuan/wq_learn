@@ -1,6 +1,17 @@
 {
   "schema_version": "reusable_d1_ra_experience_v1",
-  "updated_at": "2026-11-26T09:53:00+08:00",
+  "updated_at": "2026-11-26T14:40:00+08:00",
+  "baseline_v1_frozen_ref": "docs/整理与研究/workflow/d1_ra_baseline_v1_frozen.json",
+  "classroom_and_huazige_seed_screening_rules": {
+    "source": "docs/顾问课堂视频总结/worldquant-classroom-reference (53课) + 华子哥 WebDataScope 4差距 + brain-datafield-exploration-general",
+    "rule_1_new_and_blue_ocean_datasets": "优先选新上架数据集、Alphas=0 免额集（2026-12-06 前）或 aCnt<=10 低拥挤集，以及 WDS 社区 Sharpe > 区域均值且 OS 产率 osis/info < 10% 的蓝海甜区集（100<=info<=3000）。",
+    "rule_2_economic_meaning_and_pyramid": "先写明字段经济假设与预期正负方向（第01/12/36课），优先瞄准 Value Factor > $1.5 的空白/高倍率金字塔与机构高质量类别（StarMine / Capital IQ / 基本面比率 / 多周期盈利预测修正）。",
+    "rule_3_coverage_and_type_gate": "coverage >= 0.75（优选 >= 0.80）、MATRIX dateCoverage >= 0.60（有效年份 >= 8年）、剔除 *_det_excflag/*_anntime 等非数值陷阱与 JX79797/JX14975 黑名单；高并发优先纯 MATRIX，单值伪 VECTOR 强制只测 vec_avg。",
+    "rule_4_datafield_6_probes": "陌生或异常字段用 field_screener.build_datafield_inspection_probes() 在 Neutralization=NONE, Decay=0, testPeriod=P0Y0M 下查：基础覆盖、非零覆盖(x!=0)、真实更新频率(ts_std_dev 5/22/66 != 0)、值域、中枢与分位分布。",
+    "rule_5_stage12_clean_defaults_and_fast_mode": "阶段 1-2 默认固定 decay=0、neutralization=SUBINDUSTRY、testPeriod=P0Y0M、maxTrade=OFF，支持开启 FAST/QUICK 模式（simulationMode='QUICK', visualization=false）快速初筛与二阶爬坡；阶段 3-4 严禁使用 FAST/QUICK，强制锁定 FULL。",
+    "rule_6_stage3_controlled_variables_and_nesting": "阶段 3 每轮只改 1-2 个参数（控制变量法：固定表达式轮询 decay ∈ {0, 5, 20}，或固定 decay 轮询中性化）；推荐算子数 <=6、嵌套 <=4 层，若 >=5 层打标 OVER_NESTED_TEMP_PC_FIX 并完整记录每层参数；严禁在 tail(..., newval=0) 外层套 hump。",
+    "rule_7_deferred_2y_test_and_maxtrade": "2Y Test (testPeriod='P2Y0M0D') 与全局 maxTrade='ON' 当前保持关闭，定于两周后（2026-12-10）开启尝试。"
+  },
   "hard_invariants_fixed": {
     "delay": 1,
     "ra_ppa_separated": true,

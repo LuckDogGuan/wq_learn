@@ -52,6 +52,126 @@ PYRAMID_GOAL_MAP: dict[str, str] = {
     "USA": "USA_EXPANSION",
 }
 
+# Fixed Seed Factor Screening & Stage 1-3 Governance Rules (Huazi Ge 4 Gaps + Advisor Classroom 53 Lessons)
+CLASSROOM_HUAZIGE_SEED_RULES: dict[str, Any] = {
+    "rule_version": "classroom_53lessons_huazige_v1",
+    "seed_dataset_selection": {
+        "prefer_new_and_free_alpha0_until": "2026-12-06",
+        "max_field_alpha_count_low_crowding": 10,
+        "wds_blue_ocean_production_rate_lt": 0.10,
+        "wds_sweet_spot_info_count_range": [100, 3000],
+        "wds_sharpe_above_region_mean_required": True,
+        "min_pyramid_value_factor_usd": 1.5,
+        "require_clear_economic_hypothesis": True,
+    },
+    "seed_field_hard_gates": {
+        "min_coverage": 0.75,
+        "preferred_coverage": 0.80,
+        "min_matrix_date_coverage": 0.60,
+        "min_active_years": 8,
+        "prefer_pure_matrix_for_multithread": True,
+        "fake_single_vector_only_vec_avg": True,
+    },
+    "stage12_standardized_clean_defaults": {
+        "delay": 1,
+        "default_decay": 0,
+        "default_neutralization": "SUBINDUSTRY",
+        "default_truncation": 0.04,
+        "test_period": "P0Y0M",
+        "max_trade": "OFF",
+        "fast_mode_allowed": True,
+        "fast_mode_settings": {"simulationMode": "QUICK", "visualization": False, "testPeriod": "P0Y0M"},
+    },
+    "stage3_controlled_variable_optimization": {
+        "simulation_mode_locked": "FULL",
+        "max_changed_axes_per_round": 1,
+        "standard_decay_poll": [0, 5, 20],
+        "standard_neutralization_poll": [
+            "SUBINDUSTRY",
+            "INDUSTRY",
+            "REVERSION_AND_MOMENTUM",
+            "CROWDING",
+            "STATISTICAL",
+        ],
+        "recommended_max_operator_count": 6,
+        "recommended_max_nesting_depth": 4,
+        "over_nested_tag": "OVER_NESTED_TEMP_PC_FIX",
+    },
+    "deferred_strict_switches": {
+        "scheduled_activation_date": "2026-12-10",
+        "two_year_test_period": "P2Y0M0D",
+        "global_max_trade": "ON",
+        "current_status": "OFF_WAIT_2_WEEKS",
+    },
+}
+
+
+def build_datafield_inspection_probes(
+    field_id: str,
+    field_type: str = "MATRIX",
+) -> list[dict[str, Any]]:
+    """Build the 6 Advisor Classroom (Lessons 04/06/46) & brain-datafield-exploration-general
+    pre-inspection probes (run with Neutralization=NONE, Decay=0, testPeriod='P0Y0M').
+    Uses 100% Gold-81 Decision-#3-safe operators.
+    """
+    base = f"vec_avg({field_id})" if str(field_type).upper() == "VECTOR" else field_id
+    probes = [
+        ("PROBE_1_BASIC_COVERAGE", base, "Check (Long+Short)/Universe total coverage"),
+        ("PROBE_2_NONZERO_COVERAGE", f"if_else({base} != 0, 1, 0)", "Distinguish true zero values from NaN missing values"),
+        ("PROBE_3A_UPDATE_FREQ_WEEKLY_5D", f"if_else(ts_std_dev({base}, 5) != 0, 1, 0)", "Check weekly/daily update frequency (N=5)"),
+        ("PROBE_3B_UPDATE_FREQ_MONTHLY_22D", f"if_else(ts_std_dev({base}, 22) != 0, 1, 0)", "Check monthly update frequency (N=22)"),
+        ("PROBE_3C_UPDATE_FREQ_QUARTERLY_66D", f"if_else(ts_std_dev({base}, 66) != 0, 1, 0)", "Check quarterly update frequency (N=66)"),
+        ("PROBE_4_BOUNDS_GT_1", f"if_else(abs({base}) > 1, 1, 0)", "Check value magnitude / normalization bounds (|x| > 1)"),
+        ("PROBE_5_CENTRAL_TENDENCY_252D", f"if_else(ts_mean({base}, 252) > 0, 1, 0)", "Check 1Y rolling central sign tendency"),
+        ("PROBE_6_DISTRIBUTION_TAIL_BUCKET", f"if_else(ts_scale({base}, 252) > 0.8, 1, 0)", "Check top-quintile concentration in [0,1] 252d scaled distribution (Gold-81 replacement for scale_down)"),
+    ]
+    return [
+        {
+            "probe_id": pid,
+            "field_id": field_id,
+            "field_type": str(field_type).upper(),
+            "expression": expr,
+            "purpose": purpose,
+            "recommended_settings": {
+                "delay": 1,
+                "decay": 0,
+                "neutralization": "NONE",
+                "truncation": 0.0,
+                "testPeriod": "P0Y0M",
+                "simulationMode": "QUICK",
+                "visualization": False,
+            },
+        }
+        for pid, expr, purpose in probes
+    ]
+
+
+def compute_expression_nesting_metrics(expression: str) -> dict[str, Any]:
+    """Compute parenthesis call nesting depth & distinct operator count to govern over-nesting."""
+    expr = (expression or "").strip()
+    max_depth = 0
+    cur_depth = 0
+    for ch in expr:
+        if ch == "(":
+            cur_depth += 1
+            if cur_depth > max_depth:
+                max_depth = cur_depth
+        elif ch == ")":
+            cur_depth = max(0, cur_depth - 1)
+    op_calls = re.findall(r"([A-Za-z_][A-Za-z0-9_]*)\s*\(", expr)
+    ignore_free = {"ts_backfill", "group_backfill"}
+    counted_ops = [op.lower() for op in op_calls if op.lower() not in ignore_free]
+    distinct_ops = sorted(set(counted_ops))
+    over_nested = max_depth >= 5 or len(counted_ops) >= 7
+    return {
+        "nesting_depth": max_depth,
+        "total_operator_calls_excl_backfill": len(counted_ops),
+        "distinct_operator_count_excl_backfill": len(distinct_ops),
+        "distinct_operators": distinct_ops,
+        "is_over_nested": over_nested,
+        "nesting_tag": "OVER_NESTED_TEMP_PC_FIX" if over_nested else "CLEAN_LE4_LAYERS",
+    }
+
 
 def is_fake_single_vector_probe(vec_avg_sharpe: float, vec_max_sharpe: float, tol: float = 0.02) -> bool:
     """JX14975 #100 rule: if vec_avg vs vec_max differ by < 2%, mark as fake single-value VECTOR."""
