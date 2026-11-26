@@ -18,3 +18,8 @@
 - **2026-11-26 23:00（2 小时定时审计 #11 · `ASI/model39` 彻底定案止损，换装低拥挤 `ASI/model25` 纯 `MATRIX`！）**：
   - `S3-r17-ASI-M39-JPNFIX`（`COUNTRY d=0/d=5`）与 `S3-r16-cty` 全部 `FULL` 完成，证实即便在 `COUNTRY` 中性化与国家内排序下 `ASI/model39` 仍仅得 `LOW_ASI_JPN_SHARPE = 0.08–0.36 / 1.00`（日本区结构性无信号），已正式移出主队列停止消耗额度；
   - 立即换入实盘核验的 **`ASI / MINVOL1M / model25`**（50/50 纯 `MATRIX`, `cov=0.804–1.000, aCnt=1..2`, `0 OS -> SC=0.000`, `maxTrade=ON`），保持 `ASI:1` 单槽稳健推进。
+- **2026-11-27 00:56（2 小时定时审计 #12 · 🚀 `ASI/model25` 首波大爆发 `51.63bp / Sh=1.91 / 2Y=2.62`！立即转 `S3-r19-ASI-M25-FULL` 核验日本子市场！）**：
+  - **首波 `QUICK` 战果（`152 QUICK`，`ev_to_ebitda_relative_score`, `aCnt=1`, `0 OS -> SC=0.000!`）**：
+    - **`78GVVzjx`**（`group_rank(ts_decay_linear(ts_backfill(ev_to_ebitda_relative_score, 21), 10), subindustry)`, `COUNTRY d=0, maxTrade=ON`）：**`Margin = 51.63bp`**, **`Sh = 1.91`**, **`2Y = 2.62`**, **`Fit = 1.29`**, **`TO = 2.2%`**（`< 8%` 触发 `SKIP_LOW_TURNOVER` 跳过降换手！）；
+    - 同字段多变体全面开花：`d59wlY2g`（`SUBINDUSTRY d=0`, `44.47bp, Sh=1.58, 2Y=2.06, Fit=1.32, TO=3.9%`）、`j2VQdVq5`（`62.96bp, Sh=1.47, 2Y=2.40`）、`ZYXLWXJn`（`103.89bp, Sh=1.34, 2Y=2.02`）。
+  - **吸取 `INEFF-09` 教训立即转 `FULL` 实测**：严禁把 `ASI QUICK` 的 `FAIL=[]` 当真 `0-FAIL`，已热部署 **`S3-r19-ASI-M25-FULL`（24 FULL：`COUNTRY d=0` / `SUBINDUSTRY d=0` / `CROWDING d=2`, `maxTrade=ON`）**，覆盖单支 `ev_to_ebitda`（`subindustry`/`industry`/`country*industry`/`country`/`tail25`/`sp1.5`）及双/三支 `ev_to_sales`、`forward_10yr_eps_cagr × industry_credit_risk_percentile`，第一时间验明 **`LOW_ASI_JPN_SHARPE`** 与 **`ROBUST_UNIVERSE`** 真实表现！

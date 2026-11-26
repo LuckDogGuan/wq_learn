@@ -129,3 +129,11 @@
   - **超低 `97-OS SC (0.12–0.33)` 互补双雄爆发 → 立即上线 `S3-r18`（48 FULL）**：
     1. **`S3-r18-EUR-M77M110-ORTHO`（32 FULL）**：将高 `2Y` / 高 `Margin` 的 `model77`（`zqApnwdR dvm_ttmgfp_alt 20.29bp, Sh=2.05, 2Y=2.21, Sub=0.90/1.07, SC=0.336`；`GrQJ50gP 23.63bp, 2Y=2.52, SC=0.288`）与大盘强 `Sub-Uni`、超低自相关的 `model110`（`P0P95bbx analyst_sentiment Sh=2.30, Sub=1.16/1.20, SC=0.123!`；`RR5W58Qg score Sh=2.02, Sub PASS, SC=0.329`）及 `78G9RNAZ`（`emm_fc_epsrm_alt Sh=1.90, Sub=0.90/0.99, SC=0.149!`）做正负对齐双支融合（严禁 `adv20 > 0.40` 重切！）；
     2. **`S3-r18-EUR-SI6-TOFIX`（16 FULL）**：对 `shortinterest6` 新爆出的 `1YGE0pEz`（`Sh=1.80, 2Y=1.61, TO=28.9%, SC=0.216`）与 `VkMJ5KqY`（`Sh=1.76, TO=28.7%`）执行通用高换手降换手梯队（`ts_decay_linear`/`ts_mean`/`ts_target_tvr_decay`/`hump`，零 `adv20` 硬切）。
+- **2026-11-27 00:56（2 小时定时审计 #12 · 🚀 重大破壁：`S3-r18` 48/48 零超时实测 `EUR/model77 × model110` 砸出 `PC = 0.5419` + `97-OS SC = 0.2660`（零碰撞！）+ 热部署 `S3-r19-EUR-PC54-FIN` 临门封口！）**：
+  - **2 小时高吞吐与自动排雷**：全服官方日回测跃升至 **`4,464`**（近 2 小时净增 **`+1,168` = `584/hr`**，`0` 次 `HTTP 429`！），其中 `EUR` 完成 `520` 条（`472 QUICK + 48 FULL`，`0` 未观测）；弱集 `EUR/analyst39`（`2/128, max=0.81`）已自动早停降权。
+  - **串行 Stage-4 SC/PC 核验重大发现（记入 `EFF-10`）**：`S3-r18` 48/48 `FULL` 虽暂未出 RA `0-FAIL`（注意 `1YG5kgpz`/`ZYXLPo2d` 仅 2 字段触发 **PPA-First** 显示 `FAIL=[]` 但 `2Y=1.23/1.17 < 1.58`，已严防误标），但 4 条核心互补融合候选的真实相关性指标惊艳破壁：
+    1. **`3qGWQAeX`**（`dvm_ttmgfp_alt × mdl110_analyst_sentiment`, `RAM d=0`）：**`Sh=2.32, Fit=1.39, Mgn=7.78bp, Sub=1.19/1.21（仅差 0.02!）, 2Y=1.51/1.58（仅差 0.07!）, 97-OS SC=0.2660, 远程 PC=0.5419（>=0.70 碰撞=0!）`**；
+    2. **`vRYVwmJv`**（同式 `RAM d=4`）：**`Sh=2.19, Fit=1.28, Mgn=10.06bp, Sub=1.12/1.14（差 0.02）, 2Y=1.45, SC=0.2673, 远程 PC=0.5446（0 碰撞!）`**；
+    3. **`MPgAMxbM`**（`dvm_ttmgfp_alt × emm_fc_epsrm_alt`, `RAM d=4`）：**`Sh=1.95, Fit=1.10, Mgn=11.36bp, 2Y=2.05 PASS!, Sub=0.81/1.01, SC=0.2593, 远程 PC=0.5643（0 碰撞!）`**；
+    4. **`YPldLA5q`**（轻门控 `adv20 > 0.25`）：**`Sh=1.97, Fit=1.11` 且已直接打穿 `Sub-Universe PASS`**！
+  - **立即热部署封口包 `S3-r19-EUR-PC54-FIN`（32 FULL）**：利用高达 `0.15` 的自由 PC 裕度，将 `dvm_ttmgfp_alt`（高 2Y/高 Margin）× `emm_fc_epsrm_alt`（`2Y=2.05 PASS`）× `mdl110_analyst_sentiment / score`（强 Sub-Uni）做 3 支互补融合并配超轻 `adv20 > {0.15, 0.20, 0.25, 0.35}` 与后置 `d10`，横扫 `RAM d={0,2,5}` 与 `SUBINDUSTRY d=4`，直取 **98 OS `Useful`**！

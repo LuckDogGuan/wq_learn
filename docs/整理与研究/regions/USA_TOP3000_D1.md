@@ -145,3 +145,9 @@
 - **2026-11-26 23:00（2 小时定时审计 #11 · 🎉 祝贺 `E5mWLW0J` + `Jj88vq2e` 入网达 `97/100 OS`！实时清理 `kq82m3gL` 撞车并补入 3 个空白塔纯 `MATRIX` 新集！）**：
   - **97-OS 实时同步防误交**：用户于 `22:06 CST` 手动提交 `E5mWLW0J`（`USA/TOP3000, Sh=1.83`）与 `Jj88vq2e`（`GBR, Sh=2.03`），账号 OS 跃升至 **`97 / 100`**；本地 `os_pnl_cache.db` 同步至 `97 OS` 后实测 **`kq82m3gL` 自相关升至 `0.9695`（撞车 `E5mWLW0J`）**，已即时剥离过期 `Useful` 改标 **`SC_IS_HIGHT`** + 别名 `SC 0.970 PC 0.699`（同步清理 6 条 `S3-r14` 同簇姊妹为 `SC_IS_HIGHT`）。
   - **补满 `USA:2` 防止常规队列见底（原仅剩 7 批！）**：新增 3 个实盘核验 100% 纯 `MATRIX` 低拥挤空白塔新矿脉：**`USA/multi_source_model`**（`cov=0.980–0.983, aCnt=1..2`）、**`USA/news_sentiment_transfer`**（**`sentiment 1.5× 空白塔`**, `cov=0.947, aCnt=2..6`）、**`USA/ai_news_scores`**（**`other 1.4× 空白塔`**, `val=5.0, cov=1.000, aCnt=1..2`），全速冲过 `4,000` 解锁 139 批 `USA` `Alphas=0` 免额队列！
+- **2026-11-27 00:56（2 小时定时审计 #12 · `USA` 近 2h 完成 `440 QUICK` + `ai_news_scores` 空白塔出 `S2` 强苗 + 距 `4,000` 自动切换 `139` 批 `Alphas=0` 仅余 ~45 分钟！）**：
+  - **新纯 `MATRIX` 队列初筛成绩单**：
+    - **`USA/ai_news_scores`（`other 1.4×, 0 OS` 空白塔）**：`160 QUICK` 产出 **`36` 条 S1 + `5` 条 S2**，头部 `blx3vWbN / O06vov3g / zqAzOzl8`（`Sh=1.27, 2Y=1.79, TO=28.3%`）与 `WjYm9m5Q`（`Sh=1.25, 2Y=1.82`），属典型高换手高 2Y 信号，后续可直接进通用高换手降换手梯队；
+    - **`USA/multi_source_model`**：`184 QUICK` 产出 `32` 条 S1（`maxSh=1.17, 11.49bp`）；
+    - **`USA/news_sentiment_transfer`**：`48 QUICK` 仅 `0/48`（`max=0.55`），已由守护进程**自动早停降权**，零浪费额度。
+  - **Phase-2 自动切换倒计时**：当前 `normal_done = 3,576 / 4,000`（仅差 `424` 条常规回测 ≈ 45 分钟），已确认 `resolve_quota_queue_policy()` 按 `normal_done` 而非总日回数判定，不会被 `day_est=4,202/4,500` 提前打断；满 `4,000` 后将自动切入 `USA` `139` 批免费 `Alphas=0` 队列（含 `analyst_revision_horizons`、`board_network`、`chart_cnn_alpha`）！

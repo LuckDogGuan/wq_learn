@@ -1121,10 +1121,101 @@ def build_eur_s3r18_ortho_strike_specs() -> list[dict[str, Any]]:
     return specs
 
 
+def build_asi_eur_s3r19_breakout_specs() -> list[dict[str, Any]]:
+    """S3-r19 High-Probability Useful Finisher: EUR PC=0.54 Ultra-Ortho + ASI/model25 51bp FULL Confirm (7 batches = 56 FULL).
+
+    Triggered by 2-hour Audit #12 (2026-11-27 00:52 CST):
+      - Pack A (32 FULL, EUR/TOP2500/model77 x model110): S3-r18 recon proved 3qGWQAeX (Sh=2.32, Sub=1.19/1.21,
+        2Y=1.51) has 97-OS SC=0.2660 & PC=0.5419 (0 collisions!), and MPgAMxbM (Sh=1.95, 11.4bp, 2Y=2.05 PASS!)
+        has SC=0.2593 & PC=0.5643 (0 collisions!). With 0.15 of free PC headroom, we close the tiny 0.02 Sub-Uni
+        & 0.07 2Y gap via 3-way complementary fusion (dvm x emm x anl_sent/score) + gentle adv20>{0.15,0.20,0.25,0.35}
+        + post-min decay(10) across RAM d={0,2,5} & SUBINDUSTRY d=4!
+      - Pack B (24 FULL, ASI/MINVOL1M/model25): First-wave QUICK monster 78GVVzjx (ev_to_ebitda_relative_score,
+        aCnt=1, 51.63bp, Sh=1.91, 2Y=2.62, Fit=1.29, TO=2.2%, SC=0.000!) promoted immediately to FULL mode
+        (maxTrade=ON, TO<8% -> SKIP_LOW_TURNOVER) across COUNTRY/SUBINDUSTRY/CROWDING to verify LOW_ASI_JPN_SHARPE
+        & LOW_ROBUST_UNIVERSE_SHARPE!
+    """
+    specs: list[dict[str, Any]] = []
+    ci = "group_cartesian_product(country, industry)"
+
+    # --- Pack A (32 FULL): EUR/TOP2500 PC=0.54-0.56 Useful Finisher ---
+    dvm_gfp = "reverse(ts_backfill(mdl177_dvm_ttmgfp_alt, 21))"
+    dvm_qvm = "reverse(ts_backfill(mdl177_qvm_dvm_qvaeur_alt, 21))"
+    emm_eps = "reverse(ts_backfill(mdl177_emm_fc_epsrm_alt, 21))"
+    anl_sent = "ts_backfill(mdl110_analyst_sentiment, 21)"
+    m110_sc = "ts_backfill(mdl110_score, 21)"
+
+    eur_fin_exprs: list[tuple[str, str, str, str]] = [
+        ("PC19-E1-3way-dvm-emm-anlsent", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(min(rank({dvm_gfp}), min(rank({emm_eps}), rank({anl_sent}))), {ci})"),
+        ("PC19-E2-3way-dvm-emm-m110sc", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(min(rank({dvm_gfp}), min(rank({emm_eps}), rank({m110_sc}))), {ci})"),
+        ("PC19-E3-dvm-emm-adv25", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.25, group_zscore(min(rank({dvm_gfp}), rank({emm_eps})), {ci}), 0)"),
+        ("PC19-E4-dvm-emm-adv35", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.35, group_zscore(min(rank({dvm_gfp}), rank({emm_eps})), {ci}), 0)"),
+        ("PC19-E5-3way-adv20", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.2, group_zscore(min(rank({dvm_gfp}), min(rank({emm_eps}), rank({anl_sent}))), {ci}), 0)"),
+        ("PC19-E6-dvm-anlsent-adv15", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.15, group_zscore(min(rank({dvm_gfp}), rank({anl_sent})), {ci}), 0)"),
+        ("PC19-E7-qvmdvm-anlsent-adv20", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.2, group_zscore(min(rank({dvm_qvm}), rank({anl_sent})), {ci}), 0)"),
+        ("PC19-E8-dvm-emm-d10-adv25", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.25, group_zscore(ts_decay_linear(min(rank({dvm_gfp}), rank({emm_eps})), 10), {ci}), 0)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("ram_d0_t06", "REVERSION_AND_MOMENTUM", 0, 0.06),
+        ("ram_d2_t08", "REVERSION_AND_MOMENTUM", 2, 0.08),
+        ("ram_d5_t08", "REVERSION_AND_MOMENTUM", 5, 0.08),
+        ("sub_d4_t08", "SUBINDUSTRY", 4, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r19-EUR-PC54-FIN-{tag}",
+                campaign_id="S3_EUR_PC54_USEFUL_FINISHER",
+                hypothesis_id="HYP-S3R19-EUR-3QGW-PC054-CLOSE-002-SUB-007-2Y",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model77",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=_build_items(eur_fin_exprs, dataset_id="model77", primary_field_id="mdl177_dvm_ttmgfp_alt", tag_suffix=tag),
+            )
+        )
+
+    # --- Pack B (24 FULL): ASI/MINVOL1M/model25 ev_to_ebitda_relative_score 51.63bp FULL Confirmation ---
+    ev_ebitda = "ts_backfill(ev_to_ebitda_relative_score, 21)"
+    ev_sales = "ts_backfill(ev_to_sales_relative_score, 21)"
+    eps_10y = "ts_backfill(forward_10yr_eps_cagr, 21)"
+    cred_ind = "ts_backfill(industry_credit_risk_percentile, 21)"
+
+    asi_m25_exprs: list[tuple[str, str, str, str]] = [
+        ("PC19-A1-evebitda-d10-sub", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({ev_ebitda}, 10), subindustry)"),
+        ("PC19-A2-evebitda-ind", "ADMIN_ORIGINAL", "WL13229", f"group_zscore({ev_ebitda}, industry)"),
+        ("PC19-A3-evebitda-d10-ci", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear({ev_ebitda}, 10), {ci})"),
+        ("PC19-A4-evebitda-d10-cty", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear({ev_ebitda}, 10), country)"),
+        ("PC19-A5-evebitda-tail25-ci", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear({ev_ebitda}, 10), {ci}), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC19-A6-evebitda-sp15-ind", "TOP100_2026Q4", "SZ83096", f"signed_power(group_zscore({ev_ebitda}, industry), 1.5)"),
+        ("PC19-A7-evebitda-evsales-ci", "TOP100_2026Q4", "LD22811", f"group_rank(ts_decay_linear(min(rank({ev_ebitda}), rank({ev_sales})), 10), {ci})"),
+        ("PC19-A8-evebitda-eps10y-cred", "TOP100_2026Q4", "JR23144", f"group_rank(ts_decay_linear(min(rank({ev_ebitda}), min(rank({eps_10y}), rank({cred_ind}))), 10), {ci})"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d0_t08", "COUNTRY", 0, 0.08),
+        ("sub_d0_t08", "SUBINDUSTRY", 0, 0.08),
+        ("crd_d2_t08", "CROWDING", 2, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r19-ASI-M25-FULL-{tag}",
+                campaign_id="S3_ASI_M25_51BP_FULL_CONFIRM",
+                hypothesis_id="HYP-S3R19-ASI-M25-EVEBITDA-51BP-JPN-CHECK",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="model25",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(asi_m25_exprs, dataset_id="model25", primary_field_id="ev_to_ebitda_relative_score", tag_suffix=tag),
+            )
+        )
+
+    return specs
+
+
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r18 (48 FULL) -> S3-r17 (64 FULL) -> S3-r16 (96 FULL) -> ... -> S3-r10b (160 FULL)."""
+    """Return ordered S3-r19 (56 FULL) -> S3-r18 (48 FULL) -> S3-r17 (64 FULL) -> ... -> S3-r10b (160 FULL)."""
     return (
-        build_eur_s3r18_ortho_strike_specs()
+        build_asi_eur_s3r19_breakout_specs()
+        + build_eur_s3r18_ortho_strike_specs()
         + build_eur_asi_s3r17_orthogonal_specs()
         + build_asi_eur_s3r16_controlled_specs()
         + build_clean_lowpc_controlled_s3r15_specs()

@@ -6,7 +6,7 @@
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >4000切Alphas=0)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)"
   },
-  "updated_at": "2026-11-26T23:00:00+08:00",
+  "updated_at": "2026-11-27T00:56:00+08:00",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "context_compaction_rule": "任何 AI 工具（Antigravity / Claude Code / Codex / Cursor）启动或上下文超长重置（/compact）后，只读本文件 + docs/agents/OPTIMIZATION_LEDGER.json + AGENTS.md（总计 < 8KB），绝不重读数万行历史聊天记录！",
   "immutable_red_lines": {
@@ -70,10 +70,10 @@
         }
       ],
       "current_seed_campaigns": [
-        "USA/multi_source_model (Audit #11 新纯MATRIX NORMAL, cov=0.980-0.983, aCnt=1..2, 补满 USA:2 槽位!)",
-        "USA/news_sentiment_transfer (Audit #11 新纯MATRIX NORMAL, sentiment 1.5x 空白塔!, cov=0.947, aCnt=2..6)",
-        "USA/ai_news_scores (Audit #11 新纯MATRIX NORMAL, other 1.4x 空白塔!, val=5.0, cov=1.000, aCnt=1..2)",
-        "Phase-2 (>4,000 后自动切入 139 批 Alphas=0): USA/analyst_revision_horizons (akRqV77w Sh=1.47) + board_network + chart_cnn_alpha"
+        "USA/ai_news_scores (other 1.4x 空白塔!, Audit #12 首波 160 QUICK 产 36 S1 / 5 S2, 最高 blx3vWbN/O06vov3g/zqAzOzl8 Sh=1.27, 2Y=1.79, TO=28.3%)",
+        "USA/multi_source_model (Audit #12 首波 184 QUICK 产 32 S1, maxSh=1.17, 11.49bp)",
+        "USA/news_sentiment_transfer 已于 48 QUICK (0/48, max=0.55) 自动早停降权",
+        "Phase-2 (normal_done 冲满 4,000 后自动切入 139 批 Alphas=0): USA/analyst_revision_horizons (akRqV77w Sh=1.47) + board_network + chart_cnn_alpha"
       ]
     },
     {
@@ -97,10 +97,9 @@
         }
       ],
       "current_seed_campaigns": [
-        "S3-r18-EUR-M77M110-ORTHO (32 FULL · 超低 97-OS SC=0.12-0.33 互补双支: model77 dvm_ttmgfp_alt 20-24bp/2Y=2.52 × model110 analyst_sentiment/score Sub-Uni PASS! 零重 adv20 硬切)",
-        "S3-r18-EUR-SI6-TOFIX (16 FULL · shortinterest6 1YGE0pEz Sh=1.80/TO=28.9%/SC=0.216 通用高换手降换手梯队，零 adv20 硬切)",
-        "EUR/model25 已退出现役队列（RR5QjWYz 入 97 OS 后新变体均撞 SC=0.77-0.99）",
-        "Phase-2 (>4,000 后自动切入): EUR/analyst_revision_horizons (30 批 Alphas=0 FREE)"
+        "S3-r19-EUR-PC54-FIN (32 FULL · Audit #12 重大突破: S3-r18 测出 3qGWQAeX Sh=2.32/Fit=1.39/97-OS SC=0.266/PC=0.5419(0碰撞!) 仅差0.02 Sub与0.07 2Y, MPgAMxbM Sh=1.95/11.4bp/2Y=2.05 PASS/SC=0.259/PC=0.5643! 用3支互补+轻adv20>0.15..0.35+d10 封口直取 98 OS Useful!)",
+        "EUR/analyst39 已于 128 QUICK (2/128, max=0.81) 自动早停；EUR/model25 已退出（97-OS 撞车 RR5QjWYz）",
+        "Phase-2 (normal_done 满 4,000 后自动切入): EUR/analyst_revision_horizons (30 批 Alphas=0 FREE)"
       ]
     },
     {
@@ -109,15 +108,15 @@
       "slots": 1,
       "active_useful_champions": [],
       "current_seed_campaigns": [
-        "ASI/model25 (Audit #11 新纯MATRIX NORMAL, cov=0.804-1.000, aCnt=1..2, 0 OS -> SC=0.000!, 替代已定案的日本无信号 ASI/model39)",
+        "S3-r19-ASI-M25-FULL (24 FULL · Audit #12 首波黑马 78GVVzjx ev_to_ebitda_relative_score, aCnt=1, 0 OS -> SC=0.000, QUICK 51.63bp/Sh=1.91/2Y=2.62/Fit=1.29/TO=2.2% 跳过降换手, 立即转 FULL 核验日本子市场 LOW_ASI_JPN_SHARPE 与 Robust Universe!)",
         "ASI/model39 已移出主队列（S3-r16/r17 全中性化实证 LOW_ASI_JPN_SHARPE=0.08..0.36/1.00 彻底止损）",
-        "GLB/TOP3000 暂撤（INEFF-08）；KOR/equity_forum_data 已早停，KOR/fundamental93 留待 Phase-2 (>4,000 后) 跑 39 批免额"
+        "GLB/TOP3000 暂撤（INEFF-08）；KOR/equity_forum_data 已早停，KOR/fundamental93 留待 Phase-2 (normal_done 满 4,000 后) 跑 39 批免额"
       ]
     }
   ],
   "quota_and_isolated_experiments": {
-    "today_est_2026_11_26_official_sims": 3296,
-    "today_normal_completed_est": 2408,
+    "today_est_2026_11_26_official_sims": 4464,
+    "today_normal_completed_est": 3576,
     "alpha0_auto_switch_threshold": 4000,
     "concurrency_limits": {
       "glb_max_threads": 3,
