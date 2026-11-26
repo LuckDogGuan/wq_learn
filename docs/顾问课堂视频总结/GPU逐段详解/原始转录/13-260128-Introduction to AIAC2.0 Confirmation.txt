@@ -1,0 +1,415 @@
+260128-Introduction to AIAC2.0 Confirmation
+原片 260128-Introduction to AIAC2.0 Confirmation.mkv
+时长 00:54:09.687
+转录 whisper，共 410 段。
+
+[00:00:00.690–00:00:18.230] Alright, I see most of the people have joined in, so we can get started. So before we begin, I just want to start with some housekeeping announcements. Please send in all your questions in the Q&A box and not the chat window.
+[00:00:18.230–00:00:30.870] Apart from me, I have a lot of my colleagues on the call today, so please feel free to ask your questions in the Q&A box and my colleagues will answer them offline.
+[00:00:31.590–00:00:36.330] And if at the end there are questions which are still left, we can take them up live as well.
+[00:00:36.790–00:00:45.670] So for the agenda today, I have an introduction to the ALPAS competition. I will talk about the scoring format.
+[00:00:45.670–00:00:51.330] I will then take you through the sample notebook and then finally give you certain research tips.
+[00:00:52.010–00:00:56.650] After that, we can take questions online if time permits.
+[00:00:59.880–00:01:13.060] So a lot of you would have been consultants with us since the previous AIAC webinar, which was AI Alpha's competition 2025 from October to November last year.
+[00:01:13.240–00:01:17.860] So this competition is slightly similar to the previous AIAC, but there are certain differences.
+[00:01:18.100–00:01:26.340] So the current scope for the competition is to build ALPAS using LLMs in USA, Europe, Global, and Asia Delay 1.
+[00:01:26.660–00:01:31.100] In the previous competition, you had to submit super ALPAS over these ALPAS.
+[00:01:31.760–00:01:35.260] Now, the competition does not need you to submit super ALPAS.
+[00:01:35.380–00:01:37.660] You only need to submit regular ALPAS.
+[00:01:38.440–00:01:40.260] Now, which regular ALPAS can you submit?
+[00:01:40.260–00:01:50.820] Can you submit powerful ALPAS, you can submit those powerful ALPAS, which are part of the ongoing thematic competition, whichever thematic competition is going on at that time.
+[00:01:50.820–00:02:00.500] For example, right now, we have the global power pool thematic competition, so you can submit powerful ALPAS that match the global thematic competition.
+[00:02:00.500–00:02:07.060] thematic competition, there are certain lists of data sets which are part of that thematic competition, so those powerful ALPAS are allowed.
+[00:02:07.060–00:02:10.740] Apart from that, can you submit ATOM or other regular ALPAS?
+[00:02:10.740–00:02:11.460] Yes, you can.
+[00:02:11.460–00:02:20.620] So, basically, the answer is any type of regular ALPAS that is permitted to be submitted on the platform at the time, those can be submitted in the competition.
+[00:02:21.820–00:02:24.300] Now, how to know that your ALPAS are part of the competition?
+[00:02:24.700–00:02:29.020] So, before submitting an ALPAS, do click on the check submission button.
+[00:02:29.020–00:02:36.060] If you see the message that the ALPAS has matched the competition, then you know that the ALPAS is part of the competition.
+[00:02:36.060–00:02:38.420] But, what are the different criteria?
+[00:02:38.420–00:02:53.860] So, the criteria is that it should be a regular ALPAS in USA, Europe, Global, or Asia delivery, and it should be tagged with the relevant LLM which has been used to create this ALPAS and also a description using the LLM.
+[00:02:53.860–00:03:05.020] So, the description of the ALPAS is basically the idea of the ALPAS and this description of the ALPAS should match with the corresponding ALPAS expression.
+[00:03:05.020–00:03:14.020] These descriptions that you submit for the ALPAS would be strictly matched with the corresponding ALPAS expressions.
+[00:03:14.020–00:03:20.020] So, as to ensure that you've used LLMs to create this ALPAS and this is not an ALPAS which has been created manually.
+[00:03:20.020–00:03:28.020] So, as you know, the goal in the AI ALPAS competition is to inculcate the use of LLMs in your ALPAS research.
+[00:03:28.020–00:03:36.560] So, primarily all your ALPAS that you create should be through LLMs.
+[00:03:36.560–00:03:48.560] So, make sure that when you are trying to submit an ALPAS in the competition, you submit it with the relevant LLM tag and add the right description for that ALPAS.
+[00:03:48.560–00:05:00.180] Now, how many ALPAS can you submit in a day? You can submit unlimited number of ALPAS by the ALPAS that you submit outside the quota in EIC 2.0.
+[00:05:00.180–00:05:17.180] And if an ALPAS is not eligible for EIC 2.0, let's say you don't have the right LLM tagging or you haven't written the ALPAS description, which should be at least 100 characters, the ALPAS won't be eligible for the competition and you won't be able to submit it.
+[00:05:17.180–00:05:24.180] Also, make sure that when you are writing these descriptions, at the time of submission, they should be correct.
+[00:05:24.180–00:05:37.180] You should not have the mindset that you will submit as many ALPAS that you want and you will update the descriptions at the end of the competition because when you submit an ALPAS in the competition, the description and the LLM tagging gets logged in.
+[00:05:37.180–00:05:49.180] You won't be able to change the LLM tag or the description after the alpha has been submitted in the competition. So please be very careful with the descriptions that you are adding to the alpha at submission time.
+[00:05:49.180–00:06:04.180] Now, you will be using a Python script to automate this workflow of using LLMs and submitting alphas. We have provided you with a very basic sample notebook that can help you achieve this workflow.
+[00:06:04.180–00:06:20.180] That notebook has been designed from the perspective of, you know, that for every consultant, they may not be very proficient with programming languages or be very proficient in interaction with LLMs via API.
+[00:06:20.180–00:06:26.180] So that notebook is a very basic notebook, but something that fulfills the job of using LLMs.
+[00:06:26.180–00:06:48.180] So we will be discussing that notebook at the end. But since I have already laid the ground that it is a very basic notebook, which is just for, you know, it helps you to get started with, when you are reaching the end of the competition and you are, you know, as you keep building alphas in the competition, try to refine that notebook as well.
+[00:06:48.180–00:06:54.180] So, uh, so, uh, if you are able to build your own framework, your own agents, that's the best, that is something that we prefer.
+[00:06:54.180–00:07:05.180] But if, uh, but even if you, let's say are using just the notebook notebook that we've provided, uh, try to make, try to make the most of it.
+[00:07:05.180–00:07:13.180] Um, and try to have improvements in that notebook that reflect your own specific research workflow.
+[00:07:13.180–00:07:31.180] So as part of the eligibility criteria of the competition, you also have to submit that notebook that you have used to create these alphas and also submit a presentation document that can describe the work, uh, that you've done in the, uh, in the Python script, in the Python notebook.
+[00:07:31.180–00:07:39.180] So you have to submit, so in order to fulfill the eligibility criteria of the competition, you have to submit at least 10 alphas in the competition.
+[00:07:39.180–00:07:49.180] And that would mean submitting alphas in USA, Europe, global or Asia delay one with tagging the LLM and fulfilling the description of the alpha.
+[00:07:49.180–00:08:01.180] At the end, before the end of the competition, as in before 15th Feb, uh, midnight EST, you have to submit the notebook as well as a presentation file.
+[00:08:01.180–00:08:03.180] Now we are saying that you have to submit a valid notebook.
+[00:08:03.180–00:08:05.180] Now we are saying that you have to submit a valid notebook.
+[00:08:05.180–00:08:06.180] So what is a valid notebook?
+[00:08:06.180–00:08:19.180] Uh, a valid notebook is something which outputs the alphas in the form of alphas.json file that we have given to you as part of, uh, as part of the competitions template.
+[00:08:19.180–00:08:23.180] I will soon go over both the notebook as well as the alphas.json file.
+[00:08:23.180–00:08:25.180] So, you know, which file I'm talking about.
+[00:08:25.180–00:08:32.180] So the idea is that, uh, the, we want to give you as much flexibility as we can while you're working on these notebooks.
+[00:08:32.180–00:08:38.180] We don't want to restrict you to using specific functions or having any specific framework in mind.
+[00:08:38.180–00:08:47.180] all we want from you is a Python notebook that can output alphas at the end, uh, in the specified format.
+[00:08:47.180–00:08:50.180] And it uses LLMs to create alphas.
+[00:08:50.180–00:08:52.180] This is all that you want.
+[00:08:52.180–00:08:55.180] And that notebook will be a valid notebook.
+[00:08:55.180–00:09:04.180] So it is up to you to ensure that it is up to you while, uh, you know, at submission time to ensure the validity of your notebook.
+[00:09:04.180–00:09:13.180] Both the notebook and the presentation file have to be submitted via the same submissions link that is available on the competitions page on the platform.
+[00:09:13.180–00:09:22.150] So let's look at what are the one-time special stipends for AIC 2.0.
+[00:09:22.150–00:09:26.150] So we have a total stipend pool of 30,000 US dollars.
+[00:09:26.150–00:09:30.150] Uh, it starts with 2,500 UST for the first place.
+[00:09:30.150–00:09:33.150] And, uh, we have a longer tail of prizes this time.
+[00:09:33.150–00:09:37.150] So we have separate prizes for fourth to 10th, 11th to 25th places.
+[00:09:37.150–00:09:39.150] We also have prizes for 26.
+[00:09:39.150–00:09:46.150] Uh, uh, we also have one-time special stipends for 26th to 78th positions in the competition of 200 UST each.
+[00:09:46.150–00:09:54.150] Apart from the top 70 places, top three from each country will also be eligible for a one-time special stipend of 100 UST.
+[00:09:54.150–00:09:58.150] This excludes the top 70 positions globally.
+[00:09:58.150–00:10:02.150] Uh, in order to be eligible to receive any of the one-time special stipend,
+[00:10:02.150–00:10:07.150] you have to ensure that you have at least 10 competition alphas, uh, submitted.
+[00:10:07.150–00:10:13.280] Uh, now let's look at the scoring for the competition.
+[00:10:13.280–00:10:15.280] So we have two layers of scoring in this competition.
+[00:10:15.280–00:10:22.280] One is pretty simple, which is the quantitative most performance metric that we have in most of our competitions.
+[00:10:22.280–00:10:35.410] So right now, if you, if you see, uh, the competition leaderboard, um, you will be able to see, uh, yes.
+[00:10:35.410–00:10:41.410] So if you see the competition leaderboard, you will be able to see that consultants have IS scores.
+[00:10:41.410–00:10:45.410] So right now, uh, we are just showing you in-sample scores.
+[00:10:45.410–00:10:49.410] At the end of the competition, we will also be computing out-sample scores.
+[00:10:49.410–00:10:59.300] And, uh, and seven, there will be a 75% weight is to the out-sample score and, uh, 25% weight is to the in-sample score.
+[00:10:59.300–00:11:04.300] So don't chase the top position in the leaderboard just on the basis of in-sample scores.
+[00:11:04.300–00:11:09.300] Uh, so don't just try to submit alphas and try to climb up the leaderboard based on in-sample score.
+[00:11:09.300–00:11:18.300] Try to submit diversified alphas and alphas that are not over-fitted, um, because 75% of the scoring is based on out-sample score.
+[00:11:18.300–00:11:28.300] Now, uh, the first layer of the scoring is to reach the top 70 places, uh, by the most performance metrics.
+[00:11:28.300–00:11:32.300] as in 25% in-sample and 75% out-sample.
+[00:11:32.300–00:11:34.300] And also fulfill the other eligibility criteria.
+[00:11:34.300–00:11:36.300] So what is the eligibility criteria?
+[00:11:36.300–00:11:39.300] Submitting at least 10 alphas in the competition.
+[00:11:39.300–00:11:42.300] Submitting a valid notebook and a presentation document.
+[00:11:42.300–00:11:45.300] Also, uh, submitting valid descriptions for your alphas.
+[00:11:45.300–00:11:50.300] So as I said earlier, uh, the descriptions of your alphas will be matched with their expressions.
+[00:11:50.300–00:11:57.300] And if, uh, we see that, uh, it, if it looks like that you have not used LLMs, uh,
+[00:11:57.300–00:12:01.300] to use these alphas, uh, to create these alphas, uh, you may be disqualified.
+[00:12:01.300–00:12:08.300] So if you fulfill the eligibility criteria and you're also in the top 70 based on the most performance metrics,
+[00:12:08.300–00:12:15.300] now your notebooks will be assessed for their quality to decide the rankings from the 11th to 70th positions.
+[00:12:15.300–00:12:19.300] And the top 10 positions will finally be decided based on a presentation round.
+[00:12:19.300–00:12:23.300] So all of you who will be in the top 10 by the end of the competition, uh,
+[00:12:23.300–00:12:28.300] will be reached out for the invitation to a live presentation round via zoom.
+[00:12:28.300–00:12:33.950] So here's a timeline of the competition.
+[00:12:33.950–00:12:36.950] The competition is already underway since 19th Jan.
+[00:12:36.950–00:12:38.950] Uh, we have this webinar today on 28th Jan.
+[00:12:38.950–00:12:44.950] And the final, the final submissions, uh, for the competition will be accepted until 15th February.
+[00:12:44.950–00:12:49.950] So by 15th February, you have to submit your alphas, your notebook, as well as a presentation document.
+[00:12:49.950–00:13:00.370] So let's go to, uh, uh, live demo of the notebook that we have.
+[00:13:00.370–00:13:34.470] Just give me a minute.
+[00:13:34.470–00:13:37.930] All right.
+[00:13:37.930–00:13:43.010] Uh, I think my screen is visible.
+[00:13:43.010–00:13:44.010] All right.
+[00:13:44.010–00:13:45.010] Yes.
+[00:13:45.010–00:13:51.010] So what you see in my screen is the, uh, sample notebook that we have shared for the competition this time.
+[00:13:51.010–00:14:03.010] Um, so I'll briefly talk about all the functions that we have and all the things that you can do with this notebook to help, uh, your workflow.
+[00:14:03.010–00:14:05.010] So the goal of this notebook is simple.
+[00:14:05.010–00:14:06.010] Uh, right.
+[00:14:06.010–00:14:09.010] It is not just, you know, this notebook is not just for the competition.
+[00:14:09.010–00:14:14.010] It is also something that you can keep using after the competition to improve your workflow.
+[00:14:14.010–00:14:20.010] So as you know, that we have a very long list of operators and a lot of dataset documentations
+[00:14:20.010–00:14:29.010] and keeping all these operators in mind and all these dataset documentations in mind while working on new ideas is not something which is humanly possible.
+[00:14:29.010–00:14:33.010] That's why we are emphasizing so much on the uses of usage of LLMs.
+[00:14:33.010–00:14:39.010] You can use these LLMs to, uh, you know, have a context of all the operators that are available on the brain platform.
+[00:14:39.010–00:14:46.010] All the relevant datasets that you can use to create alphas using a specific dataset or a specific alpha idea.
+[00:14:46.010–00:14:53.010] Um, uh, so basically use an agent as let's say your own intern that can help you create these alphas.
+[00:14:53.010–00:14:58.260] So, uh, primarily what are the problems that we are trying to solve?
+[00:14:58.260–00:15:10.260] The problems are that let's say you have an alpha idea and let's say you are a consultant, uh, who is just new on the platform or hasn't really gotten a grasp of the syntax or the fast expression language that we have on the platform.
+[00:15:10.260–00:15:15.260] So you may have good ideas, but you may not be able to formulate them into expressions.
+[00:15:15.260–00:15:17.260] So you can use LLMs for that.
+[00:15:17.260–00:15:28.260] Then as I talked about earlier, datasets, there are a lot of datasets, a lot of operators, uh, to have a context of all these operators together is essentially what we want.
+[00:15:28.260–00:15:32.260] So this notebook tries to combine everything together.
+[00:15:32.260–00:15:45.260] It has functions that, uh, can provide a reference of operators, a reference of datasets, and then provide these references to an LLM in a structured format so that you can generate alpha expressions.
+[00:15:45.260–00:15:50.260] Now structure is key over here.
+[00:15:50.260–00:15:58.260] So you can, you, if you are someone who has been prompting LLMs, uh, let's say for basic tasks and hasn't used the LLM API.
+[00:15:58.260–00:16:07.260] So you will know that if you don't induce, if you don't force structure into an LLM response, the response that you get, the text that you get can be messy.
+[00:16:07.260–00:16:14.260] And then parsing that text to generating something helpful of your own can also be difficult.
+[00:16:14.260–00:16:23.260] So in this notebook, we have inculcated some pydantic models that can help you maintain structure across the LLM responses that you get.
+[00:16:23.260–00:16:27.830] So at a high level, what is it that this notebook does?
+[00:16:27.830–00:16:31.830] It helps you connect to the worldcon brain environment using the ACE library.
+[00:16:31.830–00:16:33.830] So all of you are well aware of the ACE library.
+[00:16:33.830–00:16:36.830] You would be using it for your own regular research.
+[00:16:36.830–00:16:38.830] So we are using the same ACE library.
+[00:16:38.830–00:16:45.830] We are using the ACE library to pull a list of allowed operators and list of data field IDs.
+[00:16:45.830–00:16:53.830] So over here in this notebook, I think, yeah, this is just for, uh, descriptive perspective for just for description.
+[00:16:53.830–00:17:00.830] And we have used the model one 10 model one 10 days data set since it's very easy to understand.
+[00:17:00.830–00:17:07.830] Uh, so basically what you do is you give the LLM a reference of operators reference of relevant data set IDs.
+[00:17:07.830–00:17:11.830] And then you give your own alpha hypothesis.
+[00:17:11.830–00:17:17.830] Uh, so that LLM can now generate alpha expressions using the same.
+[00:17:17.830–00:17:21.830] So this is the first function that we have get operators reference.
+[00:17:21.830–00:17:30.830] You can see that what we are doing is we are pulling operators that are available on the brain platform using the get operators functions from the ACE library.
+[00:17:30.830–00:17:36.830] Uh, we are setting up the data set in a, the data frame in a specific format.
+[00:17:36.830–00:17:37.830] And that's all we are doing.
+[00:17:37.830–00:17:38.830] We are just generating.
+[00:17:38.830–00:17:45.830] We are just getting a reference of all the operators that we have on the platform so that we can later pass it on to LLMs.
+[00:17:45.830–00:17:55.830] So this is how, uh, this operators reference output will look like, uh, it is basically a description of the table structure.
+[00:17:55.830–00:17:59.830] So that LLM has context about what this table represents.
+[00:17:59.830–00:18:08.830] And then we have name of the operator category of the operator definition of the operator, as in what is the specific usage of that operator.
+[00:18:08.830–00:18:16.830] For example, for absolute function, we just have name of the operator and just one field as an input.
+[00:18:16.830–00:18:20.830] Uh, for add, we have multiple, uh, multiple inputs.
+[00:18:20.830–00:18:24.830] So we are just giving the definition of the operator.
+[00:18:24.830–00:18:27.830] So this is basically the operators page that you see on the Worldcon brain platform.
+[00:18:27.830–00:18:33.830] We are just trying to structure it in a way that is best, that can be best interpreted by LLMs.
+[00:18:33.830–00:18:35.830] Uh, that is it.
+[00:18:35.830–00:18:41.830] Then we have the data set reference function, the get data set reference function.
+[00:18:41.830–00:18:45.830] Uh, so what it does is it collects the description of the data set.
+[00:18:45.830–00:18:51.830] Uh, it collects the, what in what universes it is available, what's the frequency of this data set.
+[00:18:51.830–00:18:58.830] And most importantly, it collects the names and descriptions of, uh, all the data fields.
+[00:18:58.830–00:19:00.830] So you can see these are the data fields that are there.
+[00:19:00.830–00:19:03.830] What is the description of this data field?
+[00:19:03.830–00:19:06.830] What is the type of this data field?
+[00:19:06.830–00:19:08.830] Is it a matrix or a vector type?
+[00:19:08.830–00:19:09.830] What is the date coverage?
+[00:19:09.830–00:19:12.830] What is the cross sectional coverage?
+[00:19:12.830–00:19:16.830] And how many alphas have been submitted in that data field?
+[00:19:16.830–00:19:20.830] So all of these information is being, uh, passed on to LLMs.
+[00:19:20.830–00:19:25.830] Uh, now we have a function to create structured output.
+[00:19:25.830–00:19:30.830] So as I said, we are using basic pydantic models to create a structured output.
+[00:19:30.830–00:19:35.830] So what we are doing is we are creating, uh, an object called, uh, class called alpha expression.
+[00:19:35.830–00:19:41.830] Uh, to this, we are passing alpha expression, economic rationale, data fields used and operators used.
+[00:19:41.830–00:19:46.830] And then we have alpha expressions, which is basically a collection of all alpha expressions.
+[00:19:46.830–00:19:56.830] So what it does is that it is asking the LLM model to output responses in the, uh, in the specific pydantic model format.
+[00:19:56.830–00:20:03.830] So that you have the alpha expression, it's English explanation, the data fields used and operators used in one place.
+[00:20:03.830–00:20:11.830] So what you can basically do is that if you are using this notebook to create your alphas, and if you find one of your alpha alphas to be doing well,
+[00:20:11.830–00:20:21.830] you can simply use the description for this alpha, which is given by LLM in this economic rationale, uh, variable, uh, to fill it on the full campaign platform.
+[00:20:21.830–00:20:31.650] So, uh, then finally we have the call LLM function.
+[00:20:31.650–00:20:35.650] This is very similar to the call LLM function, which we had in the previous AIAC competition.
+[00:20:35.650–00:20:52.650] So, uh, what it does is it, uh, it, uh, it basically sends in your, uh, prompts to the LLM and asks the LLM to structure the output in a specific format.
+[00:20:52.650–00:21:04.710] specific format. Now we have the generate alpha function, uh, the generate alpha expressions function.
+[00:21:04.710–00:21:12.710] So this is, uh, this is the core function so far, and it is going to combine all the functions that we have discussed previously.
+[00:21:12.710–00:21:18.710] the operators reference function, the operators reference function data, data sets reference reference function as well as the call LLM function.
+[00:21:18.710–00:21:28.710] So it takes, uh, it takes an hypothesis. Uh, it provides operators reference and data set reference, uh, to the LLM and uses this prompt.
+[00:21:28.710–00:21:34.710] this prompt to get, uh, you know, responses.
+[00:21:34.710–00:21:37.710] So as you can see, there are two types of prompts over here.
+[00:21:37.710–00:21:40.710] One is a system prompt and one is a user prompt.
+[00:21:40.710–00:21:47.710] So sister system prompt is something that explains the role of the LLM to the LLM itself.
+[00:21:47.710–00:21:53.710] So you can see that, uh, the system prompt over here is that you are an expert quantitative researcher with deep knowledge of world,
+[00:21:53.710–00:21:57.710] brain brain, brain, brain, brain, alpha expressions and financial markets.
+[00:21:57.710–00:21:59.710] This is the, this becomes a system prompt.
+[00:21:59.710–00:22:12.710] And now we have a user prompt that asks, uh, the LLM to use a given hypothesis and generate some N number of alphas using the given data sets and the given operators.
+[00:22:12.710–00:22:27.710] Now there are certain requirements that we've asked, uh, uh, uh, the requirements are that the alpha should, uh, uh, uh, the alpha should be diversified, should not be, uh, should not be overfitted.
+[00:22:27.710–00:22:31.710] These are mostly broader description that we've given over here.
+[00:22:31.710–00:22:35.710] This is where you can do some of your, uh, you know, add your own magic.
+[00:22:35.710–00:22:41.710] Um, so this notebook and these prompts over here are very generic.
+[00:22:41.710–00:22:48.710] What we want from you is that these prompts and these notes, this notebook that we get should be a reflection of your own research process.
+[00:22:48.710–00:22:56.710] For example, uh, while doing your own research, you may have come up with, uh, you know, you may have experimented with a lot of different types of prompts.
+[00:22:56.710–00:23:00.710] And you may have your own, uh, understanding of research, right?
+[00:23:00.710–00:23:13.710] So you may know certain kinds of ideas that work well in certain kinds of regimes or certain kinds of rules that you follow in your own research to ensure that your alphas are diversified enough and are not overfitted.
+[00:23:13.710–00:23:30.710] So try to give those ideas to the LLM as a user prompt so that your own, uh, uh, image of research can be translated to the research that you're doing using LLMs.
+[00:23:30.710–00:23:39.710] And you are able to create, uh, the right kind of alphas which are diversified enough are not overfitted and the quality of your research does not go down.
+[00:23:39.710–00:23:43.710] So, uh, the right kind of alphas actually increases.
+[00:23:43.710–00:23:47.710] So this is specifically where, uh, we want you to do a lot of, uh, lot of variations.
+[00:23:47.710–00:23:57.710] We want you to try multiple different ideas that you feel, uh, have worked well for you and to experiment a lot with these prompts.
+[00:23:57.710–00:24:04.710] So basically you provide the prompts in this, in this format, the system, the system prompt and the user prompt.
+[00:24:04.710–00:24:14.710] And in this function, as you can see, uh, we have, uh, specifically structured the output in the form of alpha expressions, which is defined over here.
+[00:24:14.710–00:24:20.710] This is basically a collection of this class alpha expression, which has these four variables.
+[00:24:20.710–00:24:39.940] So, uh, as you know, from this, uh, previous function, we get an output in the form of list of alpha expressions.
+[00:24:39.940–00:24:45.940] Uh, you can, these are some basic function to just print the alpha expression, see what are these alpha expressions.
+[00:24:45.940–00:24:46.940] And yeah.
+[00:24:46.940–00:24:47.940] Yeah.
+[00:24:47.940–00:24:56.940] So you can see for the model one 10 dataset, uh, with a very basic hypothesis that stocks with increasing revenue growth and low volatility improve or perform the market.
+[00:24:56.940–00:24:59.940] These are the expressions that we receive from the LLM.
+[00:24:59.940–00:25:02.940] So, uh, you can have your own hypothesis.
+[00:25:02.940–00:25:08.940] You can experiment with your own hypothesis and come up with your own different expressions, uh, from the LLMs.
+[00:25:08.940–00:25:16.940] And then finally you can use the generate alpha function of the Ace library, uh, and get a JSON object for this, for these alphas.
+[00:25:16.940–00:25:19.940] And then finally use it to simulate the alphas.
+[00:25:19.940–00:25:23.940] So we don't have, uh, we haven't added the function to simulate these alphas over here.
+[00:25:23.940–00:25:28.940] You can inculcate it from your existing, uh, simulation based frameworks.
+[00:25:28.940–00:25:38.940] But the idea is that the JSON object that you see over here, this is exactly, uh, the format that we expect your alphas and your work to be in.
+[00:25:38.940–00:25:46.940] Uh, so as long as your alphas are being outputted at the end of the notebook in this format, uh, your notebook will be valid.
+[00:25:46.940–00:25:54.940] This, this, uh, this JSON object is also, uh, a part of the template that we've provided you.
+[00:25:54.940–00:26:06.760] So you can also match the output that you're getting from your own notebooks with that JSON file that we've given, um, in the template.
+[00:26:06.760–00:26:11.760] So what are some of the things that you can do, uh, with this notebook in itself?
+[00:26:11.760–00:26:18.760] So the first thing that you can do is you can experiment with various different hypotheses and you can keep changing the dataset ID that you're providing.
+[00:26:18.760–00:26:22.760] So right now I've used the model 110 dataset for this hypothesis.
+[00:26:22.760–00:26:28.760] You can maybe keep the hypothesis same, simply change the dataset ID and see what kind of alpha expressions are, are being generated.
+[00:26:28.760–00:26:33.760] Then what you can do is you can experiment with the prompt over here.
+[00:26:33.760–00:26:40.760] you can have separate requirements over here and then try to generate new, uh, new ideas.
+[00:26:40.760–00:26:46.760] So basically what you can do is, uh, experiment with the hypothesis, experiment with the dataset.
+[00:26:46.760–00:26:49.760] You can also experiment with operators.
+[00:26:49.760–00:26:54.760] So over here, they are basically given all the operators as a reference to the LLM.
+[00:26:54.760–00:26:59.760] You may want to emphasize on, let's say, specific operators that you know work well for your own alphas.
+[00:26:59.760–00:27:09.290] So you can also do that. Uh, then one very good improvement that you can do with this notebook is to have a feedback loop.
+[00:27:09.290–00:27:15.290] So this was covered as one of the tips from our previous, uh, AI alphas competition as well.
+[00:27:15.290–00:27:26.290] Uh, is that if you try to generate alpha expressions in a single loop, uh, as in you just send a hypothesis, you get alpha expression, you simulate it.
+[00:27:26.290–00:27:31.290] And, uh, uh, that's all that's your overall process.
+[00:27:31.290–00:27:37.290] In that case, you will have to experiment a lot with the hypothesis, uh, and you will basically be hallucinating with the LLM.
+[00:27:37.290–00:27:45.290] Instead, if you, if you generate a process, which has a feedback loop, such that LLM generates alphas.
+[00:27:45.290–00:27:55.290] You backtest these alphas, you backtest these alphas and you give back the results of this backtest to the LLM and ask it to improve it in a certain way.
+[00:27:55.290–00:27:58.290] In that case, your notebook is expected to have a higher yield.
+[00:27:58.290–00:28:06.290] So make sure that you try to incorporate some sort of feedback loop, uh, to the, uh, to your machine.
+[00:28:06.290–00:28:16.290] So try to have, uh, you know, way to give back the results of your alpha expressions back to the LLM.
+[00:28:16.290–00:28:20.290] For example, what you can do is let's say you would generate a hundred different alphas.
+[00:28:20.290–00:28:25.290] Now you can pick up top five alphas and say that these are the specific ideas that I've worked with.
+[00:28:25.290–00:28:31.290] Now figure out a way, uh, you can ask the LLM to figure out a way to further improve these alphas.
+[00:28:31.290–00:28:39.290] So that can be one thing, uh, which I believe, uh, can help you a lot and it will increase the efficiency of your simulations.
+[00:28:39.290–00:28:44.290] Uh, you also know that recently we've added a simulation cap on the platform.
+[00:28:44.290–00:28:46.290] So you can't simulate more than 5,000 alphas in a day.
+[00:28:46.290–00:28:52.290] Uh, so you don't have the liberty to let's say do 10,000, 20,000 simulations now.
+[00:28:52.290–00:28:56.290] So you also have to think from the perspective of efficiency of simulations.
+[00:28:56.290–00:29:03.290] And from that perspective, I think having a feedback loop as part of your machines is extremely necessary.
+[00:29:03.290–00:29:10.160] Now, secondly, I've covered this point previously, but I'll cover it again.
+[00:29:10.160–00:29:13.160] Have explicit constraints over here.
+[00:29:13.160–00:29:19.160] Uh, this specific part where you ask for your own important requirements.
+[00:29:19.160–00:29:27.160] This is basically where you can add value using your own, uh, research insights.
+[00:29:27.160–00:29:32.160] So try to inculcate your research insights into the requirements over here.
+[00:29:32.160–00:29:37.160] Uh, maybe you have worked with specific type of alpha idea, which has worked well for you.
+[00:29:37.160–00:29:44.160] So, uh, maybe you can start just to start, you can start out with those specific alpha ideas.
+[00:29:44.160–00:29:54.160] Then maybe you can ask LLMs to, uh, give you, you know, sister ideas related to this specific alpha idea and try to diversify across newer ideas.
+[00:29:54.160–00:30:03.160] So basically experiment a lot with this requirement section of the prompt, or of course you can change the user prompt in any way that you want.
+[00:30:03.160–00:30:06.160] Uh, experiment as much as you can with the user prompt.
+[00:30:06.160–00:30:10.160] This is one way that we have given you that you can, of course, frame your prompt in this way.
+[00:30:10.160–00:30:18.160] But, uh, if you feel that you are getting higher efficiency with some other format of the prompt, please do that.
+[00:30:18.160–00:30:26.160] Uh, next, I know this can be costly, uh, because not all of you would have access to LLMs, but try to use as many models as you can.
+[00:30:26.160–00:30:30.160] For example, here we have used the OpenAI model CVT 5.1.
+[00:30:30.160–00:30:33.160] Uh, maybe you don't have access to this model.
+[00:30:33.160–00:30:37.160] Uh, maybe you have access to other models, uh, but don't just stick to one model.
+[00:30:37.160–00:30:46.160] If it is possible for you, uh, try to use different types of models and see which, which work, which one is working better than the others.
+[00:30:46.160–00:30:54.440] Uh, then another very good idea to follow is to do some thematic research sessions.
+[00:30:54.440–00:30:59.440] And by that, what I mean is, um, let's say when you're starting out on working with an alpha idea.
+[00:30:59.440–00:31:07.440] Uh, if it doesn't work well for you, don't jump to an entirely orthogonal alpha space, right?
+[00:31:07.440–00:31:16.440] So let's say you can have a specific research session where you are specifically focusing on, uh, let's say the idea of quality, the idea of low volatility.
+[00:31:16.440–00:31:20.440] In some other section, maybe you can work on event-driven fundamental alphas.
+[00:31:20.440–00:31:27.440] in some other research session, you may focus on analyst, um, analyst datasets, news datasets.
+[00:31:27.440–00:31:30.440] You can have a session on value plus momentum, uh, ideas.
+[00:31:30.440–00:31:41.440] So basically the idea is that, uh, if you build onto a knowledge base within a session, that is likely going to lead to higher simulation efficiency.
+[00:31:41.440–00:31:42.440] So make sure.
+[00:31:42.440–00:31:43.440] So make sure.
+[00:31:43.440–00:31:46.440] That don't jump across various different alpha ideas.
+[00:31:46.440–00:31:49.440] LLMs in their own have a tendency to hallucinate.
+[00:31:49.440–00:31:58.440] If you try to do context switching in a specific session with the LLM, uh, it is likely going to decrease, uh, your efficiency.
+[00:31:58.440–00:32:08.440] And then finally do have, uh, uh, do have, uh, a specific, try to maintain your own local dashboard or your own local report.
+[00:32:08.440–00:32:18.440] So you can have a code at the end of your framework, which, uh, basically stores all the alphas that you've simulated so far and their performances.
+[00:32:18.440–00:32:28.440] So that maybe you can give that as context to the LLMs or you can use it for your own to decide now which specific alpha idea you, you want to work with next.
+[00:32:28.440–00:32:40.890] Um, another important tip over here is that when you are starting out, don't just blindly accept whatever output is you're getting from the LLM.
+[00:32:40.890–00:32:54.890] So basically blindly experimenting with the prompts, blindly experimenting with dataset IDs over here, and then just simply picking up the best alpha ideas that you see and trying to submit them.
+[00:32:54.890–00:32:56.890] That is not going to help.
+[00:32:56.890–00:33:04.890] If this is likely going to lead to overfitting or you just submitting bad alphas, always inspect the description of these alphas on your own.
+[00:33:04.890–00:33:08.890] Do check that is the economic rationale making sense, right?
+[00:33:08.890–00:33:15.890] So for example, the LLM may hallucinate and, uh, may come up with alpha ideas, which are not making sense at all.
+[00:33:15.890–00:33:19.890] Even if those alphas have good performance, don't submit those alphas.
+[00:33:19.890–00:33:27.890] Uh, you will likely lead to, you know, it will likely lead to less OS performance for you if you are just blindly submitting alphas.
+[00:33:27.890–00:33:37.380] All right. Uh, that's all that I wanted to cover from the demo of the notebook.
+[00:33:37.380–00:33:41.380] Let me just go back to the slides.
+[00:33:41.380–00:33:56.570] All right. Uh, finally, uh, just want to cover certain research steps before we jump onto the Q and a section of the webinar.
+[00:33:56.570–00:34:01.570] So try diversifying your alphas across various regions and dataset categories.
+[00:34:01.570–00:34:08.570] This goes without saying in all of the places where you want to, uh, where you want to build a combo of alphas that does well.
+[00:34:08.570–00:34:14.570] Uh, these are the diversifying your overall alpha pool is the bare minimum that you should do.
+[00:34:14.570–00:34:24.570] Uh, these tips remain constant across, you know, when you ask about doing well in the thematic power pool competitions or doing well in the, uh, genius CAP metrics.
+[00:34:24.570–00:34:31.570] Uh, this goes still, this still remains the same when talking about most performance based competitions like this one.
+[00:34:31.570–00:34:34.570] Try diversifying your alphas across different dataset categories.
+[00:34:34.570–00:34:39.570] Uh, try to submit alphas with pure and unique ideas without mixing several signals together.
+[00:34:39.570–00:34:43.570] So this is a bad habit that a lot of consultants have mixing random signals together.
+[00:34:43.570–00:34:44.570] So this is a bad habit that a lot of consultants have mixing random signals together.
+[00:34:44.570–00:34:49.570] Since you are using LLMs to aid your research, try to focus on submitting alphas, which are pure and unique.
+[00:34:49.570–00:34:55.570] Uh, maybe this can be part of, uh, your important requirements, part of the prompt as well.
+[00:34:55.570–00:35:10.570] When you ask the LLM to only, uh, output pure and unique signals, uh, try to learn from your past knowledge and peers about skills to inspire LLMs to try more ideas and inspire orthogonal directions.
+[00:35:10.570–00:35:18.570] Uh, so this basically, so basically what we want to tell you is, uh, choose LLMs increasingly throughout the duration of the competition.
+[00:35:18.570–00:35:27.570] competition and at the end, when you submit your own notebook, that should be the most optimized version of your notebook, uh, that you've built throughout the competition.
+[00:35:27.570–00:35:31.570] Now, understanding new datasets is very easy with LLMs.
+[00:35:31.570–00:35:40.570] So if you are submitting alphas in the competition, try to submit those alphas, uh, try to submit alphas on those datasets that you haven't utilized so far.
+[00:35:40.570–00:35:47.570] Another thing that you can do is to automate selection of dataset as come with the corresponding idea.
+[00:35:47.570–00:35:52.570] So, uh, one part which is still left manual in this overall workflow is the selection of dataset.
+[00:35:52.570–00:35:59.570] Based on the hypothesis that you give, you may still need to provide a dataset ID, uh, for the LLM to work with.
+[00:35:59.570–00:36:01.570] You can also try to automate this part.
+[00:36:01.570–00:36:15.570] Maybe you can try to match the alpha idea with the dataset description, uh, or, you know, use your own creativity as to how you will work on this problem statement of matching a specific dataset with a corresponding alpha idea.
+[00:36:15.570–00:36:19.570] So this part can be automated as well.
+[00:36:19.570–00:36:21.570] Uh, and I have covered this earlier.
+[00:36:21.570–00:36:25.570] Try various models to see which type of model does well with what type of tasks.
+[00:36:25.570–00:36:28.570] Uh, do watch, do have a watch on your total token amount.
+[00:36:28.570–00:36:34.570] Uh, if you are paying for these LLM subscriptions that can, uh, that can be costly.
+[00:36:34.570–00:36:36.570] Use the test period feature.
+[00:36:36.570–00:36:37.570] Use the test period feature.
+[00:36:37.570–00:36:43.570] Well, we still have the test period feature on the platform that can, uh, you know, help you do your own OSIS testing on the alpha.
+[00:36:43.570–00:36:49.570] So set aside one, one year period of testing for your own alphas before submitting them.
+[00:36:49.570–00:36:55.570] Uh, when you submit your scripts, uh, because these scripts will be evaluated for their quality, uh, by our researchers.
+[00:36:55.570–00:37:11.570] Uh, do write, uh, if possible, do write clear comments in the script so that it's slightly easier to interpret, interpret, uh, these scripts and do not submit your script with passwords or LM API token inside of them.
+[00:37:11.570–00:37:14.570] Uh, this goes without saying that is confidential to you.
+[00:37:14.570–00:37:20.570] So don't, when you're submitting these scripts, make sure that any confidential information is not there in your script.
+[00:37:20.570–00:37:23.620] All right.
+[00:37:23.620–00:37:25.620] Uh, these are all the research steps that I wanted to cover.
+[00:37:25.620–00:37:29.620] Uh, we can go on to the Q and a section.
+[00:37:29.620–00:37:36.620] I see my colleagues have answered a lot of questions, but I'll try to pick up questions, which are still left.
+[00:37:36.620–00:37:54.200] Uh, someone has asked, does the scoring cover trading costs?
+[00:37:54.200–00:37:58.200] Uh, so no, uh, the combo that will be considered.
+[00:37:58.200–00:38:03.200] The combo that will be calculated will not be calculated after costs.
+[00:38:03.200–00:38:10.200] It will just be, uh, calculated in the, in south, uh, in the, uh, in the auto sample period, but it will be before costs.
+[00:38:10.200–00:38:20.470] Uh, someone has asked, can I use other libraries which can be installed through pip?
+[00:38:20.470–00:38:21.470] Uh, no.
+[00:38:21.470–00:38:22.470] Right.
+[00:38:22.470–00:38:26.470] Please try to stick to the requirements.txt file that has been provided.
+[00:38:26.470–00:38:33.470] But if there's a specific library which you feel that you want to use, um, and is not part of the requirements.txt
+[00:38:33.470–00:38:37.470] Uh, to reach out to us and we'll evaluate if you want to allow it or not.
+[00:38:37.470–00:38:51.040] Someone has asked, are we allowed to use the parent alpha methodology as input instead of the hypothesis?
+[00:38:51.040–00:38:55.040] Uh, so no, you can't use simply parent alpha expressions as input.
+[00:38:55.040–00:38:58.040] The input has to be in the form of English, English text.
+[00:38:58.040–00:39:02.040] Now this English, English text can be anything, can be research paper.
+[00:39:02.040–00:39:03.040] It can be inspired from blogs.
+[00:39:03.040–00:39:07.040] It can be your own hypothesis that you come up with and you write in English.
+[00:39:07.040–00:39:08.040] Uh, it can be anything.
+[00:39:08.040–00:39:14.040] So basically it has to be English text, uh, as the only source, uh, and you can't use parent alphas.
+[00:39:14.040–00:39:22.040] Uh, so someone has asked, they are a new consultant.
+[00:39:22.040–00:39:26.040] They don't have idea of, about the last competition, how to get started with this competition.
+[00:39:26.040–00:39:30.040] Um, so for you, I will just go through.
+[00:39:30.040–00:39:36.110] So I'll just go through some of these FAQs.
+[00:39:36.110–00:39:43.110] Uh, so if you are a new consultant and you have no context of the previous AIC, you can start going through, going over these FAQs.
+[00:39:43.110–00:39:49.110] We have, uh, two sections with one, which talks about the structure of the competition.
+[00:39:49.110–00:39:51.110] One, which talks about the scoring of the competition.
+[00:39:51.110–00:39:53.110] There are a lot of articles over here.
+[00:39:53.110–00:39:59.110] Uh, but to understand the competition, you can simply go through the star marked FAQs that we have to make things simpler for you.
+[00:39:59.110–00:40:03.110] Um, so these are all the things that I've covered already.
+[00:40:03.110–00:40:06.110] What is the total stipend pool and other incentives?
+[00:40:06.110–00:40:07.110] Yes.
+[00:40:07.110–00:40:11.110] This is one thing that maybe I missed, uh, uh, while I was covering the presentation.
+[00:40:11.110–00:40:23.110] So apart from the one time special stipends that we have, we also have, uh, a specific genius based incentive in this time in AIC.
+[00:40:23.110–00:40:29.110] So you will have a 10% improvement to your final Q2 genius tiebreaker scores.
+[00:40:29.110–00:40:32.110] If you are able to fulfill the competition eligibility criteria.
+[00:40:32.110–00:40:36.110] And as I have discussed earlier, the competition eligibility criteria is simple.
+[00:40:36.110–00:40:39.110] Uh, make sure that you submit at least 10 alphas in the competition.
+[00:40:39.110–00:40:45.110] This means this, these alphas will have a description and an LLM tag, submit a valid notebook and a presentation.
+[00:40:45.110–00:40:49.110] Uh, and ensure that the competition alpha expressions are valid.
+[00:40:49.110–00:40:53.110] That is they are consistent with the alpha description that you've submitted.
+[00:40:53.110–00:40:55.110] These are all the things that you need to do.
+[00:40:55.110–00:41:04.110] So you can simply go over these star marked FAQs, uh, and, uh, you will be able to understand all the nuances of the competition.
+[00:41:04.110–00:41:27.990] So someone has asked, can we submit the AI alpha manually after LLM has produced it?
+[00:41:27.990–00:41:28.990] The answer is no.
+[00:41:28.990–00:41:32.990] We encourage you to submit alphas, uh, only via scripts.
+[00:41:32.990–00:41:55.160] Um, so someone has asked how many notebooks can I submit?
+[00:41:55.160–00:42:02.160] So you can submit multiple notebooks, uh, but only the final notebook that you submit will be counted in the competition.
+[00:42:02.160–00:42:06.040] Uh, someone has asked to achieve a 1.1 genius multiplier.
+[00:42:06.040–00:42:08.040] Is it mandatory to submit a notebook?
+[00:42:08.040–00:42:09.040] Yes.
+[00:42:09.040–00:42:13.040] You need to submit the entire competition eligibility criteria, which includes submitting a notebook.
+[00:42:13.040–00:43:37.550] Someone has asked which parts of the official code can we change?
+[00:43:37.550–00:43:41.550] So I'll repeat again, you can change anything in the code that you want.
+[00:43:41.550–00:43:43.550] You can entirely restructure the notebook.
+[00:43:43.550–00:43:47.550] The only ask is that your final output should be in the form of this JSON object.
+[00:43:47.550–00:43:53.550] The corresponding JSON file, uh, is also part of the template that has been provided to you.
+[00:43:53.550–00:43:58.550] So make sure that you adhere to the, uh, specific structure of this JSON file.
+[00:43:58.550–00:44:04.550] As long as you're doing that and you're using LLMs as part of your notebook, your notebook will be valid.
+[00:44:04.550–00:44:51.200] So I don't see any new questions in the Q and A box.
+[00:44:51.200–00:44:58.200] Now, uh, all of the questions have either been covered already or are part of the FAQs.
+[00:44:58.200–00:45:03.200] So I will be, uh, stop, I will stop sharing my screen now.
+[00:45:03.200–00:45:10.200] Uh, we'll, uh, we'll still be here in the call till, uh, for 10 more minutes.
+[00:45:10.200–00:45:15.200] Uh, when the webinar ends to answer any questions in the Q and A box.
+[00:45:15.200–00:45:19.200] Thank you for attending and you can still ask any question that you have via the Q and A box.
+[00:45:19.200–00:45:20.200] The webinar is over.
+[00:45:20.200–00:45:22.200] We are just doing an offline Q and A now.
+[00:45:22.200–00:53:58.280] Thanks for joining everyone.
+[00:53:58.280–00:54:01.280] Uh, since we don't have any more questions, I'll stop the webinar now.
+[00:54:01.280–00:54:04.280] For any further questions to reach out to your research advisors.
+[00:54:04.280–00:54:05.280] Thank you.
+[00:54:05.280–00:54:06.280] Thank you.
+[00:54:06.280–00:54:07.280] Thank you.
+[00:54:07.280–00:54:08.280] Thank you.
+[00:54:08.280–00:54:09.280] Thank you.

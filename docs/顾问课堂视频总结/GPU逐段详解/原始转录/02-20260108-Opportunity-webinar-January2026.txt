@@ -1,0 +1,569 @@
+20260108-Opportunity-webinar-January2026
+原片 20260108-Opportunity-webinar-January2026.mkv
+时长 00:58:32.721
+转录 whisper，共 564 段。
+
+[00:00:00.000–00:00:07.560] while others continue to join. So, Happy New Year to everyone and welcome to the first Consultant
+[00:00:07.560–00:00:14.520] Opportunity Webinar for 2026. I'm Avril Srivastav, your host for today's session and also the Senior
+[00:00:14.520–00:00:20.360] Vice President of Strategy at WorldQuant. Along with my colleagues, we join you every month to
+[00:00:20.360–00:00:25.120] share updates on the BRAIN community, highlight new opportunities that we plan and also announce
+[00:00:25.120–00:00:31.280] the winners of the recent competitions. We'll be doing that again today as well. So, let's
+[00:00:31.280–00:00:36.100] review our standard housekeeping points first. If you can hear me clearly, please click the
+[00:00:36.100–00:00:43.160] hand button at the bottom of your screen. Nice, thank you so much for that confirmation.
+[00:00:44.300–00:00:48.480] Throughout the session, you can use the Q&A button at the bottom of your screen to send
+[00:00:48.480–00:00:56.460] in your queries by text. So, our team will respond as we go along. This webinar counts for two points
+[00:00:56.460–00:01:01.560] towards your community activity score on the Genius Leaderboard. To receive these points,
+[00:01:01.680–00:01:08.100] please make sure you're signed up with the same email ID on Zoom that you use for your consultant
+[00:01:08.100–00:01:15.810] account on BRAIN. So, a common question from all of you is when Genius levels are expected to be
+[00:01:15.810–00:01:21.450] announced. So, I'll just preempt that. We plan to announce it within a couple of days, maybe even in a few
+[00:01:21.450–00:01:29.170] hours. So, you'll all see those results shortly. So, let me share my screen and then we'll show you
+[00:01:29.170–00:01:45.620] here how the next 60 minutes are going to flow. Okay, hopefully you can see my screen now. So, we will
+[00:01:45.620–00:01:52.760] have WorldQuant's Chief Strategy Officer, Nitish Mehni, who will recap 2025 and share the vision for BRAIN for 2026.
+[00:01:52.760–00:01:59.120] Then, we will start with two updates regarding Genius. We'll have more data pyramids opening up across
+[00:01:59.120–00:02:04.680] Genius levels and we'll also show you how osmosis is scheduled to boost your combined alpha performance
+[00:02:04.680–00:02:10.920] score in Genius levels that could be announced in April. So, you will start working on osmosis right now
+[00:02:10.920–00:02:16.840] and your Genius levels that get announced in April get influenced. Then, we'll cover our new opportunities
+[00:02:16.840–00:02:22.640] on BRAIN. Two earlier opportunities, PowerPool alphas and AI competitions have evolved into
+[00:02:22.640–00:02:29.280] more exciting versions starting with thematic PowerPool alphas that has already gone live on BRAIN this week.
+[00:02:29.280–00:02:34.880] And next week, we launch a new AI alphas competition after the enthusiastic response you all showed to the
+[00:02:34.880–00:02:40.800] first iteration. More on that shortly. We will present the themes for January and also then show you the
+[00:02:40.800–00:02:49.120] results of the India theme and the earlier AIAC competition. And we'll end the session with an announcement of the
+[00:02:49.120–00:02:55.760] competition winners. And we'll also have two top consultants share their experience on the platform.
+[00:02:55.760–00:03:02.800] With this, let me hand it over to Nitish. Nitish, over to you for the vision and the recap.
+[00:03:02.800–00:03:11.100] Thank you, Avril. Would you like the plots?
+[00:03:11.100–00:03:12.940] Yeah, one moment, please.
+[00:03:16.960–00:03:24.880] Hello, everybody. Happy new year to all of you. I hope you had a good 2025 and I wish you a lot of success
+[00:03:24.880–00:03:31.440] in in 2026. I think all of us together will create partnership, you know, when it comes to WorldQuant
+[00:03:31.440–00:03:42.980] BRAIN, the WorldQuant team. And with all of you, we would actually want to show you some of the outcomes
+[00:03:42.980–00:03:49.860] outcomes of that, you know, that we've achieved across research and business, and then hopefully
+[00:03:49.860–00:03:55.620] continue to strengthen them in this year. So Avril, if we can just show the slides.
+[00:03:55.620–00:03:55.940] Yes.
+[00:04:00.430–00:04:05.630] So first, we wanted to start by showing the breadth in research that we've achieved and then gradually
+[00:04:05.630–00:04:09.950] go into your contributions in supporting the business and then the growth in business as well.
+[00:04:09.950–00:04:17.710] well. So here you see the number of data fields growth, like 2025 was an year of breadth. We
+[00:04:17.710–00:04:25.310] onboarded a lot of data sets, data fields, a large number of regions, and we tried to touch as many
+[00:04:25.310–00:04:31.790] pyramids as we can on the platform. So we have around 245,000 data fields available to you,
+[00:04:31.790–00:04:39.070] and you can expect over 100,000 data fields coming in this quarter more for you to do research.
+[00:04:40.750–00:04:49.630] Next, we look at the number of alpha submissions. Consultants in 2025 submitted over 2 million
+[00:04:49.630–00:04:56.270] alphas on the platform. So this is a great achievement, shows the engagement that is coming from all of you.
+[00:04:57.390–00:05:05.790] Moving forward, in terms of the consultant growth, almost half the consultants we hired in 2025 were
+[00:05:05.790–00:05:06.590] referrals from all of you.
+[00:05:06.590–00:05:12.910] I'm very happy about this program because instead of doing general marketing and spending budgets on
+[00:05:12.910–00:05:20.430] public forums trying to attract talent, if the talent has been referred by you, one, it gives us a
+[00:05:20.430–00:05:26.510] feedback that you are enjoying in the program and you are ready to refer your friends to participate.
+[00:05:26.510–00:05:30.590] And in return, we also know that referral program has some monetary benefits.
+[00:05:30.590–00:05:36.830] So we are putting the money in the right place to our consultants rather than having to spend it on,
+[00:05:36.830–00:05:41.150] you know, digital platforms and with regular advertisement bringing the talent.
+[00:05:41.150–00:05:47.790] So this was good. I'm very thankful to all of you for doing this and bringing 3600 consultants this year.
+[00:05:47.790–00:05:52.030] Moving forward, how many total consultants do we have?
+[00:05:52.750–00:06:00.590] We have 12,500 consultants as of today, out of which almost little more than 50%,
+[00:06:00.590–00:06:12.590] 6,500 were hired in 2025. We also little more than doubled our user base. We have 300,000 users of which 160,000 joined us
+[00:06:13.710–00:06:18.430] in the last year. So this is good result as well.
+[00:06:20.430–00:06:29.920] Moving forward, so not just this, you know, we launched the Genius program and several other competitions.
+[00:06:29.920–00:06:38.160] If I'm not wrong, I think we launched 14 themes and nine competitions in 2025 for our consulting community.
+[00:06:38.960–00:06:43.520] My numbers may be a little off, but I think that's approximately what we have. Anand and Avril will
+[00:06:43.520–00:06:54.000] show us details later. So almost 6,000, 6,500 consultants are now logging in every day on the platform.
+[00:06:54.000–00:06:59.200] That is a very good engagement result. I see 53% of the consultants are now logging in.
+[00:06:59.200–00:07:05.440] So this is fantastic. So 6,000, 6,500 consultants coming on the platform, trying to simulate, make alphas.
+[00:07:06.560–00:07:13.680] And this gives you a place in the infinite excellence program. Although we have 12,500 consultants,
+[00:07:13.680–00:07:18.480] we will continue to hire more consultants because we are not really at the place where we want to stop
+[00:07:18.480–00:07:23.600] giving the opportunity to more people to learn and participate in quantitative finance.
+[00:07:23.600–00:07:28.080] But we will continue to deepen the excellence. But we will continue to deepen the excellence via infinite
+[00:07:28.080–00:07:36.160] excellence program. So this are some of the plots showing our progress across several dimensions
+[00:07:36.800–00:07:46.480] in 2025. Now, if you were to think of the key things we did in 25 versus what we would aim for in 26.
+[00:07:46.480–00:07:57.200] projects. Like I said, 2025 was an year of breadth for us. We launched many data fields. We launched many regions.
+[00:07:58.080–00:08:13.630] We hired many consultants. And we tried to ensure that the diversity on the platform was enough.
+[00:08:13.630–00:08:20.910] and we had enough things on the platform to provide to 10,000 plus people to build a solid product.
+[00:08:22.030–00:08:28.910] We also launched some flexible capabilities on coding. You were able to analyze the data faster.
+[00:08:28.910–00:08:40.770] the data faster. Genius levels help you get more feedback. And in 2026, instead of breadth, our focus will be depth.
+[00:08:41.970–00:08:50.690] So all of us should, in 2026, aim to build strong after-cost performance for yourself as a consultant.
+[00:08:50.690–00:08:55.650] And we will, as WorldQuant, also try to strengthen our after-cost performance.
+[00:08:56.610–00:08:59.810] Meaning, if we have several regions. Meaning, if we have several regions, we just want to make sure with all the
+[00:08:59.810–00:09:11.330] contributions coming from you, we can build a stand. After-cost, the combos of the alphas that are being
+[00:09:11.330–00:09:17.970] submitted from you may not necessarily stand all the costs and give us a sharp of 2 plus or 3 plus.
+[00:09:19.090–00:09:26.610] But that's what we will aim this year. So that is number one. Second, AI will be very strong focus this year.
+[00:09:26.610–00:09:33.570] We will start this year with an AI competition. We want to increase the efficiency of your work.
+[00:09:33.570–00:09:39.730] So we will try to bring in several AI capabilities and hopefully introduce that as a behavior of research
+[00:09:39.730–00:09:46.210] on the brain platform. So focusing on AI capabilities on the platform and enabling those for you.
+[00:09:46.210–00:09:58.770] depth in the areas to build strong after-costs. And third, we will also try to launch, instead of expression
+[00:09:58.770–00:10:06.930] alphas, we will try to launch alphas that you can code. Python-based alphas, so that if you have ever felt
+[00:10:06.930–00:10:15.570] that there are constraints in the expression language, now those constraints could go away and
+[00:10:15.570–00:10:21.730] you can use Python to express your alpha ideas. So at some point in this year, the work is in progress and
+[00:10:21.730–00:10:29.810] you will see a launch of that feature and that should enable us to use several libraries in deep learning
+[00:10:29.810–00:10:38.050] learning and others to do more sophisticated research. So the goal this year is quality.
+[00:10:38.050–00:10:45.490] And the goal is to give you more control on your own stipends and quarterly payouts as well.
+[00:10:46.690–00:10:53.490] You participated in the Osmosis competition last year. Osmosis competition was
+[00:10:53.490–00:11:03.810] our way to introduce an idea to you to help you trial your own confidence on the signals that you have
+[00:11:03.810–00:11:14.130] created so far. Meaning you distributed 100,000 points to the signals that you have generated with the hope
+[00:11:14.130–00:11:21.890] to see what will the performance of the combination that you have created look like in the future if you
+[00:11:21.890–00:11:29.970] allocated your 100,000 points based on your confidence. Now this in near term will become a
+[00:11:29.970–00:11:38.210] permanent feature where you would be assigning weights to your alphas based on your confidence.
+[00:11:38.210–00:11:44.370] We will allow you to change weights once per week but we don't expect you to do that. Your confidence
+[00:11:44.370–00:11:49.730] shouldn't change so fast even if the performance was not good in the following week. But because you keep
+[00:11:49.730–00:11:52.690] submitting new signals we want to keep submitting new signals so we want to make sure that you have the
+[00:11:52.690–00:11:59.810] ability to incorporate new signals into that so that is why we are allowing a weekly change. So you will
+[00:11:59.810–00:12:07.970] notice that you would give your confidence scores in the Osmosis process depending on the performance
+[00:12:08.770–00:12:18.610] of that combination you would be able to add a multiplier to your daily payout. If the thing did well
+[00:12:19.570–00:12:27.650] you will get a better daily payout and if it did not do well you might get a lower daily payout compared to
+[00:12:27.650–00:12:33.410] others like it will be a relative score. So compared to others if you are better then you would get a better
+[00:12:33.410–00:12:43.090] payout otherwise a lower payout and the same will be true for the quarterly stipends. It is not only about
+[00:12:43.090–00:12:49.650] daily payouts because daily payouts because daily payouts can be volatile one can get lucky but we will also
+[00:12:49.650–00:12:59.730] look at how your Osmosis combo did in the quarter and if it does well it will lead to a multiplier in your
+[00:12:59.730–00:13:07.250] quarterly payouts as well. So going forward depending on the performance of your own alpha pool that you have
+[00:13:07.250–00:13:16.930] created and the application of your confidence to that pool you will be able to impact your own daily and
+[00:13:16.930–00:13:27.490] quarterly payouts and that is done to introduce the concept of accountability meaning we should do research
+[00:13:27.490–00:13:36.050] which is useful for your own alpha pool and the contributions coming into WorldQuant. Also we at this
+[00:13:36.050–00:13:40.450] point have over 3 million submissions of which 2 million were done last year from this community.
+[00:13:40.450–00:13:50.850] we also have to find ways to pick good signals out of all of those submissions so if your Osmosis combo
+[00:13:50.850–00:13:56.690] works well it gives us a confidence too because you know your alpha pool best that if you have given
+[00:13:56.690–00:14:04.290] that confidence score and your Osmosis combo is performing then we can also rely more on your confidence
+[00:14:04.290–00:14:11.890] in how we utilize your alphas. So that is going to be a big thing so depth will be the focus we will
+[00:14:22.670–00:14:30.350] and themes will continue to go on. We would also hope you know last year we recruited several people from
+[00:14:30.350–00:14:35.950] our consulting community for researcher roles and other roles so thank you for showing that interest too and
+[00:14:35.950–00:14:42.990] hopefully we can continue that in 2026. So my good wishes to everybody here we have to continue on the
+[00:14:42.990–00:14:50.750] momentum of 2025 and I'm very confident we will. 2026 will be an era of inflection for WorldQuant
+[00:14:50.750–00:15:02.610] BRAIN and for all of us. Avaral over to you. Thank you Nisish. So with this let's go one level deeper
+[00:15:02.610–00:15:07.410] and we'll have Anand walk us through the features that we had launched throughout the year. Anand.
+[00:15:07.410–00:15:35.250] Anand. Thanks Avaral, can you hear me? Yes. Great. So doing a quick recap of 2025 there were several features that we introduced on the platform to keep the community active and engaged on the platform. We expanded the genius combo to include power pool and several of you were able to get yourself promoted using that.
+[00:15:35.250–00:15:47.460] We introduced the ability to create super alphas using alphas of university and country giving you
+[00:15:48.100–00:15:54.900] more opportunities in the super alpha space. Power pool and risk handled alphas were new kind of research
+[00:15:54.900–00:16:03.620] that we introduced and expanded on the platform. Fast D1 was introduced towards the later half of the year.
+[00:16:03.620–00:16:15.620] Brain Labs which allows you to write code and visualize the data to go deeper into the data and create better alphas was introduced.
+[00:16:16.660–00:16:27.220] And we continuously kept adding new data fields and operators. To reward the community we had a total of 14 competitions and 19 themes.
+[00:16:27.220–00:16:38.180] Some notable ones included AIEC to boost the use of AI on the platform.
+[00:16:38.180–00:16:46.660] Osmosis being another competition that we introduced towards later half of the year and we will continue to have that going forward.
+[00:16:47.700–00:16:54.260] Some of you also got the opportunity to be a part of the IQC Global Finals in Singapore.
+[00:16:54.260–00:17:18.500] We introduced, we introduced, we enhanced a lot of regions. We introduced India, Japan, D0 and for global region we enhanced that by introducing the ability to create super alphas and we introduced a new universe by the name of top diverse 3000 universe.
+[00:17:18.500–00:17:32.000] Osmosis. For next, over to you. Thank you for that Anand. On the engagement side of things, we will be going live with infinite excellence program later this month.
+[00:17:32.000–00:17:40.000] We've already discussed this in previous webinars. It is a way to recognize the top 10,000 consultants among this community.
+[00:17:40.000–00:17:52.000] You are naturally the best among the 300,000 users that we have across the world. You overcome various milestones and achievements and you've been able to submit alphas that are unique on the platform month on month.
+[00:17:52.000–00:18:04.000] So it's not only the grandmasters and the experts who deserve recognition, but all that 10,000 given how difficult it is to reach this milestone.
+[00:18:04.000–00:18:14.000] You will hear more details about this by end of the month, but suffice to say as a recap, this is also a way for us to ensure that the top 10,000 remain engaged.
+[00:18:14.000–00:18:21.000] We hear from you. We hear from you more and we are able to provide you exciting opportunities month on month.
+[00:18:21.000–00:18:38.000] So the inactive consultants who have not submitted an alpha in the last three months will be out of the infinite excellence program and will be in the wait list and they will compete with new people for the vacancies that emerge in the top 10,000 consultants role.
+[00:18:38.000–00:18:45.000] So for all of you who have submitted an alpha in the last three months, congratulations, you are already among the top 10,000 here already.
+[00:18:45.000–00:18:53.000] More details will come for you within the month. And anyway, the genius levels will also be announced in a couple of days.
+[00:18:53.000–00:19:01.000] Genius levels is effectively a way of recognizing all of you in the infinite excellence program, given it's also a 10,000 consultant program right now.
+[00:19:01.000–00:19:09.000] We've also gone live with the learn to quant video series last year. It is available on world quants YouTube handle, and it has a million plus views.
+[00:19:09.000–00:19:18.000] If you haven't had a chance to go through it, do check it out. There are some really interesting alpha examples that could serve as templates for your research on brain as well.
+[00:19:18.000–00:19:27.000] And those are in fact are popular videos in that playlist too. We have more search avenues also coming up on our social media channels later this year.
+[00:19:27.000–00:19:34.000] We now also have a consultant tutorial on the simulate page. We have one for users and now we have one for consultants.
+[00:19:34.000–00:19:43.000] It's effectively giving you an overview of all the additional features that are available to consultants compared to when you were as a user.
+[00:19:43.000–00:19:50.000] It's a very interesting milestone based journey that you can complete over a couple of weeks and of course it rewards you with a certificate too.
+[00:19:50.000–00:19:58.000] The opportunity webinars is something we have disciplined way mentioned that we will do this every month and we have done so.
+[00:19:58.000–00:20:09.690] This is probably the 15th of our webinar and we will end to do this series month on month for 2026 as well.
+[00:20:09.690–00:20:25.980] The recruitment tab is a tab on the brain platform where a lot of you have already expressed interest on what full-time we have extended offers and interviewed many candidates through that specific page as well.
+[00:20:25.980–00:20:27.980] So have a look at that page if you haven't already.
+[00:20:27.980–00:20:35.980] That's again an opportunity for you to express your willingness for full-time roles, share your latest CV with us and if we find this of interest.
+[00:20:35.980–00:20:40.980] And of course, if you're a top performing consultant, we do reach out to you from time to time.
+[00:20:40.980–00:20:49.230] With this, let's look forward to what we have in store, starting with the genius changes. Anant, back to you.
+[00:20:49.230–00:20:51.230] Thanks, Aviral.
+[00:20:51.230–00:20:58.230] So we are expanding the number of pyramids available to you through the genius program.
+[00:20:58.230–00:21:04.230] This is to increase the focus on the country specific regions that we have on the platform.
+[00:21:04.230–00:21:14.230] As of now, grandmasters have access to all these countries and master genius tiers have access to either AMR or Japan.
+[00:21:14.230–00:21:25.230] That will be expanded to add 23 new pyramids to gold and 46 each to expert and master.
+[00:21:25.230–00:21:34.230] What this means is that as you progress towards the genius tiers, you start with 23 such country specific pyramids.
+[00:21:34.230–00:21:42.230] And as you move along the tier, new 23 pyramids get added as you move up the ladder.
+[00:21:42.230–00:21:49.230] We have divided these countries specific pyramids into group of four.
+[00:21:49.230–00:21:56.230] America, Korea, Taiwan, Japan or Korea plus Hong Kong.
+[00:21:56.230–00:21:59.230] Gold would be getting one of them.
+[00:21:59.230–00:22:05.230] Expert, you will be getting either Taiwan, America, Korea or Hong Kong, Japan or Korea.
+[00:22:05.230–00:22:14.230] And similarly masters will get one off from the group of four that you see on the slide.
+[00:22:14.230–00:22:20.230] The number of pyramids required in genius eligibility criteria remain the same.
+[00:22:20.230–00:22:26.230] So this is greater opportunity for you to become eligible and move up the ladder in genius.
+[00:22:26.230–00:22:29.670] That's it on this.
+[00:22:29.670–00:22:30.670] Okay.
+[00:22:30.670–00:22:31.670] I'm looking at the questions coming in.
+[00:22:31.670–00:22:34.670] So Anant, when is this expected to go live?
+[00:22:34.670–00:22:37.670] This should go live in a couple of days.
+[00:22:37.670–00:22:38.670] Understood.
+[00:22:38.670–00:22:44.670] So this is effectively new regions entirely being available to gold and export, which are not available earlier.
+[00:22:44.670–00:22:45.670] Right?
+[00:22:45.670–00:22:46.670] Yes.
+[00:22:46.670–00:22:47.670] Understood.
+[00:22:47.670–00:22:48.670] Okay.
+[00:22:48.670–00:22:58.660] And if someone goes from export to gold or they fall a genius level, what happens to their regions?
+[00:22:58.660–00:23:04.660] do they move from a different, among these four or two groups, they do the shift groups?
+[00:23:04.660–00:23:05.660] No.
+[00:23:05.660–00:23:10.660] So the distribution of pyramids has been made consistent with the groups.
+[00:23:10.660–00:23:15.660] So all the consultants in gold and expert are distributed in four groups.
+[00:23:15.660–00:23:22.660] And as they move up or below, they continue to remain in the same group in order to maintain this consistency.
+[00:23:22.660–00:23:25.660] These four groups merge into two for master.
+[00:23:25.660–00:23:39.660] So as you move up or down the ladder, you would continue to have a very consistent view where you either lose one value when you go down or gain the same when you go up.
+[00:23:39.660–00:23:40.660] I understood.
+[00:23:40.660–00:23:41.660] Got it.
+[00:23:41.660–00:23:47.660] And among these groups, these groups will be allocated to consultants randomly for the interest of fairness.
+[00:23:47.660–00:23:56.660] So it's not like a menu that the consultants are choosing, but we will ensure that we have a sound logic too, for this allocation.
+[00:23:56.660–00:23:57.660] Okay.
+[00:23:57.660–00:23:58.660] With this, let's move on to the next one.
+[00:23:58.660–00:24:00.660] This is on Osmosis score.
+[00:24:00.660–00:24:01.660] Anand, back to you.
+[00:24:01.660–00:24:02.660] Okay.
+[00:24:02.660–00:24:11.660] So next major change in genius is intended to give you greater control on the outcome of genius.
+[00:24:11.660–00:24:15.660] You have already participated in Osmosis competition in December.
+[00:24:15.660–00:24:18.660] So, you know, overall how this works.
+[00:24:18.660–00:24:26.660] You will be given 10,000, 100,000 confidence points to be assigned to your alphas across each region.
+[00:24:26.660–00:24:30.660] We would be sampling these points on a weekly basis.
+[00:24:30.660–00:24:36.660] So you would have option to change or include new alphas weekly, but not the obligation.
+[00:24:36.660–00:24:40.660] You may choose to keep the weights as usual.
+[00:24:40.660–00:24:52.660] And as we continue throughout the year, we record the historical performance of the combo that is generated based on these weights.
+[00:24:52.660–00:24:59.660] And this resultant Osmosis combo will impact your payoff in two ways.
+[00:24:59.660–00:25:04.660] First of all, it would be considered as the fourth combined alpha performance score for genius.
+[00:25:04.660–00:25:07.660] So that impacts your quarterly payoff.
+[00:25:07.660–00:25:12.660] And this would also impact your daily payoffs in the form of a multiplier.
+[00:25:12.660–00:25:15.660] So you give us the confidence.
+[00:25:15.660–00:25:19.660] We generate the combos based on those confidence.
+[00:25:19.660–00:25:22.660] And this way you control your payoff.
+[00:25:22.660–00:25:30.660] If your confidence has good predictive power and it matches the alpha's real performance,
+[00:25:30.660–00:25:39.100] then you win, you get more incentives or you lose out on some extent.
+[00:25:39.100–00:25:40.100] Great. Thank you for this.
+[00:25:40.100–00:25:42.100] And I'm looking at questions coming in.
+[00:25:42.100–00:25:44.100] When does this go live?
+[00:25:44.100–00:25:47.100] As in which genius levels does this impact?
+[00:25:47.100–00:25:51.100] This impacts all genius levels.
+[00:25:51.100–00:25:56.100] There's no distinction between gold or expert or master.
+[00:25:56.100–00:25:57.100] Okay.
+[00:25:57.100–00:25:58.100] Clear.
+[00:25:58.100–00:26:03.100] And if I have not chosen any osmosis weights, what happens to my score?
+[00:26:03.100–00:26:15.530] If you haven't chosen anything, then we would use a default equal weighted combo to represent your pool.
+[00:26:15.530–00:26:25.040] Thank you.
+[00:26:25.040–00:26:30.040] So the genius impact of this will be from the genius results that get announced on the 7th April.
+[00:26:30.040–00:26:31.040] So the ongoing quarter.
+[00:26:31.040–00:26:44.620] So we will be announcing more details about the multiplier and updating the CAP combo for everyone in the next few weeks on new opportunities.
+[00:26:44.620–00:26:45.620] Anand.
+[00:26:45.620–00:26:46.620] Anand.
+[00:26:46.620–00:26:47.620] Anand.
+[00:26:47.620–00:26:48.620] Anand.
+[00:26:48.620–00:26:49.620] Anand.
+[00:26:49.620–00:26:50.620] Just one second.
+[00:26:50.620–00:26:59.620] So, team, can I, I'm seeing, you know, I'm just reading through all the questions you are sending just because it helps me get some feedback as well.
+[00:26:59.620–00:27:10.620] Can you, so we've cut the number of simulations and I'm noticing some of you are saying that you are not able to submit alphas because of lowered number of simulations.
+[00:27:10.620–00:27:19.980] I think that behavior is expected in the beginning.
+[00:27:19.980–00:27:23.980] Meaning you were allowed to do unlimited number of simulations.
+[00:27:23.980–00:27:37.980] But we, when we did our experimental analysis in house, we noticed that someone who ran more simulations were getting less alphas selected for us to be used.
+[00:27:37.980–00:27:45.980] Meaning running more simulations and submitting same number of alphas wasn't necessarily leading to higher quality of submissions.
+[00:27:45.980–00:27:52.420] And we wanted you to work to improve your yield.
+[00:27:52.420–00:28:07.420] So we wanted you to think on things like if you have already run this simulation in the past, can you go access those results, feed it into your API or simulation generating process to get feedback.
+[00:28:07.420–00:28:17.420] Or when you are making every simulation, you think a little more consciously, you know, before making every simulation.
+[00:28:17.420–00:28:23.420] This should lead to better quality submissions and our idea of depth this year.
+[00:28:23.420–00:28:35.420] So I would think that it might take you some time to adjust your processes, but my request to you to not give up because some of you were using up to 40,000 simulations.
+[00:28:35.420–00:28:38.420] I noticed, but that was only a handful of people.
+[00:28:38.420–00:28:45.420] And if now the limit is 5,000, your processes may get impacted, but please do not give up.
+[00:28:45.420–00:28:56.420] Please use this as an opportunity to improvise your research process such that you can improve the yield of your submissions.
+[00:28:56.420–00:29:02.420] 5,000 simulations for four alpha submissions is already quite a bit.
+[00:29:02.420–00:29:15.420] Having said that, we may be missing some deep details when you do research, which requires large number of simulations.
+[00:29:15.420–00:29:23.420] If that is the case, please post it in your Q&A tab, the feedback that you may have on this change.
+[00:29:23.420–00:29:30.420] But otherwise some initial difficulty is expected because you will have to adjust your systems.
+[00:29:30.420–00:29:37.420] But beyond that, if there are some inbuilt things which require large number of simulation, then we are missing out on something.
+[00:29:37.420–00:29:41.420] So please make us aware via the Q&A.
+[00:29:41.420–00:29:43.420] Guys, sorry to interrupt. Back to you.
+[00:29:43.420–00:29:45.920] Thank you.
+[00:29:45.920–00:29:46.920] Thank you.
+[00:29:46.920–00:29:50.920] So the consultants, please do share your feedback. We'll monitor this as well.
+[00:29:50.920–00:29:55.920] And we will see if we need to make any announcements further on.
+[00:29:55.920–00:29:59.920] Now, let's continue back with Anant on the thematic PowerPool.
+[00:30:04.410–00:30:10.410] We are introducing a few changes to how PowerPool operates on the platform.
+[00:30:10.410–00:30:16.410] Instead of having monthly competitions, which were becoming a bit repetitive,
+[00:30:16.410–00:30:21.410] we would now have shorter, we would now have shorter, more focused thematic competitions,
+[00:30:21.410–00:30:26.410] where we would identify certain value-adding directions centrally,
+[00:30:26.410–00:30:35.410] and only the PowerPools that fall within the scope of that direction are eligible for submission.
+[00:30:35.410–00:30:38.410] We will be reducing the eligibility as well.
+[00:30:38.410–00:30:43.410] You need to just have five alphas now going forward.
+[00:30:43.410–00:30:51.410] For pure PowerPool alphas, PowerPool alphas that are neither atom nor regular,
+[00:30:51.410–00:30:59.410] these can only be submitted within the scope of the active thematic PowerPool competition.
+[00:30:59.410–00:31:02.410] And there would be no multiplier associated with them.
+[00:31:02.410–00:31:05.410] They would have a default multiplier of 1.
+[00:31:05.410–00:31:15.410] The incentives of submitting such PowerPool would be driven through competition-style rewards as you see towards the right.
+[00:31:15.410–00:31:18.910] Mostly everything else remains the same.
+[00:31:18.910–00:31:20.910] The tagging methodology is the same.
+[00:31:20.910–00:31:23.910] Daily and monthly quota remains the same.
+[00:31:23.910–00:31:28.910] The way the way PowerPool combined alpha performance score operates in Genius.
+[00:31:28.910–00:31:35.300] One is India.
+[00:31:35.300–00:31:40.300] You have already spent two months doing regular and atom research on India.
+[00:31:40.300–00:31:47.300] So now is the right time to allow you to submit the most unique PowerPool signals that you identified.
+[00:31:47.300–00:32:01.300] The special test that we had for India, which is having a sub-universe sharp of at least one applies over here to ensure enough liquidity.
+[00:32:01.300–00:32:10.300] Towards the second half of the month, we'll have global thematic PowerPool with a slight twist on select datasets.
+[00:32:10.300–00:32:24.300] This is to ensure there's enough data diversity in your global PowerPool and we'll be focusing on underutilized unique datasets that are more likely to help you add value.
+[00:32:24.300–00:32:27.300] That's it on this, Avril.
+[00:32:27.300–00:32:28.300] Got it.
+[00:32:28.300–00:32:29.300] Nice.
+[00:32:29.300–00:32:30.300] I think everyone's really engaged in PowerPool.
+[00:32:30.300–00:32:31.300] Good questions coming in.
+[00:32:31.300–00:32:33.300] So I'm going to run through them quickly.
+[00:32:33.300–00:32:39.300] Anant, as a recap, can you define what is pure PowerPool and how is that definition changing now?
+[00:32:39.300–00:32:51.300] So pure PowerPool is an alpha that you couldn't have submitted if we didn't have PowerPool concept on the platform.
+[00:32:51.300–00:32:56.300] So anything that is both PowerPool and atom is not PowerPool.
+[00:32:56.300–00:33:00.300] Anything that is PowerPool and regular is not PowerPool.
+[00:33:00.300–00:33:01.300] very helpful.
+[00:33:01.300–00:33:09.300] So the two points that you see on the left are applicable only for the pure PowerPool alphas.
+[00:33:09.300–00:33:12.300] The quota also applies only on pure PowerPool alpha.
+[00:33:12.300–00:33:23.300] So if you have a submission that is PowerPool as well as atom, we, for quota perspective, we treat it as atom and that does not count towards your PowerPool quota.
+[00:33:23.300–00:33:24.300] Very helpful.
+[00:33:24.300–00:33:25.300] Very helpful.
+[00:33:25.300–00:33:30.300] So right now, can people submit PowerPool alphas that fall outside the India theme?
+[00:33:30.300–00:33:31.300] No.
+[00:33:31.300–00:33:38.300] So new submissions would be limited to the themes that we open up on the platform.
+[00:33:38.300–00:33:45.300] You can continue to tag or untag older submissions, but new submissions have to be within the scope that we define.
+[00:33:45.300–00:33:46.300] I'm not sure.
+[00:33:46.300–00:33:53.300] So the old alphas of yours that were PowerPool can still be used for combined genius performance.
+[00:33:53.300–00:33:54.300] Okay.
+[00:33:54.300–00:33:55.300] Thank you.
+[00:33:55.300–00:33:56.300] This is good.
+[00:33:56.300–00:33:57.300] Let's move on.
+[00:33:57.300–00:34:09.020] Next, continuing the goal of improving productivity on the platform, very much in line with simulation.
+[00:34:09.020–00:34:21.020] we will be having AI alpha competition, second version starting 19th Jan that will go on for four weeks.
+[00:34:21.020–00:34:22.020] What remains the same?
+[00:34:22.020–00:34:30.020] You would still be leveraging LLMs to enhance your research to build DLA1 alphas in USA, Global, Asia, and Europe.
+[00:34:30.020–00:34:36.020] And you would be doing this through a Python script automating your LLM enabled workflow.
+[00:34:36.020–00:34:37.020] What changes?
+[00:34:37.020–00:34:40.020] This time there would be no parent alpha.
+[00:34:40.020–00:34:46.020] The machine that you generate shouldn't be taking a well-defined alpha.
+[00:34:46.020–00:34:50.020] At this stage, it would be taking a plain English investment idea.
+[00:34:50.020–00:34:54.020] You can use your own thought process to come up with these ideas.
+[00:34:54.020–00:34:59.020] You can get them from research papers or you can interact with other LLM tools.
+[00:34:59.020–00:35:06.020] But as long as it's a plain English investment idea, it is a valid input to your machine.
+[00:35:06.020–00:35:09.020] within the scope of this competition.
+[00:35:09.020–00:35:23.020] Another change this time is that apart from the notebook, you would also be submitting presentation files, describing your approach that you took in the notebook.
+[00:35:23.020–00:35:28.020] You need to have at least 10 submissions.
+[00:35:28.020–00:35:32.020] And alphas for this competition need to have two tags.
+[00:35:32.020–00:35:33.020] First one being LLM used.
+[00:35:33.020–00:35:34.020] First one being LLM used.
+[00:35:34.020–00:35:38.020] This is very similar to how you tagged your super alphas last time.
+[00:35:38.020–00:35:40.020] This time you'll be tagging your alphas directly.
+[00:35:40.020–00:35:41.020] And the description is mandatory.
+[00:35:41.020–00:35:47.020] And as I said, valid notebook and presentation files need to be submitted.
+[00:35:47.020–00:35:52.020] So this is very much in line with the simulation.
+[00:35:52.020–00:35:57.020] Try to use LLM to reduce the yield of your research process.
+[00:35:57.020–00:36:05.020] Simulate only those expressions that you are pretty sure will give you performance and use LLM to scale this approach up.
+[00:36:05.020–00:36:07.460] Scoring.
+[00:36:07.460–00:36:13.460] We'll use a 25% IS, 75% OS, Merge Performance score.
+[00:36:13.460–00:36:21.460] Apart from this, there will be some subjective assessment score assigned to top 70 eligible consultants.
+[00:36:21.460–00:36:26.460] And top 10 will be decided based on live performance to the brain team.
+[00:36:26.460–00:36:31.460] A total one time stipend pool of 30K USD would be eligible.
+[00:36:31.460–00:36:37.460] And for the first time for a competition, we are giving direct genius incentive.
+[00:36:38.460–00:36:52.460] Consultants who fulfill the AIEC 2.0 competition eligibility criteria will be eligible for a 10% bump in their Q2 genius tiebreaker score which will be announced in April.
+[00:36:52.460–00:36:59.460] So whatever your tiebreaker score is, if you are eligible for AIEC 2.0, you get a 10% bump.
+[00:36:59.460–00:37:02.460] So this is a double benefit for you.
+[00:37:02.460–00:37:13.460] Not only do you improve your productivity, get more alphas with less simulations, but you also get the chance of inflating or increasing your tiebreaker scores.
+[00:37:13.460–00:37:16.460] That's it on this.
+[00:37:16.460–00:37:18.460] Are there any questions on this?
+[00:37:18.460–00:37:20.460] Yes.
+[00:37:20.460–00:37:21.460] Yes.
+[00:37:21.460–00:37:26.460] So can you give us examples of what all could be inputs into this tool?
+[00:37:26.460–00:37:27.460] Correct.
+[00:37:27.460–00:37:42.460] So your input could be a one line idea, like a stock with consistent dividend over multiple years is likely to perform well in future.
+[00:37:42.460–00:37:43.460] It could be a one line.
+[00:37:43.460–00:37:54.460] It could be a big paragraph or a big text that you extract from some other sources like research papers, or you could even brainstorm.
+[00:37:54.460–00:38:07.460] Feel free to brainstorm with other chatbots that you use in your research process to come up with a thesis and whatever text, thesis, such a chatbot generates, you can use that as an input.
+[00:38:07.460–00:38:08.460] It can be any of these.
+[00:38:08.460–00:38:09.460] It can be any of these.
+[00:38:09.460–00:38:12.460] What it cannot be is a well-defined alpha.
+[00:38:12.460–00:38:15.460] This time you're not supposed to take a well-defined alpha.
+[00:38:15.460–00:38:24.460] Your notebook should be smart enough to figure out the syntax and figure out operations and settings on its own.
+[00:38:24.460–00:38:25.460] That's true.
+[00:38:25.460–00:38:31.480] Thank you.
+[00:38:31.480–00:38:39.480] It's components, including the community score, average data fields per alpha, total operators that you've used in the quarter and so on.
+[00:38:39.480–00:38:44.480] All of that gets collated together in terms of ranks and then you get a final tiebreaker score.
+[00:38:44.480–00:38:56.480] If you have multiple people who have met the base criteria for a specific genius level, then based on the tiebreaker, the certain consultants get preference for the limited seats in each genius level.
+[00:38:56.480–00:39:01.480] People who participate in the competition competition and have a legitimate entry.
+[00:39:01.480–00:39:04.480] They don't have to win, just have legitimate entry.
+[00:39:04.480–00:39:09.480] They will get a 10% bump in the final genius level scores.
+[00:39:09.480–00:39:16.480] This is for the genius levels that are going to be announced in the first week of April, based on the submissions for these three months.
+[00:39:16.480–00:39:27.790] And this could alleviate some of the concern that I read where it was said that, you know, you will have an advantage in the genius tiers now.
+[00:39:27.790–00:39:38.790] So if you successfully participate, the genius tiers might become better, which might help you towards the cost of running these AI based things on your end.
+[00:39:38.790–00:39:46.790] So just the participation will ensure a better final score multiplier.
+[00:39:46.790–00:39:49.230] Thank you.
+[00:39:49.230–00:39:53.620] Yes.
+[00:39:53.620–00:40:02.620] Next to Kapal opening up of the country specific pyramids will also be accompanying that with a corresponding theme.
+[00:40:02.620–00:40:10.620] Alphas submitted in any one of the five country specific regions are eligible.
+[00:40:10.620–00:40:21.620] Just FYI, we improve the max trade test for Asia regions where it's no longer mandatory to apply the max trade.
+[00:40:21.620–00:40:31.620] But as long as your alpha is liquid enough to retain at least 70% of its original performance, it's eligible for submission.
+[00:40:31.620–00:40:38.620] And this is mandatory only for Japan, given Japan is the most liquid country specific region amongst them.
+[00:40:38.620–00:40:43.620] So make full use of these improved research environment.
+[00:40:43.620–00:40:46.620] There are more datasets available to you now.
+[00:40:46.620–00:40:54.620] The theme will start on 12th January and a multiplier of 2x would be applicable for regular alphas and atom.
+[00:40:54.620–00:41:02.620] Towards the right, I would highlight the dataset opportunity that you have in these pyramids.
+[00:41:02.620–00:41:09.620] a common theme that we are now observing is crowding in model and price volume datasets.
+[00:41:09.620–00:41:15.620] While these are easy to make, that's not where the real opportunity lies.
+[00:41:15.620–00:41:19.620] You would face lower pyramid multiplier here.
+[00:41:19.620–00:41:26.620] And even though it looks like a good alpha, it is highly unlikely that such alphas will add value to your combo.
+[00:41:26.620–00:41:31.620] So that impacts your combined alpha performance as well.
+[00:41:31.620–00:41:33.620] Where does the opportunity lie?
+[00:41:33.620–00:41:40.620] So you can see analyst and fundamental, while not sparse, they are not crowded.
+[00:41:40.620–00:41:45.620] So these could be good starting point for you in country specific pyramids.
+[00:41:45.620–00:41:48.620] They typically yield good low turnover signals.
+[00:41:48.620–00:41:51.620] So that would be a good starting point, but don't stop there.
+[00:41:51.620–00:42:05.620] The green data categories is where the real opportunity lies, especially categories like news, sentiment, short interest, which are known to give you good signal.
+[00:42:05.620–00:42:06.620] They are highly underutilized in these pyramids.
+[00:42:06.620–00:42:07.620] They are highly underutilized in these pyramids.
+[00:42:07.620–00:42:12.620] So that's where you would get your edge in these pyramids.
+[00:42:12.620–00:42:19.620] So that's where you should focus as soon as you are comfortable with these regions.
+[00:42:19.620–00:42:24.620] That's it on this.
+[00:42:24.620–00:42:28.620] So clarification here would be that the power pool alphas will not be part of this country specific.
+[00:42:28.620–00:42:29.620] Correct?
+[00:42:29.620–00:42:30.620] Correct.
+[00:42:30.620–00:42:31.620] Yes.
+[00:42:31.620–00:42:32.620] Okay.
+[00:42:32.620–00:42:33.620] Understood.
+[00:42:33.620–00:42:38.620] And this ties into the new pyramids that are going to be opened up to the new genius consultant.
+[00:42:38.620–00:42:39.620] Okay.
+[00:42:39.620–00:42:40.620] Yes.
+[00:42:40.620–00:42:42.620] Thank you.
+[00:42:42.620–00:42:58.410] Now, giving back the feedback on your last month's efforts, India and AIEC were two common directions that we focused on in December.
+[00:42:58.410–00:43:04.410] You can look at the combo performance that you are able to generate as a community there.
+[00:43:04.410–00:43:20.410] For India region, given its relatively emerging market, inefficient, we see average IS Sharpe of 2.47 returns of 13.91 on a turnover of 26.32.
+[00:43:20.410–00:43:32.410] AIEC, which was more general purposes and more submissions coming in countries like USA.
+[00:43:32.410–00:43:39.410] We saw an average Sharpe of 1.91 returns of 4.37 and average turnover of 21.08.
+[00:43:39.410–00:43:40.410] AIEC.
+[00:43:40.410–00:43:41.410] Worth highlighting.
+[00:43:41.410–00:43:47.410] Worth highlighting here is the common theme from last slide, which is crowding in price volume and model.
+[00:43:47.410–00:43:52.410] So as you see, even in these scopes, these two categories are heavily crowded.
+[00:43:52.410–00:43:58.410] While the other three keep changing depending upon the scope that you look at.
+[00:43:58.410–00:44:06.410] So again, AIEC 2 is coming up, India PowerPool is active already.
+[00:44:06.410–00:44:17.410] So if you want to increase the chances of generating impact there, the chances of having better combo in these scopes, stay away from price volume and model.
+[00:44:17.410–00:44:24.410] Focus more on datasets and data categories that are new and unique and more likely to add value.
+[00:44:24.410–00:44:27.410] That's it on this.
+[00:44:27.410–00:44:28.410] Thank you.
+[00:44:28.410–00:44:30.410] No further questions.
+[00:44:30.410–00:44:32.720] All right.
+[00:44:32.720–00:44:38.720] Now we go on to our winners announcement and then we'll also hear from our two top consultants today.
+[00:44:38.720–00:44:44.720] Nitish, if you could invite you to do the honors for the Osmosis competition winners.
+[00:44:44.720–00:44:50.720] We'll have the top 10 winners announced today and then we'll have the remaining via announcement.
+[00:44:50.720–00:44:55.140] Nitish, you're on mute.
+[00:44:55.140–00:45:01.080] All right, let's go.
+[00:45:01.080–00:45:08.850] Thank you all for participating, first of all.
+[00:45:08.850–00:45:15.850] This is a new thing we are introducing and I know you participated in large numbers, hundreds of you.
+[00:45:15.850–00:45:17.850] So thank you for doing that.
+[00:45:17.850–00:45:20.850] And I also see we have over 2000 participants in today's webinars.
+[00:45:20.850–00:45:22.850] Even that is fantastic.
+[00:45:22.850–00:45:23.850] So congratulations.
+[00:45:23.850–00:45:24.850] So congratulations.
+[00:45:24.850–00:45:31.870] Huang from China.
+[00:45:31.870–00:45:36.760] Pan Nam Khan from Vietnam.
+[00:45:36.760–00:45:42.510] Zong Zilping from China.
+[00:45:42.510–00:45:45.510] Ji Huan from China.
+[00:45:45.510–00:45:50.340] Ruiz Yang Ma from China.
+[00:45:50.340–00:45:51.340] Wow.
+[00:45:51.340–00:45:54.190] Xu Ji Huan from China.
+[00:45:54.190–00:45:56.190] Xu Ji Huan from China.
+[00:45:56.190–00:46:14.740] I assume there are more awards, but interesting to see the China dominance in this one.
+[00:46:14.740–00:46:17.740] So congratulations to all of you.
+[00:46:17.740–00:46:18.740] Yes.
+[00:46:18.740–00:46:24.740] We have total 50 monetary rewards to be given across and those 50 will be announced on the platform soon.
+[00:46:24.740–00:46:31.060] And Osmosis anyway continues now as a regular aspect of the competition.
+[00:46:31.060–00:46:35.060] So we expect more people to be jostling for the leaderboard positions.
+[00:46:35.060–00:46:36.060] Right.
+[00:46:36.060–00:46:38.060] Next, we have the power pool.
+[00:46:38.060–00:46:41.060] But before that, we will hear from the consultants.
+[00:46:41.060–00:46:42.060] We'll start with Khan.
+[00:46:42.060–00:46:44.060] I think Khan we have here.
+[00:46:44.060–00:46:46.060] Khan is a Vietnam consultant.
+[00:46:46.060–00:46:47.060] He's among the top winners.
+[00:46:47.060–00:46:49.060] He's among the top winners as well.
+[00:46:49.060–00:46:59.880] He's been a grand master with us and a master in multiple milestones.
+[00:46:59.880–00:47:01.880] So Khan, do we have you with us?
+[00:47:01.880–00:47:02.880] Okay.
+[00:47:02.880–00:47:03.880] Hi everyone.
+[00:47:03.880–00:47:04.880] My name is Khan.
+[00:47:04.880–00:47:12.880] I'm a consultant from Vietnam and I'm currently studying at the Academy of Cryptography Techniques.
+[00:47:12.880–00:47:20.880] I'm passionate about quantitative finance, especially building and improving ANFA or GUN Kwan.
+[00:47:20.880–00:47:33.880] Today, I would like to briefly share my experience in the Osmosis competition and how I approach building ANFA to progress towards grandmaster rank.
+[00:47:33.880–00:47:36.880] For Osmosis, my main focus is stability.
+[00:47:36.880–00:47:48.880] I usually choose ANFA with low volatility and small drawdowns because they tend to be more robust in a competitive environment.
+[00:47:48.880–00:48:01.880] I pay close attention to two-year shape or letter shape stability and I always check the PNL curve to make sure performance is smooth and consistent.
+[00:48:01.880–00:48:06.880] Another important point is turnover control.
+[00:48:06.880–00:48:10.880] It's still pushing ANFA to trade too frequently.
+[00:48:10.880–00:48:18.880] I adjust thresholds based on ANFA quality to keep channel stable.
+[00:48:18.880–00:48:24.880] I also check invest stability constraints performed across multiple reasons.
+[00:48:24.880–00:48:30.880] Since good ANFA should not reply on only one market.
+[00:48:30.880–00:48:36.880] For ranking up, I focus on building simple but diverse ANFA.
+[00:48:36.880–00:48:47.880] I encourage everyone to work with teams because teams keep ideas consistent, make ANFA easier to scale and reduce the risk of overfitting.
+[00:48:47.880–00:48:55.880] To summarize everything, everything comes down to stability and a long-term mindset.
+[00:48:55.880–00:48:57.880] Thank you very much for listening.
+[00:48:57.880–00:49:04.880] I hope this sharing is helpful and I'm very happy to discuss more with everyone later.
+[00:49:04.880–00:49:06.880] Thank you so much.
+[00:49:06.880–00:49:07.880] Thank you.
+[00:49:07.880–00:49:08.880] Thank you.
+[00:49:08.880–00:49:12.880] A lot of experience coming in from a three-time master and a one-time grandmaster.
+[00:49:12.880–00:49:15.880] I just started down a very impressive checklist.
+[00:49:15.880–00:49:27.880] Be mindful of two-year sharp, manage your turnover, check for investability constraints, ensure alpha does well in multiple regions and work on the themes that go live on BRAIN platform.
+[00:49:27.880–00:49:33.880] It's a very robust checklist which will help you in long-term too.
+[00:49:33.880–00:49:40.880] Next, we'll have Yi Huan from China who's a two-time grandmaster and has been a consultant since last year.
+[00:49:40.880–00:49:42.880] Yi Huan, we have you with us.
+[00:49:42.880–00:49:43.880] Yes.
+[00:49:43.880–00:49:44.880] Thank you.
+[00:49:44.880–00:49:45.880] Hello.
+[00:49:45.880–00:49:46.880] I'm Yi Huan.
+[00:49:46.880–00:49:49.880] Thank you for giving me the opportunity to share my experience.
+[00:49:49.880–00:49:54.880] For my background, I'm a consultant in a medical company.
+[00:49:54.880–00:49:58.880] I became the consultant in March of last year.
+[00:49:58.880–00:50:03.880] Firstly, I would like to express my gratitude to the mentors in China.
+[00:50:03.880–00:50:13.880] Through their knowledge-bearing, we've got a solid understanding of the BRAIN platform and learn how to do simulation with API.
+[00:50:13.880–00:50:15.880] It's totally new for me.
+[00:50:15.880–00:50:19.880] I also want to give big chunks to find a consultant.
+[00:50:19.880–00:50:24.880] We've got to create ideas and solutions to the challenges of the communities.
+[00:50:24.880–00:50:32.880] Without their help, I don't think I can get these results.
+[00:50:32.880–00:50:38.880] And it seems the platform along the simulating path in the end of last year.
+[00:50:38.880–00:50:41.880] I followed a mentor.
+[00:50:41.880–00:50:59.610] In the AI, I want to efficiently gather the virus information from the platform and suggest alpha expressions.
+[00:50:59.610–00:51:12.610] However, meanwhile, I require AI to analyze the mind-submitted efforts to extra-frequently-used operators and the common templates for alpha expressions.
+[00:51:12.610–00:51:17.610] In that way, I graduated in full efficiency of the simulation recently.
+[00:51:17.610–00:51:22.610] ... why won't I realize that in full efficiency?
+[00:51:22.610–00:51:23.610] Johan, I'm sorry to interrupt.
+[00:51:23.610–00:51:24.610] Your voice is not completely clear.
+[00:51:24.610–00:51:26.610] Would it be possible for you to adjust your microphone?
+[00:51:26.610–00:51:27.610] Okay.
+[00:51:27.610–00:51:28.610] Okay.
+[00:51:28.610–00:51:31.610] It's not okay now.
+[00:51:31.610–00:51:32.610] Okay.
+[00:51:32.610–00:51:33.610] Now...
+[00:51:33.610–00:51:34.610] It's slightly better.
+[00:51:34.610–00:51:35.610] Yeah.
+[00:51:35.610–00:51:36.610] Please proceed.
+[00:51:36.610–00:51:37.610] Okay.
+[00:51:37.610–00:51:39.610] I'm sorry.
+[00:51:39.610–00:51:48.610] Sorry, this is worse. I'm sorry to interrupt you again. Maybe you go back to your original position.
+[00:51:48.610–00:52:01.610] Okay. And while I realize that my approach now carries the potential risk of the gaming over-dependence on previous authors.
+[00:52:01.610–00:52:08.610] And what I do is try to simulate more with new AI-generated Alpha expressions.
+[00:52:09.610–00:52:15.610] To diversify the expressions in different regions, I hope I can get the results.
+[00:52:15.610–00:52:17.610] And that's my story. Thank you so much.
+[00:52:17.610–00:52:23.610] Thank you, Johan. So given we probably missed a little bit, if you could just summarize once more.
+[00:52:23.610–00:52:30.610] I picked the advice of yours on AI, using AI to generate multiple Alpha ideas across regions.
+[00:52:30.610–00:52:34.610] Any other words of wisdom for the community?
+[00:52:34.610–00:52:50.610] Yeah. Yeah. And for the community, I just followed, I just referred to the different consultants, the ideas in the forum.
+[00:52:50.610–00:53:04.610] And frankly, frankly, I'm not good at programming. That's why I just actively learn the MCP and AI tools, step by step.
+[00:53:04.610–00:53:06.610] Yeah. Nice. Thank you. This is very inspiring.
+[00:53:06.610–00:53:12.610] Yes. That's the process for my learning. For me, it's a learning journey, a long-term journey.
+[00:53:12.610–00:53:24.610] Interesting. So you were new to programming, but you were able to ramp up with the support of the brain community and the advisors to creating your own MCP server as well, and then making AI your strength from scratch.
+[00:53:24.610–00:53:32.610] You understand. Thank you. And the other tip was on leveraging the examples and templates on the forum. Good.
+[00:53:32.610–00:53:42.620] I hope that you also do well in the upcoming AI Alpha's competition, given this is your strength now. All the best. Okay.
+[00:53:42.620–00:53:47.620] Going forward, we will do our best to announce the full list of winners for all competitions.
+[00:53:47.620–00:53:56.620] It's going to be a long list, but I think it's worth it worth recognizing all of you. We will be showing the power pool December winners right now.
+[00:53:56.620–00:54:06.620] And that's the entire list as well. And that's as usual, we have our eight themes in December. This is the last edition of this monthly power pool contest.
+[00:54:06.620–00:54:15.620] We have transitioned now to the thematic, but looking at the winners here, we have 10 across each. So I will just click through quickly.
+[00:54:15.620–00:54:24.770] So we have Abil Sin Ting, Xiaoping, Meng Yun in the winners here.
+[00:54:24.770–00:54:36.770] We have Xiaoping has won again in USADIWAN, Zhenyu, Jinping, Oum, Hui, Guangchai, Zizong, Snehal. Congratulations to all of you.
+[00:54:36.770–00:54:44.770] We have another leaderboard as well. I will be keeping the screen on once the webinar ends for you all to also see later.
+[00:54:44.770–00:54:48.770] We have some people who have won multiple leaderboards.
+[00:54:48.770–00:54:51.770] We have some people who have won multiple leaderboards. So congratulations to you too.
+[00:54:51.770–00:54:55.770] The stipend pool which runs month on month will remain the same even as we transition to thematic.
+[00:54:55.770–00:55:03.770] So the pool on grab, it remains the same. It's just that instead of being staggered over eight leaderboards, it will now be over say two or three teams that run.
+[00:55:03.770–00:55:10.770] teams that run. So in January, there will be two teams that we've already shared with you. Global select data sets and the ongoing India.
+[00:55:10.770–00:55:14.770] So the total stipend pool across these would be $15,000.
+[00:55:14.770–00:55:19.770] Let me now show you the next set of leaderboards for the monthly power pool.
+[00:55:19.770–00:55:29.240] Congratulations to Hao Yu, Luidong, Fifan, Long, Haifeng, Abhinav, Jingxing, Chenyi, who were ranked two.
+[00:55:29.240–00:55:33.240] And ranked three, Arun, Rebecca, Bohi and Zhu.
+[00:55:33.240–00:55:40.240] This is the top ten winners in the monthly power pool second set of leaderboards.
+[00:55:40.240–00:55:48.700] We had 80 winners across these and we'll continue to have 80 winners in power pool as well.
+[00:55:48.700–00:56:00.050] We'll have, you would have seen 40 winners from December to Jan.
+[00:56:00.050–00:56:09.320] Great. So this brings us to an end to the planned agenda for the competition, for the webinar today.
+[00:56:09.320–00:56:16.320] We will stay on for a few minutes while the video is off to answer all the questions that we have received in our chat.
+[00:56:16.320–00:56:20.320] More updates will come via announcements on the BRAIN platform.
+[00:56:20.320–00:56:30.320] Please keep sharing your feedback, especially on the question that Nitish had asked in the middle of the webinar regarding your experience with the simulation limits as well.
+[00:56:30.320–00:56:33.320] So see you all next month and wish you all the best.
+[00:56:33.320–00:56:34.320] If you very best.
+[00:56:34.320–00:56:35.320] Peace.
+[00:56:35.320–00:56:35.560] Bless.
+[00:56:35.560–00:56:58.460] a
+[00:56:58.460–00:56:58.760] bye,
+[00:56:58.760–00:56:59.460] a
