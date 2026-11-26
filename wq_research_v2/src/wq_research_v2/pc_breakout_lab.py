@@ -1212,12 +1212,69 @@ def build_asi_eur_s3r19_breakout_specs() -> list[dict[str, Any]]:
     return specs
 
 
-# Live-verified alphaCount==0 fields used in UNUSED_ALPHA0 Stage-3 FULL batches (2026-11-27 02:55 CST).
+# Live-verified alphaCount==0 fields used in UNUSED_ALPHA0 Stage-3 FULL batches (2026-11-27).
 S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
     "img30d_return_tercile_confidence0_zackbatch": 0,
     "img30d_return_tercile_confidence2_zackbatch": 0,
     "img30d_return_quartile_confidence0_zackbatch": 0,
+    "analyst_regime_120d_return_quantile5_prob0": 0,
+    "analyst_monthquarter_120d_return_quantile5_score3": 0,
+    "analyst_monthquarter_60d_return_quantile5_score1": 0,
+    "analyst_60d_return_quantile5_prob3": 0,
+    "analyst_regime_60d_return_quantile5_score2": 0,
 }
+
+
+def build_s3r21_asi_glbseason_free_specs() -> list[dict[str, Any]]:
+    """S3-r21 (24 FULL, UNUSED_ALPHA0 FREE): ASI/MINVOL1M/global_seasonal_model FULL JPN + 2Y Finisher.
+
+    Triggered by 2-hour Audit #14 (2026-11-27 04:51 CST):
+      ASI/global_seasonal_model (100% Alphas=0 FREE, cov=1.000, dateCov=1.000, 0 OS -> SC=0.000!)
+      exploded on Wave 1 (272 QUICK -> 89 S1 / 39 S2 / 12 S3 >= 1.58):
+        - rK0kmNY1 (rev regime_120d_prob0): Sh=1.80
+        - wpN6V2Kl (rev gneut d10): 16.13bp, Sh=1.67, Fit=1.19
+        - blx30mzK / kq8R5WdK (m22): 32.62-37.76bp, Sh=1.60-1.65, Fit=1.15-1.19, TO=3.7%
+        - LL8eeG2n / 3qGddp2O (monthquarter_120d_score3): Sh=1.57-1.64, 2Y=1.50-1.58, 21.76bp
+      Immediately promotes to FULL (maxTrade=ON, ZERO quota cost!) across COUNTRY d={0,4} & CROWDING d=2
+      to verify LOW_ASI_JPN_SHARPE & ROBUST_UNIVERSE while fusing 120d/60d horizons to lift 2Y >= 1.65!
+    """
+    specs: list[dict[str, Any]] = []
+    ci = "group_cartesian_product(country, industry)"
+    p0 = "ts_backfill(analyst_regime_120d_return_quantile5_prob0, 21)"
+    mq120 = "ts_backfill(analyst_monthquarter_120d_return_quantile5_score3, 21)"
+    mq60 = "ts_backfill(analyst_monthquarter_60d_return_quantile5_score1, 21)"
+    p3 = "ts_backfill(analyst_60d_return_quantile5_prob3, 21)"
+    s2 = "ts_backfill(analyst_regime_60d_return_quantile5_score2, 21)"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC21-A1-p0-d10-gneut-sub", "ADMIN_ORIGINAL", "WL13229", f"reverse(group_neutralize(ts_decay_linear({p0}, 10), subindustry))"),
+        ("PC21-A2-p0-m22-ci", "ADMIN_ORIGINAL", "WL13229", f"reverse(group_zscore(ts_mean({p0}, 22), {ci}))"),
+        ("PC21-A3-mq120-m22-sec", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_mean({mq120}, 22), sector)"),
+        ("PC21-A4-p0-mq120-d10-ci", "ADMIN_ORIGINAL", "KH94146", f"group_zscore(ts_decay_linear(min(rank(reverse({p0})), rank({mq120})), 10), {ci})"),
+        ("PC21-A5-p0-mq120-m22-ci", "TOP100_2026Q4", "ZS59763", f"group_rank(ts_mean(min(rank(reverse({p0})), rank({mq120})), 22), {ci})"),
+        ("PC21-A6-p0-mq120-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank(reverse({p0})), rank({mq120})), 10), {ci}), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC21-A7-3way-p0-mq120-p3", "TOP100_2026Q4", "SZ83096", f"group_rank(ts_decay_linear(min(rank(reverse({p0})), min(rank({mq120}), rank({p3}))), 10), {ci})"),
+        ("PC21-A8-mq60-s2-cty", "TOP100_2026Q4", "LD22811", f"group_rank(ts_mean(min(rank({mq60}), rank({s2})), 22), country)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d0_t08", "COUNTRY", 0, 0.08),
+        ("cty_d4_t08", "COUNTRY", 4, 0.08),
+        ("crd_d2_t08", "CROWDING", 2, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r21-ASI-GLBSEASON-FREE-{tag}",
+                campaign_id="S3_ASI_GLBSEASON_ALPHA0_FULL",
+                hypothesis_id="HYP-S3R21-ASI-GLBSEASON-ALPHA0-37BP-JPN-2Y-FINISHER",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="global_seasonal_model",
+                queue_type="UNUSED_ALPHA0",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(exprs, dataset_id="global_seasonal_model", primary_field_id="analyst_regime_120d_return_quantile5_prob0", tag_suffix=tag),
+            )
+        )
+    return specs
 
 
 def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
@@ -1314,9 +1371,10 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r20 (48 FULL) -> S3-r19 (56 FULL) -> S3-r18 (48 FULL) -> ... -> S3-r10b (160 FULL)."""
+    """Return ordered S3-r21 (24 FULL) -> S3-r20 (48 FULL) -> S3-r19 (56 FULL) -> ... -> S3-r10b (160 FULL)."""
     return (
-        build_s3r20_free_and_eur_margin_specs()
+        build_s3r21_asi_glbseason_free_specs()
+        + build_s3r20_free_and_eur_margin_specs()
         + build_asi_eur_s3r19_breakout_specs()
         + build_eur_s3r18_ortho_strike_specs()
         + build_eur_asi_s3r17_orthogonal_specs()

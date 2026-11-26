@@ -158,3 +158,6 @@
   - **立即热部署零额度 Stage-3 + 新免费矿脉**：
     1. **`S3-r20-USA-CNN-FREE`（32 FULL `UNUSED_ALPHA0` FREE）**：在 `rK0mNeX8 / RR5LemNg / MPgAe0wa` 上立即跑通用高换手降换手梯队（`ts_decay_linear 5/10`、`ts_mean 5/10`、`ts_target_tvr_decay 0.15`、`hump 0.01`、底/顶三分位与四分位互补双支，零额度消耗直冲美股免费 `Useful`！）；
     2. **`USA_OPTCHART_FREE`（`option_chart_model`, `model 1.3×`, `val=5.0, cov=0.865–0.954, 8/8 Alphas=0`）**：与 `chart_cnn_alpha` 同源的期权图谱 CNN 预测免费蓝海集！
+- **2026-11-27 04:54（2 小时定时审计 #14 · 日官方回测狂破历史新高 `6,588`（`0` 次 `429`！）+ `S3-r20-USA-CNN-FREE` 归因定案 + 换装 `60d/120d` 免额长周期双引擎！）**：
+  - **控制变量归因（记入 `INEFF-10`）**：`S3-r20-USA-CNN-FREE`（`32/32 FULL` 零超时完成）证实 `chart_cnn_alpha` 在 `SUBINDUSTRY d=4 + ts_decay5` 下 **`2Y` 飙升至 `2.96`（`wpNV7mxd`）**，但 10Y 全期 Sharpe 从 `1.45` 回落至 `1.20`（`RAM`/`CROWDING` 跌至 `0.92`），适合留作高 2Y 辅支而非单打 RA `1.58`；`USA/option_chart_model` 虽 `maxSh=1.41` 但换手 `89–105%`、`2Y=0.99–1.17`，同样不投入重 Stage-3。
+  - **Phase-2 零额度长周期换血**：为 `USA:2` 补入两大实盘核验 `60d/120d` 低换手 `Alphas=0` 纯 `MATRIX` 免费矿脉：**`USA_MULTIFACT_120D_FREE`（`multifactor_return_pred`, `cov=0.983`, 8/8 `Alphas=0`）** 与 **`USA_GLBSEASON_20D_FREE`（`global_seasonal_model`, `cov=0.997`, 8/8 `Alphas=0`）**，保持 4 槽免额全速推进至 `13:00 CST`！

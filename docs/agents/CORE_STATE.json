@@ -6,7 +6,7 @@
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >4000切Alphas=0)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)"
   },
-  "updated_at": "2026-11-27T02:57:00+08:00",
+  "updated_at": "2026-11-27T04:54:00+08:00",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "context_compaction_rule": "任何 AI 工具（Antigravity / Claude Code / Codex / Cursor）启动或上下文超长重置（/compact）后，只读本文件 + docs/agents/OPTIMIZATION_LEDGER.json + AGENTS.md（总计 < 8KB），绝不重读数万行历史聊天记录！",
   "immutable_red_lines": {
@@ -70,10 +70,10 @@
         }
       ],
       "current_seed_campaigns": [
-        "S3-r20-USA-CNN-FREE (32 FULL · Audit #13 立即在 Phase-2 免额开跑! USA/chart_cnn_alpha 首波爆出 rK0mNeX8 Sh=1.45/2Y=2.74/TO=51.9%、RR5LemNg 1.36/2.72、MPgAe0wa 1.33/2.48，全员 alphaCount=0，执行通用高换手降换手梯队!)",
-        "USA_OPTCHART_FREE (Audit #13 新纯MATRIX Alphas=0 FREE, option_chart_model, model 1.3x, val=5.0, cov=0.865-0.954)",
-        "USA/ai_news_scores (NORMAL 首波升至 xAla3EOW Sh=1.41, 2Y=2.22, TO=27.5% — 待次日常规降换手)",
-        "USA/news_sentiment_transfer 已早停；USA/board_network (2/148, max=0.80) 即将跑完"
+        "USA_MULTIFACT_120D_FREE (Audit #14 新纯MATRIX Alphas=0 FREE, multifactor_return_pred 60d/120d 长周期, cov=0.983)",
+        "USA_GLBSEASON_20D_FREE (Audit #14 新纯MATRIX Alphas=0 FREE, global_seasonal_model 20d/60d, cov=0.997)",
+        "USA/chart_cnn_alpha (S3-r20 32/32 FULL 完结: 2Y=2.96 但 10Y Sh 封顶 1.20/1.45) & USA/option_chart_model (TO=91%/2Y=1.17 暂止损)",
+        "USA/ai_news_scores (NORMAL xAla3EOW Sh=1.41, 2Y=2.22, TO=27.5% — 待次日常规降换手)"
       ]
     },
     {
@@ -111,9 +111,9 @@
         }
       ],
       "current_seed_campaigns": [
-        "EUR_M264_DL_FREE & EUR_OTH460_DL_FREE (Audit #13 新纯MATRIX Alphas=0 FREE, model 1.3x, cov=1.000, dateCov=1.000, Phase-2 零额度消耗!)",
+        "EUR_GLBSEASON_60D_FREE (Audit #14 新纯MATRIX Alphas=0 FREE, global_seasonal_model 60d, cov=0.997, 接棒已自动早停的 EUR/model264 & EUR/other460!)",
         "S3-r20-EUR-1YG-HIGHMGN (16 FULL NORMAL · 排队于次轮常规额度: 锁定 RAM 保持 PC~0.59, 用轻 adv20>0.08..0.12 + post-d5/d10 把 1YG578aX Margin 从 7.44bp 推至 11-13bp!)",
-        "EUR/analyst_revision_horizons (0/88, max=0.64) 与 EUR/analyst39 已自动早停；EUR/model25 已退出"
+        "EUR/model264 (0/64, max=0.68) 与 EUR/other460 (1/80, max=0.80) 已自动早停"
       ]
     },
     {
@@ -122,15 +122,16 @@
       "slots": 1,
       "active_useful_champions": [],
       "current_seed_campaigns": [
-        "ASI_GLBSEASON_FREE (Audit #13 新纯MATRIX Alphas=0 FREE, global_seasonal_model, cov=1.000, dateCov=1.000, maxTrade=ON, Phase-2 零额度消耗!)",
-        "ASI/model25 S3-r19 24/24 FULL 完成: 突破日本子市场至 JPN=0.70..0.89/1.00 (E5mAewpG 49.77bp/Sh=1.73/2Y=2.05/Fit=1.50/Robust=1.50/1.56 仅差 0.06!), 保留为次日 NORMAL 跨集补日本主力",
-        "KOR/fundamental93 (0/72, max=0.52) 已自动早停；ASI/model39 与 GLB/TOP3000 已移出主队列"
+        "S3-r21-ASI-GLBSEASON-FREE (24 FULL UNUSED_ALPHA0 FREE · Audit #14 重大爆发! ASI/global_seasonal_model 首波 272 QUICK 产 89 S1 / 39 S2 / 12 S3 >=1.58, 16-38bp Margin, Sh=1.80! 立即转免额 FULL 核验日本子市场与 2Y>=1.65!)",
+        "ASI_GLBSEASON_V2_FREE + ASI_MULTIFACT_120D_FREE (Audit #14 新纯MATRIX Alphas=0 FREE, 60d/120d 分析师预测, cov=0.954-1.000, maxTrade=ON!)",
+        "ASI/model25 S3-r19 24/24 FULL 完成 (JPN=0.70..0.89, E5mAewpG 49.77bp), 保留为次日 NORMAL 跨集主力"
       ]
     }
   ],
   "quota_and_isolated_experiments": {
-    "today_est_2026_11_26_official_sims": 5452,
+    "today_est_2026_11_26_official_sims": 6588,
     "today_normal_completed_est": 4040,
+    "today_alpha0_completed_est": 2252,
     "phase2_alpha0_active": true,
     "alpha0_auto_switch_threshold": 4000,
     "concurrency_limits": {

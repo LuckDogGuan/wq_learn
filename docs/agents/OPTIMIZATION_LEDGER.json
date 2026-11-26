@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-27T02:57:00+08:00",
+  "updated_at": "2026-11-27T04:54:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -90,6 +90,14 @@
       "verdict": "EFFECTIVE（里程碑通关：诞生 100% 官方 /check 0-FAIL 干净 4 层 Useful 冠军 1YG578aX，并量化 RAM 单轴降 PC -0.190 的决定性作用！）",
       "metric_delta": "1) 1YG578aX (RAM d=0 tr=0.06): Sh=2.39, 2Y=2.25/2.02 PASS, Fit=1.46, Sub-Uni=1.24/1.24 PASS, TO=12.88%, Mgn=7.44bp (IC Mgn=11.43bp/Sh=1.59), 官方 97-OS SC=0.2598 PASS, 官方 PC=0.5897 PASS (0碰撞!), EUR/D1/MODEL 1.3x + AQP202611，已打 Useful + SC 0.260 PC 0.590；2) 同式切换 SUBINDUSTRY (O06vZ7md) 虽将 Margin 推至 16.12bp，但远程 PC 暴涨至 0.7793 (142 个 >=0.70 碰撞!) -> 实证 RAM 单独砍掉 -0.1896 PC！3) Phase-2 免额 USA/chart_cnn_alpha 首波即出 rK0mNeX8 (Sh=1.45, 2Y=2.74, TO=51.9%)、RR5LemNg (1.36/2.72)、MPgAe0wa (1.33/2.48)，已转 S3-r20 免额 FULL 降换手。",
       "reusable_rule": "EUR 跨集互补 3 支融合必须锁定 REVERSION_AND_MOMENTUM (RAM) 维持 PC<0.60（切忌回退 SUBINDUSTRY 引发 140+ 拥挤碰撞）；若需提 Margin，留在 RAM 下微调 decay=3..5 + 超轻 adv20>0.08..0.12 + 后置 d5/d10（S3-r20）。"
+    },
+    {
+      "case_id": "EFF-12",
+      "region_dataset": "ASI/MINVOL1M/global_seasonal_model (Phase-2 Alphas=0 FREE 首波大爆发)",
+      "controlled_change": "在 Phase-2 免额模式下，对 ASI/MINVOL1M 接入 60d/120d 分析师季节/状态分位预测集 global_seasonal_model（8/8 alphaCount=0, cov=1.000, dateCov=1.000, maxTrade=ON, COUNTRY 中性化）",
+      "verdict": "EFFECTIVE（Phase-2 零额度头号大矿 · 272 QUICK 产 89 S1 / 39 S2 / 12 S3 >= 1.58，Margin 16-38bp！）",
+      "metric_delta": "rK0kmNY1 (rev regime_120d_prob0) Sh=1.80; wpN6V2Kl 16.13bp/Sh=1.67/Fit=1.19; blx30mzK 32.62bp/Sh=1.65/Fit=1.15/TO=3.7%; kq8R5WdK 37.76bp/Sh=1.60/Fit=1.19; LL8eeG2n/3qGddp2O (monthquarter_120d_score3) Sh=1.57-1.64, 2Y=1.50-1.58, 21.76bp; 已即时升级 S3-r21-ASI-GLBSEASON-FREE (24 FULL 免额) 核验日本子市场与 2Y>=1.65，并同步扩展 60d/120d 版本至 EUR/USA!",
+      "reusable_rule": "Phase-2 免额阶段应优先选取 60d/120d 长周期机构/分析师预测概率字段（天然低换手 3.7%-7.9% + 高 Margin 16-38bp），显著优于 5d/30d 短周期图谱类高换手字段。"
     }
   ],
   "ineffective_cases": [
@@ -164,6 +172,14 @@
       "verdict": "INEFFECTIVE（暴露 ASI QUICK 漏检日本子市场陷阱 + ASI:2 导致 53% 超时 + EUR/model110 2Y 偏弱）",
       "metric_delta": "1) ASI/model39 在 QUICK 标 0-FAIL，但 FULL 实测 16/16 全员败于 LOW_ASI_JPN_SHARPE(-0.19~0.35/1.0) + LOW_ROBUST_UNIVERSE_SHARPE(0.75x/0.90x)；ASI/behavioral d=20 压至 Sh=0.59；ASI/psd cty d=10 压至 Sh=0.63；2) ASI:2 + 240s 停滞超时在 30 分钟内造成 64 条 progress=0.35 误杀；3) EUR/model110 value x tree 仅 Sh=1.47 / 2Y=1.05（仅因 <=3 字段触发 PPA-First 显示 FAIL=[]，未过 RA）",
       "root_cause_and_ban": "1) ASI 的 QUICK 模式不跑 JPN 与 Robust 检查，严禁把 ASI QUICK 的 fails=[] 误作真实 0-FAIL；2) ASI 永久限单槽 (ASI:1) + stall_timeout=360s（S3-r17-ASI-M39-JPNFIX-cty_d0_t08 实测 8/8 零超时完成！）；3) S3-r17 实证已定案：即便叠加 COUNTRY 中性化与国家内排序，ASI/model39 仍仅得 LOW_ASI_JPN_SHARPE=0.08~0.30/1.00（日本区结构性无信号），且 EUR/model238 (1.73->0.59) 与 EUR/shortinterest6 (1.47->0.37) 与 model77 同属中小盘驱动、严禁套用 adv20>0.35 硬门控！后续聚焦全新宽覆盖大盘有效集与冲过 4,000 常规额解锁 Alphas=0 蓝海。"
+    },
+    {
+      "case_id": "INEFF-10",
+      "region_dataset": "USA/chart_cnn_alpha (S3-r20 FULL 32/32) + USA/option_chart_model + EUR/model264 & other460",
+      "controlled_change": "1) 对 30d 高换手 CNN 图谱信号 chart_cnn_alpha (TO=52%, Sh=1.45, 2Y=2.74) 叠加 d=4/8 + ts_decay 5/10 降换手；2) 初筛 option_chart_model (TO=91%) 与 EUR 财务趋势分类集 model264/other460",
+      "verdict": "INEFFECTIVE（30d 短周期图谱过度平滑即失真、期权图谱换手 91%、EUR DL 分类集零信号）",
+      "metric_delta": "1) chart_cnn_alpha 在 SUBINDUSTRY d=4+ts_decay5 下 2Y 飙至 2.96 (wpNV7mxd)，但全期 10Y Sharpe 从 1.45 跌至 1.20 (RAM/CROWDING 更跌至 0.92)；2) option_chart_model 虽 maxSh=1.41 但 TO=89%-105% 且 2Y=0.99-1.17；3) EUR/model264 (0/64, max=0.68) 与 EUR/other460 (1/80, max=0.80) 已自动早停。",
+      "root_cause_and_ban": "短周期(<=30d)深度学习图像/分类预测字段不适合重衰减单打 RA 1.58（chart_cnn_alpha 可留作高 2Y 辅支而非独立主力）；Phase-2 免额换血聚焦 60d/120d 长周期 global_seasonal_model & multifactor_return_pred。"
     }
   ]
 }
