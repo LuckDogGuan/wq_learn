@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-26T14:38:00+08:00",
+  "updated_at": "2026-11-26T14:52:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -76,6 +76,14 @@
       "verdict": "INEFFECTIVE（引发 240s 后端计算超时）",
       "metric_delta": "整批 8 条仿真卡死在 progress=0.15/0.90 触发 RESULTS_UNOBSERVED",
       "root_cause_and_ban": "EUR 2500 只跨国股票池对 252 日滚动分位与快慢因子矩阵求逆开销极大。EUR 严禁使用上述慢算子。"
+    },
+    {
+      "case_id": "INEFF-05",
+      "region_dataset": "EST 2026-11-26 Day-2 首批单维信用/期权波动/纯下调计数集 (USA/expected_move, EUR/model28, EUR/model27, EUR/predictive_starmine)",
+      "controlled_change": "以纯单维信用违约分位、纯期权绝对预期振幅或纯分析师单向下调计数做 Stage-1 主力单因子初筛",
+      "verdict": "INEFFECTIVE（单集独立初筛无效 · 及时止损换向）",
+      "metric_delta": "USA/expected_move 0/64 (max=0.76); EUR/model28 0/32 (max=0.66); EUR/model27 0/24 (max=0.73); EUR/predictive_starmine 0/24 (max=0.26)；对比 USA/analyst_revision_horizons (Sh=1.28) 与 USA/model227 (22bp)/model36 (25.7bp)",
+      "root_cause_and_ban": "单维信用风险（model28/27）适合作为跨集正交辅支（如 E5mWLW0J 里的 dtd），而非独立单因子主信号；期权绝对振幅无方向性。应及时止损并优先切入估值动量/会计选股/无偏分析师预期/净修正扩散度（model39/model138/biasfree_analyst/earnings6/analyst39/estimate_diffusion）。"
     }
   ]
 }

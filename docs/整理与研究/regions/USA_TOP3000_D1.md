@@ -127,3 +127,9 @@
   - **EST `2026-11-26`（`13:00 CST` 起 `4,500 FULL` 新额）双引擎上新**：
     1. **置顶提 Margin 收口包 `S3-r13-USA-E5M-HIGHMGN`（32 FULL）**：直接对 `E5mWLW0J`（`SC=0.344, Sh=1.83, Mgn=7.99bp`）将快 `22d` 收益中性化拉慢至 `66d/126d` + `33d/44d` 后置衰减 + `hump(0.01)` + `ts_target_tvr_decay(target_tvr=0.05)` + `ass_tvr_prior_y`，目标将 Margin 从 `7.99bp` 推升至 **`12–18bp+`**；
     2. **4 个全新实盘核验纯 `MATRIX` 机构蓝海大集（含 24 个 `Alphas=0` 免额字段！）**：`USA / model36`（StarMine SmartRatios, `cov=1.000, aCnt=1..8`）、`USA / model227`（纯基本面财务比率与增速，**8/8 `Alphas=0` 免额**, `cov=0.825–0.979`）、`USA / analyst_revision_horizons`（多周期分析师 EBITDA/营收修正，**8/8 `Alphas=0` 免额**, `cov=1.000, val=5.0`）、`USA / expected_move`（期权隐含波动幅，**8/8 `Alphas=0` 免额**, `cov=0.836–0.942, val=5.0`）。
+- **2026-11-26 14:53（2 小时定时审计 #8 · EST `2026-11-26` 首波 656 FULL 复盘 + 止损 `expected_move` + 切入 `model39` 美股估值动量孪生与免额 EPS 扩散度！）**：
+  - **首波复盘与控制变量归因（已记入 `OPTIMIZATION_LEDGER.json`）**：
+    - `USA / analyst_revision_horizons`（免额）首波即出 `POOL_A` **`A1LMJpeg`（`Sh=1.28, 2Y=1.39`）** 及 `Jj3Zwmem / vRY3g5Y3 (1.21)`；`model227` 出 `21.98bp` 种子（`max=1.05`），`model36` 出 `25.71bp` 种子（`max=0.99`）；
+    - `USA / expected_move` 满 `64 FULL` `0` 命中（`max=0.76`），**果断下线止损**；
+    - `S3-r13` 归因确认 `pwWrLpaV`（`9.56bp, 2Y=2.63, Sh=1.65, Fit=0.95`）因同时改 3 轴导致 `Fit` 略差 `0.05`；新增严格单轴 **`S3-r14-USA-E5M-1AX`（16 FULL）** 冻结 `ret22` 单步测 `d33/d44/ret33/ret44/tail/tvr08`（严禁 `tail` 外套 `hump`）。
+  - **美股双王牌上新**：新增 **`USA / model39`**（StarMine Valuation-Momentum 美股孪生，40 个纯 `MATRIX`，精选 8 个 `aCnt=1..4, cov=0.95–0.97` 低拥挤字段）+ **`USA / analyst_revision_horizons` V2**（8/8 `Alphas=0` 免额：含 EPS 净修正扩散度 `estimate_diffusion_quarterly_eps_30d_short`、分析师修正簇幅度及 52 周高点动量）。

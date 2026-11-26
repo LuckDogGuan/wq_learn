@@ -7,12 +7,13 @@ from wq_research_v2.pc_breakout_lab import build_pc_breakout_lab_s3r10_specs
 
 def test_pc_breakout_lab_passes_all_static_gates_and_operator_diversity() -> None:
     specs = build_pc_breakout_lab_s3r10_specs()
-    assert len(specs) == 42
+    assert len(specs) == 44
     total_items = sum(len(s["items"]) for s in specs)
-    assert total_items == 336
+    assert total_items == 352
 
     batch_ids = [s["batch_id"] for s in specs]
     assert len(batch_ids) == len(set(batch_ids)), "Duplicate batch_id in pc_breakout_lab!"
+    assert any(b.startswith("S3-r14-USA-E5M-1AX-") for b in batch_ids), "Missing S3-r14 Single-Axis E5mWLW0J Finisher!"
     assert any(b.startswith("S3-r13-USA-E5M-HIGHMGN-") for b in batch_ids), "Missing S3-r13 High-Margin Finisher!"
 
     validator = ExprValidator()
@@ -41,7 +42,7 @@ def test_pc_breakout_lab_passes_all_static_gates_and_operator_diversity() -> Non
             elif item["source_side"] == "TOP100_2026Q4":
                 top_cnt += 1
 
-    assert admin_cnt == top_cnt == 168, f"50:50 imbalance: admin={admin_cnt}, top={top_cnt}"
+    assert admin_cnt == top_cnt == 176, f"50:50 imbalance: admin={admin_cnt}, top={top_cnt}"
 
     # Verify genuinely diverse, live-verified REGULAR Gold-81 operators are exercised!
     required_new_ops = {

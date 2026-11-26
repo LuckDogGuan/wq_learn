@@ -605,10 +605,63 @@ def build_usa_e5m_highmgn_s3r13_specs() -> list[dict[str, Any]]:
     return specs
 
 
+def build_usa_e5m_1ax_margin_s3r14_specs() -> list[dict[str, Any]]:
+    """S3-r14 Strict Single-Variable Controlled-Variable Attribution on E5mWLW0J (16 FULL = 2 batches).
+
+    Follows AGENTS.md Section 3 & OPTIMIZATION_LEDGER.json (EFF-05 & INEFF-01):
+      - S3-r13 changed 3 axes at once (last_qtr + d44 + ret66 -> pwWrLpaV 9.56bp, 2Y=2.63, Fit=0.95)
+        and proved ret22->ret66 alone dropped Sharpe 1.83->1.58 while hump outside tail(newval=0) crashed 0.83.
+      - Here we FREEZE E5mWLW0J's core (ass_tvr_prior_qtr x eps1 x dtd, d22, ret22, tail[-0.25,0.25,0], STATISTICAL)
+        and vary STRICTLY ONE variable per expression (ZERO hump outside tail!).
+    """
+    at_pq = "ts_backfill(mdl31_ab1_ass_tvr_prior_qtr, 21)"
+    at_lq = "ts_backfill(mdl31_ab1_ass_tvr_last_qtr, 21)"
+    eps1 = "ts_backfill(star_eps_surprise_prediction_fq1, 21)"
+    dtd = "ts_backfill(mdl28_sm_structural2_v14_0_0_nd_credit_structural_distance_to_default, 21)"
+
+    core_pq = f"min(rank({at_pq}), min(rank({eps1}), rank({dtd})))"
+    core_lq = f"min(rank({at_lq}), min(rank({eps1}), rank({dtd})))"
+
+    ret22 = "rank(ts_mean(returns, 22))"
+    ret33 = "rank(ts_mean(returns, 33))"
+    ret44 = "rank(ts_mean(returns, 44))"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC14-1AX-d33-only", "ADMIN_ORIGINAL", "WL13229", f"tail(vector_neut(group_rank(ts_decay_linear({core_pq}, 33), subindustry), {ret22}), lower=-0.25, upper=0.25, newval=0)"),
+        ("PC14-1AX-d44-only", "ADMIN_ORIGINAL", "WL13229", f"tail(vector_neut(group_rank(ts_decay_linear({core_pq}, 44), subindustry), {ret22}), lower=-0.25, upper=0.25, newval=0)"),
+        ("PC14-1AX-ret33-only", "ADMIN_ORIGINAL", "WL13229", f"tail(vector_neut(group_rank(ts_decay_linear({core_pq}, 22), subindustry), {ret33}), lower=-0.25, upper=0.25, newval=0)"),
+        ("PC14-1AX-ret44-only", "ADMIN_ORIGINAL", "WL13229", f"tail(vector_neut(group_rank(ts_decay_linear({core_pq}, 22), subindustry), {ret44}), lower=-0.25, upper=0.25, newval=0)"),
+        ("PC14-1AX-atlq-only", "TOP100_2026Q4", "SZ83096", f"tail(vector_neut(group_rank(ts_decay_linear({core_lq}, 22), subindustry), {ret22}), lower=-0.25, upper=0.25, newval=0)"),
+        ("PC14-1AX-tail30-only", "TOP100_2026Q4", "ZS59763", f"tail(vector_neut(group_rank(ts_decay_linear({core_pq}, 22), subindustry), {ret22}), lower=-0.3, upper=0.3, newval=0)"),
+        ("PC14-1AX-tail20-only", "TOP100_2026Q4", "ZS59763", f"tail(vector_neut(group_rank(ts_decay_linear({core_pq}, 22), subindustry), {ret22}), lower=-0.2, upper=0.2, newval=0)"),
+        ("PC14-1AX-tvr08-only", "TOP100_2026Q4", "JX79797", f"ts_target_tvr_decay(tail(vector_neut(group_rank(ts_decay_linear({core_pq}, 22), subindustry), {ret22}), lower=-0.25, upper=0.25, newval=0), lambda_min=0, lambda_max=0.9, target_tvr=0.08)"),
+    ]
+
+    specs: list[dict[str, Any]] = []
+    for tag, neut, dec, trunc in [
+        ("stat_d6_t08", "STATISTICAL", 6, 0.08),
+        ("stat_d4_t08", "STATISTICAL", 4, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r14-USA-E5M-1AX-{tag}",
+                campaign_id="S3_PCLAB_USA_E5M_1AX",
+                hypothesis_id="HYP-PC14-E5M-STRICT-SINGLE-AXIS-MARGIN",
+                region="USA",
+                universe="TOP3000",
+                dataset_id="model31",
+                settings=_make_settings("USA", "TOP3000", neut, decay=dec, truncation=trunc),
+                items=_build_items(exprs, dataset_id="model31", primary_field_id="mdl31_ab1_ass_tvr_prior_qtr", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r13 (32 FULL) -> S3-r12 (48 FULL) -> S3-r11 (96 FULL) -> S3-r10b (160 FULL)."""
+    """Return ordered S3-r14 (16 FULL) -> S3-r13 (32 FULL) -> S3-r12 (48 FULL) -> S3-r11 (96 FULL) -> S3-r10b (160 FULL)."""
     return (
-        build_usa_e5m_highmgn_s3r13_specs()
+        build_usa_e5m_1ax_margin_s3r14_specs()
+        + build_usa_e5m_highmgn_s3r13_specs()
         + build_usa_stat_3ds_pc_finisher_s3r12_specs()
         + build_ortho_pc_breakout_s3r11_specs()
         + build_usa_pc_angle_ab_dist_specs()
