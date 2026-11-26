@@ -8,8 +8,8 @@ import unittest
 from unittest.mock import Mock
 
 
-ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = ROOT / "代码/优化代码/定时提交因子/schedule_submit.py"
+ROOT = Path(__file__).resolve().parents[2]
+SCRIPT = ROOT / "scripts/ops/定时提交因子/schedule_submit.py"
 SPEC = importlib.util.spec_from_file_location("schedule_submit", SCRIPT)
 schedule_submit = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(schedule_submit)

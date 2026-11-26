@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-代码/优化代码/取消Tag/remove_tag.py
+scripts/ops/取消Tag/remove_tag.py
 
 批量取消指定 Alpha 上的 Tag 标签小工具。
 功能特性：
@@ -20,7 +20,7 @@ from pathlib import Path
 
 # 添加 Core 所在路径
 CURRENT_DIR = Path(__file__).resolve().parent
-CORE_PARENT = CURRENT_DIR.parent
+CORE_PARENT = CURRENT_DIR.parent.parent.parent / "legacy_core"
 if str(CORE_PARENT) not in sys.path:
     sys.path.insert(0, str(CORE_PARENT))
 

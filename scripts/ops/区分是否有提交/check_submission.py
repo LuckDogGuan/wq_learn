@@ -22,14 +22,14 @@ if sys.platform == "win32":
     except Exception:
         pass
 
-# 将项目根目录加入 sys.path 以支持模块导入
+# 将项目根目录与 legacy_core 加入 sys.path 以支持模块导入
 CURRENT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = CURRENT_DIR.parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
-OPTIMIZE_CODE_DIR = CURRENT_DIR.parent
-if str(OPTIMIZE_CODE_DIR) not in sys.path:
-    sys.path.insert(0, str(OPTIMIZE_CODE_DIR))
+LEGACY_CORE_DIR = PROJECT_ROOT / "legacy_core"
+if str(LEGACY_CORE_DIR) not in sys.path:
+    sys.path.insert(0, str(LEGACY_CORE_DIR))
 
 from Core.api import login
 from Core.api.sim_api import (

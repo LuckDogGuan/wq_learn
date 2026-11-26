@@ -6,8 +6,9 @@ import sys
 import unittest
 from unittest.mock import AsyncMock, Mock, patch
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "代码/优化代码"))
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "legacy_core"))
+sys.path.insert(0, str(ROOT / "scripts" / "ops"))
 from Core.api.sim_api import (
     check_alpha_submission_status,
     get_alpha_details,

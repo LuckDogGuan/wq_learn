@@ -6,12 +6,14 @@ import argparse
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+LEGACY_CORE_DIR = Path(__file__).resolve().parents[3] / "legacy_core"
+if str(LEGACY_CORE_DIR) not in sys.path:
+    sys.path.insert(0, str(LEGACY_CORE_DIR))
 from Core.api.submission import run_submission_group
 
 
 # 填写 ID 后手动运行即可；检查通过后会提交，也支持命令行传入 ID。
-ALPHA_IDS = ["1Yj6rqzW"]
+ALPHA_IDS = ["bl8LnbA6"]
 
 
 def parse_ids(values: list[str]) -> list[str]:

@@ -1,0 +1,66 @@
+Quantcepts- What is an Alpha
+原片 Quantcepts.tar::Quantcepts/Quantcepts- What is an Alpha.mkv
+时长 00:07:50.829
+转录 whisper，共 61 段。
+
+[00:00:03.180–00:00:11.020] An alpha is a mathematical model that seeks to predict the future price movement of various financial instruments.
+[00:00:11.020–00:00:16.380] An alpha is a vector of predicted values of stocks in the universe.
+[00:00:16.380–00:00:21.500] The universe could be a group of US stocks defined on the basis of their liquidity.
+[00:00:21.500–00:00:28.620] Each value can change daily and has two properties. First, the direction of the alpha and second,
+[00:00:28.620–00:00:36.140] the magnitude of the alpha. Direction determines whether you want to go long or short the instrument.
+[00:00:36.140–00:00:41.500] The magnitude of the values determine what proportion of the allocated capital should be
+[00:00:41.500–00:00:48.860] distributed amongst the instruments in the universe. To create an alpha, we begin with an idea that seeks
+[00:00:48.860–00:00:55.900] to capture an inefficiency in the market. That idea is then applied to a chosen group of stocks
+[00:00:55.900–00:01:06.990] which we call our alpha universe. Long Short Market Neutral Strategy
+[00:01:07.630–00:01:14.590] It involves equal amount of long positions in stocks expected to rise in value and short positions in
+[00:01:14.590–00:01:21.630] stock expected to drop in value. The hope is that even if the long positions fall in value,
+[00:01:21.630–00:01:28.590] profit from shorting may still outweigh losses benefiting the hedge fund. Let's delve into what
+[00:01:28.590–00:01:35.550] that means. Taking a long position means buying a stock and making money when it increases in value.
+[00:01:35.550–00:01:41.870] On the other hand, taking a short position in a stock means borrowing an equity that you do not own,
+[00:01:41.870–00:01:49.710] usually from a broker, selling it and then hoping it declines in value. The hope is you can buy it back
+[00:01:49.710–00:01:54.270] at a lower price than what you had paid for it and return the borrowed shares.
+[00:02:01.860–00:02:08.660] Quant researchers can seek to provide expectations about future performance by exposing the particular
+[00:02:08.660–00:02:14.980] alpha to a stream of historical financial data to generate its theoretical past performance.
+[00:02:14.980–00:02:19.620] Let's look at the six performance-related metrics on WorldQuant BRAIN.
+[00:02:19.620–00:02:27.220] Sharpe is the measure of risk-adjusted returns earned by the alpha. Higher values of Sharpe are better.
+[00:02:28.100–00:02:34.500] Turnover is the percentage of the capital which the alpha trades each day. More turnover may mean
+[00:02:34.500–00:02:41.380] higher transaction costs during trading. Drawdown represents the percentage of the largest loss incurred
+[00:02:41.380–00:02:46.580] during any year in your backtesting. As a practice, you should target a return to drawdown
+[00:02:46.580–00:02:53.940] ratio greater than 1. The higher the ratio of returns to drawdown, the better it may be for your alpha.
+[00:02:53.940–00:03:00.740] Correlation of the alpha to other alphas in the pool should be low unless we see much higher performance
+[00:03:00.740–00:03:07.700] as compared to the correlated alphas. The metrics to check if the performance is contributed by diverse
+[00:03:07.700–00:03:13.460] set of stocks include a weight test and a sub-universe test. Weight Test
+[00:03:13.460–00:03:20.900] A robustness check to ensure alpha weight is evenly distributed across stocks not concentrated on a few.
+[00:03:20.900–00:03:27.540] A sub-universe test checks if the alpha's performance in the immediate smaller set of tradable stocks
+[00:03:27.540–00:03:30.820] or sub-universe exceeds a required threshold.
+[00:03:30.820–00:03:43.570] price volume data category. It includes data like stock prices, the open price of a stock, high price,
+[00:03:43.570–00:03:50.290] low price, close, and other trading related information like volume of shares traded and market
+[00:03:50.290–00:03:57.330] capitalization. The change in a stock's price between the open and the close of a trading session
+[00:03:57.330–00:04:04.770] can be a potential idea. Let's see how this information can be used as a signal to generate an alpha.
+[00:04:04.770–00:04:12.210] Here is one hypothesis. If a stock's close price is lower than its open price, we may anticipate a
+[00:04:12.210–00:04:18.770] reversion, expecting the stock to bounce back and outperform others in the near future. We take a
+[00:04:18.770–00:04:26.130] long position, profiting if the price of the stock rises. Conversely, if the close price is higher than
+[00:04:26.130–00:04:32.210] the open price, we may expect a reversion to a lower price, prompting us to take a short position.
+[00:04:39.740–00:04:45.580] Fundamentals capture the underlying business, financial, and operational health of a company,
+[00:04:46.220–00:04:51.980] usually reported every quarter. While the data fields are many, they can be summarized into three
+[00:04:51.980–00:04:59.100] financial statements. Balance sheet, income statement, and cash flow statement. The balance sheet provides a
+[00:04:59.100–00:05:06.780] snapshot of the company's financial health, detailing its assets, liabilities, and equity. The income
+[00:05:06.780–00:05:14.060] statement illustrates the company's profitability, showing how revenue is transformed into income after
+[00:05:14.060–00:05:20.940] accounting for various expenses. And last, the cash flow statement reveals the company's liquidity
+[00:05:20.940–00:05:28.300] by tracking the inflow and the outflow of cash from activities like operations, investments, and financing.
+[00:05:28.940–00:05:36.140] Now let's discuss an idea based on the changes in the cash flow from operations and market cap of the firm.
+[00:05:36.140–00:05:41.980] Cash flow from operations is the cash earned through core business activities. Market capitalization
+[00:05:41.980–00:05:49.580] represents the firm's worth calculated as the current market price of one share multiplied by the total
+[00:05:49.580–00:05:56.780] number of the company's outstanding shares. The ratio of cash flow from operations to market cap
+[00:05:56.780–00:06:03.260] indicates if a company is fairly valued in the market with respect to its cash-generating abilities.
+[00:06:03.900–00:06:12.140] One theory is, high ratio suggests an undervalued firm which could provide higher future returns and vice versa.
+[00:06:19.490–00:06:28.610] Alphas are fueled by variety of ideas, each distinct in the pattern it can identify and the results it forecasts.
+[00:06:28.610–00:06:36.690] Some ideas include reversion. The hypothesis is that if something increases today it will fall tomorrow
+[00:06:36.690–00:06:44.770] and if something decreases today it will increase tomorrow. This something can be anything price, volume,
+[00:06:44.770–00:06:52.210] correlation between two things or the other indicators or variables that you think of while developing your alpha.
+[00:06:52.210–00:06:58.530] another idea category is momentum. Assume that stocks which have performed well in the past
+[00:06:58.530–00:07:04.450] will continue to perform well while the stocks that have performed poorly will continue to do so.
+[00:07:05.090–00:07:13.410] Seasonality is based on the idea that certain months, quarters, or years may influence the price of a security.
+[00:07:13.410–00:07:29.570] lead-lag relationships assume that the prices of certain stocks lead and others lag behind. For example, an improvement in an industrial company might later lead to an improvement in its suppliers.
+[00:07:30.290–00:07:37.410] Index rebalancing is another idea category. When a stock is added to an index like the S&P 500,
+[00:07:37.410–00:07:53.410] indexed funds purchased by the funds fracking the index can increase its price and can be predicted.

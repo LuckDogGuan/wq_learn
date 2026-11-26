@@ -1,6 +1,6 @@
 # WorldQuant Brain: 因子提交状态判别工具 (check_submission)
 
-本模块位于 `代码/优化代码/区分是否有提交/`，用于精准、权威、快速地判别任意 WorldQuant BRAIN Alpha 是**已提交 (Submitted / OS)** 还是 **未提交 (Unsubmitted / IS)**。
+本模块位于 `scripts/ops/区分是否有提交/`，用于精准、权威、快速地判别任意 WorldQuant BRAIN Alpha 是**已提交 (Submitted / OS)** 还是 **未提交 (Unsubmitted / IS)**。
 
 ---
 

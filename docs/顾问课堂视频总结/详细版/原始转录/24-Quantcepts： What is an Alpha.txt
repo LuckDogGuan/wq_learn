@@ -1,0 +1,14 @@
+Quantcepts： What is an Alpha
+原片 Quantcepts.tar::Quantcepts/Quantcepts： What is an Alpha.mkv
+时长 00:01:02.181
+转录 whisper，共 9 段。
+
+[00:00:03.180–00:00:11.020] An alpha is a mathematical model that seeks to predict the future price movement of various financial instruments.
+[00:00:11.020–00:00:16.380] An alpha is a vector of predicted values of stocks in the universe.
+[00:00:16.380–00:00:21.500] The universe could be a group of US stocks defined on the basis of their liquidity.
+[00:00:21.500–00:00:28.620] Each value can change daily and has two properties. First, the direction of the alpha. And second,
+[00:00:28.620–00:00:36.220] the magnitude of the alpha. Direction determines whether you want to go long or short the instrument.
+[00:00:36.220–00:00:41.500] The magnitude of the values determine what proportion of the allocated capital should be
+[00:00:41.500–00:00:48.940] distributed amongst the instruments in the universe. To create an alpha, we begin with an idea that seeks
+[00:00:48.940–00:00:55.900] to capture an inefficiency in the market. That idea is then applied to a chosen group of stocks
+[00:00:55.900–00:00:59.500] which we call our alpha universe.
