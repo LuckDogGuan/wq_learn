@@ -1229,7 +1229,101 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
     "long_term_quantile5_r60_pred": 0,
     "long_term_seasonal_quantile1_r120_pred": 0,
     "long_term_regime2_quantile1_r120_pred": 0,
+    "short_hedge3_60d_single_quantile_pred": 0,
 }
+
+
+def build_s3r23c_asi_qtile5_sub_free_specs() -> list[dict[str, Any]]:
+    """S3-r23c (16 FULL, 100% UNUSED_ALPHA0 FREE): ASI/MINVOL1M/multifactor_return_pred qtile5_class_pred subindustry/sector Finisher!
+
+    Triggered by 2026-11-27 09:44 CST audit:
+      - Fresh sibling field `short_term_60d_qtile5_class_pred` just hit vRY06mzQ (Sh=2.01, 2Y=2.56, Fit=1.25,
+        TO=13.55%, FAIL=[], CROWDING d=0) on `subindustry` (never yet tested on `subindustry`/`sector` under
+        COUNTRY in FULL mode!).
+      - Pairs `qtile5_class_pred` standalone & in single-dataset ATOM dual-branch with `st_r2` / `anl_120`
+        using `subindustry` / `sector` + Wang Ge L6 `tail(0.25, 0.75, 0.5)` across COUNTRY d={0, 4} (maxTrade=ON).
+      - Runs IMMEDIATELY in Phase-2 (`queue_type='UNUSED_ALPHA0'`, ZERO normal quota cost!).
+    """
+    specs: list[dict[str, Any]] = []
+    st_q5 = "ts_backfill(short_term_60d_qtile5_class_pred, 21)"
+    st_r2 = "ts_backfill(short_term_regime2_60d_single_quantile_pred, 21)"
+    anl_120 = "ts_backfill(analyst_120d_single_quantile_pred, 21)"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC23C-A1-q5-d10-sub", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({st_q5}, 10), subindustry)"),
+        ("PC23C-A2-q5-d15-sub", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({st_q5}, 15), subindustry)"),
+        ("PC23C-A3-q5-d10-sec", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear({st_q5}, 10), sector)"),
+        ("PC23C-A4-q5-str2-sub", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear(min(rank({st_q5}), rank({st_r2})), 10), subindustry)"),
+        ("PC23C-A5-q5-tail25-sub", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear({st_q5}, 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC23C-A6-q5-tail25-sec", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear({st_q5}, 10), sector), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC23C-A7-q5-anl120-sub", "TOP100_2026Q4", "SZ83096", f"group_rank(ts_decay_linear(min(rank({st_q5}), rank({anl_120})), 10), subindustry)"),
+        ("PC23C-A8-q5-str2-tail25", "TOP100_2026Q4", "LD22811", f"tail(group_rank(ts_decay_linear(min(rank({st_q5}), rank({st_r2})), 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d0_t08", "COUNTRY", 0, 0.08),
+        ("cty_d4_t08", "COUNTRY", 4, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r23c-ASI-QTILE5-SUB-FREE-{tag}",
+                campaign_id="S3_ASI_QTILE5_SUB_ALPHA0_FULL",
+                hypothesis_id="HYP-S3R23C-ASI-VRY06MZQ-QTILE5-SUB-SEC-FREE-FULL",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="multifactor_return_pred",
+                queue_type="UNUSED_ALPHA0",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(exprs, dataset_id="multifactor_return_pred", primary_field_id="short_term_60d_qtile5_class_pred", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
+def build_s3r23b_asi_mf120_sub_free_specs() -> list[dict[str, Any]]:
+    """S3-r23b (24 FULL, 100% UNUSED_ALPHA0 FREE): ASI/MINVOL1M/multifactor_return_pred subindustry/sector Robust & PC<0.70 Finisher!
+
+    Key S3-r22 attribution:
+      - On ASI/MINVOL1M under COUNTRY neutralization, `subindustry` (A1L67JZg: Sh=2.62, 2Y=2.71, Fit=1.61,
+        JPN=PASS, PC=0.7084, Robust=2.10/2.36=89.0%) crushed `country*industry` (78GOnqEQ: Sh=2.33, JPN=0.83 FAIL)
+        because country*industry slices Asia into ~700 tiny buckets!
+      - In S3-r22, `tail25` and `anl120 x st_r2` (A1L631kY, QUICK Sh=2.35/2Y=2.30) were only tested on
+        `country*industry`, NEVER on `subindustry` or broader `sector` in FULL mode!
+      - Runs IMMEDIATELY in Phase-2 (queue_type='UNUSED_ALPHA0', ZERO quota cost!) across COUNTRY d={0,2,6} (maxTrade=ON).
+    """
+    specs: list[dict[str, Any]] = []
+    st_r2 = "ts_backfill(short_term_regime2_60d_single_quantile_pred, 21)"
+    anl_120 = "ts_backfill(analyst_120d_single_quantile_pred, 21)"
+    sh3_60 = "ts_backfill(short_hedge3_60d_single_quantile_pred, 21)"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC23B-A1-str2-d15-sub", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({st_r2}, 15), subindustry)"),
+        ("PC23B-A2-str2-d10-sec", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({st_r2}, 10), sector)"),
+        ("PC23B-A3-str2-d15-sec", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear({st_r2}, 15), sector)"),
+        ("PC23B-A4-anl120-str2-sub", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear(min(rank({anl_120}), rank({st_r2})), 10), subindustry)"),
+        ("PC23B-A5-str2-tail25-sub", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear({st_r2}, 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC23B-A6-str2-d15-tail25-sub", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear({st_r2}, 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC23B-A7-str2-tail25-sec", "TOP100_2026Q4", "SZ83096", f"tail(group_rank(ts_decay_linear({st_r2}, 10), sector), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC23B-A8-anl-str2-tail25-sub", "TOP100_2026Q4", "LD22811", f"tail(group_rank(ts_decay_linear(min(rank({anl_120}), rank({st_r2})), 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d0_t08", "COUNTRY", 0, 0.08),
+        ("cty_d2_t08", "COUNTRY", 2, 0.08),
+        ("cty_d6_t08", "COUNTRY", 6, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r23b-ASI-MF120-SUB-FREE-{tag}",
+                campaign_id="S3_ASI_MF120_SUB_ALPHA0_FULL",
+                hypothesis_id="HYP-S3R23B-ASI-A1L67JZG-SUB-SEC-TAIL25-FREE-FULL",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="multifactor_return_pred",
+                queue_type="UNUSED_ALPHA0",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(exprs, dataset_id="multifactor_return_pred", primary_field_id="short_term_regime2_60d_single_quantile_pred", tag_suffix=tag),
+            )
+        )
+    return specs
 
 
 def build_s3r23_asi_mf120_robust_specs() -> list[dict[str, Any]]:
@@ -1525,9 +1619,11 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r23 (24 FULL) -> S3-r22 (48 FULL) -> S3-r21 (24 FULL) -> ... -> S3-r10b (160 FULL)."""
+    """Return ordered S3-r23b (24 FULL FREE) -> S3-r23c (16 FULL FREE) -> S3-r23 (24 FULL) -> S3-r22 (48 FULL) -> ..."""
     return (
-        build_s3r23_asi_mf120_robust_specs()
+        build_s3r23b_asi_mf120_sub_free_specs()
+        + build_s3r23c_asi_qtile5_sub_free_specs()
+        + build_s3r23_asi_mf120_robust_specs()
         + build_s3r22_mf120_free_specs()
         + build_s3r21_asi_glbseason_free_specs()
         + build_s3r20_free_and_eur_margin_specs()
