@@ -9,7 +9,7 @@
 ```mermaid
 flowchart TD
     subgraph INIT["启动层：goal/run_config.json 方向与子代理配置"]
-        G0["用户可指定（或取默认值）：<br/>• Region (默认 USA, EUR) | Universe (TOP3000 / TOP2500)<br/>• Category (model / analyst / fundamental / other...)<br/>• 研究方式 (全闭环 / 仅 Stage1-2 快筛 / 仅 Stage3 专一优化 / 管理员模板评测)<br/>• 子代理：dsh-opencode-go/deepseek-v4.1-flash（先 probe，≤4 轮即弃）"]
+        G0["用户可指定（或取默认值）：<br/>• Region (默认 USA, EUR) | Universe (TOP3000 / TOP2500)<br/>• Category (model / analyst / fundamental / other...)<br/>• 研究方式 (全闭环 / 仅 Stage1-2 快筛 / 仅 Stage3 专一优化 / 管理员模板评测)<br/>• 子代理：dsh-opencode-go/deepseek-v4.1-flash（先 probe，最多 4 轮，保留会话，默认只回传结果）"]
     end
 
     subgraph S0["第一环【严进】：Stage 0 种子因子（Seed Factor）严格把关"]

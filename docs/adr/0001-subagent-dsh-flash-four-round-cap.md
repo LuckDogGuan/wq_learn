@@ -1,18 +1,10 @@
-# ADR-0001 · 子代理统一用 DSH flash，≤4 轮即弃
+# ADR-0001 · DSH flash 会话保留与回写责任
 
 Status: accepted · 2026-11-27 · 决定人：用户
 
-**决定**：子代理使用 `dsh-opencode-go/deepseek-v4.1-flash`，每次启用前先 `dsh_worker_probe`；每个子代理最多 4 轮对话，用满即丢弃并换新。方向判断与有效/无效归因由主 Agent 负责。
+- 子代理使用 `dsh-opencode-go/deepseek-v4.1-flash`，派发用 `tier=flash`、`effort=high`，启用前执行 `dsh_worker_probe`。探测结果只覆盖当次工具调用。
+- 同一个子代理负责诊断、只读核验和最终回报。一轮指一次派单与回报。每个子代理最多 4 轮，达到上限后停止给该会话派单。保留 DSH 会话、对话及结果，后续任务按需开新会话。
+- 默认直接回传结果。确需交付文件时，仅在派单指定且原先不存在的路径创建文件。由主 Agent 复核证据、决定方向、修改现有文件及落账。
+- 长任务按检查点分段，检查点回传至同一会话。整体队列冗余沿用 `goal/run_config.json` 的巡检配置。
 
-**原因**：子代理无对话上下文且长对话会遗忘，状态必须落在文件里（`docs/agents/TODO_20261127.md`、`.scratch/`、账本）。flash 适合机械、边界明确的活。
-
-**未验证**：该 provider/model 名称是否可用 `[U]`；probe 只证明一次 no-op 调用成功，不证明具备 agent/工具能力。flash 做归因的可靠性 `[U]`。
-
-**影响**：`goal/run_config.json → subagent_profile`、`.agents/skills/wq-d1-closed-loop/SKILL.md` Step C。原 Google Neon/medium 默认降为 legacy 预设。
-
-## 修订 2026-11-27 15:46（用户确认）
-
-- **闭环归一个子代理**：一个任务的“提出意见 → 修改 → 结果”由同一个子代理完整负责并回报；不得把同一流程拆给多个代理接力。主 Agent 负责派单、方向决策、`git diff`/测试复核及有效/无效归因落账。
-- **默认 DSH**：子代理默认 DSH flash（`dsh-opencode-go/deepseek-v4.1-flash`）。
-- **任务包 = 定时间隔 × 1.5**：例如 3h 巡检间隔备足约 4.5h 工作量，留冗余防断粮；`dsh_run_worker` 单次上限 7200s，更长的任务包由同一子代理分段推进，进度落文件。该“1.5 倍”的解释（对应 `schedule_and_redundancy.queue_redundancy_multiplier=1.5`）`[U]`，如有出入以用户为准。
-- 与“≤4 轮即弃”并存：一轮 = 一次派单与回报；长任务靠检查点而不是堆对话轮数。
+执行入口见 [派单模板](../agents/SUBAGENT_BRIEF_TEMPLATE.md) 和 [闭环技能](../../.agents/skills/wq-d1-closed-loop/SKILL.md)。

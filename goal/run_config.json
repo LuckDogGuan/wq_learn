@@ -6,7 +6,7 @@
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × 5地区轮巡 × 3模板族配对 × >=4500自动切免额)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · 独立文档/台账/标签，不接入主调度器)"
   },
-  "updated_at": "2026-11-26T21:35:00+08:00",
+  "updated_at": "2026-11-27T15:24:00+08:00",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "concurrency_limits": {
     "glb_max_threads": 3,
@@ -17,6 +17,13 @@
   "schedule_and_redundancy": {
     "check_interval_hours": "3-4",
     "cron_expression": "0 */3 * * *",
+    "task_windows": {
+      "min_planned_hours": 3,
+      "max_planned_hours": 24,
+      "light_check_for_tasks_over_hours": 6,
+      "max_hours_between_light_checks": 4,
+      "note": "按工作量与运行强度选择任务时长。长任务启动后 4 小时内首检，之后最多每 4 小时一次。复用现有巡检，只读确认运行符合计划、完成数与满足本轮条件数，待判定单列。"
+    },
     "queue_redundancy_multiplier": 1.5,
     "min_runnable_batches_per_cycle_with_50pct_redundancy": 240,
     "min_runnable_sims_with_50pct_redundancy": 1920,
@@ -26,8 +33,8 @@
     "execution_order": "SEQUENTIAL_NORMAL_FIRST_NO_CONCURRENT_MIX",
     "alpha0_switch_threshold": 4500,
     "daily_target": 4500,
-    "below_threshold_mode": "NORMAL_ONLY（不要同步混跑！先跑完 4,000 个常规额度）",
-    "at_or_above_threshold_mode": "ALPHA0_EXEMPT_ONLY（跑完 4,000 常规额度后，再自动切入运行 Alphas=0 豁免字段队列）",
+    "below_threshold_mode": "NORMAL_ONLY（不要同步混跑！先跑满 4,500 个常规额度，略微超出无妨）",
+    "at_or_above_threshold_mode": "ALPHA0_EXEMPT_ONLY（跑满 4,500 常规额度后，再自动切入运行 Alphas=0 豁免字段队列）",
     "alpha0_free_until": "2026-12-06",
     "asi_isolated_experiment_config": "docs/asi_d0_d1_isolated/asi_isolated_config.json（路线 ③ 亚太孤岛实验线：完全隔离，不接入主线调度器）"
   },
@@ -44,7 +51,7 @@
     ],
     "forbidden_ops": ["trade_when", "ts_target_tvr_decay(lambda_max>1)", "hump(outside tail newval=0)"]
   },
-  "description": "WorldQuant BRAIN D1-Only RA 统一启动与方向配置文件（多地区精选种子 × 多模板族配对、额度 >4000 自动切免额字段、Stage 1-2 QUICK 快筛、3-4 小时定时复查）。",
+  "description": "WorldQuant BRAIN D1-Only RA 统一启动与方向配置文件（多地区精选种子 × 多模板族配对、额度 >=4500 自动切免额字段、全指标过线自动 PATCH 打标并提示、Stage 1-2 QUICK 快筛、3-4 小时定时复查）。",
   "direction": {
     "regions": ["ASI", "EUR", "USA", "KOR"],
     "region_caps": {
@@ -78,21 +85,22 @@
   "subagent_profile": {
     "default_provider": "dsh-opencode-go",
     "default_model": "deepseek-v4.1-flash",
-    "dispatch_tool": "dsh_run_worker / dsh_spawn_worker (tier=flash)",
-    "probe_first": "每次启用前先 dsh_worker_probe(provider=dsh-opencode-go, model=deepseek-v4.1-flash)；名称可用性为未验证项，probe 仅证明 no-op 调用成功",
+    "dispatch_tool": "dsh_run_worker / dsh_spawn_worker (tier=flash, effort=high)",
+    "probe_first": "每次启用前先 dsh_worker_probe(provider=dsh-opencode-go, model=deepseek-v4.1-flash)；探测一次 no-op 工具调用，实际权限以任务结果为准",
     "max_dialogue_rounds_per_subagent": 4,
-    "discard_after_max_rounds": true,
+    "discard_after_max_rounds": false,
+    "retain_session_history": true,
     "state_carrier": "docs/agents/TODO_20261127.md + OPTIMIZATION_LEDGER.json + CORE_STATE.json（不依赖子代理对话记忆）",
-    "brief_rules": "自包含：绝对路径、验收标准、禁止触碰项；明确不 commit/push/回测/submit；同仓同时最多 1 个写入型子代理",
-    "closed_loop": "一个子代理对一个任务负责完整闭环：提出意见 -> 修改 -> 结果（含自验证与回报）；严禁把同一流程拆给多个代理接力执行",
-    "main_agent_owns": "主 Agent 负责派单、方向决策，并用 git diff / 测试复核子代理回报后写入有效/无效归因；不替子代理做闭环里的修改",
+    "brief_rules": "自包含：绝对路径、验收标准、禁止触碰项。默认只读，直接回传结论；确需文件时只新建派单中指定的文件。",
+    "closed_loop": "同一个子代理负责同一项诊断、只读核验和最终回报。达到 4 轮后停止派发，保留 DSH 会话与对话。",
+    "main_agent_owns": "主 Agent 负责派单、复核证据、方向决策、修改现有文件和落账。",
     "task_sizing": {
       "redundancy_multiplier": 1.5,
-      "basis": "每个子代理任务包按定时巡检间隔的 1.5 倍设计（cron 0 */3 * * * 即 3h 间隔 -> 备足约 4.5h 工作量），留冗余防止中途断粮；与 schedule_and_redundancy.queue_redundancy_multiplier 一致",
-      "execution_note": "dsh_run_worker 单次最长 7200s；超过 2h 的任务包拆成带检查点的段，由同一子代理用 dsh_spawn_worker 分段推进并把进度写入文件；总对话轮数仍受 max_dialogue_rounds_per_subagent=4 约束"
+      "basis": "常规研究任务按 schedule_and_redundancy.task_windows 的 3–24 小时设计；队列容量沿用 schedule_and_redundancy.queue_redundancy_multiplier。DSH 派单是任务内的核验步骤。",
+      "execution_note": "dsh_run_worker 单次最长 7200s；超过 2h 的任务包拆成带检查点的段，由同一子代理分段推进并在会话中报告检查点；总对话轮数仍受 max_dialogue_rounds_per_subagent=4 约束"
     },
     "updated_at": "2026-11-27T15:05:00+08:00",
-    "rationale": "用户 2026-11-27 指定：子代理统一用 dsh-opencode-go/deepseek-v4.1-flash，≤4 轮即弃，防上下文遗忘。原默认 Google Neon/medium 降为 override 预设。",
+    "rationale": "用户 2026-11-27 指定：子代理统一用 dsh-opencode-go/deepseek-v4.1-flash，最多 4 轮后停止派发，完整保留会话。原默认 Google Neon/medium 降为 override 预设。",
     "override_presets": {
       "google_neon_medium_legacy": {
         "provider": "google",
@@ -158,6 +166,11 @@
       "controlled_variable_decay_poll": [0, 5, 20],
       "max_opt_rounds_without_improvement": 3,
       "on_stalled_after_2_to_3_rounds": "停止继续消耗算力优化，打上内部休眠标记 `STALLED_DORMANT_AFTER_3_ROUNDS`（连同瓶颈原因存入 sc_pass_pc_rescue_queue.json / OPTIMIZATION_LEDGER.json），待后续找到新方法再唤醒专项攻关。",
+      "auto_patch_on_pass": {
+        "enabled": true,
+        "never_auto_submit": true,
+        "rule": "凡通过全部硬检与参数门槛（RA 0-FAIL + SC < 0.65 + 正交 + PC < 0.70 打 Useful / 同簇更高 Margin 自动升级替换，或 SC < 0.65 且 PC >= 0.70 打 SC_PASS + 别名 SC 0.xxx PC 0.xxx），直接自动执行 PATCH /alphas/{id} 修改并在回复中向用户提示即可，无需事前询问确认；严禁调用 POST /alphas/{id}/submit。"
+      },
       "pc_policy_and_histogram_rule": {
         "hard_preference": "PC < 0.70 才标为主力可交 Useful；PC >= 0.70 即使触发 +10% Sharpe 官方豁免也建议少交（标记 `PC_EXEMPT_HIGH_PC_HOLD` 供人工谨慎定夺）。",
         "histogram_api_endpoint": "GET /alphas/{alphaId}/correlations/prod",

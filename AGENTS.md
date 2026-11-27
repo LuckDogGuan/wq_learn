@@ -6,7 +6,7 @@
 
 1. **严格 D1-Only**：全链路锁定 `settings.delay == 1`，严禁任何 `Delay = 0 (D0)` 回测。
 2. **Decision #3 算子永久禁令**：永久禁止 `add (+)`、`multiply (*)`、`trade_when`；双分支融合统一用 `min(rank(expr_A), rank(expr_B))` / `reverse(min(...))`。
-3. **绝不自动提交 & 标签/别名/Margin 优先铁律**：永不调用 `POST /alphas/{id}/submit`。全部条件通过（RA 硬检 `0 FAIL` + `SC < 0.65` + 池内正交 + `PC < 0.70`）打 **`Useful`** 标签（独立 PPA 线打 **`PPA_Useful`**）；**凡通过 RA 硬检且 `SC < 0.65` 者统一写别名 `SC 0.xxx PC 0.xxx`**（仅 PC 未过者同时打 **`SC_PASS`** 入专项降 PC 队列）；**其他条件全通过时严格优先保留 `Margin` 越高越好的因子**；`PATCH /alphas/{id}` 须显式确认或 `--confirm-apply`。
+3. **绝不自动提交 & 标签/别名/Margin 优先铁律（全过线自动 PATCH）**：永不调用 `POST /alphas/{id}/submit`。全部条件通过（RA 硬检 `0 FAIL` + `SC < 0.65` + 池内正交 + `PC < 0.70`）打 **`Useful`** 标签（独立 PPA 线打 **`PPA_Useful`**）；**凡通过 RA 硬检且 `SC < 0.65` 者统一写别名 `SC 0.xxx PC 0.xxx`**（仅 PC 未过者或同簇低 Margin 备选打 **`SC_PASS`**）；**其他条件全通过时严格优先保留 `Margin` 越高越好的因子**；**只要指标与参数全部过线，直接自动执行 `PATCH /alphas/{id}` 修改标签/别名（含同簇高 Margin 升级替换）并在回复中向用户提示，无需事前询问**。
 4. **硬保护只读资产与已完成台账**：严禁删除/改写 `legacy_core/Core/runtime_data/`（1,532 文件）、`reference/`（静态参考库）；严禁读取/打印/提交 `Password/config.yaml`；SQLite `COMPLETED_FULL` 行永久不可被重启去重（`DEDUP_SKIPPED`）覆盖。
 5. **只对账一次、绝不盲重发**：遇 `429 / 5xx / 超时 / 缺子 ID` 仅存指纹标 `PENDING_RECONCILE`，冷却后只读对账 1 次，仍未观测落 `RESULTS_UNOBSERVED`。
 6. **无 GUI、广州低内存（1.9 GiB RAM）与地区并发线程上限**：不建本地 Web GUI；后台任务必配 SQLite WAL Checkpoint、10m 认证刷新、10s 重连、流式低内存扫描与 `MemoryMax=512M`；**地区并发硬上限：`GLB` 最多 `3` 个线程，其他所有地区最多 `4` 个线程**（代码层 `WeightedSlotSemaphore` 与 `parse_region_caps` 强制封顶）；新模块必配 `tests/` 单测与 AST 校验。
@@ -41,6 +41,7 @@
 
 - **防上下文爆炸启动协议**：切换任何 AI 工具（Claude Code / Cursor / Codex / Antigravity）或执行 `/compact` 后，**只读 3 个轻量真源（`< 8 KB`）**：本文件 + [CORE_STATE.json](docs/agents/CORE_STATE.json) + [OPTIMIZATION_LEDGER.json](docs/agents/OPTIMIZATION_LEDGER.json)（详细切换与启动口令见 [HANDOFF_GUIDE.md](docs/agents/HANDOFF_GUIDE.md)，跨工具技能见 [.agents/skills/wq-d1-closed-loop/SKILL.md](.agents/skills/wq-d1-closed-loop/SKILL.md)）。
 - **基础版/通用版冻结真源**：当前已跑通 `4,893 FULL/天` 的稳定流水线已完整冻结于 [d1_ra_baseline_v1_frozen.json](docs/整理与研究/workflow/d1_ra_baseline_v1_frozen.json) 与 [D1_RA_BASELINE_V1_MANUAL.md](docs/整理与研究/workflow/D1_RA_BASELINE_V1_MANUAL.md)；任何流程修改若劣化可一键回退。
+- **任务时长与中途检查**：常规任务按预计工作量和运行强度设计为 **3–24 小时**。预计超过 **6 小时**的任务，启动后最迟 **4 小时**做第一次轻量检查，此后相邻两次检查最多间隔 **4 小时**。优先用现有巡检，只读核对是否按计划运行、已完成数和满足本轮条件数（待判定单列）。具体口径见 [闭环技能](.agents/skills/wq-d1-closed-loop/SKILL.md)。
 - **主从闭环与阶段纪律**：
   1. **种子筛选固化**：严格执行华子哥 WDS 四差距 + 顾问课堂 53 课规则（[worldquant-classroom-reference](docs/顾问课堂视频总结/worldquant-classroom-reference/SKILL.md) / `field_screener.py`：选新集/`Alphas=0`、明确经济假设、`cov>=0.75`、`dateCov>=0.60`、必要时 6 步探查字段真实更新频率）。
   2. **Stage 1–2 标准化快筛**：默认固定 `decay=0`、`neutralization=SUBINDUSTRY`，支持开启 `FAST/QUICK` 模式（`simulationMode="QUICK", testPeriod="P0Y0M"`）初筛与 `seed_pruner.py`（`jaccard=0.78`）剪枝。

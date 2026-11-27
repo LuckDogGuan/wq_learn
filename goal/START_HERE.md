@@ -6,7 +6,7 @@
 请读取 AGENTS.md、docs/agents/CORE_STATE.json 和 docs/agents/OPTIMIZATION_LEDGER.json，按 wq-d1-closed-loop 技能启动「主Agent方向决策 + 子Agent控制变量优化」闭环，先检查上轮结果哪些有效、哪些无效，再决定下一轮优化方向。
 ```
 
-> **说明**：所有固定细则（严进种子筛选 → Stage 1-2 `QUICK` 快筛 + 10% 管理员模板评测 `5:5->8:2` → Stage 3 `FULL` 控制变量 `decay∈{0,5,20}` 专一优化、2–3 轮无果止损打标休眠、PC 范围分布表 `[min, max, alphas]` 1–2 轮止损、`PC>0.70` 保守不交、`E5mWLW0J` 已转 `SC_PASS` 搁置、2–4 小时巡检配 **1.5× 一半冗余队列**、子代理默认 `dsh-opencode-go/deepseek-v4.1-flash`（先 probe，≤4 轮即弃）；无新指令时按 [docs/agents/TODO_20261127.md](docs/agents/TODO_20261127.md) 自上而下执行 pending 项）**均已写死在 [goal/run_config.json](file:///c:/Wq/WorldQuant%20Brain/goal/run_config.json)、[CORE_STATE.json](file:///c:/Wq/WorldQuant%20Brain/docs/agents/CORE_STATE.json) 与 [.agents/skills/wq-d1-closed-loop/SKILL.md](file:///c:/Wq/WorldQuant%20Brain/.agents/skills/wq-d1-closed-loop/SKILL.md) 中自动读取，无需在启动口令里重复输入！**
+> **说明**：所有固定细则（严进种子筛选 → Stage 1-2 `QUICK` 快筛 + 10% 管理员模板评测 `5:5->8:2` → Stage 3 `FULL` 控制变量 `decay∈{0,5,20}` 专一优化、2–3 轮无果止损打标休眠、PC 范围分布表 `[min, max, alphas]` 1–2 轮止损、`PC>0.70` 保守不交、`E5mWLW0J` 已转 `SC_PASS` 搁置、2–4 小时巡检配 **1.5× 一半冗余队列**、子代理默认 `dsh-opencode-go/deepseek-v4.1-flash`（先 probe，最多 4 轮，保留会话，默认只回传结果）；无新指令时按 [docs/agents/TODO_20261127.md](docs/agents/TODO_20261127.md) 自上而下执行 pending 项）**均已写死在 [goal/run_config.json](file:///c:/Wq/WorldQuant%20Brain/goal/run_config.json)、[CORE_STATE.json](file:///c:/Wq/WorldQuant%20Brain/docs/agents/CORE_STATE.json) 与 [.agents/skills/wq-d1-closed-loop/SKILL.md](file:///c:/Wq/WorldQuant%20Brain/.agents/skills/wq-d1-closed-loop/SKILL.md) 中自动读取，无需在启动口令里重复输入！**
 
 ---
 
