@@ -1128,7 +1128,7 @@ def resolve_quota_queue_policy(
     day_done: int,
     *,
     normal_done: Optional[int] = None,
-    alpha0_switch_threshold: int = 4000,
+    alpha0_switch_threshold: int = 4500,
     daily_target: int = 4500,
     api_remaining: Optional[int] = None,
     has_pending_normal: bool = True,
@@ -1136,10 +1136,10 @@ def resolve_quota_queue_policy(
 ) -> tuple[str, str]:
     """Strictly sequential daily quota policy (NO concurrent mixing of normal & exempt Alphas=0):
 
-    - Phase 1 (`normal_done < alpha0_switch_threshold`, default < 4000):
+    - Phase 1 (`normal_done < alpha0_switch_threshold`, default < 4500):
       Run ONLY `NORMAL` queue (`NORMAL_ONLY`). Do NOT run `UNUSED_ALPHA0` concurrently!
-    - Phase 2 (`normal_done >= alpha0_switch_threshold`, default >= 4000):
-      Once 4,000 normal simulations are finished, switch cleanly to `ALPHA0_EXEMPT_ONLY`
+    - Phase 2 (`normal_done >= alpha0_switch_threshold`, default >= 4500; slight overshoot OK):
+      Once 4,500 normal simulations are finished, switch cleanly to `ALPHA0_EXEMPT_ONLY`
       to run `UNUSED_ALPHA0` exempt fields (valid until 2026-12-06) while API remaining > 80.
     - When `api_remaining <= 80` or both queues exhausted / daily target reached: `SLEEP_CAP_REACHED`.
     """
@@ -1148,7 +1148,7 @@ def resolve_quota_queue_policy(
     eff_norm = int(day_done if normal_done is None else normal_done)
     if int(alpha0_switch_threshold) > 0 and eff_norm < int(alpha0_switch_threshold):
         if has_pending_normal:
-            return "NORMAL_ONLY", f"normal={eff_norm}<{alpha0_switch_threshold} -> Phase-1 NORMAL_ONLY (先跑完4000常规额度再跑豁免)"
+            return "NORMAL_ONLY", f"normal={eff_norm}<{alpha0_switch_threshold} -> Phase-1 NORMAL_ONLY (先跑满{alpha0_switch_threshold}常规额度再跑豁免)"
         if has_pending_alpha0:
             return "ALPHA0_EXEMPT_ONLY", f"normal queue exhausted at {eff_norm} -> fallback to Alphas=0 exempt"
         return "SLEEP_CAP_REACHED", f"no pending specs at normal={eff_norm}"
@@ -1566,7 +1566,7 @@ def run_ra_production_loop(
     stage12_simulation_mode: Optional[str] = None,
     template_ratio: str = "5:5",
     daily_target: int = 4500,
-    alpha0_switch_threshold: int = 4000,
+    alpha0_switch_threshold: int = 4500,
     track_name: str = "multi_region_matrix_v2",
     max_batches: Optional[int] = None,
     sleep_between_batches_sec: float = 1.0,
@@ -1867,7 +1867,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     p.add_argument("--template-ratio", default="5:5", choices=["5:5", "8:2"], help="Stage 1-2 Admin:Top100 template ratio (default 5:5; switch to 8:2 after validation)")
     p.add_argument("--goal-config", default="", help="Optional path to goal/run_config.json to load direction defaults")
     p.add_argument("--daily-target", type=int, default=4500)
-    p.add_argument("--alpha0-switch-threshold", type=int, default=4000, help="Finish this many NORMAL sims first, then switch to UNUSED_ALPHA0 exempt fields")
+    p.add_argument("--alpha0-switch-threshold", type=int, default=4500, help="Finish this many NORMAL sims first (slight overshoot OK), then switch to UNUSED_ALPHA0 exempt fields")
     p.add_argument("--track-name", default="multi_region_matrix_v2", help="Formal track ID printed in logs for 1-to-1 log tracking")
     p.add_argument("--max-batches", type=int, default=None)
     p.add_argument("--only-free-alpha0", action="store_true")

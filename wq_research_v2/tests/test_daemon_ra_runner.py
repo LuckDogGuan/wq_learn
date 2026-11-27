@@ -207,20 +207,22 @@ def test_diverse_template_packs_and_quota_4000_alpha0_switch() -> None:
             )
             assert rep.valid, f"Diverse template invalid: {pack_name}/{t['id']} -> {rep.errors}"
 
-    # Strictly sequential: below 4000 normal -> NORMAL_ONLY (NO concurrent mixing with Alphas=0!)
-    m1, _ = resolve_quota_queue_policy(1500, normal_done=950, alpha0_switch_threshold=4000, daily_target=4500, has_pending_normal=True, has_pending_alpha0=True)
+    # Strictly sequential: below 4500 normal -> NORMAL_ONLY (NO concurrent mixing with Alphas=0!)
+    m1, _ = resolve_quota_queue_policy(1500, normal_done=950, alpha0_switch_threshold=4500, daily_target=4500, has_pending_normal=True, has_pending_alpha0=True)
     assert m1 == "NORMAL_ONLY"
-    # Even if total day_done >= 4000 (due to prior alpha0), if normal_done < 4000 -> still NORMAL_ONLY!
-    m1b, _ = resolve_quota_queue_policy(4100, normal_done=3500, alpha0_switch_threshold=4000, daily_target=4500, has_pending_normal=True, has_pending_alpha0=True)
+    # Even if total day_done >= 4500 (due to prior alpha0), if normal_done < 4500 -> still NORMAL_ONLY!
+    m1b, _ = resolve_quota_queue_policy(4600, normal_done=4450, alpha0_switch_threshold=4500, daily_target=4500, has_pending_normal=True, has_pending_alpha0=True)
     assert m1b == "NORMAL_ONLY"
-    # Once normal_done >= 4000 with pending Alphas=0 -> switch to ALPHA0_EXEMPT_ONLY!
-    m2, _ = resolve_quota_queue_policy(4050, normal_done=4000, alpha0_switch_threshold=4000, daily_target=4500, has_pending_normal=True, has_pending_alpha0=True)
+    # Once normal_done >= 4500 (or slight overshoot like 4520) with pending Alphas=0 -> switch to ALPHA0_EXEMPT_ONLY!
+    m2, _ = resolve_quota_queue_policy(4550, normal_done=4500, alpha0_switch_threshold=4500, daily_target=4500, has_pending_normal=True, has_pending_alpha0=True)
     assert m2 == "ALPHA0_EXEMPT_ONLY"
+    m2b, _ = resolve_quota_queue_policy(4580, normal_done=4520, alpha0_switch_threshold=4500, daily_target=4500, has_pending_normal=True, has_pending_alpha0=True)
+    assert m2b == "ALPHA0_EXEMPT_ONLY"
     # API remaining <= 80 -> safety sleep
-    m3, _ = resolve_quota_queue_policy(4050, normal_done=4000, alpha0_switch_threshold=4000, daily_target=4500, api_remaining=60, has_pending_normal=True, has_pending_alpha0=True)
+    m3, _ = resolve_quota_queue_policy(4550, normal_done=4500, alpha0_switch_threshold=4500, daily_target=4500, api_remaining=60, has_pending_normal=True, has_pending_alpha0=True)
     assert m3 == "SLEEP_CAP_REACHED"
     # Above daily_target and NO pending Alphas=0 -> sleep
-    m4, _ = resolve_quota_queue_policy(4500, normal_done=4500, alpha0_switch_threshold=4000, daily_target=4500, has_pending_normal=True, has_pending_alpha0=False)
+    m4, _ = resolve_quota_queue_policy(4500, normal_done=4500, alpha0_switch_threshold=4500, daily_target=4500, has_pending_normal=True, has_pending_alpha0=False)
     assert m4 == "SLEEP_CAP_REACHED"
 
 

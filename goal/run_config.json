@@ -3,7 +3,7 @@
   "active_track_name": "多域星阵路径 (Multi-Region Matrix v2.0)",
   "track_registry": {
     "baseline_v1": "基础优化路径 (Baseline v1.0 · EUR/USA 双区单模板冻结版)",
-    "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × 5地区轮巡 × 3模板族配对 × >4000自动切免额)",
+    "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × 5地区轮巡 × 3模板族配对 × >=4500自动切免额)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · 独立文档/台账/标签，不接入主调度器)"
   },
   "updated_at": "2026-11-26T21:35:00+08:00",
@@ -24,7 +24,7 @@
   },
   "quota_alpha0_switch": {
     "execution_order": "SEQUENTIAL_NORMAL_FIRST_NO_CONCURRENT_MIX",
-    "alpha0_switch_threshold": 4000,
+    "alpha0_switch_threshold": 4500,
     "daily_target": 4500,
     "below_threshold_mode": "NORMAL_ONLY（不要同步混跑！先跑完 4,000 个常规额度）",
     "at_or_above_threshold_mode": "ALPHA0_EXEMPT_ONLY（跑完 4,000 常规额度后，再自动切入运行 Alphas=0 豁免字段队列）",
