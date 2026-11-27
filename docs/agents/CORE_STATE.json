@@ -6,7 +6,7 @@
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >4000切Alphas=0)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)"
   },
-  "updated_at": "2026-11-27T12:47:00+08:00",
+  "updated_at": "2026-11-27T14:03:00+08:00",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "context_compaction_rule": "任何 AI 工具（Antigravity / Claude Code / Codex / Cursor）启动或上下文超长重置（/compact）后，只读本文件 + docs/agents/OPTIMIZATION_LEDGER.json + AGENTS.md（总计 < 8KB），绝不重读数万行历史聊天记录！",
   "immutable_red_lines": {
@@ -124,30 +124,30 @@
         }
       ],
       "current_seed_campaigns": [
-        "EUR_GLBSEASON_60D_FREE (Audit #14 新纯MATRIX Alphas=0 FREE, global_seasonal_model 60d, cov=0.997, 接棒已自动早停的 EUR/model264 & EUR/other460!)",
-        "S3-r20-EUR-1YG-HIGHMGN (16 FULL NORMAL · 排队于次轮常规额度: 锁定 RAM 保持 PC~0.59, 用轻 adv20>0.08..0.12 + post-d5/d10 把 1YG578aX Margin 从 7.44bp 推至 11-13bp!)",
+        "S3-r26b-EUR-M238-ORTHO (16 FULL NORMAL · Audit #19 立即发射! 晋级 EST 2026-11-27 新爆 EUR/model238 COUNTRY 黑马 d59elG5K [13.51bp, Sh=1.68, Fit=1.27] / A1LqgYaE [Sh=1.72] / kq8eLwA8 [34.29bp]，采用 EFF-16 超轻 adv20>{0.08,0.12,0.16} + align×pref 双支直取完全正交 EUR Useful #3!)",
+        "S3-r20-EUR-1YG-HIGHMGN (16/16 FULL 已完胜: 诞生 10.25bp Useful 冠军 6XGgvmpY [SC 0.255 PC 0.590] + 9.06bp SC_PASS 0mGn32A6; 1YG578aX 已清理为纯 SC_PASS)",
         "EUR/model264 (0/64, max=0.68) 与 EUR/other460 (1/80, max=0.80) 已自动早停"
       ]
     },
     {
-      "region": "ASI+KOR (ASI:1 单槽切 ASI/model25 纯MATRIX · 淘汰日本无信号 model39)",
+      "region": "ASI+KOR (ASI:1 单槽攻坚 ASI/multifactor_return_pred + 备选 ASI/model25)",
       "universe": "ASI:MINVOL1M / KOR:TOP600",
       "slots": 1,
       "active_useful_champions": [],
       "current_seed_campaigns": [
-        "S3-r25-ASI-MF120-NEUT05 (24 FULL NORMAL · Audit #18 根因破壁置顶! 抓出 S3-r23/r24 中 2rGPdR1N/blx753Y6 已双过 RobSh+RobRet 但因 group_rank/tail25 均值=0.5 误设 if_else false=0 造成底部微盘被满仓做空的数学 Bug! 改为 false=0.5 + 国家内流动性门控 group_rank(adv20, country)>0.20，横扫 COUNTRY d={0,4} & RAM d=4 直取 ASI 首条 Useful!)",
-        "S3-r24-ASI-MF120-D22-LIQ (24/24 FULL 完成: blx753Y6 RobSh=1.51/1.45 PASS + RobRet=0.0346/0.0329 PASS; pwWQAj8o 15.23bp) & S3-r24b-ASI-MF120-D33-FREE (ram_d8 ZYXkLjdj Sh=1.99/2Y=1.97/Fit=1.25/12.07bp; omPQenRk 13.24bp RobSh PASS)",
-        "S3-r23d (24/24 FULL 完成: vRY0Wdva RAM d=4 历史性首过 JPN=1.04 + RobSh=1.86/1.84 PASS, 11.28bp, 仅差 RobRet 0.0432/0.0475, PC=0.8004; zqAaVVVG CROWDING d=6 RobSh PASS/13.50bp/PC=0.8466; E5m3926J COUNTRY d=12 19.85bp/JPN=1.07/PC=0.7273)",
-        "S3-r20-EUR-1YG-HIGHMGN (16/16 FULL 大捷: 诞生 10.25bp 全绿 Useful 冠军 6XGgvmpY [SC 0.255 PC 0.590] 与 9.06bp SC_PASS 姊妹 0mGn32A6 [SC 0.255 PC 0.587]!)",
-        "已退役 5 个低效/日本偏弱免额支线 (ASI_GLBSEASON*, USA_CHARTCNN/OPTCHART/GLBSEASON_20D); ASI/model25 (JPN=0.70..0.89, 49.8bp) 留作备选"
+        "S3-r26-ASI-MF120-LIQ50-N05 (24 FULL NORMAL · Audit #19 决胜包! 基于 S3-r25 实证：修 0->0.5 基准后 pwWQ1QNb [rank(adv20)>0.25] 创历史最高 JPN=1.17 PASS 且 Sh=2.47/RobSh=1.90，LL8Ogqle [adv20>0.20] 把 RobSh/RobRet 双双拉升至 83.6%！将门控提高至 rank(adv20)>{0.45,0.55,0.65} / rank(cap)>0.50 / min(adv20,cap)>0.45 保持中性 0.5 + COUNTRY d={0,2,4}，一步打穿 Robust>=90% + JPN>=1.0 + PC<0.68!)",
+        "S3-r25-ASI-MF120-NEUT05 (24/24 FULL 完成: pwWQ1QNb JPN=1.17 PASS/Sh=2.47/Fit=1.59, MPg959LL Sh=2.50/JPN=1.10 PASS, KPVxwxGN 10.1bp/JPN=1.01 PASS/Rob=82.7%, LL8Ogqle 11.6bp/Rob=83.6%)",
+        "S3-r23d/r24/r24b 全部完成 (vRY0Wdva RAM d=4 首破 JPN+RobSh 双检; rK0QQLzd 20.30bp/Sh=2.24/Fit=1.61/JPN PASS)",
+        "ASI/model25 (JPN=0.70..0.89, 49.8bp) 留作备选"
       ]
     }
   ],
   "quota_and_isolated_experiments": {
-    "today_est_2026_11_26_official_sims": 9772,
-    "today_normal_completed_est": 4128,
-    "today_alpha0_completed_est": 5236,
-    "phase2_alpha0_active": true,
+    "est_2026_11_26_official_sims_final": 10020,
+    "today_est_2026_11_27_official_sims": 240,
+    "today_normal_completed_est": 176,
+    "today_alpha0_completed_est": 64,
+    "phase2_alpha0_active": false,
     "alpha0_auto_switch_threshold": 4160,
     "concurrency_limits": {
       "glb_max_threads": 3,

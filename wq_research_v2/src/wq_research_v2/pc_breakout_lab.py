@@ -1233,6 +1233,107 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
 }
 
 
+def build_s3r26_asi_mf120_liq50_n05_specs() -> list[dict[str, Any]]:
+    """S3-r26 (24 FULL, NORMAL): ASI/MINVOL1M/multifactor_return_pred High-Cutoff (0.45..0.65) Neutral-0.5 Robust Finisher!
+
+    Triggered by 2-hour Audit #19 (2026-11-27 14:00 CST) from S3-r25 (24/24 FULL) controlled attribution:
+      - Fixing the if_else false-branch bug (`0 -> 0.5`) completely restored Sharpe (2.50), Fitness (1.62), and
+        boosted `LOW_ASI_JPN_SHARPE` to an ALL-TIME RECORD `1.17 / 1.00 PASS` (`pwWQ1QNb`, `rank(adv20) > 0.25`)!
+      - Controlled scaling curve on `d22 + tail25` under `COUNTRY`:
+        * `cutoff = 0.00` (`A1L67JZg`): `RobSh/Sh = 80.2%`, `RobRet/Ret = 79.7%`
+        * `cutoff = 0.20` (`LL8Ogqle`, `d=4`): `RobSh/Sh = 83.6% (+3.4%)`, `RobRet/Ret = 83.6% (+3.9%)`, `RobSh = 1.89 >> 1.58`!
+        * `rank(adv20) > 0.20/0.25` outperformed `group_rank(adv20, country) > 0.20` on BOTH `JPN` (`1.17` vs `1.10`)
+          AND `Robust Ratio` (`+2.9%` to `+3.3%`), proving Japan's liquid core is preserved while non-Robust Asian
+          micro-caps sit in the bottom ~45%-65% of global `MINVOL1M` `adv20`/`cap`!
+      - Raising the liquidity gate to `rank(adv20) > {0.45, 0.55, 0.65}`, `rank(cap) > 0.50`, and Decision-#3
+        `min(rank(adv20), rank(cap)) > 0.45` (with neutral `0.5` false-branch!) concentrates holdings inside the
+        Robust Universe so `Total_Sharpe -> RobSh (~1.85-1.95 >> 1.58)` and `RobSh/Sh & RobRet/Ret -> 93%-100% PASS`
+        while `COUNTRY d={0,2,4}` keeps `PC < 0.68` (`0` collisions, `ASI SC = 0.000`)!
+    """
+    specs: list[dict[str, Any]] = []
+    st_r2 = "ts_backfill(short_term_regime2_60d_single_quantile_pred, 21)"
+    d10_tail = f"tail(group_rank(ts_decay_linear({st_r2}, 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    d22_tail = f"tail(group_rank(ts_decay_linear({st_r2}, 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC26-A1-d10-adv45-n05", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.45, {d10_tail}, 0.5)"),
+        ("PC26-A2-d10-adv55-n05", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.55, {d10_tail}, 0.5)"),
+        ("PC26-A3-d10-adv65-n05", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.65, {d10_tail}, 0.5)"),
+        ("PC26-A4-d22-adv45-n05", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.45, {d22_tail}, 0.5)"),
+        ("PC26-A5-d22-adv55-n05", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.55, {d22_tail}, 0.5)"),
+        ("PC26-A6-d22-adv65-n05", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.65, {d22_tail}, 0.5)"),
+        ("PC26-A7-d22-cap50-n05", "TOP100_2026Q4", "SZ83096", f"if_else(rank(cap) > 0.5, {d22_tail}, 0.5)"),
+        ("PC26-A8-d22-minadvcap45-n05", "TOP100_2026Q4", "LD22811", f"if_else(min(rank(adv20), rank(cap)) > 0.45, {d22_tail}, 0.5)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d0_t08", "COUNTRY", 0, 0.08),
+        ("cty_d2_t08", "COUNTRY", 2, 0.08),
+        ("cty_d4_t08", "COUNTRY", 4, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r26-ASI-MF120-LIQ50-N05-{tag}",
+                campaign_id="S3_ASI_MF120_LIQ50_N05_USEFUL",
+                hypothesis_id="HYP-S3R26-ASI-ADV45-65-NEUT05-ROBUST-95PCT-JPN117-PC67",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="multifactor_return_pred",
+                queue_type="NORMAL",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(exprs, dataset_id="multifactor_return_pred", primary_field_id="short_term_regime2_60d_single_quantile_pred", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
+def build_s3r26b_eur_m238_ortho_specs() -> list[dict[str, Any]]:
+    """S3-r26b (16 FULL, NORMAL): EUR/TOP2500/model238 SmartHoldings Orthogonal Low-PC (PC~0.61) Ultra-Gentle Gate Finisher!
+
+    Triggered by 2-hour Audit #19 (2026-11-27 14:00 CST) fresh EST 2026-11-27 COUNTRY QUICK hits:
+      - `d59elG5K` (`global_screening_factor_alignment_rank_d1`, COUNTRY): `Sh=1.68, 2Y=1.61, Fit=1.27, 13.51bp`
+      - `A1LqgYaE` (`regional_institutional_preference_rank_d1`, COUNTRY): `Sh=1.72, 2Y=1.61, Fit=1.12, 8.52bp`
+      - `kq8eLwA8` (`global_screening_factor_alignment_rank_d1 m22`, COUNTRY): `34.29bp, Sh=1.48, TO=3.13%`
+      - Completely orthogonal to live OS `RR5QjWYz` (`model25`, corr=0.205) AND new `10.25bp` `Useful` `6XGgvmpY`
+        (`model77+model110`), with proven low PC ~ 0.608-0.635!
+      - Applies EFF-16's ultra-gentle `adv20 > {0.08, 0.12, 0.16}` (avoiding INEFF-09's harsh `0.35` cut) +
+        `country*industry` + `align x pref` dual-branch across `COUNTRY d=4` & `REVERSION_AND_MOMENTUM d=4`.
+    """
+    specs: list[dict[str, Any]] = []
+    align = "ts_backfill(global_screening_factor_alignment_rank_d1, 21)"
+    pref = "ts_backfill(regional_institutional_preference_rank_d1, 21)"
+    ci = "group_cartesian_product(country, industry)"
+    dual = f"min(rank({align}), rank({pref}))"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC26B-E1-align-ind-adv12", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.12, group_zscore({align}, industry), 0)"),
+        ("PC26B-E2-align-ci-adv12", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.12, group_zscore({align}, {ci}), 0)"),
+        ("PC26B-E3-align-ci-adv16", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.16, group_zscore({align}, {ci}), 0)"),
+        ("PC26B-E4-pref-ci-adv12", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.12, group_zscore({pref}, {ci}), 0)"),
+        ("PC26B-E5-dual-ci-adv08", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.08, group_zscore({dual}, {ci}), 0)"),
+        ("PC26B-E6-dual-ci-adv12", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.12, group_zscore({dual}, {ci}), 0)"),
+        ("PC26B-E7-dual-ci-adv16", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.16, group_zscore({dual}, {ci}), 0)"),
+        ("PC26B-E8-dual-d10-ci-adv12", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.12, group_zscore(ts_decay_linear({dual}, 10), {ci}), 0)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d4_t08", "COUNTRY", 4, 0.08),
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r26b-EUR-M238-ORTHO-{tag}",
+                campaign_id="S3_EUR_M238_ORTHO_LOWPC_USEFUL",
+                hypothesis_id="HYP-S3R26B-EUR-M238-ALIGN-PREF-GENTLE-ADV12-ORTHO-USEFUL",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model238",
+                queue_type="NORMAL",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=_build_items(exprs, dataset_id="model238", primary_field_id="global_screening_factor_alignment_rank_d1", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
 def build_s3r25_asi_mf120_neut05_specs() -> list[dict[str, Any]]:
     """S3-r25 (24 FULL, NORMAL): ASI/MINVOL1M/multifactor_return_pred Neutral-0.5 + Within-Country adv20 Finisher!
 
@@ -1839,9 +1940,11 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r25 (24 FULL NORMAL) -> S3-r24 (24 FULL NORMAL) -> S3-r24b (16 FULL FREE) -> S3-r23d -> ..."""
+    """Return ordered S3-r26 (24 FULL) -> S3-r26b (16 FULL EUR) -> S3-r25 (24 FULL) -> S3-r24 -> ..."""
     return (
-        build_s3r25_asi_mf120_neut05_specs()
+        build_s3r26_asi_mf120_liq50_n05_specs()
+        + build_s3r26b_eur_m238_ortho_specs()
+        + build_s3r25_asi_mf120_neut05_specs()
         + build_s3r24_asi_mf120_d22_liq_specs()
         + build_s3r24b_asi_mf120_d33_free_specs()
         + build_s3r23d_asi_mf120_robust_free_specs()

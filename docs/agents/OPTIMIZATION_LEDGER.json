@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-27T12:05:00+08:00",
+  "updated_at": "2026-11-27T14:03:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -130,6 +130,14 @@
       "verdict": "EFFECTIVE（官方 /check 全绿 PASS · 成功把 Margin 推穿 EUR 10bp 底线且 PC 纹丝不动！）",
       "metric_delta": "d=0 (1YG578aX: 7.44bp, PC=0.5897) -> d=3 (0mGn32A6: Sh=2.12, 2Y=2.18, Fit=1.26, TO=9.76%, 9.06bp, SC=0.2552, PC=0.5872, 0-FAIL) -> d=5 (6XGgvmpY: Sh=2.04, 2Y=2.19, Fit=1.19, TO=8.32%, Margin=10.25bp [+2.81bp!], 官方 SC=0.2551 PASS, 官方 PC=0.5898 PASS [0碰撞!], Sub=1.06/1.06 PASS, Ladder=2.19/2.02 PASS, MATCHES_PYRAMID PASS)；两两相关 corr(6XGgvmpY, 1YG578aX)=0.9775，按 Margin 优先原则 6XGgvmpY 取代 1YG578aX 成为新 EUR Useful 冠军（待用户确认 PATCH 替换标签）",
       "reusable_rule": "对 EUR 跨集 3 支 RAM 冠军，超轻 adv20 > 0.12（注意：0.08/0.10 仍差 0.01-0.02 Sub-Uni，0.12 恰好稳过！）+ decay=3..5 是提 Margin (+2.8bp)、降换手且零伤 PC 的最优单轴微调。"
+    },
+    {
+      "case_id": "EFF-17",
+      "region_dataset": "ASI/MINVOL1M/multifactor_return_pred (S3-r25 24/24 FULL · 修复 [0,1] 中性值 0.5 并精准标定 Robust 流动性斜率!)",
+      "controlled_change": "将 S3-r23/r24 中 tail(group_rank(...), 0.25, 0.75, 0.5) 的 if_else false 分支从错误的 0 修正为中性 0.5，并对照 rank(adv20) > 0.20..0.25 vs group_rank(adv20, country) > 0.20",
+      "verdict": "EFFECTIVE（彻底修复 Sharpe/JPN 暴跌并创 JPN=1.17 历史新高，且证实全池 rank(adv20) 在 Robust 与 JPN 上双胜国别分位！）",
+      "metric_delta": "1) 修复 false=0->0.5 后，pwWQ1QNb (COUNTRY d=0, rank(adv20)>0.25, d10+tail25) 跃升至 Sh=2.47, 2Y=2.49, Fit=1.59, JPN=1.17/1.00 PASS (历史最高!)，RobSh=1.90 (>>1.58!)；2) 同式对照：rank(adv20)>0.20 (KPVxwxGN/LL8Ogqle, d22+tail25) 将 RobSh/Sh 从 80.2% 推至 83.6% (+3.4%)、RobRet/Ret 推至 83.6% (+3.9%)、JPN=1.01 PASS，双双优于 group_rank(adv20, country)>0.20 (79.8%/79.3%)！说明 Robust Universe 是 MINVOL1M 顶部 ~35%-55% 高流动性核心；立即上线 S3-r26-ASI-MF120-LIQ50-N05 (adv20>{0.45,0.55,0.65} / cap>0.50 / min(adv20,cap)>0.45 + 中性 0.5) 一步冲过 Robust>=90%！",
+      "reusable_rule": "对 [0,1] 区间的 rank/group_rank/tail(..., newval=0.5) 施加 if_else 流动性门控时，false 分支必须设为 0.5（绝不可设为 0，否则将剔除股打为满仓空头！）；对 ASI/MINVOL1M，全池 rank(adv20) 门控（阈值 0.45-0.65 配中性 0.5）可同时保日本大中盘 (JPN>=1.1) 并剔除底部非 Robust 微盘。"
     }
   ],
   "ineffective_cases": [
