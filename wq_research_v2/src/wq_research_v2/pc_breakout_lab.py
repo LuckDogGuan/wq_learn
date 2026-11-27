@@ -1233,6 +1233,111 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
 }
 
 
+def build_s3r27_asi_mf120_interp_specs() -> list[dict[str, Any]]:
+    """S3-r27 (24 FULL, NORMAL): ASI/MINVOL1M/multifactor_return_pred False-Branch Interpolation (0.15..0.35) Finisher!
+
+    Triggered by empirical mining across all 700+ ASI FULL sims after S3-r26 (2026-11-27 14:44 CST):
+      - S3-r26 proved that raising the `adv20` cutoff (`0.45 -> 0.55 -> 0.65`) with `false = 0.5` raised JPN to
+        an all-time record `1.28 / 1.00 PASS` (`3qGgR3dZ`, `Sh=2.44, Fit=1.65`), yet `RobSh/Sh` stayed at ~81%
+        because `ROBUST_UNIVERSE` on ASI still includes the bottom-20% stocks when they aren't given a mild negative tilt!
+      - By contrast, on the EXACT SAME expression `if_else(rank(adv20) > 0.25, d10_tail, false_val)`:
+        * `false_val = 0.00` (`2rGPdR1N`): `RobSh = 1.49/1.47 (101.4% PASS!)`, `RobRet = 0.0346/0.0340 (101.8% PASS!)`,
+          `Sh = 1.63 PASS`, `2Y = 1.63 PASS`, `Fit = 0.90 (-0.10)`, `JPN = 0.75 (-0.25)`
+        * `false_val = 0.50` (`pwWQ1QNb`): `JPN = 1.17/1.00 (PASS! +0.17)`, `Fit = 1.59 (PASS! +0.59)`,
+          `Sh = 2.47 PASS`, `2Y = 2.49 PASS`, `RobSh = 1.90/2.22 (0.856)`
+      - And on `if_else(rank(adv20) > 0.20, d22_tail, false_val)`:
+        * `false_val = 0.00` (`blx753Y6`): `RobSh = 1.51/1.45 (104.1% PASS!)`, `RobRet = 0.0346/0.0329 (105.2% PASS!)`,
+          `10.42bp`, `Fit = 0.87 (-0.13)`, `JPN = 0.64`
+        * `false_val = 0.50` (`KPVxwxGN`): `JPN = 1.01 PASS`, `Fit = 1.41 (+0.41)`, `Sh = 2.25`, `minRob = 0.918`
+      - S3-r27 interpolates `false_val in {0.15, 0.22, 0.28, 0.35}` on both within-country `group_rank(adv20, country) > 0.20/0.25`
+        (which keeps the false-branch fraction identical inside Japan vs all other countries!) and global `rank(adv20) > 0.25/0.35`
+        across `COUNTRY d={0,2,4}` (`PC < 0.70, SC = 0.000`) to simultaneously clear `RobSh >= 1.0x`, `RobRet >= 1.0x`,
+        `JPN >= 1.00`, AND `Fit >= 1.05`!
+    """
+    specs: list[dict[str, Any]] = []
+    st_r2 = "ts_backfill(short_term_regime2_60d_single_quantile_pred, 21)"
+    d10_tail = f"tail(group_rank(ts_decay_linear({st_r2}, 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    d15_tail = f"tail(group_rank(ts_decay_linear({st_r2}, 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    d22_tail = f"tail(group_rank(ts_decay_linear({st_r2}, 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC27-A1-d22-cadv20-f15", "ADMIN_ORIGINAL", "WL13229", f"if_else(group_rank(adv20, country) > 0.2, {d22_tail}, 0.15)"),
+        ("PC27-A2-d22-cadv20-f22", "ADMIN_ORIGINAL", "WL13229", f"if_else(group_rank(adv20, country) > 0.2, {d22_tail}, 0.22)"),
+        ("PC27-A3-d22-cadv20-f28", "ADMIN_ORIGINAL", "KH94146", f"if_else(group_rank(adv20, country) > 0.2, {d22_tail}, 0.28)"),
+        ("PC27-A4-d10-cadv25-f22", "ADMIN_ORIGINAL", "KH94146", f"if_else(group_rank(adv20, country) > 0.25, {d10_tail}, 0.22)"),
+        ("PC27-A5-d10-adv25-f20", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.25, {d10_tail}, 0.2)"),
+        ("PC27-A6-d10-adv25-f28", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.25, {d10_tail}, 0.28)"),
+        ("PC27-A7-d22-adv20-f25", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.2, {d22_tail}, 0.25)"),
+        ("PC27-A8-d15-adv35-f25", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.35, {d15_tail}, 0.25)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d0_t08", "COUNTRY", 0, 0.08),
+        ("cty_d2_t08", "COUNTRY", 2, 0.08),
+        ("cty_d4_t08", "COUNTRY", 4, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r27-ASI-MF120-INTERP-{tag}",
+                campaign_id="S3_ASI_MF120_INTERP_USEFUL",
+                hypothesis_id="HYP-S3R27-ASI-FALSE-015-028-INTERP-ROB-PASS-JPN-PASS",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="multifactor_return_pred",
+                queue_type="NORMAL",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(exprs, dataset_id="multifactor_return_pred", primary_field_id="short_term_regime2_60d_single_quantile_pred", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
+def build_s3r27b_eur_1yg_13bp_specs() -> list[dict[str, Any]]:
+    """S3-r27b (16 FULL, NORMAL): EUR/TOP2500/model77+model110 6XGgvmpY (10.25bp -> 12.5-14bp) Post-Decay + adv20 Finisher!
+
+    In S3-r20-EUR-1YG-HIGHMGN:
+      - `2rGPb8N6` (`RAM d=5`, `post-min d5` + `adv20 > 0.10`): `10.56bp, Sh=2.10, 2Y=2.23, Fit=1.24`, missed Sub-Uni by ONLY `0.02` (`1.07/1.09`)!
+      - `N1Kkvxb7` (`RAM d=5`, `post-min d5`): `12.07bp, Sh=2.03, 2Y=2.13, Fit=1.17`, missed Sub-Uni by ONLY `0.06` (`0.99/1.05`)!
+      - `RR50nj7j` (`RAM d=5`, `post-min d10`): `13.26bp, Sh=1.94, 2Y=2.09, Fit=1.09`, missed Sub-Uni by ONLY `0.07` (`0.94/1.01`)!
+    Single-axis upgrade: pair `post-min ts_decay_linear(..., {5, 8, 10})` with `adv20 > {0.14, 0.16, 0.18, 0.20}`
+    under `REVERSION_AND_MOMENTUM d={4, 6}` to push our EUR Useful champion from `10.25bp -> 12.5-14.0bp` while keeping `PC ~ 0.588`!
+    """
+    specs: list[dict[str, Any]] = []
+    ci = "group_cartesian_product(country, industry)"
+    dvm_gfp = "reverse(ts_backfill(mdl177_dvm_ttmgfp_alt, 21))"
+    emm_eps = "reverse(ts_backfill(mdl177_emm_fc_epsrm_alt, 21))"
+    m110_sc = "ts_backfill(mdl110_score, 21)"
+    core_sc = f"min(rank({dvm_gfp}), min(rank({emm_eps}), rank({m110_sc})))"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC27B-E1-sc-adv14", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.14, group_zscore({core_sc}, {ci}), 0)"),
+        ("PC27B-E2-sc-adv16", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.16, group_zscore({core_sc}, {ci}), 0)"),
+        ("PC27B-E3-d5-adv14", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.14, group_zscore(ts_decay_linear({core_sc}, 5), {ci}), 0)"),
+        ("PC27B-E4-d5-adv16", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.16, group_zscore(ts_decay_linear({core_sc}, 5), {ci}), 0)"),
+        ("PC27B-E5-d5-adv18", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.18, group_zscore(ts_decay_linear({core_sc}, 5), {ci}), 0)"),
+        ("PC27B-E6-d8-adv16", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.16, group_zscore(ts_decay_linear({core_sc}, 8), {ci}), 0)"),
+        ("PC27B-E7-d10-adv18", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.18, group_zscore(ts_decay_linear({core_sc}, 10), {ci}), 0)"),
+        ("PC27B-E8-d10-adv20", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.2, group_zscore(ts_decay_linear({core_sc}, 10), {ci}), 0)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+        ("ram_d6_t08", "REVERSION_AND_MOMENTUM", 6, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r27b-EUR-1YG-13BP-{tag}",
+                campaign_id="S3_EUR_1YG_RAM_13BP_UPGRADE",
+                hypothesis_id="HYP-S3R27B-EUR-2RGPB8N6-POSTD5-D10-ADV14-20-13BP-USEFUL",
+                region="EUR",
+                universe="TOP2500",
+                dataset_id="model77",
+                queue_type="NORMAL",
+                settings=_make_settings("EUR", "TOP2500", neut, decay=dec, truncation=trunc),
+                items=_build_items(exprs, dataset_id="model77", primary_field_id="mdl177_dvm_ttmgfp_alt", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
 def build_s3r26_asi_mf120_liq50_n05_specs() -> list[dict[str, Any]]:
     """S3-r26 (24 FULL, NORMAL): ASI/MINVOL1M/multifactor_return_pred High-Cutoff (0.45..0.65) Neutral-0.5 Robust Finisher!
 
@@ -1940,9 +2045,11 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r26 (24 FULL) -> S3-r26b (16 FULL EUR) -> S3-r25 (24 FULL) -> S3-r24 -> ..."""
+    """Return ordered S3-r27 (24 FULL) -> S3-r27b (16 FULL EUR) -> S3-r26 -> S3-r26b -> S3-r25 -> ..."""
     return (
-        build_s3r26_asi_mf120_liq50_n05_specs()
+        build_s3r27_asi_mf120_interp_specs()
+        + build_s3r27b_eur_1yg_13bp_specs()
+        + build_s3r26_asi_mf120_liq50_n05_specs()
         + build_s3r26b_eur_m238_ortho_specs()
         + build_s3r25_asi_mf120_neut05_specs()
         + build_s3r24_asi_mf120_d22_liq_specs()

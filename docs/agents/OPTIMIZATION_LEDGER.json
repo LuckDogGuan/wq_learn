@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-27T14:03:00+08:00",
+  "updated_at": "2026-11-27T14:47:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -244,6 +244,14 @@
       "verdict": "INEFFECTIVE_BASELINE_ZERO（虽让 2rGPdR1N 与 blx753Y6 成功双过 RobSh+RobRet，但 false=0 将被剔除微盘股置为极小值 0.0 造成意外满仓做空微盘 + 跨国 rank(adv20) 误切日本股票，令 JPN 从 1.06 跌至 0.61-0.75、Fit 跌至 0.87-0.90）",
       "metric_delta": "2rGPdR1N (d=0, adv20>0.25+tail25) RobSh=1.49/1.47 PASS + RobRet=0.0346/0.0340 PASS，blx753Y6 (d=2, d22+adv20>0.20+tail25) RobSh=1.51/1.45 PASS + RobRet=0.0346/0.0329 PASS，证实流动性门控确实能同时打穿 RobSh 与 RobRet！但因 tail25 中枢为 0.5 而 false 分支写 0（对照中枢为 0.0 的 group_zscore 变体 xAlXgQKW 保持 Sh=2.00, Fit=1.18, 11.73bp, JPN=0.99/1），导致 Sh 从 2.58 跌至 1.61-1.63、JPN 跌至 0.64-0.75。",
       "root_cause_and_ban": "铁律：(1) 对值域 [0,1]、均值 0.5 的 group_rank 或 tail(..., newval=0.5) 做 if_else 门控时，false 分支必须填中性均值 0.5（对均值为 0 的 group_zscore 才填 0），严禁填 0 把剔除股变成最大空头！(2) ASI 多国池流动性门控优先用国家内分位 group_rank(adv20, country) > 0.20 保护日本子市场样本。已立即上线 S3-r25-ASI-MF120-NEUT05 (24 FULL NORMAL)！"
+    },
+    {
+      "case_id": "INEFF-14",
+      "region_dataset": "ASI/MINVOL1M (S3-r26 adv20>0.45..0.65 false=0.5) & EUR/TOP2500/model238 (S3-r26b 16/16 FULL)",
+      "controlled_change": "1) 在 ASI/multifactor_return_pred 上固定 false=0.5 仅把 rank(adv20) 阈值从 0.25 拉高至 0.45/0.55/0.65；2) 对 EUR/model238 施加 adv20>0.08..0.16 + country*industry",
+      "verdict": "INEFFECTIVE（1: false=0.5 下单纯抬高 adv20 阈值虽创 JPN=1.28 新高但未改变 RobSh/Sh~81%；2: EUR/model238 属微盘驱动 Sub-Uni=-0.05..0.41 全 FAIL）",
+      "metric_delta": "1) S3-r26 3qGgR3dZ (adv20>0.45, false=0.5) 创 JPN=1.28/1.00 新高 (Sh=2.44, Fit=1.65)，但 RobSh=1.85/2.20 仍卡 84%；对比同式 2rGPdR1N/blx753Y6 (false=0.0 -> RobSh=1.49/1.47 PASS + RobRet=0.0346/0.0340 PASS, Fit=0.90) vs pwWQ1QNb/KPVxwxGN (false=0.5 -> JPN=1.17 PASS, Fit=1.59)，证实通过 Robust 的真正杠杆是 false_val 负向微倾而非高截断阈值！2) S3-r26b EUR/model238 16/16 FULL Sub-Uni 仅 -0.05~0.41/0.78，止损不再投入 Stage-3。",
+      "root_cause_and_ban": "1) 已上线 S3-r27-ASI-MF120-INTERP (24 FULL) 在 false_val ∈ {0.15, 0.22, 0.28} 之间精确插值（兼取 false=0 的双 Robust PASS 与 false=0.5 的 JPN=1.17/Fit=1.59 PASS）；2) EUR/model238 停止 Stage-3，改为上线 S3-r27b-EUR-1YG-13BP (16 FULL: 将 2rGPb8N6 10.56bp Sub=1.07/1.09 与 N1Kkvxb7 12.07bp/RR50nj7j 13.26bp 叠 adv20>{0.14..0.20} 把 EUR Useful 推上 12.5-14bp)。"
     }
   ]
 }
