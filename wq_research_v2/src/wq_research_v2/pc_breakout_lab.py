@@ -1233,6 +1233,70 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
 }
 
 
+def build_s3r29_asi_ortho_m25_q5_specs() -> list[dict[str, Any]]:
+    """S3-r29 (16 FULL, NORMAL): ASI/MINVOL1M Orthogonal 2nd-Wave Finisher (model25 49.8bp SC=0.023 + qtile5 SC=0.472) with akR2rQr9 Gate!
+
+    Triggered by 2-hour Audit #21 (2026-11-27 18:15 CST) after S3-r28 minted our FIRST-EVER ASI/MINVOL1M
+    Useful & OS #99 champion `akR2rQr9` (`9.94bp, Sh=1.90, 2Y=2.08, Fit=1.08, JPN=1.02/1.00 PASS,
+    RobSh=1.74/1.71 PASS, RobRet=0.0383/0.0364 PASS, Official SC=0.000, Official PC=0.6555`, now LIVE in 100/100 OS!):
+      - Now that `akR2rQr9` (`short_term_regime2_60d_single_quantile_pred`) is in 100-OS, we verified 100-OS SC on
+        orthogonal ASI Stage-3 seeds:
+        * `E5mAewpG` (`ASI/model25` `ev_to_ebitda_relative_score`, `49.77bp, Sh=1.73, 2Y=2.05, Fit=1.50`):
+          `100-OS SC = 0.0232` vs `akR2rQr9` (97.7% orthogonal!)
+        * `d59w0NZ2` (`ASI/model25` `ev_to_ebitda x ev_to_sales`, `38.32bp, 2Y=2.27, JPN=0.89/1.00`):
+          `100-OS SC = 0.0992` vs `akR2rQr9` (90.1% orthogonal!)
+        * `zqAaLlPO` (`ASI/multifactor_return_pred` `short_term_60d_qtile5_class_pred`, `Sh=2.11, 2Y=2.53, Fit=1.31`):
+          `100-OS SC = 0.4719 < 0.65` vs `akR2rQr9` (orthogonal within-dataset!)
+      - Applies the exact `akR2rQr9` winning gate `if_else(rank(adv20) > 0.38, tail(group_rank(ts_decay_linear(..., 15), subindustry), 0.25, 0.75, 0.5), 0.27)`
+        to `short_term_60d_qtile5_class_pred`, `ev_to_ebitda_relative_score`, and their cross-dataset dual-branch
+        fusions across `COUNTRY d=4` & `CROWDING d=2` (`maxTrade=ON`).
+    """
+    specs: list[dict[str, Any]] = []
+    ci = "group_cartesian_product(country, industry)"
+    st_q5 = "ts_backfill(short_term_60d_qtile5_class_pred, 21)"
+    anl_120 = "ts_backfill(analyst_120d_single_quantile_pred, 21)"
+    ev_ebitda = "ts_backfill(ev_to_ebitda_relative_score, 21)"
+    ev_sales = "ts_backfill(ev_to_sales_relative_score, 21)"
+
+    q5_d15 = f"tail(group_rank(ts_decay_linear({st_q5}, 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    q5_d22 = f"tail(group_rank(ts_decay_linear({st_q5}, 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    eb_d15 = f"tail(group_rank(ts_decay_linear({ev_ebitda}, 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    eb_sa_d15 = f"tail(group_rank(ts_decay_linear(min(rank({ev_ebitda}), rank({ev_sales})), 15), {ci}), lower=0.25, upper=0.75, newval=0.5)"
+    eb_q5_d15 = f"tail(group_rank(ts_decay_linear(min(rank({ev_ebitda}), rank({st_q5})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    eb_anl_d15 = f"tail(group_rank(ts_decay_linear(min(rank({ev_ebitda}), rank({anl_120})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    q5_anl_d15 = f"tail(group_rank(ts_decay_linear(min(rank({st_q5}), rank({anl_120})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    eb_sp15 = f"signed_power(group_zscore({ev_ebitda}, industry), 1.5)"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC29-A1-q5-d15-adv38-f27", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.38, {q5_d15}, 0.27)"),
+        ("PC29-A2-q5-d22-adv38-f27", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.38, {q5_d22}, 0.27)"),
+        ("PC29-A3-ebitda-d15-adv38-f27", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.38, {eb_d15}, 0.27)"),
+        ("PC29-A4-ebitda-sales-adv38-f27", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.38, {eb_sa_d15}, 0.27)"),
+        ("PC29-A5-ebitda-q5-adv38-f27", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.38, {eb_q5_d15}, 0.27)"),
+        ("PC29-A6-ebitda-anl120-adv38-f27", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.38, {eb_anl_d15}, 0.27)"),
+        ("PC29-A7-q5-anl120-adv38-f27", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.38, {q5_anl_d15}, 0.27)"),
+        ("PC29-A8-ebitda-sp15-adv38", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.38, {eb_sp15}, 0)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d4_t08", "COUNTRY", 4, 0.08),
+        ("crd_d2_t08", "CROWDING", 2, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r29-ASI-ORTHO-M25-Q5-{tag}",
+                campaign_id="S3_ASI_ORTHO_M25_Q5_USEFUL2",
+                hypothesis_id="HYP-S3R29-ASI-AKR2RQR9-GATE-ON-ORTHO-M25-SC002-Q5-SC047",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="model25",
+                queue_type="NORMAL",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(exprs, dataset_id="model25", primary_field_id="ev_to_ebitda_relative_score", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
 def build_s3r28_asi_a1lq_fin_specs() -> list[dict[str, Any]]:
     """S3-r28 (16 FULL, NORMAL): ASI/MINVOL1M/multifactor_return_pred A1Lqx17g (PC=0.6648, RobSh+RobRet PASS, JPN=0.97) 0.03-JPN Finisher!
 
@@ -2096,9 +2160,10 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r28 (16 FULL ASI A1Lqx17g Finisher) -> S3-r27 -> S3-r27b -> ..."""
+    """Return ordered S3-r29 (16 FULL ASI Ortho M25+Q5) -> S3-r28 -> S3-r27 -> ..."""
     return (
-        build_s3r28_asi_a1lq_fin_specs()
+        build_s3r29_asi_ortho_m25_q5_specs()
+        + build_s3r28_asi_a1lq_fin_specs()
         + build_s3r27_asi_mf120_interp_specs()
         + build_s3r27b_eur_1yg_13bp_specs()
         + build_s3r26_asi_mf120_liq50_n05_specs()

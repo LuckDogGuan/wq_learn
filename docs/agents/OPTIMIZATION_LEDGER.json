@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-27T16:08:00+08:00",
+  "updated_at": "2026-11-27T18:18:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -154,6 +154,14 @@
       "verdict": "[有效] 在此配对中，收窄负向倾斜可恢复日本子市场过线。",
       "metric_delta": "JPN 0.94→1.04（门槛 1.00），Sh 2.12→2.33，Fit 1.25→1.42，Margin 8.09→8.18bp；RobSh 1.75/1.91→1.87/2.10，RobRet 0.0372/0.0392→0.0387/0.0420，两项离各自门槛更远。",
       "reusable_rule": "在同式同设置内同时记录三项检查的实际值和门槛。此结论只支持该配对的 JPN 改善。"
+    },
+    {
+      "case_id": "EFF-20",
+      "region_dataset": "[V][C] ASI/MINVOL1M/multifactor_return_pred · S3-r28-ASI-MF120-A1LQ-FIN，16/16 D1 FULL NORMAL",
+      "controlled_change": "以 A1Lqx17g (COUNTRY d=4, tr=0.08, maxTrade=ON, adv20>0.35, d15_tail, false=0.25 -> JPN=0.97/1.00, RobSh=1.70/1.69 PASS, RobRet=0.0370/0.0356 PASS) 为唯一母版，窄轴微调 rank(adv20)>{0.35, 0.38} × false∈{0.25, 0.26, 0.27, 0.28} 与 decay∈{3, 4}。",
+      "verdict": "[有效] 历史性通关 ASI/MINVOL1M！单批斩获 3 条 100% 全绿 0-FAIL RA FULL 冠军，akR2rQr9 (9.94bp, SC 0.000 PC 0.655) 入库 OS #99 助推账号达成 100/100 OS！",
+      "metric_delta": "1) 在 rank(adv20)>0.38 + d15_tail 下：false=0.25 (RR5ZJlJn: JPN=0.99/1.00, RobSh=1.70/1.64 PASS, RobRet=0.0376/0.0353 PASS) → false=0.26 (e718lVlz d=4: Sh=1.86, 2Y=2.04, Fit=1.05, 9.87bp, JPN=1.01/1.00 PASS, RobSh=1.72/1.67 PASS, RobRet=0.0380/0.0358 PASS, 0-FAIL!) → false=0.27 (akR2rQr9 d=4: Sh=1.90, 2Y=2.08, Fit=1.08, TO=8.13%, 9.94bp, JPN=1.02/1.00 PASS, RobSh=1.74/1.71 PASS, RobRet=0.0383/0.0364 PASS, Official SC=0.000, Official PC=0.6555, 0-FAIL! 以及 akR2r631 d=3: Sh=1.89, 2Y=2.08, Fit=1.07, 9.51bp, JPN=1.03/1.00 PASS, RobSh=1.73/1.70 PASS, RobRet=0.0381/0.0363 PASS, 0-FAIL!)，在 false∈{0.26,0.27} 与 d∈{3,4} 上连续无悬崖全部 0-FAIL！2) 在固定 adv20>0.35 下 false=0.27/0.28 (ZYXwRgOx/XgNwjVda) 亦将 JPN 推至 1.00-1.01 PASS（RobSh=1.74/1.75 仅差 0.01）。",
+      "reusable_rule": "ASI/MINVOL1M 的 [0,1] tail(group_rank(ts_decay_linear(x, 15), subindustry), 0.25, 0.75, 0.5) 模板在 COUNTRY d={3,4} tr=0.08 maxTrade=ON 下，配 if_else(rank(adv20) > 0.38, expr, 0.26..0.27) 可同时稳过 JPN>=1.01、RobSh>=1.02x、RobRet>=1.05x 与 PC<0.66（深度 5 标 OVER_NESTED_TEMP_PC_FIX）；已立即将该黄金门控移植至正交集 ASI/model25 (100-OS SC=0.023) 与 qtile5 (100-OS SC=0.472) 上线 S3-r29。"
     }
   ],
   "ineffective_cases": [

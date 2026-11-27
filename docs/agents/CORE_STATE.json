@@ -6,7 +6,7 @@
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >=4500切Alphas=0)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)"
   },
-  "updated_at": "2026-11-27T16:15:00+08:00",
+  "updated_at": "2026-11-27T18:18:00+08:00",
   "mainline_policy": "主线=点塔(Pyramid)：某 category 已有>5个可点(可交付)因子即转其他 categories；docs/agents/TODO_20261127.md 为顺手/空闲项，核心是验证模板与操作符(T17，额度500-1000 FULL，PC仅记录不设门槛)。",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "context_compaction_rule": "任何 AI 工具（Antigravity / Claude Code / Codex / Cursor）启动或上下文超长重置（/compact）后，只读本文件 + docs/agents/OPTIMIZATION_LEDGER.json + AGENTS.md（总计 < 8KB），绝不重读数万行历史聊天记录！",
@@ -135,20 +135,36 @@
       "region": "ASI+KOR (ASI:1 单槽攻坚 ASI/multifactor_return_pred + 备选 ASI/model25)",
       "universe": "ASI:MINVOL1M / KOR:TOP600",
       "slots": 1,
-      "active_useful_champions": [],
+      "active_useful_champions": [
+        {
+          "alpha_id": "akR2rQr9",
+          "dataset_id": "multifactor_return_pred",
+          "margin_bp": 9.94,
+          "sharpe": 1.9,
+          "sharpe_2y": 2.08,
+          "fitness": 1.08,
+          "turnover": 0.0813,
+          "official_sc": 0.0,
+          "official_pc": 0.6555,
+          "nesting_depth": 5,
+          "op_count": 6,
+          "nesting_tag": "OVER_NESTED_TEMP_PC_FIX",
+          "exact_params": {"decay": 4, "truncation": 0.08, "neutralization": "COUNTRY", "maxTrade": "ON", "adv20_gate": 0.38, "false_val": 0.27, "ts_decay_days": 15, "tail_bounds": [0.25, 0.75, 0.5]},
+          "status": "LIVE_IN_100_OS_SUBMITTED_2026_11_27"
+        }
+      ],
       "current_seed_campaigns": [
-        "[V] S3-r27-ASI-MF120-INTERP 24/24 FULL 完成，0/24 全过；JPN 2/24 过线，双 Robust 1/24 过线。A1Lqx17g JPN 0.97/1.00，RobSh 1.70/1.69、RobRet 0.0370/0.0356。",
-        "[U] A1Lqx17g 下一轮主对照为 S3-r28 的 COUNTRY decay=4、truncation=0.08、ASI maxTrade=ON、D1 FULL 子组：固定 rank(adv20)>0.35 和前置 15 日窗，仅看 false=0.26/0.27/0.28。深度 5 标 OVER_NESTED_TEMP_PC_FIX；三点无 RA 全过则休眠。已见本地批次定义，广州台账尚未观测到 r28。",
+        "[V] S3-r28-ASI-MF120-A1LQ-FIN 16/16 FULL 完成，一举诞生 3 条 100% 全绿 0-FAIL RA FULL 冠军：akR2rQr9 (9.94bp, Sh=1.90, 2Y=2.08, Fit=1.08, JPN=1.02/1.00 PASS, RobSh=1.74/1.71 PASS, RobRet=0.0383/0.0364 PASS, Official SC=0.000, Official PC=0.6555, 已打 Useful + 别名 'SC 0.000 PC 0.655' 并于 17:25:38 CST 进入 OS #99，携手 GBR omq9KAO2 达成 100/100 OS！)、e718lVlz (9.87bp, d=4 false=0.26, JPN=1.01 PASS, 双 Robust PASS, 已打 SC_IS_HIGHT)、akR2r631 (9.51bp, d=3 false=0.27, JPN=1.03 PASS, 双 Robust PASS, 已打 SC_IS_HIGHT)。",
+        "[U] 已热部署 S3-r29-ASI-ORTHO-M25-Q5 (16 FULL NORMAL)：将 akR2rQr9 已验证过关门控 (adv20>0.38, d15_tail, false=0.27) 移植至与 akR2rQr9 高度正交的 ASI/model25 ev_to_ebitda_relative_score (100-OS SC=0.0232, 49.8bp) 与 short_term_60d_qtile5_class_pred (100-OS SC=0.4719 < 0.65)；同时 EUR:2 已接入 EUR_NEWS84_PYRAMID_NORM (news84 median_primary_sentiment_score_transfer) 攻打 EUR/D1/news (0 OS) 空白塔。",
         "S3-r26-ASI-MF120-LIQ50-N05 (完成: 3qGgR3dZ 创 JPN=1.28/1.00 新高, Sh=2.44, Fit=1.65; omPQN0Rb 12.54bp, JPN=1.05 PASS)",
-        "S3-r25-ASI-MF120-NEUT05 (24/24 FULL 完成: pwWQ1QNb JPN=1.17 PASS/Sh=2.47/Fit=1.59, KPVxwxGN 10.1bp/JPN=1.01 PASS/minRob=0.918)",
-        "ASI/model25 (JPN=0.70..0.89, 49.8bp) 留作备选"
+        "S3-r25-ASI-MF120-NEUT05 (24/24 FULL 完成: pwWQ1QNb JPN=1.17 PASS/Sh=2.47/Fit=1.59, KPVxwxGN 10.1bp/JPN=1.01 PASS/minRob=0.918)"
       ]
     }
   ],
   "quota_and_isolated_experiments": {
     "est_2026_11_26_official_sims_final": 10020,
-    "today_est_2026_11_27_official_sims": 880,
-    "today_normal_completed_est": 792,
+    "today_est_2026_11_27_official_sims": 1568,
+    "today_normal_completed_est": 1448,
     "today_alpha0_completed_est": 64,
     "phase2_alpha0_active": false,
     "alpha0_auto_switch_threshold": 4500,

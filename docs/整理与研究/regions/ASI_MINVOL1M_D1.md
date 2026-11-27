@@ -89,6 +89,19 @@
     2. **`QPWmYe85` / `6XGgd8qO`**（`COUNTRY d=0/d=2`, `rank(adv20) > 0.25, d10_tail, false=0.28`）：`false = 0.20 -> 0.28` 将 **`JPN` 从 `0.94` 拉升至 `1.04 / 1.00 PASS` & `1.02 / 1.00 PASS`**（`Sh = 2.33/2.28, 2Y = 2.53/2.45, Fit = 1.42/1.38, PC = 0.7104 ge080=0`）；
     3. 国别分位 `group_rank(adv20, country)` 12/12 同时失败于 `JPN`、`RobSh`、`RobRet`，已彻底封存停用。
   - **立即热部署唯一窄轴收口包 `S3-r28-ASI-MF120-A1LQ-FIN`（16 FULL `NORMAL`, `COUNTRY d={3, 4}, tr=0.08, maxTrade=ON`）**：以 **`A1Lqx17g`** 为唯一母版，固定 `rank(adv20) > 0.35` + `d15_tail` 微调 `false ∈ {0.26, 0.27, 0.28}`（用 `+3.9%` 的 `RobRet` 富余换取 `+0.03 ~ +0.06` `JPN` 过线）及 `adv20 > 0.38` × `false ∈ {0.25, 0.26, 0.27}` / `d12..d14`，直冲 **`99 / 100 OS` 首条 `ASI` 全绿 `Useful`**！
+- **2026-11-27 18:18（2 小时定时审计 #21 · 🏆 历史性大捷：`S3-r28` 一举轰出 `3` 条 100% 全绿 `0-FAIL` RA FULL 冠军！`akR2rQr9` (`9.94bp, SC 0.000 PC 0.655`) 正式打标 `Useful` 并入库 `OS #99`，携手 `omq9KAO2` 达成 `100 / 100 OS` 里程碑！立即热部署 `S3-r29-ASI-ORTHO-M25-Q5` 冲刺第 2 条正交 `ASI Useful`！）**：
+  - **`S3-r28-ASI-MF120-A1LQ-FIN`（16/16 `FULL` 零超时完成，记入 `EFF-20`）**：
+    1. **`akR2rQr9`**（`COUNTRY d=4, tr=0.08, maxTrade=ON`, `if_else(rank(adv20) > 0.38, tail(group_rank(ts_decay_linear(ts_backfill(short_term_regime2_60d_single_quantile_pred, 21), 15), subindustry), lower=0.25, upper=0.75, newval=0.5), 0.27)`）：
+       - **`Margin = 9.94bp` · `Sh = 1.90 PASS` · `2Y = 2.08 (IS_LADDER 2.08/2.02 PASS)` · `Fit = 1.08 PASS` · `TO = 8.13% PASS` · `Sub-Uni = 1.45/0.56 PASS`**
+       - **`LOW_ASI_JPN_SHARPE = 1.02 / 1.00 (PASS!!)`**
+       - **`LOW_ROBUST_UNIVERSE_SHARPE.WITH_RATIO = 1.74 / 1.71 (101.8% PASS!!)`**
+       - **`LOW_ROBUST_UNIVERSE_RETURNS = 0.0383 / 0.0364 (105.2% PASS!!)`**
+       - **`官方 SC = 0.000 PASS` · `官方 PC = 0.6555 PASS (0 碰撞!)`**
+       - 已于 `17:25:38 CST` 正式入库 **`OS #99`**（随后 `GBR/TOP700` `omq9KAO2` 于 `17:27:53 CST` 入库 **`OS #100`**，达成 **`100 / 100 OS`** 里程碑！），并完成平台 **`Useful`** 标签 + 别名 **`SC 0.000 PC 0.655`**（`HTTP 200`）！
+    2. **`e718lVlz`**（`COUNTRY d=4, tr=0.08`, `adv20 > 0.38, false = 0.26`）：**`Margin = 9.87bp, Sh = 1.86, 2Y = 2.04, Fit = 1.05, TO = 8.06%, JPN = 1.01/1.00 PASS, RobSh = 1.72/1.67 PASS, RobRet = 0.0380/0.0358 PASS, 0-FAIL`**（验证 `false = 0.26 -> 0.27` 平滑无悬崖；因 `akR2rQr9` 已入 `100-OS` 且 `100-OS SC = 0.9996`，自动打标 **`SC_IS_HIGHT`**）；
+    3. **`akR2r631`**（`COUNTRY d=3, tr=0.08`, `adv20 > 0.38, false = 0.27`）：**`Margin = 9.51bp, Sh = 1.89, 2Y = 2.08, Fit = 1.07, TO = 8.48%, JPN = 1.03/1.00 PASS, RobSh = 1.73/1.70 PASS, RobRet = 0.0381/0.0363 PASS, 0-FAIL`**（验证 `d = 3 -> 4` 平滑无悬崖；`100-OS SC = 0.9993` vs `akR2rQr9`，自动打标 **`SC_IS_HIGHT`**）；
+    4. 同时在固定 `rank(adv20) > 0.35` 下，`ZYXwRgOx`（`d=4, false=0.27`）与 `XgNwjVda`（`d=4, false=0.28, 10.03bp`）也将 `JPN` 推至 `1.00–1.01 PASS` 且 `RobRet PASS`，证实 **`(adv20 > 0.38, false ∈ {0.26, 0.27})` 是同时锁死 `JPN >= 1.01` + `RobSh >= 1.02x` + `RobRet >= 1.05x` 的黄金甜区**！
+  - **立即热部署第 2 波正交冲刺 `S3-r29-ASI-ORTHO-M25-Q5`（16 FULL `NORMAL`）**：经 `100-OS` 实盘检验，`ASI/model25` `ev_to_ebitda_relative_score`（`E5mAewpG 49.77bp`）与 `akR2rQr9` 的 **`100-OS SC = 0.0232`（97.7% 正交！）**、`d59w0NZ2`（`ev_to_ebitda × ev_to_sales 38.32bp, JPN=0.89`）**`100-OS SC = 0.0992`**、同集 `short_term_60d_qtile5_class_pred`（`zqAaLlPO Sh=2.11, 2Y=2.53`）**`100-OS SC = 0.4719 < 0.65`**；立即将 `akR2rQr9` 的冠军门控 `(adv20 > 0.38, d15_tail, false = 0.27)` 移植至上述两大正交信号及跨集双支，冲刺第 2 条高 Margin 正交 `ASI Useful`！
 
 - **闭环复核补充 [V][C]。** DSH Web Hub 按 Antigravity 已验证的配置使用 `dsh-opencode-go/deepseek-v4.1-flash`、flash、`effort=high`，独立复现 24 条 FULL、唯一一项 FAIL 的母版和已测参数。Windows 拒绝子代理写入此档案；本补充由主 Agent 回写。就 `A1Lqx17g` 而言，`2.03/2.02` 是原始检查 `IS_LADDER_SHARPE`。
 - **下一轮主对照 [U]。** `S3-r28-ASI-MF120-A1LQ-FIN` 的本地批次定义已包含所选三点。只用 `cty_d4_t08` 中 `A1/A2/A3` 与既有 `A1Lqx17g`（`false=0.25`）做单轴归因。保持 `rank(adv20)>0.35`、21 日回填、15 日前置平滑、分组和 tail 不变，深度 5 标 `OVER_NESTED_TEMP_PC_FIX`。三点均未同时满足 JPN≥1.00、两项 Robust 各自阈值及其余 RA 硬检时，停止此母版优化。本轮只读核对时，广州 SQLite 尚无 r28 条目，本轮未重复派发。

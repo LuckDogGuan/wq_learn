@@ -46,6 +46,21 @@ HIGH_BASE_MULTI_MARKET_ORDER: list[str] = [
 
 # Verified clean D1 RA seed pools (ALL live-checked against cnhkmcp get_datafields on 2026-11-25).
 CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
+    # ==================== AUDIT #21 EUR/D1/NEWS (0-OS PYRAMID 1.4x) NEWS84 PROBE + QUICK SCREEN ====================
+    {
+        "campaign_id": "EUR_NEWS84_PYRAMID_NORM",
+        "region": "EUR",
+        "universe": "TOP2500",
+        "dataset_id": "news84",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "template_packs": ["core_50_50", "admin_ts_regime", "nonlinear_tail_group"],
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["REVERSION_AND_MOMENTUM", "COUNTRY"],
+        "fields": [
+            "median_primary_sentiment_score_transfer",
+        ],
+    },
     # ==================== 10% QUOTA ADMIN ORIGINAL (WL13229/KH94146) CLEAN TEMPLATE A/B BENCHMARK ====================
     {
         "campaign_id": "USA_ADMIN_TPL_BENCH_FREE",
