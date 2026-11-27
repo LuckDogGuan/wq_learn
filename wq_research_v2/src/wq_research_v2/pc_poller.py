@@ -72,6 +72,8 @@ def parse_pc_histogram_records(
     alphas_in_070_080 = 0
     alphas_ge_080 = 0
     alphas_in_060_070 = 0
+    total_bucket_alphas = 0
+    has_cross_threshold_bucket = False
 
     if isinstance(raw_records, list):
         for row in raw_records:
@@ -94,10 +96,13 @@ def parse_pc_histogram_records(
                         cnt = int(row[2])
                 except (TypeError, ValueError):
                     continue
-            if b_min is None or b_max is None:
+            if b_min is None or b_max is None or b_max <= b_min:
                 continue
             buckets.append({"min": round(b_min, 4), "max": round(b_max, 4), "alphas": cnt})
             if cnt > 0:
+                total_bucket_alphas += cnt
+                if (b_min < 0.70 - 1e-6 and b_max > 0.70 + 1e-6) or (b_min < 0.80 - 1e-6 and b_max > 0.80 + 1e-6):
+                    has_cross_threshold_bucket = True
                 if b_max > 0.70 + 1e-6 and b_min >= 0.70 - 1e-6:
                     alphas_ge_070 += cnt
                     if b_max <= 0.80 + 1e-6:
@@ -109,6 +114,7 @@ def parse_pc_histogram_records(
 
     pc_max_raw = payload.get("max")
     pc_val = float(pc_max_raw) if isinstance(pc_max_raw, (int, float)) and math.isfinite(float(pc_max_raw)) else None
+    hist_valid = bool(buckets) and total_bucket_alphas > 0 and not has_cross_threshold_bucket
 
     if pc_val is None:
         decision = "PENDING_PC_COMPUTING"
@@ -116,6 +122,8 @@ def parse_pc_histogram_records(
         decision = "PC_PASS_STRICT"
     elif prior_pc_opt_rounds >= max_pc_opt_rounds:
         decision = "PC_ABANDON_MAX_ROUNDS_REACHED"
+    elif not hist_valid or alphas_ge_070 == 0:
+        decision = "PC_HIST_UNKNOWN"
     elif pc_val <= near_pc_max and alphas_ge_080 <= max_ge_080_count and alphas_ge_070 <= sparse_count_max:
         decision = "PC_RESCUE_NEAR_SPARSE"
     else:

@@ -213,6 +213,9 @@ def test_diverse_template_packs_and_quota_4000_alpha0_switch() -> None:
     # Even if total day_done >= 4500 (due to prior alpha0), if normal_done < 4500 -> still NORMAL_ONLY!
     m1b, _ = resolve_quota_queue_policy(4600, normal_done=4450, alpha0_switch_threshold=4500, daily_target=4500, has_pending_normal=True, has_pending_alpha0=True)
     assert m1b == "NORMAL_ONLY"
+    # If normal queue is temporarily exhausted below 4500, must NOT prematurely fallback to ALPHA0_EXEMPT_ONLY!
+    m1c, _ = resolve_quota_queue_policy(3384, normal_done=3384, alpha0_switch_threshold=4500, daily_target=4500, has_pending_normal=False, has_pending_alpha0=True)
+    assert m1c == "SLEEP_CAP_REACHED"
     # Once normal_done >= 4500 (or slight overshoot like 4520) with pending Alphas=0 -> switch to ALPHA0_EXEMPT_ONLY!
     m2, _ = resolve_quota_queue_policy(4550, normal_done=4500, alpha0_switch_threshold=4500, daily_target=4500, has_pending_normal=True, has_pending_alpha0=True)
     assert m2 == "ALPHA0_EXEMPT_ONLY"

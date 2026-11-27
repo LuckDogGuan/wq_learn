@@ -73,27 +73,7 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
             "typical_price_bollinger_band_position",
         ],
     },
-    {
-        "campaign_id": "EUR_ANL_CONSENSUS_NORM",
-        "region": "EUR",
-        "universe": "TOP2500",
-        "dataset_id": "analyst_consensus",
-        "queue_type": "NORMAL",
-        "field_type": "MATRIX",
-        "template_packs": ["core_50_50", "nonlinear_tail_group"],
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["REVERSION_AND_MOMENTUM", "COUNTRY"],
-        "fields": [
-            "median_estimate_fxadj_targetprice_annual12_tribes",
-            "min_estimate_fxadj_targetprice_annual12_tribes",
-            "max_estimate_fxadj_targetprice_annual12_tribes",
-            "min_estimate_targetprice_annual12_tribes",
-            "stddev_estimate_fxadj_targetprice_annual12_tribes",
-            "stddev_estimate_targetprice_annual12_tribes",
-            "estimate_count_current_period_targetprice_annual12_tribes",
-            "mean_estimate_fxadj_targetprice_annual12_tribes",
-        ],
-    },
+    # Retired EUR_ANL_CONSENSUS_NORM (64/64 QUICK completed with 0/64 >= 0.80, maxSh=0.41, INEFF-28).
     {
         "campaign_id": "USA_AIEQ_ALPHA_NORM",
         "region": "USA",
@@ -1283,9 +1263,7 @@ def resolve_quota_queue_policy(
     if int(alpha0_switch_threshold) > 0 and eff_norm < int(alpha0_switch_threshold):
         if has_pending_normal:
             return "NORMAL_ONLY", f"normal={eff_norm}<{alpha0_switch_threshold} -> Phase-1 NORMAL_ONLY (先跑满{alpha0_switch_threshold}常规额度再跑豁免)"
-        if has_pending_alpha0:
-            return "ALPHA0_EXEMPT_ONLY", f"normal queue exhausted at {eff_norm} -> fallback to Alphas=0 exempt"
-        return "SLEEP_CAP_REACHED", f"no pending specs at normal={eff_norm}"
+        return "SLEEP_CAP_REACHED", f"normal queue exhausted at {eff_norm}<{alpha0_switch_threshold} (awaiting new normal specs; no early Alpha0 fallback)"
     if has_pending_alpha0:
         return "ALPHA0_EXEMPT_ONLY", f"normal={eff_norm}>={alpha0_switch_threshold} -> Phase-2 ALPHA0_EXEMPT_ONLY"
     if eff_norm < int(daily_target) and has_pending_normal:

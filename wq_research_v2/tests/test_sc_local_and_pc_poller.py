@@ -135,3 +135,25 @@ def test_pc_poller_handles_200_empty_body_and_rescue_band(tmp_path: Path) -> Non
     h_stalled = parse_pc_histogram_records(sparse_payload, prior_pc_opt_rounds=3)
     assert h_stalled["decision"] == "PC_ABANDON_MAX_ROUNDS_REACHED"
     ledger.close()
+
+
+def test_pc_histogram_rejects_missing_empty_and_cross_threshold_buckets() -> None:
+    # 1. Missing records at max=0.74 -> PC_HIST_UNKNOWN (never PC_RESCUE_NEAR_SPARSE!)
+    h_missing = parse_pc_histogram_records({"max": 0.74, "min": -0.2})
+    assert h_missing["decision"] == "PC_HIST_UNKNOWN"
+
+    # 2. Empty records at max=0.74 -> PC_HIST_UNKNOWN
+    h_empty = parse_pc_histogram_records({"max": 0.74, "min": -0.2, "records": []})
+    assert h_empty["decision"] == "PC_HIST_UNKNOWN"
+
+    # 3. Cross-0.70 bucket [0.69, 0.75, 30] at max=0.74 -> PC_HIST_UNKNOWN
+    h_cross = parse_pc_histogram_records({"max": 0.74, "min": -0.2, "records": [[0.69, 0.75, 30]]})
+    assert h_cross["decision"] == "PC_HIST_UNKNOWN"
+
+    # 4. Aligned sparse bucket [0.70, 0.75, 3] at max=0.74 -> PC_RESCUE_NEAR_SPARSE
+    h_sparse = parse_pc_histogram_records({"max": 0.74, "min": -0.2, "records": [[0.60, 0.70, 20], [0.70, 0.75, 3]]})
+    assert h_sparse["decision"] == "PC_RESCUE_NEAR_SPARSE"
+
+    # 5. Aligned crowded bucket [0.70, 0.75, 30] at max=0.74 -> PC_ABANDON_CROWDED_OR_FAR
+    h_crowded = parse_pc_histogram_records({"max": 0.74, "min": -0.2, "records": [[0.70, 0.75, 30]]})
+    assert h_crowded["decision"] == "PC_ABANDON_CROWDED_OR_FAR"

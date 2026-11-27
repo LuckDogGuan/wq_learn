@@ -122,4 +122,8 @@ def test_reconcile_once_never_resends_on_post_failure(tmp_path: Path) -> None:
     assert res["unobserved"] == 2
     est_day = runnable[0]["est_platform_date"]
     assert ledger.compute_daily_summary(est_day)["unobserved_count"] == 2
+    # On daemon restart, already-reconciled RESULTS_UNOBSERVED fingerprints must NOT be re-queued!
+    _, runnable_restart, skipped_restart = runner.prepare_batch_tasks(spec, simulation_mode="FULL")
+    assert len(runnable_restart) == 0 and len(skipped_restart) == 2
+    assert ledger.get_task_status(runnable[0]["task_id"]) == "RESULTS_UNOBSERVED"
     ledger.close()

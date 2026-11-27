@@ -281,7 +281,7 @@ class LedgerStore:
     def has_completed_fingerprint(self, payload_fingerprint: str) -> bool:
         with self._lock:
             row = self._conn.execute(
-                "SELECT 1 FROM sim_tasks WHERE payload_fingerprint=? AND status IN ('COMPLETED_QUICK','COMPLETED_FULL','SUBMITTED','PENDING_RECONCILE') LIMIT 1",
+                "SELECT 1 FROM sim_tasks WHERE payload_fingerprint=? AND status IN ('COMPLETED_QUICK','COMPLETED_FULL','SUBMITTED','PENDING_RECONCILE','RESULTS_UNOBSERVED') LIMIT 1",
                 (payload_fingerprint,),
             ).fetchone()
             return row is not None
@@ -300,10 +300,10 @@ class LedgerStore:
         incoming_status = str(task.get("status") or "")
         task_id = str(task.get("task_id") or "")
         # Immutable guard: NEVER let QUEUED/DEDUP_SKIPPED/SYNTAX_ERROR/BLACKLIST_SKIPPED/SUBMITTED
-        # overwrite an already completed simulation row on daemon restart / loop!
+        # overwrite an already completed or reconciled-unobserved simulation row on daemon restart / loop!
         if task_id and incoming_status not in ("COMPLETED_FULL", "COMPLETED_QUICK"):
             existing_status = self.get_task_status(task_id)
-            if existing_status in ("COMPLETED_FULL", "COMPLETED_QUICK"):
+            if existing_status in ("COMPLETED_FULL", "COMPLETED_QUICK", "RESULTS_UNOBSERVED"):
                 return
         cols = [
             "task_id", "batch_id", "payload_fingerprint", "canonical_dedup_key",

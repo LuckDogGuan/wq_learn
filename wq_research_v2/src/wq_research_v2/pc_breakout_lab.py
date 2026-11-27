@@ -1233,6 +1233,85 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
 }
 
 
+def build_s3r34_asi_anlcons_usa_aieq_specs() -> list[dict[str, Any]]:
+    """S3-r34 (16 FULL, NORMAL): ASI/analyst_consensus e71Kn6Wg (16.57bp, Sh=1.78, SC=0.067) x ASI/analyst39 np6oOoRl (PC=0.617, SC=0.098) FULL Promotion + USA/ai_equity_alpha LL86Rx8e (RAM PC ge070=2, SC=0.475) FULL Promotion!
+
+    Triggered by 2-hour Audit #26 (2026-11-28 04:12 CST):
+      - Pack A (8 FULL NORMAL, ASI/MINVOL1M/analyst_consensus, COUNTRY d=0 tr=0.04 maxTrade=ON):
+        Promotes `e71Kn6Wg` (`group_rank(ts_zscore(ts_mean(ts_backfill(max_estimate_targetprice_annual12_tribes, 21), 5), 66), subindustry)`,
+        `QUICK Sh=1.78, 2Y=1.87, Fit=1.16, TO=6.38%, Margin=16.57bp, 100-OS SC=0.0671, PC max=0.7593 ge080=0`)
+        and `9qGKw1k1` (`Sh=1.76, 2Y=2.01, Fit=1.16, TO=7.33%, Margin=14.89bp, 100-OS SC=0.1211`) to `FULL`
+        under exact `COUNTRY d=0, tr=0.04, maxTrade=ON` settings, plus 1-axis Wang Ge L6 `tail(0.25, 0.75, 0.5)`,
+        `country*industry`, `adv20>{0.35, 0.38} false=0.27`, and cross-dataset fusion with `anl39_qepsinclxo`
+        (`np6oOoRl`: `Sh=1.62, 100-OS SC=0.0976, PC max=0.6172 ge070=0!`; `0mGdKd3r`: `2Y=2.16, 37.34bp, SC=-0.0614`).
+      - Pack B (8 FULL NORMAL, USA/TOP3000/ai_equity_alpha, REVERSION_AND_MOMENTUM d=4 tr=0.06):
+        Live PC verification (`EFF-26`) proved that switching `analyst_sentiment_score_3` from `SUBINDUSTRY`
+        (`O06kqe1b`, `PC ge070=439`) to `REVERSION_AND_MOMENTUM` (`LL86Rx8e`, `Sh=1.45, Fit=0.90, TO=6.81%,
+        14.25bp, 100-OS SC=0.4754`) cuts `>=0.70` Prod collisions by 99.5% (`439 -> 2`)! Promotes `LL86Rx8e`,
+        `O06kpr8g` (`sent4`), `E5mbwl9K` (`sent5`, `2Y=1.63`), L6 `tail25`, `d22`, and dual-branches `sent3 x sent4/5`.
+    """
+    ci = "group_cartesian_product(country, industry)"
+    tp_max = "ts_backfill(max_estimate_targetprice_annual12_tribes, 21)"
+    tp_fx_max = "ts_backfill(max_estimate_fxadj_targetprice_annual12_tribes, 21)"
+    qeps39 = "ts_backfill(anl39_qepsinclxo, 21)"
+    z_tp = f"ts_zscore(ts_mean({tp_max}, 5), 66)"
+    z_tp_fx = f"ts_zscore(ts_mean({tp_fx_max}, 5), 66)"
+    z_qeps = f"ts_zscore(ts_mean({qeps39}, 5), 66)"
+    d_qeps = f"ts_decay_linear({qeps39}, 10)"
+    e71_tail = f"tail(group_rank({z_tp}, subindustry), lower=0.25, upper=0.75, newval=0.5)"
+
+    asi_cons_exprs: list[tuple[str, str, str, str]] = [
+        ("PC34-A1-e71-exact-full", "ADMIN_ORIGINAL", "WL13229", f"group_rank({z_tp}, subindustry)"),
+        ("PC34-A2-9qg-exact-full", "ADMIN_ORIGINAL", "WL13229", f"group_rank({z_tp_fx}, subindustry)"),
+        ("PC34-A3-e71-tail25", "ADMIN_ORIGINAL", "KH94146", e71_tail),
+        ("PC34-A4-e71-ci", "ADMIN_ORIGINAL", "KH94146", f"group_rank({z_tp}, {ci})"),
+        ("PC34-A5-e71-adv35-f27", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.35, {e71_tail}, 0.27)"),
+        ("PC34-A6-e71-adv38-f27", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.38, {e71_tail}, 0.27)"),
+        ("PC34-A7-e71-x-np6-qeps-z66", "TOP100_2026Q4", "SZ83096", f"group_rank(min(rank({z_tp}), rank({z_qeps})), subindustry)"),
+        ("PC34-A8-e71-x-0mg-qeps-d10", "TOP100_2026Q4", "LD22811", f"group_rank(min(rank({z_tp}), rank({d_qeps})), subindustry)"),
+    ]
+
+    s3 = "ts_backfill(analyst_sentiment_score_3, 21)"
+    s4 = "ts_backfill(analyst_sentiment_score_4, 21)"
+    s5 = "ts_backfill(analyst_sentiment_score_5, 21)"
+
+    usa_aieq_exprs: list[tuple[str, str, str, str]] = [
+        ("PC34-B1-ll8-s3-d10-sub", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({s3}, 10), subindustry)"),
+        ("PC34-B2-s4-d10-sub", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({s4}, 10), subindustry)"),
+        ("PC34-B3-s5-d10-sub", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear({s5}, 10), subindustry)"),
+        ("PC34-B4-s3-d22-tail25", "ADMIN_ORIGINAL", "KH94146", f"tail(group_rank(ts_decay_linear({s3}, 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC34-B5-s3-s4-d10-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank({s3}), rank({s4})), 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC34-B6-s3-s5-d10-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank({s3}), rank({s5})), 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC34-B7-s3-s5-d22-tail25", "TOP100_2026Q4", "SZ83096", f"tail(group_rank(ts_decay_linear(min(rank({s3}), rank({s5})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC34-B8-s3-s4-s5-3way-d15", "TOP100_2026Q4", "LD22811", f"tail(group_rank(ts_decay_linear(min(rank({s3}), min(rank({s4}), rank({s5}))), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+    ]
+
+    return [
+        _pack(
+            batch_id="S3-r34-ASI-ANLCONS-E71-FULL-cty_d0_t04",
+            campaign_id="S3_ASI_ANLCONS_E71_EXACT_FULL",
+            hypothesis_id="HYP-S3R34-ASI-E71KN6WG-SC0067-X-ANL39-PC0617",
+            region="ASI",
+            universe="MINVOL1M",
+            dataset_id="analyst_consensus",
+            queue_type="NORMAL",
+            settings=_make_settings("ASI", "MINVOL1M", "COUNTRY", decay=0, truncation=0.04, max_trade="ON"),
+            items=_build_items(asi_cons_exprs, dataset_id="analyst_consensus", primary_field_id="max_estimate_targetprice_annual12_tribes", tag_suffix="cty_d0_t04"),
+        ),
+        _pack(
+            batch_id="S3-r34-USA-AIEQ-LL8-LOWPC-ram_d4_t06",
+            campaign_id="S3_USA_AIEQ_RAM_LOWPC_FULL",
+            hypothesis_id="HYP-S3R34-USA-LL86RX8E-RAM-PCGE2-SC0475-FULL",
+            region="USA",
+            universe="TOP3000",
+            dataset_id="ai_equity_alpha",
+            queue_type="NORMAL",
+            settings=_make_settings("USA", "TOP3000", "REVERSION_AND_MOMENTUM", decay=4, truncation=0.06),
+            items=_build_items(usa_aieq_exprs, dataset_id="ai_equity_alpha", primary_field_id="analyst_sentiment_score_3", tag_suffix="ram_d4_t06"),
+        ),
+    ]
+
+
 def build_s3r33_asi_q5str2_eur_opeff_si6_specs() -> list[dict[str, Any]]:
     """S3-r33 (16 FULL, NORMAL): ASI/multifactor_return_pred MPgw26wL (JPN=1.03 PASS, 100-OS SC=0.5421, PC ge070=0) Robust Finisher + EUR/model25 x shortinterest6 Orthogonal Low-PC Fusion!
 
@@ -2458,9 +2537,10 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r33 (16 FULL ASI Q5xSTR2 + EUR OpEffxSI6) -> S3-r32 -> S3-r31 -> ..."""
+    """Return ordered S3-r34 (16 FULL ASI ANLCONS + USA AIEQ) -> S3-r33 -> S3-r32 -> ..."""
     return (
-        build_s3r33_asi_q5str2_eur_opeff_si6_specs()
+        build_s3r34_asi_anlcons_usa_aieq_specs()
+        + build_s3r33_asi_q5str2_eur_opeff_si6_specs()
         + build_s3r32_asi_psd_anl_ortho_full_specs()
         + build_s3r31_eur_m110_asi_anl_full_specs()
         + build_s3r30_asi_anl120_ortho_specs()

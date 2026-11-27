@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-28T02:20:00+08:00",
+  "updated_at": "2026-11-28T03:17:38+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -194,6 +194,22 @@
       "verdict": "[有效] 锁定两条严格 PC_PASS_STRICT (>=0.70 碰撞=0!) 且 100-OS SC < 0.60 的高夏普正交 FULL 母版！",
       "metric_delta": "1) ASI MPgw26wL：对 OS #99 akR2rQr9 的 100-OS SC=0.5421 (<0.65 PASS)，远程 PC 直方图 >=0.70 碰撞为 0 条 ([0.6,0.7]=6 条，PC_PASS_STRICT)，且 FULL 已过 LOW_ASI_JPN_SHARPE=1.03/1.00，仅差 Robust (1.94/2.20=88.2%)；2) EUR A1Ld9wqd：对 OS #98 6XGgvmpY 的 100-OS SC=0.5904 (<0.65 PASS)，远程 PC 直方图 >=0.60 碰撞为 0 条 (最高桶 [0.5,0.6]=60 条，PC<0.60!)；EUR np6JW77q/kq87KjPK (operating_efficiency) 100-OS SC=0.4534-0.4710，40.73-52.92bp，2Y=1.79-1.85 PASS。",
       "reusable_rule": "1) 对已过 JPN=1.03 且 PC ge070=0 的 MPgw26wL 施加 EFF-20 (akR2rQr9) 与 S3-r29 (Jj30vk2x qtile5 双过 Robust) 的通关门控 if_else(rank(adv20)>{0.30,0.35,0.38}, ..., {0.26,0.27}) 上线 S3-r33-ASI-MF120-Q5STR2-GATE；2) 将 EUR PC<0.60 的 star_hold_* 与高 Margin/高 2Y 的 operating_efficiency (40.73bp) 融合并配 adv20>{0.15,0.20,0.25,0.35} 上线 S3-r33-EUR-OPEFF-SI6-ORTHO。"
+    },
+    {
+      "case_id": "EFF-25",
+      "region_dataset": "[V][C] ASI/MINVOL1M/multifactor_return_pred · S3-r33 · 0mGd9vJk / qM5dvqRE",
+      "controlled_change": "两条 D1 FULL 均为 COUNTRY、decay=4、truncation=0.08、nanHandling=OFF、maxTrade=ON，固定 adv20 门槛 0.38 与式内平滑 15，只将 if_else 低流动性分支从 0.27 改为 0.26。",
+      "verdict": "[有效] 这个单轴改动仅修复 Robust Sharpe 的相对门槛。Robust Returns 两式均通过，日本子检均失败。",
+      "metric_delta": "Robust Sharpe 1.62/1.63 FAIL→1.60/1.60 PASS，Robust Returns 0.0372/0.0362→0.0369/0.0355 PASS。JPN 0.93→0.91，Sh 1.81→1.78，Fitness 1.03→1.00，2Y 2.10→2.06，Margin 9.56→9.49bp。",
+      "reusable_rule": "分开读 Robust 原值与相对门槛。这个坐标下的过线伴随门槛下降及日本子检进一步走弱，沿用 INEFF-27 的收口决策。"
+    },
+    {
+      "case_id": "EFF-26",
+      "region_dataset": "[V][C] USA/TOP3000/ai_equity_alpha (O06kqe1b vs LL86Rx8e) & ASI/MINVOL1M/analyst_consensus x analyst39 (e71Kn6Wg x np6oOoRl)",
+      "controlled_change": "1) 在 USA/TOP3000/ai_equity_alpha (aCnt=1) 上固定 group_rank(ts_decay_linear(ts_backfill(analyst_sentiment_score_3, 21), 10), subindustry) 与 d=0, tr=0.04，严格单轴对照 SUBINDUSTRY (O06kqe1b) vs REVERSION_AND_MOMENTUM (LL86Rx8e) 的 100-OS SC 与远程 PC 直方图；2) 对 ASI/MINVOL1M/analyst_consensus (e71Kn6Wg/9qGKw1k1) 与 ASI/analyst39 (np6oOoRl/0mGdKd3r) 执行 100-OS SC 与远程 PC 直方图检验。",
+      "verdict": "[有效] 1) USA 单改 SUBINDUSTRY->RAM 将 >=0.70 生产碰撞从 439 条砍至 2 条 (-99.5%!) 且 Sharpe 从 1.41 升至 1.45、100-OS SC 从 0.6340 降至 0.4754；2) ASI/analyst39 np6oOoRl 实测 PC=0.6172 (ge070=0, PC_PASS_STRICT) 且 100-OS SC=0.0976，与 e71Kn6Wg (Sh=1.78, 2Y=1.87, Fit=1.16, 16.57bp, 100-OS SC=0.0671) 形成互补。",
+      "metric_delta": "1) USA O06kqe1b (SUBINDUSTRY: Sh=1.41, Fit=0.89, 39.70bp, SC=0.6340, PC=0.8355, ge070=439) -> LL86Rx8e (RAM: Sh=1.45, Fit=0.90, TO=6.81%, 14.25bp, SC=0.4754, PC ge070=2 [0.7-0.8=1, >=0.8=1])；2) ASI e71Kn6Wg (Sh=1.78, 2Y=1.87, Fit=1.16, TO=6.38%, 16.57bp, 100-OS SC=0.0671, PC=0.7593 ge080=0) + np6oOoRl (Sh=1.62, 100-OS SC=0.0976, PC=0.6172 ge070=0!) + 0mGdKd3r (2Y=2.16, 37.34bp, SC=-0.0614)。",
+      "reusable_rule": "1) 在 USA/ai_equity_alpha 上锁定 REVERSION_AND_MOMENTUM (d=4, tr=0.06) 配 L6 tail25 与 sent3 x sent4/5 双支上线 S3-r34-USA-AIEQ-LL8-LOWPC；2) 将 ASI/analyst_consensus e71Kn6Wg/9qGKw1k1 原式同参转 FULL 并融合 PC=0.6172 的 anl39_qepsinclxo 上线 S3-r34-ASI-ANLCONS-E71-FULL。"
     }
   ],
   "ineffective_cases": [
@@ -403,6 +419,22 @@
       "verdict": "[无效] 1) 上述 5 个 NORMAL 数据集在 56-80 条 QUICK 后均因正向 Sharpe>=0.80 命中率 <=1.5% (maxSh=0.65-0.83) 被守护进程自动早停；2) USA/model31 全簇对 100-OS (e71w5Qrl + E5mWLW0J) 的 SC 均升至 0.7115-0.9876 (SC_READY_HIGH)。",
       "metric_delta": "EUR/analyst10 1/64 (max=0.83), EUR/institutions6 1/80 (max=0.80), USA/fundamental72 1/64 (max=0.83), USA/institutions6 0/72 (max=0.76), ASI/mmp_nlp_sentiment 0/56 (max=0.65)；USA/model31 STATISTICAL 簇对 E5mWLW0J SC=0.7115-0.7377，RAM 簇对 e71w5Qrl SC=0.8341-0.9876。",
       "root_cause_and_ban": "1) 停止在已饱和的 USA/model31 (ass_tvr/acc) 上投入 FULL 额度；2) 从守护进程下线上述 5 个已早停集，换入实盘核验高覆盖纯 MATRIX 常规新集 EUR/ai_factor_transfer、EUR/analyst_consensus、USA/ai_equity_alpha (aCnt=1)、USA/ai_factor_transfer、ASI/analyst39 与 ASI/analyst_consensus。"
+    },
+    {
+      "case_id": "INEFF-27",
+      "region_dataset": "[V][C] ASI/MINVOL1M/multifactor_return_pred · S3-r33-ASI-MF120-Q5STR2-GATE-cty_d4_t08 · 8 D1 FULL NORMAL",
+      "controlled_change": "MPgw26wL→YPlmnqVW 固定 qtile5 × st_r2、式内平滑 10、COUNTRY 与其他实发设置，改平台 decay 0→4 并加 adv20>0.35 / 低流动性取 0.27。其他变体扫描门槛、取值、式内平滑。",
+      "verdict": "[无效] 8 条 JPN 全低于 1.00，只有 qM5dvqRE 双过 Robust，整个批次 RA 为 0/8。",
+      "metric_delta": "MPgw26wL→YPlmnqVW，JPN 1.03→0.93，Sh 2.44→1.89，2Y 2.60→2.18，Fitness 1.53→1.08，Margin 7.83→8.53bp。批次 JPN 0.88–0.97，Margin 8.53–10.27bp。qM5dvqRE 的 JPN 0.91，BRAIN 详情同样为 FAIL。",
+      "root_cause_and_ban": "单支的门控结果无法直接迁移到双支。同母版首对同时改 decay 与门控，无法单独归因。结束这一组门控扫描，现有 analyst_consensus 队列继续筛查。"
+    },
+    {
+      "case_id": "INEFF-28",
+      "region_dataset": "[V][C] EUR/TOP2500/shortinterest6 × model110、model25 · S3-r33-EUR-OPEFF-SI6-ORTHO-ram_d4_t08 · 8 D1 FULL NORMAL",
+      "controlled_change": "固定 REVERSION_AND_MOMENTUM、decay=4、truncation=0.08、nanHandling=OFF、maxTrade=OFF，A1Ld9wqd→ZYXxqPQZ→GrQ6Y1WQ 仅改流动性门控（无→adv20>0.15→0.25），另测 operating_efficiency 融合。",
+      "verdict": "[无效] 8/8 Fitness、Sub-Universe、IS Ladder FAIL。四条 operating_efficiency 双支最高 Sharpe 0.80。同轮 EUR/analyst_consensus 0/64 达 Sharpe 0.80，最高 0.41，已自动早停。",
+      "metric_delta": "母版至两条同式变体 Sh 1.95→1.72→1.42，Fitness 1.09→0.92→0.70，Margin 9.53→8.26→6.83bp。Sub-Universe 0.46/1.01→0.48/0.89→0.54/0.74，全为 FAIL。台账 2Y 摘要 1.52→1.41→1.37，平台对应检查为 IS Ladder。",
+      "root_cause_and_ban": "停止该组合的门槛扫描。母版低 PC 与硬检状态分别判定。operating_efficiency 相关母版与双支的表达式及多项设置有差异，归因限于实发组合。"
     }
   ]
 }
