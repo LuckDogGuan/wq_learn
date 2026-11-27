@@ -38,6 +38,19 @@
     - **`9qGo72A1`**（`CROWDING d=2`）：`Sh=2.13, 2Y=2.26, Fit=1.35, 9.12bp, JPN=PASS, Robust=1.85/1.92, PC=0.8136`（反证 `COUNTRY` 单独砍掉 **`-0.1052` PC**！）；
     - **`N1KMRVqg`**（`COUNTRY d=4`, `anl120 × st_r2`）：**`11.81bp, Sh=2.06, Fit=1.35, JPN=PASS, PC=0.7325`**；`vRY0vo5a` (`10.34bp, JPN=PASS`)、`Jj3lv0Kl` (`9.87bp, JPN=PASS`)；
   - **立即热部署收口包 `S3-r23-ASI-MF120-ROBUST`（24 FULL `NORMAL`, `COUNTRY d={0,2,4}`, `maxTrade=ON`）**：在剩余 `460` 常规额度中立即发射，用 `adv20 > {0.2, 0.3, 0.4}` / `cap > 0.25` 剔除底部非流动微盘股拉过 `Robust ≥ 90%` 并叠加王哥 L6 `tail(0.25, 0.75, 0.5)` 压穿 `PC < 0.68`，直取 **`ASI` 首条全绿 `Useful`**！
+- **2026-11-27 10:50（2 小时定时审计 #17 · `S3-r23b` 16/16 + `S3-r23c` 16/16 免额 `FULL` 再出 `6` 条 `JPN PASS` 猛将（`vRY0o3g3 14.41bp / JPN=1.13`、`MPgwVVRL Sh=2.58 / JPN=1.05`、`MPgw26wL Sh=2.44 / JPN=1.03`）！定位 `Robust Ratio = 96.4%` 收口钥匙并秒发 `S3-r23d-ASI-MF120-ROBUST-FREE`！）**：
+  - **全天官方回测冲上 `9,268` 条（`206%` 日目标达成，连续 14 小时 `0` 次 `429`！）**：
+  - **`S3-r23b-ASI-MF120-SUB-FREE`（16/16 `FULL` 零超时完成）& `S3-r23c-ASI-QTILE5-SUB-FREE`（16/16 `FULL` 零超时完成）受控归因（更新 `EFF-14`）**：
+    - **再添 `6` 条 `LOW_ASI_JPN_SHARPE >= 1.00 PASS`（累计 `11` 条过日本子检！）**：
+      1. **`vRY0o3g3`**（`COUNTRY d=6`, `anl120 × st_r2 subindustry`）：**`Margin = 14.41bp, Sh = 2.34, 2Y = 1.95, Fit = 1.64, TO = 8.55%, JPN = 1.13 / 1.00 (PASS!)`**；
+      2. **`1YGv2QvX`**（`COUNTRY d=6`, `anl120 × st_r2 + tail25 subindustry`）：**`Margin = 13.97bp, Sh = 2.35, 2Y = 2.03, Fit = 1.71, TO = 9.42%, JPN = 1.04 / 1.00 (PASS!)`**；
+      3. **`e71AEEoO` / `VkMneejw`**（`COUNTRY d=2`, `anl120 × st_r2`）：**`11.64bp / 11.57bp, Sh = 2.37 / 2.36, Fit = 1.73 / 1.66, JPN = 1.02 / 1.00 (PASS!)`**；
+      4. **`MPgwVVRL`**（`COUNTRY d=2`, `st_r2 d10 + tail25 subindustry`）：**`Sh = 2.58, 2Y = 2.63, Fit = 1.65, 8.63bp, JPN = 1.05 / 1.00 (PASS!)`**；
+      5. **`MPgw26wL`**（`S3-r23c COUNTRY d=0`, `qtile5 × st_r2 + tail25 subindustry`）：**`Sh = 2.44, 2Y = 2.60, Fit = 1.53, 7.83bp, JPN = 1.03 / 1.00 (PASS!)`**；
+    - **关键受控变量发现（为什么 `Robust` 差最后一步？）**：
+      - 将线性衰减从 `10d` 拉长至 `15d` + `tail25` + `d=6`（`88GA2dqz Sh=2.52, 11.34bp` & `2rGEeez6 Sh=2.51`）把 `Robust / Limit` 达标率从 `0.884` 推高至 **`0.916 (2.08/2.27)`**、`Robust Returns` 推至 **`0.917 (0.0411/0.0448)`**（`JPN = 0.98–0.99 / 1.00`）；
+      - 横向对比 56 条 `FULL` 的 `Robust / Limit` 排名发现：**`9qGo72A1`（`CROWDING d=2`, `st_r2 d10 subindustry`）的 `Robust / Limit` 已高达 `0.964 (1.85 / 1.92)`（仅差 `0.07`！）且 `JPN = 1.02 PASS`！**
+  - **立即热部署免额收口包 `S3-r23d-ASI-MF120-ROBUST-FREE`（24 FULL `UNUSED_ALPHA0` FREE, `maxTrade=ON`）**：在 `CROWDING d=6`（在 `9qGo72A1 rob=0.964 + JPN PASS` 基础上叠 `d12/d15/d22 + tail25` 及 `anl120/qtile5` 双支同步冲过 `Robust ≥ 1.00× Limit` 并压 `PC < 0.70`）、`REVERSION_AND_MOMENTUM d=4`（复刻 `EFF-11` 砍 `-0.190` PC 奇效）与 `COUNTRY d=12 tr=0.06` 下立即零额度执行；同时保持 `S3-r23-ASI-MF120-ROBUST`（`adv20/cap` 门控 `NORMAL`）与 `S3-r20-EUR-1YG-HIGHMGN` 置顶待命！
 - **2026-11-27 10:03（2 小时定时审计 #17 · 官方日回测突破 `9,028` 且连续 13h+ 零 `429`！`S3-r23b` 16/16 + `S3-r23c` d=0 8/8 `FULL` 实证：纯 `Alphas=0` 再增 6 条 `JPN=PASS`（含 `14.41bp`），但 24/24 全卡 `ROBUST_UNIVERSE`，铁证需 `adv20/cap` 流动性门控收口！）**：
   - **`S3-r23b-ASI-MF120-SUB-FREE`（`d=2`/`d=6` `16/16 FULL` 零超时完成，`d=0` 去重跳过，记入 `INEFF-12`）**：再增 **5 条 `LOW_ASI_JPN_SHARPE=PASS`**：**`MPgwVVRL`**（`d=2, Sh=2.58, 2Y=2.63, Fit=1.65, 8.63bp`）、**`e71AEEoO`**（`d=2, 11.64bp, Sh=2.37, Fit=1.73`）、**`VkMneejw`**（`d=2, 11.57bp, Sh=2.36, Fit=1.66`）、**`1YGv2QvX`**（`d=6, 13.97bp, Sh=2.35, Fit=1.71`）、**`vRY0o3g3`**（`d=6, 14.41bp, Sh=2.34, Fit=1.64`）；另有 `2rGEeez6` (`JPN=0.99/1`)、`88GA2dqz` (`0.98/1`)、`XgNqO56z` (`0.97/1`) 贴边；
   - **`S3-r23c-ASI-QTILE5-SUB-FREE`（`short_term_60d_qtile5_class_pred`：`d=0` 8/8 完成，`d=4` 8 条实时在跑未打断）**：`MPgw26wL` 同样打出 **`Sh=2.44, 2Y=2.60, Fit=1.53, 7.83bp, JPN=PASS`**；

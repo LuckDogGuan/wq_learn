@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-27T10:03:00+08:00",
+  "updated_at": "2026-11-27T10:53:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -109,11 +109,11 @@
     },
     {
       "case_id": "EFF-14",
-      "region_dataset": "ASI/MINVOL1M/multifactor_return_pred (S3-r22 24/24 FULL 历史性打穿日本子市场检查!)",
-      "controlled_change": "将 ASI/multifactor_return_pred (short_term_regime2_60d_single_quantile_pred & analyst_120d) 晋级 24 FULL，严格对照 COUNTRY d=0/4 vs CROWDING d=2 (maxTrade=ON)",
-      "verdict": "EFFECTIVE（历史性破壁 · 首次在 ASI FULL 批量打穿 LOW_ASI_JPN_SHARPE>=1.00，且 COUNTRY 单轴压 PC -0.105 至 0.7084！）",
-      "metric_delta": "5 条 ASI FULL 全部 PASS LOW_ASI_JPN_SHARPE: A1L67JZg (COUNTRY d=0) Sh=2.62, 2Y=2.71, Fit=1.61, 7.80bp, ASI SC=0.000, 远程 PC=0.7084 (ge070=3 仅差 0.0084!), 仅败于 ROBUST_UNIVERSE(2.10/2.36 = 89.0% vs 90%!); 9qGo72A1 (CROWDING d=2) Sh=2.13, JPN PASS, Robust=1.85/1.92, PC=0.8136 -> 实证 COUNTRY 单独压低 -0.1052 PC; N1KMRVqg (COUNTRY d=4, 双支) 11.81bp, Sh=2.06, JPN PASS, PC=0.7325! 立即上线 S3-r23-ASI-MF120-ROBUST (COUNTRY d=0/2/4 + adv20>{0.2,0.3,0.4}/cap>0.25 + tail25) 同步打穿 Robust>=90% 与 PC<0.68!",
-      "reusable_rule": "ASI/MINVOL1M 首次验证同时过 JPN Sharpe 且高夏普(2.62)的矿脉为 multifactor_return_pred；COUNTRY 中性化比 CROWDING 低 -0.105 PC，若仅差 1-3% ROBUST_UNIVERSE_SHARPE_RATIO，直接在 MINVOL1M 内用 adv20>0.2-0.4 或 cap>0.25 剔除底部非流动微盘股并叠 L6 tail25。"
+      "region_dataset": "ASI/MINVOL1M/multifactor_return_pred (S3-r22 24/24 + S3-r23b 16/16 + S3-r23c 16/16 FULL 累计 11 条打穿日本子市场检查!)",
+      "controlled_change": "将 ASI/multifactor_return_pred (st_r2_60d / analyst_120d / qtile5_class) 晋级 56 FULL，严格对照 COUNTRY d=0/2/4/6 vs CROWDING d=2 及 subindustry/sector + d10/d15 + tail(0.25,0.75,0.5) (maxTrade=ON)",
+      "verdict": "EFFECTIVE（历史性破壁 · 累计 11 条 ASI FULL 打穿 LOW_ASI_JPN_SHARPE>=1.00，定位 Robust>=90% 两大收口钥匙！）",
+      "metric_delta": "1) S3-r22: A1L67JZg (COUNTRY d=0, d10 sub) Sh=2.62, 2Y=2.71, Fit=1.61, 7.80bp, JPN=1.06 PASS, SC=0.000, PC=0.7084 (ge070=3), rob=2.10/2.36 (0.890); 9qGo72A1 (CROWDING d=2, d10 sub) Sh=2.13, 2Y=2.26, Fit=1.35, JPN=1.02 PASS, rob=1.85/1.92 (0.964 仅差 0.07!); 2) S3-r23b (16/16 FULL): MPgwVVRL (d=2, d10+tail25) Sh=2.58, 2Y=2.63, Fit=1.65, JPN=1.05 PASS; vRY0o3g3 / 1YGv2QvX (d=6, anl120 x st_r2) 14.41bp / 13.97bp, Sh=2.34-2.35, Fit=1.64-1.71, JPN=1.13/1.04 PASS; 88GA2dqz / 2rGEeez6 (d=6/d=2, d15+tail25) 将 rob_ratio 从 0.884 推至 0.916 (2.08/2.27)、rret 推至 0.917、Mgn 升至 11.34bp (JPN=0.98-0.99); 3) S3-r23c (16/16 FULL): MPgw26wL (qtile5 x st_r2 + tail25) Sh=2.44, 2Y=2.60, Fit=1.53, JPN=1.03 PASS! 已上线免额 S3-r23d-ASI-MF120-ROBUST-FREE (CROWDING d=6 / RAM d=4 / COUNTRY d=12 tr=0.06 + d12/d15/d22 + tail25) 与常规额 S3-r23-ASI-MF120-ROBUST (adv20/cap 门控) 双路合围!",
+      "reusable_rule": "在 ASI/MINVOL1M 上，拉长线性衰减 (10d->12d/15d/22d + d=6..12) 并配合 CROWDING/RAM 中性化或 adv20>0.2-0.4 门控，可有效抑制底部 10% 非稳健微盘尾部噪音、提升 ROBUST_UNIVERSE_SHARPE_RATIO，同时用 L6 tail25 + 同集双支将 PC 压入 <0.70。"
     }
   ],
   "ineffective_cases": [
@@ -207,11 +207,11 @@
     },
     {
       "case_id": "INEFF-12",
-      "region_dataset": "ASI/MINVOL1M/multifactor_return_pred (S3-r23b 16/16 FULL + S3-r23c d=0 8/8 FULL 纯免额无流动性门控对照)",
-      "controlled_change": "在不使用 adv20/cap（因不在 allowed_pv1_alpha0_helpers）的前提下，尝试仅靠纯 Alphas=0 分组切换（subindustry/sector）+ tail25 + anl120 双支 + d={2,6} 修复 A1L67JZg 的 ROBUST_UNIVERSE（以及测试新字段 short_term_60d_qtile5_class_pred）",
-      "verdict": "INEFFECTIVE_FOR_ROBUST（可批量过 JPN 与推高 Margin 至 14.41bp，但 24/24 全部无法单独打穿 ROBUST_UNIVERSE >= 90%）",
-      "metric_delta": "S3-r23b 16/16 FULL 再增 5 条 JPN=PASS（MPgwVVRL d=2 Sh=2.58/2Y=2.63/Fit=1.65/8.63bp；e71AEEoO 11.64bp/Fit=1.73；VkMneejw 11.57bp；1YGv2QvX d=6 13.97bp/Fit=1.71；vRY0o3g3 d=6 14.41bp/Fit=1.64），S3-r23c d=0 再增 MPgw26wL (Sh=2.44/2Y=2.60/JPN PASS)，但 24/24 全员仍卡在 LOW_ROBUST_UNIVERSE_SHARPE (82%-89% vs 90%) 与 LOW_ROBUST_UNIVERSE_RETURNS。",
-      "root_cause_and_ban": "铁证：ASI/MINVOL1M 上纯 Alphas=0 调参（换分组/加 tail25/调 decay）无法消除尾部非流动微盘贡献，切勿继续空耗免额纯调参；必须切入 NORMAL 常规额度引入 adv20/cap 流动性门控（S3-r23-ASI-MF120-ROBUST 已置顶待发）。"
+      "region_dataset": "ASI/MINVOL1M/multifactor_return_pred (S3-r23b 16/16 FULL + S3-r23c 16/16 FULL 纯 COUNTRY 免额无流动性门控对照)",
+      "controlled_change": "在固定 COUNTRY 中性化且不使用 adv20/cap（因不在 allowed_pv1_alpha0_helpers）的前提下，尝试仅靠纯 Alphas=0 分组切换（subindustry/sector）+ tail25 + anl120/qtile5 双支 + d={0,2,4,6} 修复 A1L67JZg 的 ROBUST_UNIVERSE",
+      "verdict": "INEFFECTIVE_FOR_ROBUST_UNDER_COUNTRY（累计再增 6 条 JPN=PASS 且将 Margin 推至 14.41bp、Robust Ratio 推至 91.6%，但纯 COUNTRY 下 32/32 仍未过 ROBUST_UNIVERSE）",
+      "metric_delta": "S3-r23b 16/16 FULL 再增 5 条 JPN=PASS（MPgwVVRL d=2 Sh=2.58/2Y=2.63/Fit=1.65/8.63bp/JPN=1.05；e71AEEoO 11.64bp/Fit=1.73/JPN=1.02；VkMneejw 11.57bp；1YGv2QvX d=6 13.97bp/Fit=1.71/JPN=1.04；vRY0o3g3 d=6 14.41bp/Fit=1.64/JPN=1.13），且 88GA2dqz (d=6, d15+tail25) 将 rob_ratio 从 0.884 推至 0.916 (2.08/2.27, JPN=0.98)；S3-r23c 16/16 FULL 再增 MPgw26wL (Sh=2.44/2Y=2.60/JPN=1.03 PASS) 与 N1KM2Ynw (d=4 Sh=2.43/2Y=2.64/9.07bp)，但纯 COUNTRY 下仍差最后 8.4% Robust Ratio。",
+      "root_cause_and_ban": "铁证：纯 COUNTRY 中性化下无 adv20/cap 门控难以单独越过 Robust>=90%；破局双路：(1) 常规额 S3-r23-ASI-MF120-ROBUST 直接加 adv20/cap 流动性门控；(2) 免额 S3-r23d-ASI-MF120-ROBUST-FREE 切至 CROWDING d=6 / RAM d=4（利用 9qGo72A1 CROWDING 已达 rob_ratio=0.964 + JPN=1.02 PASS 的基础叠 d12/d15/d22 + tail25 冲过最后 3.6% Robust 并压 PC<0.70）。"
     }
   ]
 }
