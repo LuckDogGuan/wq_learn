@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-27T14:47:00+08:00",
+  "updated_at": "2026-11-27T16:08:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -138,6 +138,22 @@
       "verdict": "EFFECTIVE（彻底修复 Sharpe/JPN 暴跌并创 JPN=1.17 历史新高，且证实全池 rank(adv20) 在 Robust 与 JPN 上双胜国别分位！）",
       "metric_delta": "1) 修复 false=0->0.5 后，pwWQ1QNb (COUNTRY d=0, rank(adv20)>0.25, d10+tail25) 跃升至 Sh=2.47, 2Y=2.49, Fit=1.59, JPN=1.17/1.00 PASS (历史最高!)，RobSh=1.90 (>>1.58!)；2) 同式对照：rank(adv20)>0.20 (KPVxwxGN/LL8Ogqle, d22+tail25) 将 RobSh/Sh 从 80.2% 推至 83.6% (+3.4%)、RobRet/Ret 推至 83.6% (+3.9%)、JPN=1.01 PASS，双双优于 group_rank(adv20, country)>0.20 (79.8%/79.3%)！说明 Robust Universe 是 MINVOL1M 顶部 ~35%-55% 高流动性核心；立即上线 S3-r26-ASI-MF120-LIQ50-N05 (adv20>{0.45,0.55,0.65} / cap>0.50 / min(adv20,cap)>0.45 + 中性 0.5) 一步冲过 Robust>=90%！",
       "reusable_rule": "对 [0,1] 区间的 rank/group_rank/tail(..., newval=0.5) 施加 if_else 流动性门控时，false 分支必须设为 0.5（绝不可设为 0，否则将剔除股打为满仓空头！）；对 ASI/MINVOL1M，全池 rank(adv20) 门控（阈值 0.45-0.65 配中性 0.5）可同时保日本大中盘 (JPN>=1.1) 并剔除底部非 Robust 微盘。"
+    },
+    {
+      "case_id": "EFF-18",
+      "region_dataset": "[V][C] EUR/TOP2500/model77+model110 · S3-r27b-EUR-1YG-13BP，16/16 D1 FULL NORMAL",
+      "controlled_change": "配对固定表达式与 RAM/truncation=0.08/maxTrade=OFF，仅把 setting decay 从 4 调至 6。adv20>0.14 的无额外平滑组与 post-min d5 组分别比较。",
+      "verdict": "[有效] 此配对下 decay=6 能增加 Margin，收益限于回测指标。",
+      "metric_delta": "E5moVZbK→akRXVPwx：Margin 9.60→10.65bp、TO 8.98%→7.89%、Sh 2.06→2.00、Fit 1.21→1.16、Ladder 2.15→2.16，均回测硬检 0 FAIL。A1LqQRag→VkMKdleY：Margin 10.64→11.29bp、Sh 1.88→1.85、Fit 1.06→1.03；Sub-Uni 0.97/0.98 FAIL→0.96/0.96 PASS，来自门槛下移，绝对 Sharpe 未提高。",
+      "reusable_rule": "同式配对可以区分 Margin 增益、绝对子池表现与动态门槛变化。三个 Margin 超过 6XGgvmpY 的候选均因 SC 和 PC 淘汰，见 INEFF-16。"
+    },
+    {
+      "case_id": "EFF-19",
+      "region_dataset": "[V][C] ASI/MINVOL1M/multifactor_return_pred · S3-r27-ASI-MF120-INTERP",
+      "controlled_change": "固定全池 rank(adv20)>0.25、前置 ts_decay_linear 10、COUNTRY decay=0、truncation=0.08、maxTrade=ON，仅将 false 从 0.20 调至 0.28（qM5eEbRK→QPWmYe85）。",
+      "verdict": "[有效] 在此配对中，收窄负向倾斜可恢复日本子市场过线。",
+      "metric_delta": "JPN 0.94→1.04（门槛 1.00），Sh 2.12→2.33，Fit 1.25→1.42，Margin 8.09→8.18bp；RobSh 1.75/1.91→1.87/2.10，RobRet 0.0372/0.0392→0.0387/0.0420，两项离各自门槛更远。",
+      "reusable_rule": "在同式同设置内同时记录三项检查的实际值和门槛。此结论只支持该配对的 JPN 改善。"
     }
   ],
   "ineffective_cases": [
@@ -252,6 +268,22 @@
       "verdict": "INEFFECTIVE（1: false=0.5 下单纯抬高 adv20 阈值虽创 JPN=1.28 新高但未改变 RobSh/Sh~81%；2: EUR/model238 属微盘驱动 Sub-Uni=-0.05..0.41 全 FAIL）",
       "metric_delta": "1) S3-r26 3qGgR3dZ (adv20>0.45, false=0.5) 创 JPN=1.28/1.00 新高 (Sh=2.44, Fit=1.65)，但 RobSh=1.85/2.20 仍卡 84%；对比同式 2rGPdR1N/blx753Y6 (false=0.0 -> RobSh=1.49/1.47 PASS + RobRet=0.0346/0.0340 PASS, Fit=0.90) vs pwWQ1QNb/KPVxwxGN (false=0.5 -> JPN=1.17 PASS, Fit=1.59)，证实通过 Robust 的真正杠杆是 false_val 负向微倾而非高截断阈值！2) S3-r26b EUR/model238 16/16 FULL Sub-Uni 仅 -0.05~0.41/0.78，止损不再投入 Stage-3。",
       "root_cause_and_ban": "1) 已上线 S3-r27-ASI-MF120-INTERP (24 FULL) 在 false_val ∈ {0.15, 0.22, 0.28} 之间精确插值（兼取 false=0 的双 Robust PASS 与 false=0.5 的 JPN=1.17/Fit=1.59 PASS）；2) EUR/model238 停止 Stage-3，改为上线 S3-r27b-EUR-1YG-13BP (16 FULL: 将 2rGPb8N6 10.56bp Sub=1.07/1.09 与 N1Kkvxb7 12.07bp/RR50nj7j 13.26bp 叠 adv20>{0.14..0.20} 把 EUR Useful 推上 12.5-14bp)。"
+    },
+    {
+      "case_id": "INEFF-15",
+      "region_dataset": "[V][C] ASI/MINVOL1M/multifactor_return_pred · S3-r27-ASI-MF120-INTERP，24/24 D1 FULL NORMAL",
+      "controlled_change": "分别按流动性门控坐标、前置平滑窗口及 setting decay 分组复核 false 插值，然后与 r25/r26 对照。",
+      "verdict": "[无效] 本批插值未同时通过 JPN 和两项 Robust。",
+      "metric_delta": "回测硬检 0/24 全过；JPN 2/24 过线，Robust 两项同时过线 1/24，两集合无交集。国别分位门控 12/12 同时失败于 JPN、RobSh、RobRet。A1Lqx17g 只差 JPN 0.97/1.00，RobSh 1.70/1.69、RobRet 0.0370/0.0356；同式 decay=0/2 的 JPN 0.98 仍失败，RobSh 也未过。",
+      "root_cause_and_ban": "停止铺开国别分位门控、继续加大衰减和把 false=0.5 下的高 JPN 当作 Robust 修复。只保留 A1Lqx17g 的固定母版给一次窄轴验证。"
+    },
+    {
+      "case_id": "INEFF-16",
+      "region_dataset": "[V][C] EUR/TOP2500/model77+model110 · S3-r27b-EUR-1YG-13BP，16/16 D1 FULL NORMAL",
+      "controlled_change": "在 RAM decay={4,6} 下检查 adv20 门槛和 post-min 平滑配对，并用 BRAIN SC/PC 原始响应与 PnL 核对现役 OS 对手。",
+      "verdict": "[无效] 本批未交付可替换的冠军，也未达到 12.5bp 目标。",
+      "metric_delta": "5/16 回测硬检 0 FAIL；post-min d8/d10 共 6/6 因 Fitness、Ladder 失败，最高 Margin 11.50bp 仍有 FAIL。五个候选对 6XGgvmpY 的官方 SC 与生产 PC 均为 0.9901–0.9972，PC 直方图各有 1 个 >=0.90 的生产因子。独立用平台 PnL 的 2,578 个共同日差分复算，相关 0.9890–0.9963。6XGgvmpY 已于北京时间 15:22:37 进入 OS。",
+      "root_cause_and_ban": "收口此高相关家族，不继续扫阈值或平滑。转向其他点塔类别。平台终检快照仍含 PENDING，SC 与 PC 的实数足以判定五条均未达到打标门槛。"
     }
   ]
 }

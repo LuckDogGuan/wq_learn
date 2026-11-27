@@ -158,3 +158,9 @@
 - **2026-11-27 14:47（服务重启巡检补记 · `S3-r26b` `EUR/model238` 16/16 `FULL` 止损记入 `INEFF-14` + 热部署 `S3-r27b-EUR-1YG-13BP` 冲刺 `12.5–14.0bp` 更高 Margin `Useful`！）**：
   - `S3-r26b` 16/16 `FULL` 完成，证实 `EUR/model238`（`QPWmawe5 21.10bp, Sh=1.50`）即便在 `adv20 > 0.08..0.16` 下 `Sub-Uni` 仍仅 `-0.05 ~ 0.41 / 0.78`，果断止损不再排入 Stage-3；
   - 转向 `S3-r20` 中仅差 `0.02–0.07` `Sub-Uni` 的高 Margin 准过关三杰 **`2rGPb8N6`（`10.56bp, Sub=1.07/1.09`）**、**`N1Kkvxb7`（`12.07bp, Sub=0.99/1.05`）**、**`RR50nj7j`（`13.26bp, Sub=0.94/1.01`）**，立即上线 **`S3-r27b-EUR-1YG-13BP`（16 FULL `NORMAL`, `RAM d={4,6}` + `post-min d5/d8/d10` + `adv20 > {0.14, 0.16, 0.18, 0.20}`）**，把现役 `Useful` 冠军 **`6XGgvmpY`（`10.25bp, PC=0.590`）** 进一步推高至 **`12.5–14.0bp`**！
+
+### 2026-11-27 · S3-r27b 验真与方向切换
+
+- **[V][C] [有效] Margin 局部提升。** 广州 SQLite 确认 16/16 `D1 FULL NORMAL` 完成，5 条回测硬检零 FAIL。`adv20 > 0.14` 无额外平滑的同式配对，`decay 4 → 6` 令 `E5moVZbK → akRXVPwx` 的 Margin `9.60 → 10.65bp`，换手 `8.98% → 7.89%`，Sharpe `2.06 → 2.00`，Fitness `1.21 → 1.16`。`post-min d5` 配对的 `VkMKdleY` 达 `11.29bp`，Sub-Uni `0.96/0.96` 擦线过关。
+- **[V][C] [无效] 同族交付。** `post-min d8/d10` 共 6 条，全部失败于 Fitness 和 Ladder。BRAIN 确认 `6XGgvmpY` 在北京时间 `15:22:37` 进入 OS。五条零 FAIL 候选的官方 SC 对手均为 `6XGgvmpY`，SC 和 PC 同为 `0.9901–0.9972`。本地用平台 PnL 的 2,578 个共同日差分交叉复算为 `0.9890–0.9963`。本批新增 `Useful` 和 `SC_PASS` 均为 0，结束该组参数扫描。详见 `EFF-18`、`INEFF-16`。
+- **[V] 点塔方向。** 平台 Pyramid 快照显示 `EUR/D1/news` 在 OS 为 0，`pv` 为 10，`fundamental` 为 12。`news84` 的 `median_primary_sentiment_score_transfer` 是 `MATRIX`，覆盖率 `0.7986`、历史覆盖 `1.00`、字段 Alpha 数 `7`。**[U]** 下轮优先核对该字段的真实非零覆盖和更新频率，再用 Stage 1–2 `D1 QUICK` 测试正向新闻情绪假说。只有筛过的种子才进入 FULL。本轮未发起探针或回测。
