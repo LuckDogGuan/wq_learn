@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-27T08:52:00+08:00",
+  "updated_at": "2026-11-27T10:03:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -204,6 +204,14 @@
       "verdict": "INEFFECTIVE（ASI 日本子市场不足 JPN=0.14..0.63/1.00；EUR 60d 偏弱 maxSh=1.15）",
       "metric_delta": "1) S3-r21 24/24 FULL 虽保持 Sh=1.57-1.65 / Margin=15-39bp，但全员败于 LOW_ASI_JPN_SHARPE (0.14-0.63/1.00) + LOW_ROBUST_UNIVERSE_SHARPE (0.96-1.04/1.48) + 2Y (1.25-1.55)；2) EUR/global_seasonal_model 408 QUICK 仅 19 S1 / 0 S2 (maxSh=1.15, TO=66%)。",
       "root_cause_and_ban": "ASI/global_seasonal_model 与 ASI/model39 类似存在日本区偏弱问题，果断止损不恋战，立即切入同为免额但 Sharpe 高出 +1.07 (2.87 vs 1.80) 且 2Y=3.07 的 ASI/multifactor_return_pred!"
+    },
+    {
+      "case_id": "INEFF-12",
+      "region_dataset": "ASI/MINVOL1M/multifactor_return_pred (S3-r23b 16/16 FULL + S3-r23c d=0 8/8 FULL 纯免额无流动性门控对照)",
+      "controlled_change": "在不使用 adv20/cap（因不在 allowed_pv1_alpha0_helpers）的前提下，尝试仅靠纯 Alphas=0 分组切换（subindustry/sector）+ tail25 + anl120 双支 + d={2,6} 修复 A1L67JZg 的 ROBUST_UNIVERSE（以及测试新字段 short_term_60d_qtile5_class_pred）",
+      "verdict": "INEFFECTIVE_FOR_ROBUST（可批量过 JPN 与推高 Margin 至 14.41bp，但 24/24 全部无法单独打穿 ROBUST_UNIVERSE >= 90%）",
+      "metric_delta": "S3-r23b 16/16 FULL 再增 5 条 JPN=PASS（MPgwVVRL d=2 Sh=2.58/2Y=2.63/Fit=1.65/8.63bp；e71AEEoO 11.64bp/Fit=1.73；VkMneejw 11.57bp；1YGv2QvX d=6 13.97bp/Fit=1.71；vRY0o3g3 d=6 14.41bp/Fit=1.64），S3-r23c d=0 再增 MPgw26wL (Sh=2.44/2Y=2.60/JPN PASS)，但 24/24 全员仍卡在 LOW_ROBUST_UNIVERSE_SHARPE (82%-89% vs 90%) 与 LOW_ROBUST_UNIVERSE_RETURNS。",
+      "root_cause_and_ban": "铁证：ASI/MINVOL1M 上纯 Alphas=0 调参（换分组/加 tail25/调 decay）无法消除尾部非流动微盘贡献，切勿继续空耗免额纯调参；必须切入 NORMAL 常规额度引入 adv20/cap 流动性门控（S3-r23-ASI-MF120-ROBUST 已置顶待发）。"
     }
   ]
 }
