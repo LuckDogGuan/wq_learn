@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-27T06:53:00+08:00",
+  "updated_at": "2026-11-27T08:52:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -106,6 +106,14 @@
       "verdict": "EFFECTIVE（迄今最强 Phase-2 免额发现 · ASI 仅 96 QUICK 爆出 Sh=2.87/2Y=3.07 核弹，USA 同步出 Sh=1.59/2Y=2.17！）",
       "metric_delta": "1) ASI/multifactor_return_pred (仅 96 QUICK): 4 条 0-FAIL QUICK —— N1KMgZao (short_term_regime2_60d_single_quantile_pred d10) Sh=2.87, 2Y=3.07, Fit=1.93, 9.02bp; A1L631kY (analyst_120d x st_r2) Sh=2.35, 2Y=2.30, Fit=1.58, 9.09bp; rK0kJx58 (m22) Sh=2.15, 2Y=1.87, 11.81bp, TO=6.9%; WjYkXgEZ (qtile5_class) Sh=2.12, 2Y=2.77! 2) USA/multifactor_return_pred (208 QUICK): 46 S1 / 15 S2 / 1 S3 —— RR5X05Yj Sh=1.59, QPWeEOXQ 1.48/2Y=1.69, qM5beOvK 1.44/2Y=1.99, blxp7x2r d10 在将换手从 41.3% 砍至 12.9% 时仍保住 Sh=1.41! 已双双晋级 S3-r22 免费 FULL!",
       "reusable_rule": "multifactor_return_pred 的 60d regime2 与 60d/120d quantile 预测字段在 ASI 与 USA 均呈现强正向 Alpha 且抗衰减保夏普（远优于 30d 图谱），已立即双区晋级 S3-r22 免额 FULL 核验日本子市场与 PC。"
+    },
+    {
+      "case_id": "EFF-14",
+      "region_dataset": "ASI/MINVOL1M/multifactor_return_pred (S3-r22 24/24 FULL 历史性打穿日本子市场检查!)",
+      "controlled_change": "将 ASI/multifactor_return_pred (short_term_regime2_60d_single_quantile_pred & analyst_120d) 晋级 24 FULL，严格对照 COUNTRY d=0/4 vs CROWDING d=2 (maxTrade=ON)",
+      "verdict": "EFFECTIVE（历史性破壁 · 首次在 ASI FULL 批量打穿 LOW_ASI_JPN_SHARPE>=1.00，且 COUNTRY 单轴压 PC -0.105 至 0.7084！）",
+      "metric_delta": "5 条 ASI FULL 全部 PASS LOW_ASI_JPN_SHARPE: A1L67JZg (COUNTRY d=0) Sh=2.62, 2Y=2.71, Fit=1.61, 7.80bp, ASI SC=0.000, 远程 PC=0.7084 (ge070=3 仅差 0.0084!), 仅败于 ROBUST_UNIVERSE(2.10/2.36 = 89.0% vs 90%!); 9qGo72A1 (CROWDING d=2) Sh=2.13, JPN PASS, Robust=1.85/1.92, PC=0.8136 -> 实证 COUNTRY 单独压低 -0.1052 PC; N1KMRVqg (COUNTRY d=4, 双支) 11.81bp, Sh=2.06, JPN PASS, PC=0.7325! 立即上线 S3-r23-ASI-MF120-ROBUST (COUNTRY d=0/2/4 + adv20>{0.2,0.3,0.4}/cap>0.25 + tail25) 同步打穿 Robust>=90% 与 PC<0.68!",
+      "reusable_rule": "ASI/MINVOL1M 首次验证同时过 JPN Sharpe 且高夏普(2.62)的矿脉为 multifactor_return_pred；COUNTRY 中性化比 CROWDING 低 -0.105 PC，若仅差 1-3% ROBUST_UNIVERSE_SHARPE_RATIO，直接在 MINVOL1M 内用 adv20>0.2-0.4 或 cap>0.25 剔除底部非流动微盘股并叠 L6 tail25。"
     }
   ],
   "ineffective_cases": [

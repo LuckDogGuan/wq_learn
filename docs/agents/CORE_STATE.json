@@ -6,7 +6,7 @@
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >4000切Alphas=0)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)"
   },
-  "updated_at": "2026-11-27T06:53:00+08:00",
+  "updated_at": "2026-11-27T08:52:00+08:00",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "context_compaction_rule": "任何 AI 工具（Antigravity / Claude Code / Codex / Cursor）启动或上下文超长重置（/compact）后，只读本文件 + docs/agents/OPTIMIZATION_LEDGER.json + AGENTS.md（总计 < 8KB），绝不重读数万行历史聊天记录！",
   "immutable_red_lines": {
@@ -70,9 +70,9 @@
         }
       ],
       "current_seed_campaigns": [
-        "S3-r22-USA-MF120-FREE (24 FULL UNUSED_ALPHA0 FREE · Audit #15! USA/multifactor_return_pred 首波 208 QUICK 产 46 S1/15 S2/1 S3: RR5X05Yj Sh=1.59, QPWeEOXQ 1.48/2Y=1.69, qM5beOvK 1.44/2Y=1.99, blxp7x2r d10 保 1.41 且降 TO 41%->12.9%! 立即免额 FULL 冲 Useful!)",
-        "USA_MF120_V2_FREE (Audit #15 补齐 short_term_regime2_quantile1_r60_pred 等 8 个 Alphas=0 字段!) + USA_FINNEWS_NLP_FREE + USA_MMP_NLP_FREE (100% 纯MATRIX Alphas=0 FREE, other 1.4x 空白塔!)",
-        "USA/ai_news_scores (NORMAL xAla3EOW Sh=1.41, 2Y=2.22, TO=27.5% — 待次日常规降换手)"
+        "USA/multifactor_return_pred S3-r22 FULL 完成 (omP2g7X2 1.33/2Y=1.74; V2 mLKOVed9 1.49); USA/finnews_nlp_scores & USA/mmp_nlp_sentiment 已早停",
+        "Phase-2 Alphas=0 全部跑完 -> 自动切回消耗剩余 460 NORMAL (4,040->4,500) + 等待 13:00 CST 美东换日新额度!",
+        "USA/ai_news_scores (NORMAL xAla3EOW Sh=1.41, 2Y=2.22, TO=27.5% — 待常规降换手)"
       ]
     },
     {
@@ -121,17 +121,17 @@
       "slots": 1,
       "active_useful_champions": [],
       "current_seed_campaigns": [
-        "S3-r22-ASI-MF120-FREE (24 FULL UNUSED_ALPHA0 FREE · Audit #15 核弹爆发! ASI/multifactor_return_pred 仅 96 QUICK 狂出 4 条 0-FAIL QUICK: N1KMgZao Sh=2.87/2Y=3.07/Fit=1.93/9.02bp、A1L631kY 2.35/2.30/1.58、rK0kJx58 2.15/11.81bp/TO=6.9%、WjYkXgEZ 2.12/2.77! 立即转免额 FULL 核验日本子市场!)",
-        "ASI_MF120_V2_FREE (Audit #15 追加 8 个 multifactor_return_pred Alphas=0 字段, cov=0.957, maxTrade=ON!)",
-        "ASI/global_seasonal_model S3-r21 24/24 FULL 已定案止损（JPN=0.14..0.63/1.00 不足, INEFF-11）；ASI/model25 (JPN=0.70..0.89, 49.8bp) 留待次日 NORMAL"
+        "S3-r23-ASI-MF120-ROBUST (24 FULL NORMAL · Audit #16 历史性破壁! S3-r22 首次在 ASI FULL 批量打穿 LOW_ASI_JPN_SHARPE>=1.00: A1L67JZg COUNTRY d=0 Sh=2.62/2Y=2.71/Fit=1.61/JPN PASS/ASI SC=0.000/PC=0.7084(ge070=3!), 仅差 1% Robust(2.10/2.36)! 立即用 adv20>{0.2,0.3,0.4}/cap>0.25 + tail25 封口直取 ASI 首条 Useful!)",
+        "EUR 同步在剩余 460 NORMAL 中立刻发射 S3-r20-EUR-1YG-HIGHMGN (16 FULL RAM 提 Margin 7.44->11-13bp)!",
+        "ASI/model25 (JPN=0.70..0.89, 49.8bp) 留作备选"
       ]
     }
   ],
   "quota_and_isolated_experiments": {
-    "today_est_2026_11_26_official_sims": 7740,
+    "today_est_2026_11_26_official_sims": 8548,
     "today_normal_completed_est": 4040,
-    "today_alpha0_completed_est": 3396,
-    "phase2_alpha0_active": true,
+    "today_alpha0_completed_est": 4188,
+    "phase2_alpha0_active": false,
     "alpha0_auto_switch_threshold": 4000,
     "concurrency_limits": {
       "glb_max_threads": 3,

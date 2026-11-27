@@ -1232,6 +1232,60 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
 }
 
 
+def build_s3r23_asi_mf120_robust_specs() -> list[dict[str, Any]]:
+    """S3-r23 (24 FULL, NORMAL): ASI/MINVOL1M/multifactor_return_pred ROBUST_UNIVERSE & PC<0.70 Finisher!
+
+    Triggered by 2-hour Audit #16 (2026-11-27 08:51 CST):
+      HISTORIC ASI BREAKTHROUGH in S3-r22-ASI-MF120-FREE (24/24 FULL):
+        - First time EVER passing LOW_ASI_JPN_SHARPE >= 1.00 on ASI FULL (5 alphas PASSED JPN!):
+          * A1L67JZg (COUNTRY d=0, st_r2_60d subindustry): Sh=2.62, 2Y=2.71, Fit=1.61, JPN=PASS,
+            ASI SC=0.000, remote PC=0.7084 (ge070=3 ONLY! 0.0084 above 0.70!) — ONLY failed
+            LOW_ROBUST_UNIVERSE_SHARPE (2.10/2.36 = 89.0% vs 90%!) & ROBUST_RETURNS (0.0376/0.0425)!
+          * 9qGo72A1 (CROWDING d=2): JPN=PASS, Robust=1.85/1.92, PC=0.8136 -> proves COUNTRY cuts PC -0.105!
+          * N1KMRVqg (COUNTRY d=4, anl120 x st_r2): 11.81bp, Sh=2.06, Fit=1.35, JPN=PASS, PC=0.7325!
+      Lock COUNTRY d={0,2,4} (maxTrade=ON) and apply EFF-03 liquidity gating (adv20>{0.2,0.3,0.4} / cap>0.25)
+      + Wang Ge L6 tail(0.25,0.75,0.5) (EFF-02) to simultaneously lift Robust Ratio 89%->95%+ PASS AND
+      crush PC 0.7084 -> <0.68, minting ASI's FIRST-EVER Useful (0 OS -> SC=0.000)!
+    """
+    specs: list[dict[str, Any]] = []
+    st_r2 = "ts_backfill(short_term_regime2_60d_single_quantile_pred, 21)"
+    anl_120 = "ts_backfill(analyst_120d_single_quantile_pred, 21)"
+    base_d10 = f"group_rank(ts_decay_linear({st_r2}, 10), subindustry)"
+    base_tail = f"tail({base_d10}, lower=0.25, upper=0.75, newval=0.5)"
+    base_m22 = f"group_zscore(ts_mean({st_r2}, 22), subindustry)"
+    base_dual = f"group_rank(ts_decay_linear(min(rank({anl_120}), rank({st_r2})), 10), subindustry)"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC23-A1-str2-adv20", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.2, {base_d10}, 0)"),
+        ("PC23-A2-str2-adv30", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.3, {base_d10}, 0)"),
+        ("PC23-A3-str2-adv40", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.4, {base_d10}, 0)"),
+        ("PC23-A4-str2-cap25", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(cap) > 0.25, {base_d10}, 0)"),
+        ("PC23-A5-str2-adv25-tail25", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.25, {base_tail}, 0)"),
+        ("PC23-A6-str2-adv35-tail25", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.35, {base_tail}, 0)"),
+        ("PC23-A7-str2-m22-adv30", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.3, {base_m22}, 0)"),
+        ("PC23-A8-anl120-str2-adv30", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.3, {base_dual}, 0)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d0_t08", "COUNTRY", 0, 0.08),
+        ("cty_d2_t08", "COUNTRY", 2, 0.08),
+        ("cty_d4_t08", "COUNTRY", 4, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r23-ASI-MF120-ROBUST-{tag}",
+                campaign_id="S3_ASI_MF120_ROBUST_USEFUL",
+                hypothesis_id="HYP-S3R23-ASI-A1L67JZG-PC0708-LIQGATE-ROBUST-PASS",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="multifactor_return_pred",
+                queue_type="NORMAL",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(exprs, dataset_id="multifactor_return_pred", primary_field_id="short_term_regime2_60d_single_quantile_pred", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
 def build_s3r22_mf120_free_specs() -> list[dict[str, Any]]:
     """S3-r22 (48 FULL, 100% UNUSED_ALPHA0 FREE): ASI/multifactor_return_pred 2.87/3.07 FULL + USA/multifactor_return_pred FULL!
 
@@ -1471,9 +1525,10 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r22 (48 FULL) -> S3-r21 (24 FULL) -> S3-r20 (48 FULL) -> ... -> S3-r10b (160 FULL)."""
+    """Return ordered S3-r23 (24 FULL) -> S3-r22 (48 FULL) -> S3-r21 (24 FULL) -> ... -> S3-r10b (160 FULL)."""
     return (
-        build_s3r22_mf120_free_specs()
+        build_s3r23_asi_mf120_robust_specs()
+        + build_s3r22_mf120_free_specs()
         + build_s3r21_asi_glbseason_free_specs()
         + build_s3r20_free_and_eur_margin_specs()
         + build_asi_eur_s3r19_breakout_specs()
