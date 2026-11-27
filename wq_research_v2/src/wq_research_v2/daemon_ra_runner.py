@@ -46,19 +46,28 @@ HIGH_BASE_MULTI_MARKET_ORDER: list[str] = [
 
 # Verified clean D1 RA seed pools (ALL live-checked against cnhkmcp get_datafields on 2026-11-25).
 CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
-    # ==================== AUDIT #21 EUR/D1/NEWS (0-OS PYRAMID 1.4x) NEWS84 PROBE + QUICK SCREEN ====================
+    # ==================== AUDIT #22 EUR/D1/SENTIMENT (0-OS PYRAMID 1.4x) SENTIMENT21 PURE MATRIX SCREEN ====================
+    # Retired EUR_NEWS84_PYRAMID_NORM (64/64 QUICK completed with 0/64 >= 0.80, maxSh=0.36, INEFF-19).
+    # Replaced with live-verified EUR/TOP2500/sentiment21 (cov=1.000, dateCov=1.000, aCnt=5..10, MATRIX) for EUR/D1/sentiment (0 OS)!
     {
-        "campaign_id": "EUR_NEWS84_PYRAMID_NORM",
+        "campaign_id": "EUR_SNT21_PYRAMID_NORM",
         "region": "EUR",
         "universe": "TOP2500",
-        "dataset_id": "news84",
+        "dataset_id": "sentiment21",
         "queue_type": "NORMAL",
         "field_type": "MATRIX",
-        "template_packs": ["core_50_50", "admin_ts_regime", "nonlinear_tail_group"],
+        "template_packs": ["core_50_50", "nonlinear_tail_group"],
         "default_neut": "SUBINDUSTRY",
         "alt_neuts": ["REVERSION_AND_MOMENTUM", "COUNTRY"],
         "fields": [
-            "median_primary_sentiment_score_transfer",
+            "snt21_2pos_conf_low_85",
+            "snt21_2pos_max_87",
+            "snt21_2pos_median_99",
+            "snt21_2pos_conf_up_88",
+            "snt21_3neg_conf_low_48",
+            "snt21_3dts_gen_55",
+            "snt21_2neut_mean_102",
+            "snt21_3dts_tuen_51",
         ],
     },
     # ==================== 10% QUOTA ADMIN ORIGINAL (WL13229/KH94146) CLEAN TEMPLATE A/B BENCHMARK ====================

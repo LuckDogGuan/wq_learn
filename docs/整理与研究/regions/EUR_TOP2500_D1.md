@@ -164,3 +164,11 @@
 - **[V][C] [有效] Margin 局部提升。** 广州 SQLite 确认 16/16 `D1 FULL NORMAL` 完成，5 条回测硬检零 FAIL。`adv20 > 0.14` 无额外平滑的同式配对，`decay 4 → 6` 令 `E5moVZbK → akRXVPwx` 的 Margin `9.60 → 10.65bp`，换手 `8.98% → 7.89%`，Sharpe `2.06 → 2.00`，Fitness `1.21 → 1.16`。`post-min d5` 配对的 `VkMKdleY` 达 `11.29bp`，Sub-Uni `0.96/0.96` 擦线过关。
 - **[V][C] [无效] 同族交付。** `post-min d8/d10` 共 6 条，全部失败于 Fitness 和 Ladder。BRAIN 确认 `6XGgvmpY` 在北京时间 `15:22:37` 进入 OS。五条零 FAIL 候选的官方 SC 对手均为 `6XGgvmpY`，SC 和 PC 同为 `0.9901–0.9972`。本地用平台 PnL 的 2,578 个共同日差分交叉复算为 `0.9890–0.9963`。本批新增 `Useful` 和 `SC_PASS` 均为 0，结束该组参数扫描。详见 `EFF-18`、`INEFF-16`。
 - **[V] 点塔方向。** 平台 Pyramid 快照显示 `EUR/D1/news` 在 OS 为 0，`pv` 为 10，`fundamental` 为 12。`news84` 的 `median_primary_sentiment_score_transfer` 是 `MATRIX`，覆盖率 `0.7986`、历史覆盖 `1.00`、字段 Alpha 数 `7`。**[U]** 下轮优先核对该字段的真实非零覆盖和更新频率，再用 Stage 1–2 `D1 QUICK` 测试正向新闻情绪假说。只有筛过的种子才进入 FULL。本轮未发起探针或回测。
+- **2026-11-27 20:15（2 小时定时审计 #22 · `EUR/news84` 64/64 `QUICK` 实证 `0/64` 止损记入 `INEFF-19` → 秒切 `0-OS` 空白金字塔 `EUR/D1/sentiment (1.4x)` 满覆盖纯 `MATRIX` 集 `sentiment21`！）**：
+  - **[V][C] [无效] `EUR_NEWS84_PYRAMID_NORM`（64/64 `QUICK` 完成，记入 `INEFF-19`）**：`median_primary_sentiment_score_transfer` 在 `SUBINDUSTRY`/`RAM`/`COUNTRY` 三种中性化与三大模板族下 64 条全部完成，**`0/64` 达到 `Sharpe >= 0.80`**（最高 `ZYXwKEZQ Sh=0.36, Fit=0.04, TO=63.9%, Mgn=0.23bp`），证实该单字段在 `EUR/TOP2500 D1` 信号极弱且高换手，已立即从守护进程队列下线止损；
+  - **[U] 换装 `0-OS` 空白塔 `EUR / D1 / sentiment (1.4x)` 主力纯 `MATRIX` 集 `EUR_SNT21_PYRAMID_NORM`（`sentiment21`）**：经 BRAIN API 实盘核验，`EUR/TOP2500/sentiment21` 拥有 `50` 个 `coverage=1.000, dateCoverage=1.000, aCnt=5..10` 的纯 `MATRIX` 情绪置信度与均值/标准差字段（精选 `snt21_2pos_conf_low_85`, `snt21_2pos_max_87`, `snt21_2pos_median_99`, `snt21_2pos_conf_up_88`, `snt21_3neg_conf_low_48`, `snt21_3dts_gen_55`, `snt21_2neut_mean_102`, `snt21_3dts_tuen_51`），已置顶热部署开跑！
+### 2026-11-27 18:19 · news84 首检
+
+- **[V]** BRAIN 复核 `median_primary_sentiment_score_transfer` 为 EUR/TOP2500/D1 的 `news84` MATRIX 字段，覆盖率 0.7986、历史覆盖 1.00、已有 Alpha 数 7，新闻金字塔倍率 1.4。检验假说为较正面的新闻情绪对横截面后续收益有正向预测力。
+- **[V]** 广州守护进程 18:19:12 开始提交。当前定义 9 批、72 条 D1 QUICK NORMAL。8 批已入台账，其中 16 条已提交、48 条排队，另 8 条尚未入台账。首检完成 0，达标 0，待判 72。实查已排任务为 decay 0、truncation 0.04、maxTrade OFF，包含 SUBINDUSTRY、REVERSION_AND_MOMENTUM、COUNTRY 三种中性化。计划在 21:19 前按现有巡检回看正向 Sharpe ≥0.80 命中与 ≥1.25 的晋级种子。
+- **[U]** 台账已看到模板快筛，真实非零覆盖和 5/22/66 日更新频率尚待探查。已用现有生成器核对探针定义，晋级 FULL 前核实覆盖与更新频率。

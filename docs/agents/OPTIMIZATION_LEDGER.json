@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-27T18:18:00+08:00",
+  "updated_at": "2026-11-27T20:15:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -292,6 +292,30 @@
       "verdict": "[无效] 本批未交付可替换的冠军，也未达到 12.5bp 目标。",
       "metric_delta": "5/16 回测硬检 0 FAIL；post-min d8/d10 共 6/6 因 Fitness、Ladder 失败，最高 Margin 11.50bp 仍有 FAIL。五个候选对 6XGgvmpY 的官方 SC 与生产 PC 均为 0.9901–0.9972，PC 直方图各有 1 个 >=0.90 的生产因子。独立用平台 PnL 的 2,578 个共同日差分复算，相关 0.9890–0.9963。6XGgvmpY 已于北京时间 15:22:37 进入 OS。",
       "root_cause_and_ban": "收口此高相关家族，不继续扫阈值或平滑。转向其他点塔类别。平台终检快照仍含 PENDING，SC 与 PC 的实数足以判定五条均未达到打标门槛。"
+    },
+    {
+      "case_id": "INEFF-17",
+      "region_dataset": "[V][C] ASI/MINVOL1M/multifactor_return_pred · S3-r28-ASI-MF120-A1LQ-FIN，16/16 D1 FULL NORMAL，补充 EFF-20",
+      "controlled_change": "以 A1Lqx17g 为对照，固定 rank(adv20)>0.35、前置 15 日平滑、COUNTRY decay=4、truncation=0.08 和 maxTrade=ON，仅比较 false=0.26、0.27、0.28。",
+      "verdict": "[无效] 原 0.35 门槛的三点均未通过回测硬检。0.38 门槛的两个低 Margin 备选也无法形成新的正交交付。",
+      "metric_delta": "zqAwvgVd 的 JPN 0.98/1.00 FAIL。ZYXwRgOx 与 XgNwjVda 的 JPN 1.00、1.01 PASS，Robust Sharpe 分别为 1.74/1.75、1.76/1.79 FAIL。相同 false 0.27 下，门槛 0.35→0.38（ZYXwRgOx→akR2rQr9）时 Robust Sharpe 保持 1.74，门槛降到 1.71。BRAIN 现行 PC 为冠军 0.6555，e718lVlz 0.9996，akR2r631 0.9993。两条备选对冠军的本地 SC 同为 0.9996、0.9993，三条池内相关均 ≥0.9989（1,022 个共同日差分）。",
+      "root_cause_and_ban": "结束原 0.35 轴和同簇备选的降 PC。只在 EFF-20 的已测坐标复用硬检结论，PC 低于 0.66 已实证于 akR2rQr9。0.38/false=0.26/Country decay=3 的 VkMwvVJA 仍失败于 Sharpe、Fitness 与 JPN。r29 改测其他信号。"
+    },
+    {
+      "case_id": "INEFF-18",
+      "region_dataset": "[V][C] ASI/MINVOL1M/model25 & multifactor_return_pred (qtile5) · S3-r29-ASI-ORTHO-M25-Q5，16/16 D1 FULL NORMAL",
+      "controlled_change": "将 akR2rQr9 通关门控 if_else(rank(adv20) > 0.38, ..., 0.27) 直接移植至正交信号 ev_to_ebitda_relative_score (100-OS SC=-0.0032..0.0527) 与 short_term_60d_qtile5_class_pred (100-OS SC=0.4719) 及跨集双支，测试 COUNTRY d=4 与 CROWDING d=2。",
+      "verdict": "[无效] 虽成功修通 78Gqnr5O (45.60bp) 的 RobSh 与 Jj30vk2x 的双项 Robust，但两底物本身日本子市场信号不足 (JPN=0.41..0.91/1.00)，0/16 全过。",
+      "metric_delta": "1) 78Gqnr5O (CROWDING d=2, ev_to_ebitda sp1.5 + adv20>0.38)：对照 S3-r19 无门控母版 E5mAewpG (RobSh=1.50/1.56 FAIL)，叠加 adv20>0.38 后 RobSh=1.61/1.59 PASS，且保住 45.60bp、Sh=1.77、2Y=2.18、Fit=1.59，但 JPN=0.60/1.00 FAIL、RobRet=0.0840/0.0908 FAIL（COUNTRY d=4 pwWJKwrV 52.96bp JPN=0.71/1.00）；2) Jj30vk2x (qtile5 d15 + adv20>0.38, CROWDING d=2) 双过 RobSh (1.10/1.04) 与 RobRet (0.0495/0.0453)，但 Sh 降至 1.16、JPN=0.91/1.00（COUNTRY d=4 N1KWR1xX Sh=1.74, JPN=0.80/1.00）。",
+      "root_cause_and_ban": "门控 if_else(rank(adv20)>0.38, ..., 0.27) 的作用是修通双项 Robust，前提是底物本身在无门控 FULL 下已具备 JPN>=1.00！因此停止对 model25 与单支 qtile5 套用 0.38 门控，立即转向已在 FULL 实证 JPN=1.04..1.13 PASS 且 100-OS SC=0.3618 < 0.65 的 1YGv2QvX/vRY0o3g3 (analyst_120d x st_r2, 13.97..14.41bp) 上线 S3-r30-ASI-ANL120-ORTHO！"
+    },
+    {
+      "case_id": "INEFF-19",
+      "region_dataset": "[V][C] EUR/TOP2500/news84 · EUR_NEWS84_PYRAMID_NORM，64/64 D1 QUICK NORMAL",
+      "controlled_change": "对 EUR/D1/news (0 OS) 唯一高覆盖 MATRIX 字段 median_primary_sentiment_score_transfer (cov=0.7986, dCov=1.00, aCnt=7) 在 SUBINDUSTRY/RAM/COUNTRY 与三大模板族下执行 64 条 QUICK 初筛。",
+      "verdict": "[无效] 0/64 达到 Sharpe>=0.80（maxSh=0.36, maxFit=0.07, TO=44%-64%），立即止损下线。",
+      "metric_delta": "最高 ZYXwKEZQ (COUNTRY ts_delta 22) Sh=0.36, 2Y=0.72, Fit=0.04, Mgn=0.23bp；1 算子直出 6XGPe3P5 Sh=0.32, Fit=0.04；22d 均值 j2Vl0jlW Sh=0.18, Mgn=1.23bp。",
+      "root_cause_and_ban": "news84 单字段在泛欧 D1 无截面区分度，立即从守护进程移除；EUR:2 切换至另一 0-OS 空白高倍率塔 EUR/D1/sentiment (1.4x) 的满覆盖纯 MATRIX 数据集 sentiment21 (cov=1.000, dCov=1.000, aCnt=5..10)。"
     }
   ]
 }

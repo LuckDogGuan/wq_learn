@@ -1233,6 +1233,62 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
 }
 
 
+def build_s3r30_asi_anl120_ortho_specs() -> list[dict[str, Any]]:
+    """S3-r30 (16 FULL, NORMAL): ASI/MINVOL1M Orthogonal 1YGv2QvX/vRY0o3g3 (anl_120 x st_r2, 14.4bp, JPN=1.13 PASS, 100-OS SC=0.3618) Finisher!
+
+    Triggered by 2-hour Audit #22 (2026-11-27 20:10 CST) after S3-r29 (16/16 FULL) & 100-OS SC attribution:
+      - In S3-r29, `78Gqnr5O` (`ASI/model25` `ev_to_ebitda_relative_score` + `adv20 > 0.38`) passed `RobSh (1.61/1.59 PASS)`
+        with `45.60bp` Margin (`Sh=1.77, 2Y=2.18, Fit=1.59`), and `Jj30vk2x` (`st_q5` + `adv20 > 0.38`) passed BOTH
+        `RobSh (1.10/1.04)` and `RobRet (0.0495/0.0453)`, but both missed `LOW_ASI_JPN_SHARPE` (`0.60..0.91 / 1.00`).
+      - By contrast, in S3-r23b (`1YGv2QvX` & `vRY0o3g3`) and S3-r23d (`E5m3926J`), the dual-branch
+        `min(rank(analyst_120d_single_quantile_pred), rank(short_term_regime2_60d_single_quantile_pred))` ALREADY passed
+        `LOW_ASI_JPN_SHARPE = 1.04..1.13 / 1.00 PASS` in FULL (`Margin = 13.97..19.85bp, Sh = 2.25..2.35, Fit = 1.56..1.71`),
+        AND 100-OS SC verification proved `vRY0o3g3` (`100-OS SC = 0.3618 < 0.65`) and `j2VNLJNW` (`anl_120`, `100-OS SC = 0.2137`)
+        are COMPLETELY ORTHOGONAL to newly submitted OS #99 `akR2rQr9` (`SC_READY_PASS`)!
+      - Applies the exact `akR2rQr9` / `e718lVlz` winning gate `if_else(rank(adv20) > {0.35, 0.38}, ..., {0.25, 0.26, 0.27})`
+        onto `1YGv2QvX` (`anl_120 x st_r2 d15/d22 + tail25`), `anl_60 x st_r2`, and `anl_120 x anl_60` across
+        `COUNTRY d={4, 6}, tr=0.08, maxTrade=ON` to simultaneously clear `RobSh`, `RobRet`, AND `JPN >= 1.04` with `100-OS SC ~ 0.36`!
+    """
+    specs: list[dict[str, Any]] = []
+    st_r2 = "ts_backfill(short_term_regime2_60d_single_quantile_pred, 21)"
+    anl_120 = "ts_backfill(analyst_120d_single_quantile_pred, 21)"
+    anl_60 = "ts_backfill(analyst_60d_single_quantile_pred, 21)"
+
+    anl_str2_d15 = f"tail(group_rank(ts_decay_linear(min(rank({anl_120}), rank({st_r2})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    anl_str2_d22 = f"tail(group_rank(ts_decay_linear(min(rank({anl_120}), rank({st_r2})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    anl120_60_d15 = f"tail(group_rank(ts_decay_linear(min(rank({anl_120}), rank({anl_60})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    anl60_str2_d15 = f"tail(group_rank(ts_decay_linear(min(rank({anl_60}), rank({st_r2})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC30-A1-anl120-str2-d15-adv35-f25", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, {anl_str2_d15}, 0.25)"),
+        ("PC30-A2-anl120-str2-d15-adv35-f27", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, {anl_str2_d15}, 0.27)"),
+        ("PC30-A3-anl120-str2-d15-adv38-f26", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.38, {anl_str2_d15}, 0.26)"),
+        ("PC30-A4-anl120-str2-d15-adv38-f27", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.38, {anl_str2_d15}, 0.27)"),
+        ("PC30-A5-anl120-str2-d22-adv35-f26", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.35, {anl_str2_d22}, 0.26)"),
+        ("PC30-A6-anl120-str2-d22-adv38-f27", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.38, {anl_str2_d22}, 0.27)"),
+        ("PC30-A7-anl120-anl60-d15-adv35-f26", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.35, {anl120_60_d15}, 0.26)"),
+        ("PC30-A8-anl60-str2-d15-adv38-f27", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.38, {anl60_str2_d15}, 0.27)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d4_t08", "COUNTRY", 4, 0.08),
+        ("cty_d6_t08", "COUNTRY", 6, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r30-ASI-ANL120-ORTHO-{tag}",
+                campaign_id="S3_ASI_ANL120_ORTHO_USEFUL2",
+                hypothesis_id="HYP-S3R30-ASI-1YGV2QVX-JPN104-SC036-WITH-AKR2RQR9-GATE",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="multifactor_return_pred",
+                queue_type="NORMAL",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(exprs, dataset_id="multifactor_return_pred", primary_field_id="analyst_120d_single_quantile_pred", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
 def build_s3r29_asi_ortho_m25_q5_specs() -> list[dict[str, Any]]:
     """S3-r29 (16 FULL, NORMAL): ASI/MINVOL1M Orthogonal 2nd-Wave Finisher (model25 49.8bp SC=0.023 + qtile5 SC=0.472) with akR2rQr9 Gate!
 
@@ -2160,9 +2216,10 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r29 (16 FULL ASI Ortho M25+Q5) -> S3-r28 -> S3-r27 -> ..."""
+    """Return ordered S3-r30 (16 FULL ASI ANL120 Ortho) -> S3-r29 -> S3-r28 -> ..."""
     return (
-        build_s3r29_asi_ortho_m25_q5_specs()
+        build_s3r30_asi_anl120_ortho_specs()
+        + build_s3r29_asi_ortho_m25_q5_specs()
         + build_s3r28_asi_a1lq_fin_specs()
         + build_s3r27_asi_mf120_interp_specs()
         + build_s3r27b_eur_1yg_13bp_specs()
