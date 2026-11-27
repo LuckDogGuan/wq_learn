@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-28T00:22:00+08:00",
+  "updated_at": "2026-11-28T02:20:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -186,6 +186,14 @@
       "verdict": "[有效] 锁定两条低 SC 且 PC 稀疏可救 (PC_RESCUE_NEAR_SPARSE, >=0.80 碰撞为 0) 的 ASI 正交母版！",
       "metric_delta": "1) d59AaaMg 对 OS #99 akR2rQr9 的 100-OS SC=0.1405 (86% 正交)，远程 PC 直方图 >=0.70 仅 2 条、>=0.80 为 0 条、[0.6,0.7] 19 条；2) vRY0o3g3 对 akR2rQr9 的 100-OS SC=0.3618，远程 PC 直方图 >=0.70 仅 6 条、>=0.80 为 0 条，且已在无门控 FULL 下实证 LOW_ASI_JPN_SHARPE=1.13/1.00 PASS。",
       "reusable_rule": "晋级 Stage-3 FULL 前先用 100-OS SC + 远程 PC 直方图过滤拥挤信号；对已确认 PC_RESCUE_NEAR_SPARSE (ge070<=6, ge080=0) 的 d59AaaMg 与 vRY0o3g3 上线 S3-r32-ASI-PSD-D59-FULL 与 S3-r32-ASI-ANL-PSD-GENTLE (adv20>{0.15,0.20,0.25} + anl_120 x nv2 跨集双支，全用 subindustry + ts_decay_linear 杜绝 sector/ts_mean 停滞)。"
+    },
+    {
+      "case_id": "EFF-24",
+      "region_dataset": "[V][C] ASI/MINVOL1M/multifactor_return_pred (MPgw26wL) & EUR/TOP2500/shortinterest6 x model25 (A1Ld9wqd / np6JW77q) · 100-OS SC + 远程 PC 直方图严格 0 碰撞发现",
+      "controlled_change": "同步广州 os_pnl_cache.db 至 100/100 OS 后，对已过日本子检的 ASI FULL 双支 MPgw26wL (qtile5 x st_r2 d10+tail25, Sh=2.44, 2Y=2.60, Fit=1.53, JPN=1.03 PASS) 及 EUR 跨集双支 A1Ld9wqd (star_hold_region_rank x mdl110_analyst_sentiment, Sh=1.95, Fit=1.09, 9.53bp) 与 np6JW77q (operating_efficiency 40.73bp, 2Y=1.79 PASS) 执行 100-OS SC 与远程 PC 直方图检验。",
+      "verdict": "[有效] 锁定两条严格 PC_PASS_STRICT (>=0.70 碰撞=0!) 且 100-OS SC < 0.60 的高夏普正交 FULL 母版！",
+      "metric_delta": "1) ASI MPgw26wL：对 OS #99 akR2rQr9 的 100-OS SC=0.5421 (<0.65 PASS)，远程 PC 直方图 >=0.70 碰撞为 0 条 ([0.6,0.7]=6 条，PC_PASS_STRICT)，且 FULL 已过 LOW_ASI_JPN_SHARPE=1.03/1.00，仅差 Robust (1.94/2.20=88.2%)；2) EUR A1Ld9wqd：对 OS #98 6XGgvmpY 的 100-OS SC=0.5904 (<0.65 PASS)，远程 PC 直方图 >=0.60 碰撞为 0 条 (最高桶 [0.5,0.6]=60 条，PC<0.60!)；EUR np6JW77q/kq87KjPK (operating_efficiency) 100-OS SC=0.4534-0.4710，40.73-52.92bp，2Y=1.79-1.85 PASS。",
+      "reusable_rule": "1) 对已过 JPN=1.03 且 PC ge070=0 的 MPgw26wL 施加 EFF-20 (akR2rQr9) 与 S3-r29 (Jj30vk2x qtile5 双过 Robust) 的通关门控 if_else(rank(adv20)>{0.30,0.35,0.38}, ..., {0.26,0.27}) 上线 S3-r33-ASI-MF120-Q5STR2-GATE；2) 将 EUR PC<0.60 的 star_hold_* 与高 Margin/高 2Y 的 operating_efficiency (40.73bp) 融合并配 adv20>{0.15,0.20,0.25,0.35} 上线 S3-r33-EUR-OPEFF-SI6-ORTHO。"
     }
   ],
   "ineffective_cases": [
@@ -379,6 +387,22 @@
       "controlled_change": "在 EUR/TOP2500/analyst11、USA/TOP3000/shortinterest6、USA/TOP3000/analyst11 上跑 Stage 1-2 D1 QUICK NORMAL 初筛，并对 USA/analyst11 头部候选 QPWqKVO5 (Sh=1.20, 2Y=1.75, 16.95bp, 100-OS SC=0.6090) 查远程 PC 直方图。",
       "verdict": "[无效] EUR/analyst11 (maxSh=0.45) 与 USA/shortinterest6 (maxSh=0.42) 均 0 条达 0.80 自动早停；USA/analyst11 单集远程 PC >=0.70 碰撞高达 7,018 条 (PC_ABANDON_CROWDED_OR_FAR)。",
       "root_cause_and_ban": "立即从 CURATED_RA_D1_CAMPAIGNS 下线已早停/已跑完的上述 4 批，避免单集晋级 USA/analyst11；换入实盘核验高覆盖纯 MATRIX 常规新集 EUR/analyst10、EUR/institutions6、USA/fundamental72 (aCnt=1..2)、USA/institutions6 与 ASI/mmp_nlp_sentiment (0-OS other 1.3x)。"
+    },
+    {
+      "case_id": "INEFF-25",
+      "region_dataset": "[V][C] ASI/MINVOL1M/price_signal_dl & multifactor_return_pred (anl_120) · S3-r32 (16/16 FULL) & S3-r31-ASI (8/8 FULL) 归因收口",
+      "controlled_change": "1) S3-r32-ASI-PSD-D59-FULL (8/8 FULL): 将 d59AaaMg (normalized_volume_indicator_2, QUICK Sh=1.74/2Y=2.56) 按 RAM d=4 tr=0.04 maxTrade=ON 升 FULL 并测单轴变体；2) S3-r31-ASI-ANL120-RAW-FULL (8/8 FULL) & S3-r32-ASI-ANL-PSD-GENTLE (8/8 FULL): 测无门控单支 anl_120/60 及 anl_120 x st_r2 超轻门控 adv20>{0.15,0.20,0.25} 与 anl_120 x nv2 跨集双支。",
+      "verdict": "[无效] 1) ASI/price_signal_dl 在 FULL 下 Sh 仅 0.15-0.78、JPN=-0.29..0.42/1.00 全 FAIL，属 QUICK 假象；2) 单支 anl_120/60 无 st_r2 辅支时 FULL JPN 仅 0.52-0.59/1.00；3) anl_120 x st_r2 即使在超轻 adv20>0.15..0.25 门控下 JPN 仍从 1.04 跌至 0.73-0.78 且 RobSh 1.73-1.76/2.17-2.20 FAIL。",
+      "metric_delta": "1) d59AaaMg (QUICK Sh=1.74) -> E5mYMNMG (FULL Sh=0.71, Fit=0.21, 1.82bp, JPN=0.22/1.00 FAIL)，加 adv20>0.35/0.38 的 blxVgJ0R/1YG1RO3M 虽双过 RobSh+RobRet 但 Sh=0.27-0.47，跨集 anl_120 x nv2 (WjYn2KmP/qM5vJebK) 亦被拖低至 Sh=1.10-1.19、JPN=-0.14..-0.08；2) S3-r31-ASI 8/8 FULL 完成：6XG3LdYG 19.27bp/Sh=1.54/2Y=1.64 PASS/Fit=1.11、ZYXqvQxx 22.98bp/Sh=1.50/Fit=1.03，但单支 JPN=0.52-0.59/1.00；3) S3-r32-B 1YG1A6Ek/rK0EMQXJ/XgNPAX6z (adv20>0.15/0.20/0.25) Sh=2.42-2.44, 2Y=2.28-2.38, Fit=1.70-1.71, 12.94-13.49bp，但 JPN=0.74-0.78/1.00 FAIL。",
+      "root_cause_and_ban": "彻底收口 ASI/price_signal_dl 与 anl_120 门控扫描；转向已在 FULL 实证 JPN=1.03 PASS、100-OS SC=0.5421、PC ge070=0 且其 qtile5 分支在 S3-r29 已实证 adv20>0.38 双过 Robust 的 MPgw26wL (qtile5 x st_r2) 上线 S3-r33！"
+    },
+    {
+      "case_id": "INEFF-26",
+      "region_dataset": "[V][C] EUR/analyst10 (1/64) · EUR/institutions6 (1/80) · USA/fundamental72 (1/64) · USA/institutions6 (0/72) · ASI/mmp_nlp_sentiment (0/56) 自动早停收口 + USA/model31 100-OS 饱和确认",
+      "controlled_change": "1) 对 Audit #24 上线的 5 个 NORMAL 活动执行 Stage 1-2 D1 QUICK 初筛；2) 同步 100/100 OS 后重算 USA/model31 历史 0-FAIL SC_PASS 候选 (qM5r0dxj/1YGbl1EQ/legO522N/1YGbjW96/78GbojXL/2rGzjlNJ/N1Kme7Ro) 的 100-OS SC。",
+      "verdict": "[无效] 1) 上述 5 个 NORMAL 数据集在 56-80 条 QUICK 后均因正向 Sharpe>=0.80 命中率 <=1.5% (maxSh=0.65-0.83) 被守护进程自动早停；2) USA/model31 全簇对 100-OS (e71w5Qrl + E5mWLW0J) 的 SC 均升至 0.7115-0.9876 (SC_READY_HIGH)。",
+      "metric_delta": "EUR/analyst10 1/64 (max=0.83), EUR/institutions6 1/80 (max=0.80), USA/fundamental72 1/64 (max=0.83), USA/institutions6 0/72 (max=0.76), ASI/mmp_nlp_sentiment 0/56 (max=0.65)；USA/model31 STATISTICAL 簇对 E5mWLW0J SC=0.7115-0.7377，RAM 簇对 e71w5Qrl SC=0.8341-0.9876。",
+      "root_cause_and_ban": "1) 停止在已饱和的 USA/model31 (ass_tvr/acc) 上投入 FULL 额度；2) 从守护进程下线上述 5 个已早停集，换入实盘核验高覆盖纯 MATRIX 常规新集 EUR/ai_factor_transfer、EUR/analyst_consensus、USA/ai_equity_alpha (aCnt=1)、USA/ai_factor_transfer、ASI/analyst39 与 ASI/analyst_consensus。"
     }
   ]
 }

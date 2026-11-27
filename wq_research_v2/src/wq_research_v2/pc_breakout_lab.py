@@ -1233,6 +1233,90 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
 }
 
 
+def build_s3r33_asi_q5str2_eur_opeff_si6_specs() -> list[dict[str, Any]]:
+    """S3-r33 (16 FULL, NORMAL): ASI/multifactor_return_pred MPgw26wL (JPN=1.03 PASS, 100-OS SC=0.5421, PC ge070=0) Robust Finisher + EUR/model25 x shortinterest6 Orthogonal Low-PC Fusion!
+
+    Triggered by 2-hour Audit #25 (2026-11-28 02:19 CST):
+      - Pack A (8 FULL NORMAL, ASI/MINVOL1M/multifactor_return_pred, COUNTRY d=4 tr=0.08 maxTrade=ON):
+        Live 100-OS SC & remote PC histogram verification (`EFF-24`) proved that `MPgw26wL`
+        (`tail(group_rank(ts_decay_linear(min(rank(ts_backfill(short_term_60d_qtile5_class_pred, 21)), rank(ts_backfill(short_term_regime2_60d_single_quantile_pred, 21))), 10), subindustry), lower=0.25, upper=0.75, newval=0.5)`,
+        `FULL Sh=2.44, 2Y=2.60, Fit=1.53, TO=13.19%, Margin=7.83bp, LOW_ASI_JPN_SHARPE=1.03/1.00 PASS`)
+        has `100-OS SC = 0.5421 < 0.65` vs `OS #99` `akR2rQr9` AND strict remote PC pass
+        (`alphas_ge_070 = 0, alphas_ge_080 = 0, decision = PC_PASS_STRICT`)! Applies the proven
+        `EFF-20` (`akR2rQr9`) / `S3-r29` (`Jj30vk2x`) Robust-passing liquidity gate
+        `if_else(rank(adv20) > {0.30, 0.35, 0.38}, ..., {0.26, 0.27})` across `d10/d15/d22` (`subindustry`).
+      - Pack B (8 FULL NORMAL, EUR/TOP2500/shortinterest6, REVERSION_AND_MOMENTUM d=4 tr=0.08):
+        Live 100-OS SC & remote PC histogram verification (`EFF-24`) proved that `A1Ld9wqd`
+        (`group_zscore(ts_decay_linear(min(rank(ts_backfill(star_hold_region_rank, 21)), rank(ts_backfill(mdl110_analyst_sentiment, 21))), 10), group_cartesian_product(country, industry))`,
+        `FULL Sh=1.95, Fit=1.09, TO=8.24%, Margin=9.53bp`) has `100-OS SC = 0.5904 < 0.65` vs `OS #98` `6XGgvmpY`
+        AND `alphas_ge_070 = 0, alphas_in_060_070 = 0` (`PC < 0.60`), while `np6JW77q` / `kq87KjPK`
+        (`operating_efficiency_component_percentile`, `FULL 40.73..52.92bp, Sh=1.70..1.85, 2Y=1.79..1.85 PASS`)
+        has `100-OS SC = 0.4534..0.4710 < 0.65`. Combines `operating_efficiency_component_percentile`
+        with `star_hold_region_rank` / `star_hold_industry_rank` (`2Y=1.91 PASS`) / `star_hold_global_screening_rank`
+        (`2Y=1.84 PASS`) and `adv20 > {0.15, 0.20, 0.25, 0.35}` Sub-Universe gates.
+    """
+    q5 = "ts_backfill(short_term_60d_qtile5_class_pred, 21)"
+    st_r2 = "ts_backfill(short_term_regime2_60d_single_quantile_pred, 21)"
+    dual_q5_st = f"min(rank({q5}), rank({st_r2}))"
+    t_d10 = f"tail(group_rank(ts_decay_linear({dual_q5_st}, 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    t_d15 = f"tail(group_rank(ts_decay_linear({dual_q5_st}, 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    t_d22 = f"tail(group_rank(ts_decay_linear({dual_q5_st}, 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+
+    asi_q5_exprs: list[tuple[str, str, str, str]] = [
+        ("PC33-A1-q5str2-d10-adv35-f27", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, {t_d10}, 0.27)"),
+        ("PC33-A2-q5str2-d10-adv38-f27", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.38, {t_d10}, 0.27)"),
+        ("PC33-A3-q5str2-d15-adv35-f27", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.35, {t_d15}, 0.27)"),
+        ("PC33-A4-q5str2-d15-adv38-f27", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.38, {t_d15}, 0.27)"),
+        ("PC33-A5-q5str2-d15-adv38-f26", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.38, {t_d15}, 0.26)"),
+        ("PC33-A6-q5str2-d15-adv35-f26", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.35, {t_d15}, 0.26)"),
+        ("PC33-A7-q5str2-d22-adv38-f27", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.38, {t_d22}, 0.27)"),
+        ("PC33-A8-q5str2-d15-adv30-f27", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.3, {t_d15}, 0.27)"),
+    ]
+
+    ci = "group_cartesian_product(country, industry)"
+    op_eff = "ts_backfill(operating_efficiency_component_percentile, 21)"
+    si_rgn = "ts_backfill(star_hold_region_rank, 21)"
+    si_ind = "ts_backfill(star_hold_industry_rank, 21)"
+    si_glb = "ts_backfill(star_hold_global_screening_rank, 21)"
+    anl_sent = "ts_backfill(mdl110_analyst_sentiment, 21)"
+
+    eur_si_exprs: list[tuple[str, str, str, str]] = [
+        ("PC33-B1-opeff-sirgn-adv25", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.25, group_zscore(ts_decay_linear(min(rank({op_eff}), rank({si_rgn})), 10), {ci}), 0)"),
+        ("PC33-B2-opeff-sirgn-adv35", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, group_zscore(ts_decay_linear(min(rank({op_eff}), rank({si_rgn})), 10), {ci}), 0)"),
+        ("PC33-B3-opeff-siind-adv25", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.25, group_zscore(ts_decay_linear(min(rank({op_eff}), rank({si_ind})), 10), {ci}), 0)"),
+        ("PC33-B4-opeff-siglb-adv25", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.25, group_zscore(ts_decay_linear(min(rank({op_eff}), rank({si_glb})), 10), {ci}), 0)"),
+        ("PC33-B5-a1l-sirgn-anlsent-adv15", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.15, group_zscore(ts_decay_linear(min(rank({si_rgn}), rank({anl_sent})), 10), {ci}), 0)"),
+        ("PC33-B6-a1l-sirgn-anlsent-adv25", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.25, group_zscore(ts_decay_linear(min(rank({si_rgn}), rank({anl_sent})), 10), {ci}), 0)"),
+        ("PC33-B7-siind-anlsent-adv20", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.2, group_zscore(ts_decay_linear(min(rank({si_ind}), rank({anl_sent})), 10), {ci}), 0)"),
+        ("PC33-B8-3way-opeff-sirgn-anlsent-adv20", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.2, group_zscore(min(rank({op_eff}), min(rank({si_rgn}), rank({anl_sent}))), {ci}), 0)"),
+    ]
+
+    return [
+        _pack(
+            batch_id="S3-r33-ASI-MF120-Q5STR2-GATE-cty_d4_t08",
+            campaign_id="S3_ASI_MF120_Q5STR2_ROBUST_GATE",
+            hypothesis_id="HYP-S3R33-ASI-MPGW26WL-SC054-PCGE0-ADV35-38-F26-27",
+            region="ASI",
+            universe="MINVOL1M",
+            dataset_id="multifactor_return_pred",
+            queue_type="NORMAL",
+            settings=_make_settings("ASI", "MINVOL1M", "COUNTRY", decay=4, truncation=0.08, max_trade="ON"),
+            items=_build_items(asi_q5_exprs, dataset_id="multifactor_return_pred", primary_field_id="short_term_60d_qtile5_class_pred", tag_suffix="cty_d4_t08"),
+        ),
+        _pack(
+            batch_id="S3-r33-EUR-OPEFF-SI6-ORTHO-ram_d4_t08",
+            campaign_id="S3_EUR_OPEFF_SI6_ORTHO_LOWPC",
+            hypothesis_id="HYP-S3R33-EUR-A1LD9WQD-PC060-X-OPEFF-40BP-ADV15-35",
+            region="EUR",
+            universe="TOP2500",
+            dataset_id="shortinterest6",
+            queue_type="NORMAL",
+            settings=_make_settings("EUR", "TOP2500", "REVERSION_AND_MOMENTUM", decay=4, truncation=0.08),
+            items=_build_items(eur_si_exprs, dataset_id="shortinterest6", primary_field_id="star_hold_region_rank", tag_suffix="ram_d4_t08"),
+        ),
+    ]
+
+
 def build_s3r32_asi_psd_anl_ortho_full_specs() -> list[dict[str, Any]]:
     """S3-r32 (16 FULL, NORMAL): ASI/price_signal_dl d59AaaMg (100-OS SC=0.1405, PC ge070=2) Exact FULL Promotion + ASI/multifactor_return_pred Ultra-Gentle Gate & Cross-DS Ortho!
 
@@ -2374,9 +2458,10 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r32 (16 FULL ASI PSD d59AaaMg + ASI ANL Gentle/Cross) -> S3-r31 -> S3-r30 -> ..."""
+    """Return ordered S3-r33 (16 FULL ASI Q5xSTR2 + EUR OpEffxSI6) -> S3-r32 -> S3-r31 -> ..."""
     return (
-        build_s3r32_asi_psd_anl_ortho_full_specs()
+        build_s3r33_asi_q5str2_eur_opeff_si6_specs()
+        + build_s3r32_asi_psd_anl_ortho_full_specs()
         + build_s3r31_eur_m110_asi_anl_full_specs()
         + build_s3r30_asi_anl120_ortho_specs()
         + build_s3r29_asi_ortho_m25_q5_specs()

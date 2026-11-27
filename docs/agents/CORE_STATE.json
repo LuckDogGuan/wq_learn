@@ -6,7 +6,7 @@
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >=4500切Alphas=0)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)"
   },
-  "updated_at": "2026-11-28T00:22:00+08:00",
+  "updated_at": "2026-11-28T02:21:00+08:00",
   "mainline_policy": "主线=点塔(Pyramid)：某 category 已有>5个可点(可交付)因子即转其他 categories；docs/agents/TODO_20261127.md 为顺手/空闲项，核心是验证模板与操作符(T17，额度500-1000 FULL，PC仅记录不设门槛)。",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "context_compaction_rule": "任何 AI 工具（Antigravity / Claude Code / Codex / Cursor）启动或上下文超长重置（/compact）后，只读本文件 + docs/agents/OPTIMIZATION_LEDGER.json + AGENTS.md（总计 < 8KB），绝不重读数万行历史聊天记录！",
@@ -71,9 +71,9 @@
         }
       ],
       "current_seed_campaigns": [
-        "USA/multifactor_return_pred S3-r22 FULL 完成 (omP2g7X2 1.33/2Y=1.74; V2 mLKOVed9 1.49); USA/finnews_nlp_scores & USA/mmp_nlp_sentiment 已早停",
-        "[V] USA_SI6_SMARTHOLD_NORM (0/64, max=0.42) 自动早停；USA_ANL11_PYRAMID_NORM (384/384, QPWqKVO5 远程 PC ge070=7,018) 与 USA_M110_PYRAMID_NORM (384/384) 已跑完下线（INEFF-24）。",
-        "[U] 已补入实盘核验超低拥挤纯 MATRIX 常规新集 USA_FND72_PIT_NORM (fundamental72, aCnt=1..2, cov=0.79-0.91) 与 USA_INST6_OWNERSHIP_NORM (institutions6, cov=1.000) 继续推进 2,920 -> 4,500 常规额度。"
+        "[V] 同步广州 os_pnl_cache.db 至 100/100 OS 后，实测 USA/model31 既有 0-FAIL SC_PASS 候选对 e71w5Qrl / E5mWLW0J 的 100-OS SC 均升至 0.7115-0.9876 (SC_READY_HIGH)，确认 model31 (ass_tvr/acc) 全簇饱和（INEFF-26）。",
+        "[V] USA_FND72_PIT_NORM (1/64, max=0.83) 与 USA_INST6_OWNERSHIP_NORM (0/72, max=0.76) 已触发自动早停并下线（INEFF-26）。",
+        "[U] 已补入实盘核验高覆盖纯 MATRIX 常规新集 USA_AIEQ_ALPHA_NORM (ai_equity_alpha, aCnt=1 超低拥挤, cov=0.9113) 与 USA_AIFACT_TRANSFER_NORM (ai_factor_transfer, cov=1.000) 继续冲刺 3,384 -> 4,500 常规额度。"
       ]
     },
     {
@@ -125,13 +125,12 @@
         }
       ],
       "current_seed_campaigns": [
-        "[V] S3-r31-EUR-M110-ZYX-FULL-sub_d0_t04 已完成 8/8 D1 FULL NORMAL，0 条满足硬检（LOW_2Y_SHARPE=0.84-1.51 < 1.58）。omPA3dpn (26.66bp, Sh=2.11, 2Y=1.23) 与 6XG3ak8J (11.26bp, Sh=2.44, 2Y=1.51) 远程 PC 直方图 >=0.70 分别为 568 条与 452 条（PC_ABANDON_CROWDED_OR_FAR），收口停止（INEFF-22）。",
-        "[V] EUR_ANL11_PYRAMID_NORM 完成 56 条 D1 QUICK NORMAL，0 条达 Sharpe≥0.80（max=0.45），已早停并从守护进程下线（INEFF-24）。",
-        "[U] 已补入高覆盖纯 MATRIX 常规新集 EUR_ANL10_SMARTEST_NORM (analyst10, analyst 1.3x 塔, cov=0.84-1.00) 与 EUR_INST6_OWNERSHIP_NORM (institutions6, 0-OS 塔, cov=0.93-1.00)。"
+        "[V] EUR_ANL10_SMARTEST_NORM (1/64, max=0.83) 与 EUR_INST6_OWNERSHIP_NORM (1/80, max=0.80) 已触发自动早停并下线（INEFF-26）。",
+        "[V][U] 100-OS SC + 远程 PC 直方图锁定 EUR 严格 PC<0.60 正交母版 A1Ld9wqd (shortinterest6 x model110, FULL Sh=1.95, Fit=1.09, 9.53bp, 100-OS SC=0.5904, PC ge060=0!) 与高 Margin 正交辅支 np6JW77q/kq87KjPK (model25 operating_efficiency, 40.73-52.92bp, 2Y=1.79-1.85 PASS, 100-OS SC=0.4534-0.4710)（EFF-24）；已上线 S3-r33-EUR-OPEFF-SI6-ORTHO-ram_d4_t08 (8 FULL) + EUR_AIFACT_TRANSFER_NORM & EUR_ANL_CONSENSUS_NORM！"
       ]
     },
     {
-      "region": "ASI+KOR (ASI:1 单槽攻坚 ASI/price_signal_dl d59AaaMg + ASI/multifactor_return_pred 温和门控/跨集正交)",
+      "region": "ASI+KOR (ASI:1 单槽攻坚 ASI/multifactor_return_pred MPgw26wL PC=0碰撞正交收口 + ASI/analyst39 & analyst_consensus)",
       "universe": "ASI:MINVOL1M / KOR:TOP600",
       "slots": 1,
       "active_useful_champions": [
@@ -153,16 +152,16 @@
         }
       ],
       "current_seed_campaigns": [
-        "[V] S3-r31-ASI-ANL120-RAW-FULL-cty_d0_t08：8 条 FULL（含 5 条 ts_mean 22 + sector）在 progress=0.35 停滞 360 秒，已只读对账 1 次落 RESULTS_UNOBSERVED，按红线 #5 不盲重发（INEFF-23）。",
-        "[V][U] 100-OS SC + 远程 PC 直方图锁定两大 PC_RESCUE_NEAR_SPARSE 正交母版（EFF-23）：① d59AaaMg (ASI/price_signal_dl normalized_volume_indicator_2, RAM d=4 tr=0.04 QUICK Sh=1.74, 2Y=2.56, Fit=1.00, 100-OS SC=0.1405, PC ge070=2, ge080=0)；② 1YGv2QvX / vRY0o3g3 (anl_120 x st_r2, FULL JPN=1.04-1.13 PASS, 14.41bp, 100-OS SC=0.3618, PC ge070=6, ge080=0)；已热部署 S3-r32-ASI-PSD-D59-FULL-ram_d4_t04 (8 FULL) + S3-r32-ASI-ANL-PSD-GENTLE-cty_d4_t08 (8 FULL，全用 subindustry/country*industry + ts_decay_linear 零停滞) + ASI_MMP_NLP_NORM (0-OS other 1.3x 空白塔)！"
+        "[V] S3-r32-ASI-PSD-D59-FULL (8/8 FULL)、S3-r32-ASI-ANL-PSD-GENTLE (8/8 FULL) 与 S3-r31-ASI-ANL120-RAW-FULL (8/8 FULL) 全部完成（INEFF-25）：实证 price_signal_dl 在 FULL 下 Sh=0.15-0.78 属 QUICK 假象，且 anl_120 任何 adv20>0.15..0.38 门控均伤日本中盘（JPN=0.73-0.78），果断收口。",
+        "[V][U] 100-OS SC + 远程 PC 直方图锁定已过日本子检的严格 PC_PASS_STRICT 母版 MPgw26wL (qtile5 x st_r2 d10+tail25, FULL Sh=2.44, 2Y=2.60, Fit=1.53, JPN=1.03/1.00 PASS, 100-OS SC=0.5421, PC ge070=0!)（EFF-24）；结合 S3-r29 Jj30vk2x (qtile5 + adv20>0.38 双过 Robust) 与 EFF-20 akR2rQr9 (st_r2 + adv20>0.38 全过)，已热部署 S3-r33-ASI-MF120-Q5STR2-GATE-cty_d4_t08 (8 FULL) + ASI_ANL39_STARMINE_NORM & ASI_ANL_CONSENSUS_NORM！"
       ]
     }
   ],
   "quota_and_isolated_experiments": {
     "est_2026_11_26_official_sims_final": 10020,
-    "today_est_2026_11_27_official_sims": 3336,
-    "today_normal_completed_est": 2920,
-    "today_alpha0_completed_est": 336,
+    "today_est_2026_11_27_official_sims": 3824,
+    "today_normal_completed_est": 3384,
+    "today_alpha0_completed_est": 344,
     "phase2_alpha0_active": false,
     "alpha0_auto_switch_threshold": 4500,
     "concurrency_limits": {
