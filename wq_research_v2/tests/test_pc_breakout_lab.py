@@ -7,12 +7,13 @@ from wq_research_v2.pc_breakout_lab import S3_ALPHA0_VERIFIED_FIELDS, build_pc_b
 
 def test_pc_breakout_lab_passes_all_static_gates_and_operator_diversity() -> None:
     specs = build_pc_breakout_lab_s3r10_specs()
-    assert len(specs) == 115
+    assert len(specs) == 118
     total_items = sum(len(s["items"]) for s in specs)
-    assert total_items == 920
+    assert total_items == 944
 
     batch_ids = [s["batch_id"] for s in specs]
     assert len(batch_ids) == len(set(batch_ids)), "Duplicate batch_id in pc_breakout_lab!"
+    assert any(b.startswith("S3-r25-ASI-MF120-NEUT05-") for b in batch_ids), "Missing S3-r25 ASI MF120 NEUT05!"
     assert any(b.startswith("S3-r24-ASI-MF120-D22-LIQ-") for b in batch_ids), "Missing S3-r24 ASI MF120 D22+LIQ!"
     assert any(b.startswith("S3-r24b-ASI-MF120-D33-FREE-") for b in batch_ids), "Missing S3-r24b ASI MF120 D33 FREE!"
     assert any(b.startswith("S3-r23d-ASI-MF120-ROBUST-FREE-") for b in batch_ids), "Missing S3-r23d ASI MF120 ROBUST FREE!"
@@ -66,7 +67,7 @@ def test_pc_breakout_lab_passes_all_static_gates_and_operator_diversity() -> Non
             elif item["source_side"] == "TOP100_2026Q4":
                 top_cnt += 1
 
-    assert admin_cnt == top_cnt == 460, f"50:50 imbalance: admin={admin_cnt}, top={top_cnt}"
+    assert admin_cnt == top_cnt == 472, f"50:50 imbalance: admin={admin_cnt}, top={top_cnt}"
 
     # Verify genuinely diverse, live-verified REGULAR Gold-81 operators are exercised!
     required_new_ops = {

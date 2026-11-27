@@ -1233,6 +1233,69 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
 }
 
 
+def build_s3r25_asi_mf120_neut05_specs() -> list[dict[str, Any]]:
+    """S3-r25 (24 FULL, NORMAL): ASI/MINVOL1M/multifactor_return_pred Neutral-0.5 + Within-Country adv20 Finisher!
+
+    Root-cause breakthrough discovered in Audit #18 (2026-11-27 12:45 CST) from S3-r23 & S3-r24:
+      1) In S3-r23 (`2rGPdR1N`) and S3-r24 (`blx753Y6`), `if_else(rank(adv20) > 0.2..0.25, tail(group_rank(...), 0.25, 0.75, 0.5), 0)`
+          ACTUALLY PASSED BOTH `LOW_ROBUST_UNIVERSE_SHARPE.WITH_RATIO (1.49/1.47 & 1.51/1.45 PASS!)` AND
+         `LOW_ROBUST_UNIVERSE_RETURNS (0.0346/0.0340 & 0.0346/0.0329 PASS!)`!
+      2) Why did Sharpe drop from 2.58 -> 1.61 and JPN from 1.05 -> 0.64..0.75?
+         TWO mathematical causes:
+         (a) `group_rank` and `tail(..., lower=0.25, upper=0.75, newval=0.5)` have range [0, 1] with neutral mean = `0.5`,
+             NOT `0.0`! Setting the `if_else` false-branch to `0` assigned all excluded illiquid stocks the EXTREME
+             MINIMUM `0.0` (maximum short position after neutralization!) instead of neutral `0.5`!
+             By contrast, `xAlXgQKW` used `group_zscore` (centered at `0.0`) with false-branch `0`, preserving
+             `Sh=2.00, Fit=1.18, 11.73bp, JPN=0.99/1.00`!
+         (b) Cross-country `rank(adv20)` slices unevenly across Asian currencies/markets; `group_rank(adv20, country) > 0.2`
+             gates liquidity uniformly WITHIN each country (keeping Japan's top 80% liquid stocks intact!).
+      3) S3-r25 fixes the false-branch baseline to `0.5` for `tail(group_rank(...), 0.25, 0.75, 0.5)` (and `0` for
+         `group_zscore`) + pairs with `group_rank(adv20, country) > 0.2` across `COUNTRY d={0, 4}` (PC ~ 0.67-0.70)
+         and `REVERSION_AND_MOMENTUM d=4`.
+    """
+    specs: list[dict[str, Any]] = []
+    st_r2 = "ts_backfill(short_term_regime2_60d_single_quantile_pred, 21)"
+    anl_120 = "ts_backfill(analyst_120d_single_quantile_pred, 21)"
+    st_q5 = "ts_backfill(short_term_60d_qtile5_class_pred, 21)"
+
+    d10_tail = f"tail(group_rank(ts_decay_linear({st_r2}, 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    d15_tail = f"tail(group_rank(ts_decay_linear({st_r2}, 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    d22_tail = f"tail(group_rank(ts_decay_linear({st_r2}, 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    anl_d12_tail = f"tail(group_rank(ts_decay_linear(min(rank({anl_120}), rank({st_r2})), 12), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    q5_d10_tail = f"tail(group_rank(ts_decay_linear(min(rank({st_q5}), rank({st_r2})), 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    m22_gz = f"group_zscore(ts_mean({st_r2}, 22), subindustry)"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC25-A1-d10-tail25-cadv20-n05", "ADMIN_ORIGINAL", "WL13229", f"if_else(group_rank(adv20, country) > 0.2, {d10_tail}, 0.5)"),
+        ("PC25-A2-d15-tail25-cadv20-n05", "ADMIN_ORIGINAL", "WL13229", f"if_else(group_rank(adv20, country) > 0.2, {d15_tail}, 0.5)"),
+        ("PC25-A3-d22-tail25-cadv20-n05", "ADMIN_ORIGINAL", "KH94146", f"if_else(group_rank(adv20, country) > 0.2, {d22_tail}, 0.5)"),
+        ("PC25-A4-d22-tail25-adv20-n05", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.2, {d22_tail}, 0.5)"),
+        ("PC25-A5-d10-tail25-adv25-n05", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.25, {d10_tail}, 0.5)"),
+        ("PC25-A6-anl-d12-cadv20-n05", "TOP100_2026Q4", "ZS59763", f"if_else(group_rank(adv20, country) > 0.2, {anl_d12_tail}, 0.5)"),
+        ("PC25-A7-q5-d10-cadv20-n05", "TOP100_2026Q4", "SZ83096", f"if_else(group_rank(adv20, country) > 0.2, {q5_d10_tail}, 0.5)"),
+        ("PC25-A8-m22-gz-cadv20-n0", "TOP100_2026Q4", "LD22811", f"if_else(group_rank(adv20, country) > 0.2, {m22_gz}, 0)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d0_t08", "COUNTRY", 0, 0.08),
+        ("cty_d4_t08", "COUNTRY", 4, 0.08),
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r25-ASI-MF120-NEUT05-{tag}",
+                campaign_id="S3_ASI_MF120_NEUT05_USEFUL",
+                hypothesis_id="HYP-S3R25-ASI-IFELSE-05-BASELINE-WITHIN-CTY-ADV20-ALL-PASS",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="multifactor_return_pred",
+                queue_type="NORMAL",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(exprs, dataset_id="multifactor_return_pred", primary_field_id="short_term_regime2_60d_single_quantile_pred", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
 def build_s3r24_asi_mf120_d22_liq_specs() -> list[dict[str, Any]]:
     """S3-r24 (24 FULL, NORMAL): ASI/MINVOL1M/multifactor_return_pred d22+tail25 + adv20/cap Finisher!
 
@@ -1776,9 +1839,10 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r24 (24 FULL NORMAL) -> S3-r24b (16 FULL FREE) -> S3-r23d -> S3-r23b -> S3-r23c -> S3-r23 -> ..."""
+    """Return ordered S3-r25 (24 FULL NORMAL) -> S3-r24 (24 FULL NORMAL) -> S3-r24b (16 FULL FREE) -> S3-r23d -> ..."""
     return (
-        build_s3r24_asi_mf120_d22_liq_specs()
+        build_s3r25_asi_mf120_neut05_specs()
+        + build_s3r24_asi_mf120_d22_liq_specs()
         + build_s3r24b_asi_mf120_d33_free_specs()
         + build_s3r23d_asi_mf120_robust_free_specs()
         + build_s3r23b_asi_mf120_sub_free_specs()

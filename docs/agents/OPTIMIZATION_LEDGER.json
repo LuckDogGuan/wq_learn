@@ -122,6 +122,14 @@
       "verdict": "EFFECTIVE（历史里程碑 · vRY0Wdva 首次在 ASI/MINVOL1M 同时 PASS LOW_ASI_JPN_SHARPE 与 LOW_ROBUST_UNIVERSE_SHARPE，仅剩 1 项 Robust Returns 0.0432/0.0475；同时量化了 COUNTRY 比 RAM/CROWDING 低 -0.092~-0.138 PC！）",
       "metric_delta": "1) RAM d=4 单轴对照：bare d22 (A1L6okwX: JPN=0.93 FAIL, RobSh=88.0% FAIL, RobRet=79.8%) -> +tail25 (vRY0Wdva: Sh=2.05, 2Y=2.00, Fit=1.33, 11.28bp, JPN=1.04 PASS, RobSh=1.86/1.84=90.7% PASS!, 仅余 RobRet=0.0432/0.0475)；d12->d22 (omP2xVlb->vRY0Wdva) 全维度单调跃升！2) CROWDING d=6 (zqAaVVVG): RobSh=1.78/1.77 PASS!, 13.50bp, JPN=0.98, RobRet=0.0433/0.0468；3) COUNTRY d=12 (E5m3926J): Margin 19.85bp, Sh=2.25, JPN=1.07 PASS；4) 远程 PC 实测：COUNTRY (A1L67JZg 0.7084 ge080=0 / E5m3926J 0.7273 ge080=0) << RAM (vRY0Wdva 0.8004 ge080=1) < CROWDING (zqAaVVVG 0.8466 ge080=1)！",
       "reusable_rule": "ASI/MINVOL1M 终极组合：d22 + tail(0.25,0.75,0.5)（同向提升 JPN、RobSh、RobRet、2Y、Fitness）+ adv20>{0.2..0.4}/cap>0.25 流动性门控（切掉尾部微盘将 RobRet 推过 90%）+ COUNTRY 中性化（维持 PC<0.68 零高撞车）；已上线 S3-r24 (24 FULL NORMAL) + S3-r24b (16 FULL FREE) 立即执行！"
+    },
+    {
+      "case_id": "EFF-16",
+      "region_dataset": "EUR/TOP2500/model77+model110 (S3-r20-EUR-1YG-HIGHMGN 16/16 FULL · Margin-First 升级成功!)",
+      "controlled_change": "在 1YG578aX (7.44bp, RAM d=0) 上锁定 REVERSION_AND_MOMENTUM，单轴叠加超轻流动性门控 if_else(rank(adv20) > 0.12, expr, 0) 与温和 decay ∈ {3, 5}",
+      "verdict": "EFFECTIVE（官方 /check 全绿 PASS · 成功把 Margin 推穿 EUR 10bp 底线且 PC 纹丝不动！）",
+      "metric_delta": "d=0 (1YG578aX: 7.44bp, PC=0.5897) -> d=3 (0mGn32A6: Sh=2.12, 2Y=2.18, Fit=1.26, TO=9.76%, 9.06bp, SC=0.2552, PC=0.5872, 0-FAIL) -> d=5 (6XGgvmpY: Sh=2.04, 2Y=2.19, Fit=1.19, TO=8.32%, Margin=10.25bp [+2.81bp!], 官方 SC=0.2551 PASS, 官方 PC=0.5898 PASS [0碰撞!], Sub=1.06/1.06 PASS, Ladder=2.19/2.02 PASS, MATCHES_PYRAMID PASS)；两两相关 corr(6XGgvmpY, 1YG578aX)=0.9775，按 Margin 优先原则 6XGgvmpY 取代 1YG578aX 成为新 EUR Useful 冠军（待用户确认 PATCH 替换标签）",
+      "reusable_rule": "对 EUR 跨集 3 支 RAM 冠军，超轻 adv20 > 0.12（注意：0.08/0.10 仍差 0.01-0.02 Sub-Uni，0.12 恰好稳过！）+ decay=3..5 是提 Margin (+2.8bp)、降换手且零伤 PC 的最优单轴微调。"
     }
   ],
   "ineffective_cases": [
@@ -220,6 +228,14 @@
       "verdict": "INEFFECTIVE_FOR_ROBUST_UNDER_COUNTRY（累计再增 6 条 JPN=PASS 且将 Margin 推至 14.41bp、Robust Ratio 推至 91.6%，但纯 COUNTRY 下 32/32 仍未过 ROBUST_UNIVERSE）",
       "metric_delta": "S3-r23b 16/16 FULL 再增 5 条 JPN=PASS（MPgwVVRL d=2 Sh=2.58/2Y=2.63/Fit=1.65/8.63bp/JPN=1.05；e71AEEoO 11.64bp/Fit=1.73/JPN=1.02；VkMneejw 11.57bp；1YGv2QvX d=6 13.97bp/Fit=1.71/JPN=1.04；vRY0o3g3 d=6 14.41bp/Fit=1.64/JPN=1.13），且 88GA2dqz (d=6, d15+tail25) 将 rob_ratio 从 0.884 推至 0.916 (2.08/2.27, JPN=0.98)；S3-r23c 16/16 FULL 再增 MPgw26wL (Sh=2.44/2Y=2.60/JPN=1.03 PASS) 与 N1KM2Ynw (d=4 Sh=2.43/2Y=2.64/9.07bp)，但纯 COUNTRY 下仍差最后 8.4% Robust Ratio。",
       "root_cause_and_ban": "铁证：纯 COUNTRY 中性化下无 adv20/cap 门控难以单独越过 Robust>=90%；破局双路：(1) 常规额 S3-r23-ASI-MF120-ROBUST 直接加 adv20/cap 流动性门控；(2) 免额 S3-r23d-ASI-MF120-ROBUST-FREE 切至 CROWDING d=6 / RAM d=4（利用 9qGo72A1 CROWDING 已达 rob_ratio=0.964 + JPN=1.02 PASS 的基础叠 d12/d15/d22 + tail25 冲过最后 3.6% Robust 并压 PC<0.70）。"
+    },
+    {
+      "case_id": "INEFF-13",
+      "region_dataset": "ASI/MINVOL1M/multifactor_return_pred (S3-r23 & S3-r24 group_rank/tail25 门控 false=0 错位做空反例 + 跨国 rank(adv20) 偏差)",
+      "controlled_change": "在 ASI/MINVOL1M 的 COUNTRY d=0/2/6 上对值域 [0,1]（中枢=0.5）的 group_rank / tail(..., 0.25, 0.75, newval=0.5) 叠加 if_else(rank(adv20) > 0.2..0.4, expr, 0)",
+      "verdict": "INEFFECTIVE_BASELINE_ZERO（虽让 2rGPdR1N 与 blx753Y6 成功双过 RobSh+RobRet，但 false=0 将被剔除微盘股置为极小值 0.0 造成意外满仓做空微盘 + 跨国 rank(adv20) 误切日本股票，令 JPN 从 1.06 跌至 0.61-0.75、Fit 跌至 0.87-0.90）",
+      "metric_delta": "2rGPdR1N (d=0, adv20>0.25+tail25) RobSh=1.49/1.47 PASS + RobRet=0.0346/0.0340 PASS，blx753Y6 (d=2, d22+adv20>0.20+tail25) RobSh=1.51/1.45 PASS + RobRet=0.0346/0.0329 PASS，证实流动性门控确实能同时打穿 RobSh 与 RobRet！但因 tail25 中枢为 0.5 而 false 分支写 0（对照中枢为 0.0 的 group_zscore 变体 xAlXgQKW 保持 Sh=2.00, Fit=1.18, 11.73bp, JPN=0.99/1），导致 Sh 从 2.58 跌至 1.61-1.63、JPN 跌至 0.64-0.75。",
+      "root_cause_and_ban": "铁律：(1) 对值域 [0,1]、均值 0.5 的 group_rank 或 tail(..., newval=0.5) 做 if_else 门控时，false 分支必须填中性均值 0.5（对均值为 0 的 group_zscore 才填 0），严禁填 0 把剔除股变成最大空头！(2) ASI 多国池流动性门控优先用国家内分位 group_rank(adv20, country) > 0.20 保护日本子市场样本。已立即上线 S3-r25-ASI-MF120-NEUT05 (24 FULL NORMAL)！"
     }
   ]
 }
