@@ -55,3 +55,14 @@
   - **`S3-r23b-ASI-MF120-SUB-FREE`（`d=2`/`d=6` `16/16 FULL` 零超时完成，`d=0` 去重跳过，记入 `INEFF-12`）**：再增 **5 条 `LOW_ASI_JPN_SHARPE=PASS`**：**`MPgwVVRL`**（`d=2, Sh=2.58, 2Y=2.63, Fit=1.65, 8.63bp`）、**`e71AEEoO`**（`d=2, 11.64bp, Sh=2.37, Fit=1.73`）、**`VkMneejw`**（`d=2, 11.57bp, Sh=2.36, Fit=1.66`）、**`1YGv2QvX`**（`d=6, 13.97bp, Sh=2.35, Fit=1.71`）、**`vRY0o3g3`**（`d=6, 14.41bp, Sh=2.34, Fit=1.64`）；另有 `2rGEeez6` (`JPN=0.99/1`)、`88GA2dqz` (`0.98/1`)、`XgNqO56z` (`0.97/1`) 贴边；
   - **`S3-r23c-ASI-QTILE5-SUB-FREE`（`short_term_60d_qtile5_class_pred`：`d=0` 8/8 完成，`d=4` 8 条实时在跑未打断）**：`MPgw26wL` 同样打出 **`Sh=2.44, 2Y=2.60, Fit=1.53, 7.83bp, JPN=PASS`**；
   - **关键定案**：上述 `24/24` 纯免额变体全部仅卡在 `LOW_ROBUST_UNIVERSE_SHARPE`（`82–89%` vs `90%`）与 `LOW_ROBUST_UNIVERSE_RETURNS`，彻底证实纯 `Alphas=0` 调参无法替代流动性门控；静待 `S3-r23c-cty_d4` 收尾后自动切入 **`S3-r23-ASI-MF120-ROBUST`（24 FULL `NORMAL`, `adv20/cap` 门控）** 与 **`S3-r20-EUR-1YG-HIGHMGN`（16 FULL `NORMAL`）**（余 `460` 常规额度 + `13:00 CST` 美东换日新额度）。
+- **2026-11-27 12:05（2 小时定时审计 #18 · 🏆 历史里程碑：`S3-r23d` 24/24 `FULL` 首破 `JPN + ROBUST_UNIVERSE_SHARPE` 双硬检！全天官方回测飙破 `9,668` 条！抢在 `13:00 CST` 换日前立即发射 `S3-r24` + `S3-r23` + `S3-r20`！）**：
+  - **`S3-r23d-ASI-MF120-ROBUST-FREE`（24/24 `FULL` 零超时完成，记入 `EFF-15`）**：
+    - **`vRY0Wdva`**（`REVERSION_AND_MOMENTUM d=4`, `tail(group_rank(ts_decay_linear(st_r2, 22), subindustry), 0.25, 0.75, 0.5)`）：**历史首次同时 PASS `LOW_ASI_JPN_SHARPE (1.04/1.00)` 与 `LOW_ROBUST_UNIVERSE_SHARPE.WITH_RATIO (1.86/1.84 = 90.7%)`！**（`Sh=2.05, 2Y=2.00, Fit=1.33, TO=9.36%, Margin=11.28bp`），全检查表仅余 **1 项** `LOW_ROBUST_UNIVERSE_RETURNS (0.0432/0.0475)`！严格对照证明 `d12 -> d22` 与 `bare -> tail25` 在所有维度上单调同向增效；
+    - **`zqAaVVVG`**（`CROWDING d=6`, `d22 + tail25`）：同样 **PASS `RobSh (1.78/1.77 = 90.4%)`**, `13.50bp, 2Y=2.15, JPN=0.98, RobRet=0.0433/0.0468`；
+    - **`E5m3926J` / `LL8e02K1`**（`COUNTRY d=12 tr=0.06`, `anl120 × st_r2`）：将 Margin 推至 **`19.85bp / 17.77bp`**, `Sh=2.25/2.29, Fit=1.56/1.65, JPN=1.07/1.04 PASS`！
+    - **远程 PC 实测归因**：`COUNTRY`（`A1L67JZg PC=0.7084, ge080=0`；`E5m3926J PC=0.7273, ge080=0`）比 `RAM`（`vRY0Wdva PC=0.8004, ge080=1`）和 `CROWDING`（`zqAaVVVG PC=0.8466, ge080=1`）**暴降 `-0.092 ~ -0.138` PC**！
+  - **立即行动（退役 5 个死集 + 调整免额切换阈值 `4000 -> 4160` 抢用换日前 120 常规余量 + 热部署 `S3-r24` / `S3-r24b`）**：
+    - 退役 `ASI_GLBSEASON_FREE/V2`、`USA_CHARTCNN_FREE`、`USA_OPTCHART_FREE`、`USA_GLBSEASON_20D_FREE`（已定案 `INEFF-10/11`），停止白耗 `ASI:1` / `USA:2` 并发槽；
+    - 新增 **`S3-r24-ASI-MF120-D22-LIQ`（24 FULL `NORMAL`）**：将 `vRY0Wdva` 的冠军 `d22+tail25`（及 `anl120/qtile5 d15`）叠单变量 `adv20>{0.2,0.3,0.4}/cap>0.25`，在 `COUNTRY d={2,6}`（保 `PC < 0.68`）与 `RAM d=4`（配 `vector_neut(returns, 22)` 压 PC）下同步打穿最后 1 项 `RobRet` 冲击 **`ASI` 首条 `Useful`**；
+    - 新增 **`S3-r24b-ASI-MF120-D33-FREE`（16 FULL 免额）**：延续 `d22 -> d33/d44/m33 + tr=0.04` 零额度跟进；
+    - 将广州 `--alpha0-switch-threshold` 微调至 `4160`（严格维持先 `NORMAL` 后 `Alphas=0` 不混跑），抢在 `13:00 CST` 美东换日前立刻发完 `S3-r24 (24)` + `S3-r23 (24)` + `S3-r20 EUR High-Margin (16)` 共 `64 FULL` 核心收口包！

@@ -32,6 +32,7 @@ from wq_research_v2.auth_session import BrainAuthSession
 from wq_research_v2.batch_audit_logger import build_batch_audit_report, render_batch_audit_markdown
 from wq_research_v2.blacklist_registry import BlacklistRegistry
 from wq_research_v2.ledger_store import LedgerStore
+from wq_research_v2.pc_breakout_lab import S3_ALPHA0_VERIFIED_FIELDS
 from wq_research_v2.quota_tracker import QuotaTracker, current_est_platform_date
 from wq_research_v2.ra_evaluator import D1RAEvaluator
 from wq_research_v2.seed_pruner import PruningConfig, prune_similar_seeds
@@ -211,49 +212,8 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
             "long_hedge2_quantile5_confidence_r120",
         ],
     },
-    {
-        "campaign_id": "USA_GLBSEASON_20D_FREE",
-        "region": "USA",
-        "universe": "TOP3000",
-        "dataset_id": "global_seasonal_model",
-        "queue_type": "UNUSED_ALPHA0",
-        "field_type": "MATRIX",
-        "template_packs": ["core_50_50", "nonlinear_tail_group"],
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING"],
-        "fields": [
-            "pv_dailycal_60d_return_quantile3_prob",
-            "weekly_pricevol_r20_quantile3_confscore",
-            "weekly_pricevol_r20_quantile2_confscore",
-            "daily_pricevol_12m_r20_quantile3_confscore",
-            "pv_20d_q5_label3_probability",
-            "pv_12m_20d_q5_label2_probability",
-            "pv_20d_q5_label0_confidence",
-            "pv_12m_5d_q5_label3_confidence",
-        ],
-    },
-    {
-        "campaign_id": "ASI_GLBSEASON_V2_FREE",
-        "region": "ASI",
-        "universe": "MINVOL1M",
-        "dataset_id": "global_seasonal_model",
-        "queue_type": "UNUSED_ALPHA0",
-        "field_type": "MATRIX",
-        "max_trade": "ON",
-        "template_packs": ["core_50_50", "nonlinear_tail_group"],
-        "default_neut": "COUNTRY",
-        "alt_neuts": ["SUBINDUSTRY", "CROWDING"],
-        "fields": [
-            "analyst_monthquarter_60d_return_quantile5_score2",
-            "analyst_monthquarter_60d_return_quantile5",
-            "analyst_calendar_120d_return_quantile5_score0",
-            "analyst_regime_120d_return_quantile5_score0",
-            "analyst_regime_60d_return_quantile5_prob2",
-            "analyst_monthquarter_60d_return_quantile5_prob3",
-            "analyst_monthquarter_120d_return_quantile5_prob2",
-            "analyst_monthquarter_120d_return_quantile5_prob0",
-        ],
-    },
+    # Retired at Audit #18 (INEFF-10/INEFF-11): USA_GLBSEASON_20D_FREE (short 20d noise), ASI_GLBSEASON_V2_FREE
+    # & ASI_GLBSEASON_FREE (S3-r21 24/24 FULL proved JPN=0.14..0.63/1.00) so ASI:1 & USA:2 focus on multifactor_return_pred!
     {
         "campaign_id": "ASI_MULTIFACT_120D_FREE",
         "region": "ASI",
@@ -320,49 +280,7 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
             "oth460_2l_boie",
         ],
     },
-    {
-        "campaign_id": "USA_OPTCHART_FREE",
-        "region": "USA",
-        "universe": "TOP3000",
-        "dataset_id": "option_chart_model",
-        "queue_type": "UNUSED_ALPHA0",
-        "field_type": "MATRIX",
-        "template_packs": ["core_50_50", "nonlinear_tail_group"],
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING"],
-        "fields": [
-            "quantile_2_option_return_rank",
-            "quantile_3_option_return_rank",
-            "probability_quantile_4_label_2_option_pred",
-            "quantile_1_option_return_rank",
-            "probability_quantile_3_label_1_option_pred",
-            "quantile_5_option_return_rank",
-            "probability_quantile_5_label_2_option_pred",
-            "quantile_4_option_return_rank",
-        ],
-    },
-    {
-        "campaign_id": "ASI_GLBSEASON_FREE",
-        "region": "ASI",
-        "universe": "MINVOL1M",
-        "dataset_id": "global_seasonal_model",
-        "queue_type": "UNUSED_ALPHA0",
-        "field_type": "MATRIX",
-        "max_trade": "ON",
-        "template_packs": ["core_50_50", "nonlinear_tail_group"],
-        "default_neut": "COUNTRY",
-        "alt_neuts": ["SUBINDUSTRY", "CROWDING"],
-        "fields": [
-            "analyst_60d_return_quantile5_prob3",
-            "analyst_regime_120d_return_quantile5_prob0",
-            "analyst_event_60d_return_quantile5_score3",
-            "analyst_monthquarter_120d_return_quantile5_score3",
-            "analyst_monthquarter_60d_return_quantile5_score1",
-            "analyst_regime_5d_return_quantile5_score0",
-            "analyst_regime_60d_return_quantile5_score2",
-            "analyst_regime_120d_return_quantile5_prob4",
-        ],
-    },
+    # Retired at Audit #18 (INEFF-10/INEFF-11): USA_OPTCHART_FREE (TO=89-105%), ASI_GLBSEASON_FREE (JPN=0.14-0.63).
     # ==================== AUDIT #11 FRESH ORTHOGONAL PURE-MATRIX NORMAL MINES (USA:2 REFILL + ASI/model25) ====================
     # Added 2026-11-26 22:58 CST: USA had only 7 NORMAL batches left; refill with blank-pyramid pure-MATRIX sets
     # (sentiment 1.5x, other 1.4x, model 1.3x) & replace Japan-dead ASI/model39 (INEFF-09) with ASI/model25!
@@ -547,27 +465,7 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
             "mean_connected_company_market_value",
         ],
     },
-    {
-        "campaign_id": "USA_CHARTCNN_FREE",
-        "region": "USA",
-        "universe": "TOP3000",
-        "dataset_id": "chart_cnn_alpha",
-        "queue_type": "UNUSED_ALPHA0",
-        "field_type": "MATRIX",
-        "template_packs": ["core_50_50", "nonlinear_tail_group"],
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING"],
-        "fields": [
-            "img30d_return_quartile_confidence0_zackbatch",
-            "img30d_return_quintile_confidence2_zackbatch",
-            "img30d_return_quintile_confidence3_zackbatch",
-            "img30d_return_quintile_prob2_zackbatch",
-            "img30d_return_quintile_prob3_zackbatch",
-            "img30d_return_tercile_confidence0_zackbatch",
-            "img30d_return_tercile_confidence1_zackbatch",
-            "img30d_return_tercile_confidence2_zackbatch",
-        ],
-    },
+    # Retired at Audit #18 (INEFF-10): USA_CHARTCNN_FREE (S3-r20 32/32 FULL proved 10Y Sh capped at 1.20).
     {
         "campaign_id": "GLB_M39_VALMOM_NORM",
         "region": "GLB",
@@ -1729,6 +1627,7 @@ def run_ra_production_loop(
         "raw_volume_indicator_3": 0,
         "raw_volume_indicator_5": 0,
         "normalized_volume_indicator_2": 0,
+        **S3_ALPHA0_VERIFIED_FIELDS,
     }
     for camp in CURATED_RA_D1_CAMPAIGNS:
         if camp["queue_type"] == "UNUSED_ALPHA0":

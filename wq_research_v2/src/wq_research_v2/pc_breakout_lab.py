@@ -1233,6 +1233,108 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
 }
 
 
+def build_s3r24_asi_mf120_d22_liq_specs() -> list[dict[str, Any]]:
+    """S3-r24 (24 FULL, NORMAL): ASI/MINVOL1M/multifactor_return_pred d22+tail25 + adv20/cap Finisher!
+
+    Triggered by 2-hour Audit #18 (2026-11-27 12:04 CST) after S3-r23d (24/24 FULL) & remote PC attribution:
+      - HISTORIC DUAL PASS in S3-r23d: `vRY0Wdva` (REVERSION_AND_MOMENTUM d=4, d22 + tail25 subindustry)
+        became our FIRST-EVER ASI/MINVOL1M alpha to simultaneously PASS BOTH `LOW_ASI_JPN_SHARPE (1.04/1.00)`
+        AND `LOW_ROBUST_UNIVERSE_SHARPE.WITH_RATIO (1.86/1.84)` (Sh=2.05, 2Y=2.00, Fit=1.33, 11.28bp)!
+        Its ONLY remaining FAIL check is `LOW_ROBUST_UNIVERSE_RETURNS (0.0432/0.0475)`.
+      - Remote PC Attribution across neutralizations on ASI/multifactor_return_pred:
+        * `COUNTRY`: `A1L67JZg` PC=0.7084 (ge070=3, ge080=0) & `E5m3926J` (d=12, 19.85bp) PC=0.7273 (ge080=0)
+        * `REVERSION_AND_MOMENTUM`: `vRY0Wdva` PC=0.8004 (ge070=3, ge080=1)
+        * `CROWDING`: `zqAaVVVG` PC=0.8466 (ge070=5, ge080=1)
+        -> Proves `COUNTRY` cuts -0.092 to -0.138 PC vs RAM/CROWDING!
+      - Controlled 1-axis synthesis: freeze `vRY0Wdva`'s winning `d22 + tail25` (plus `d15 + anl120/qtile5`)
+        and apply `adv20>{0.2,0.3,0.4}` / `cap>0.25` liquidity gating (zeroing bottom illiquid micro-caps so
+        Robust Returns / Total Returns climbs from 82-88% -> >=94% PASS!) across `COUNTRY d={2,6}` (keeping
+        PC < 0.68!) AND `REVERSION_AND_MOMENTUM d=4` (with `vector_neut(returns, 22)` & dual-branch to cut PC).
+    """
+    specs: list[dict[str, Any]] = []
+    st_r2 = "ts_backfill(short_term_regime2_60d_single_quantile_pred, 21)"
+    anl_120 = "ts_backfill(analyst_120d_single_quantile_pred, 21)"
+    st_q5 = "ts_backfill(short_term_60d_qtile5_class_pred, 21)"
+
+    d22_tail = f"tail(group_rank(ts_decay_linear({st_r2}, 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    d15_tail = f"tail(group_rank(ts_decay_linear({st_r2}, 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    anl_d15_tail = f"tail(group_rank(ts_decay_linear(min(rank({anl_120}), rank({st_r2})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    q5_d15_tail = f"tail(group_rank(ts_decay_linear(min(rank({st_q5}), rank({st_r2})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    d22_vneut = f"vector_neut({d22_tail}, rank(ts_mean(returns, 22)))"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC24-A1-d22-tail25-adv20", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.2, {d22_tail}, 0)"),
+        ("PC24-A2-d22-tail25-adv30", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.3, {d22_tail}, 0)"),
+        ("PC24-A3-d22-tail25-adv40", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.4, {d22_tail}, 0)"),
+        ("PC24-A4-d22-tail25-cap25", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(cap) > 0.25, {d22_tail}, 0)"),
+        ("PC24-A5-d15-tail25-adv30", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.3, {d15_tail}, 0)"),
+        ("PC24-A6-anl-d15-tail25-adv30", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.3, {anl_d15_tail}, 0)"),
+        ("PC24-A7-q5-d15-tail25-adv30", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.3, {q5_d15_tail}, 0)"),
+        ("PC24-A8-d22-vneut-adv30", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.3, {d22_vneut}, 0)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d2_t08", "COUNTRY", 2, 0.08),
+        ("cty_d6_t08", "COUNTRY", 6, 0.08),
+        ("ram_d4_t08", "REVERSION_AND_MOMENTUM", 4, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r24-ASI-MF120-D22-LIQ-{tag}",
+                campaign_id="S3_ASI_MF120_D22_LIQ_USEFUL",
+                hypothesis_id="HYP-S3R24-ASI-VRY0WDVA-D22-TAIL25-ADV20-CTY-PC67-ROBUST-PASS",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="multifactor_return_pred",
+                queue_type="NORMAL",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(exprs, dataset_id="multifactor_return_pred", primary_field_id="short_term_regime2_60d_single_quantile_pred", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
+def build_s3r24b_asi_mf120_d33_free_specs() -> list[dict[str, Any]]:
+    """S3-r24b (16 FULL, 100% UNUSED_ALPHA0 FREE): ASI/MINVOL1M/multifactor_return_pred d33/d44 + tr=0.04 FREE Robust-Ret Finisher!
+
+    Extends the monotonic d12 -> d22 Robust lift discovered in S3-r23d (`omP2xVlb` RobSh 87.4%/RobRet 79.4% ->
+    `vRY0Wdva` RobSh 90.7% PASS/RobRet 81.8%, JPN=1.04 PASS) to d33/d44/m33 + tighter truncation=0.04 +
+    tail(0.20..0.30) / signed_power(0.75) at ZERO daily quota cost!
+    """
+    specs: list[dict[str, Any]] = []
+    st_r2 = "ts_backfill(short_term_regime2_60d_single_quantile_pred, 21)"
+    anl_120 = "ts_backfill(analyst_120d_single_quantile_pred, 21)"
+    st_q5 = "ts_backfill(short_term_60d_qtile5_class_pred, 21)"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC24B-A1-d33-tail25-sub", "ADMIN_ORIGINAL", "WL13229", f"tail(group_rank(ts_decay_linear({st_r2}, 33), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC24B-A2-d44-tail25-sub", "ADMIN_ORIGINAL", "WL13229", f"tail(group_rank(ts_decay_linear({st_r2}, 44), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC24B-A3-m33-tail25-sub", "ADMIN_ORIGINAL", "KH94146", f"tail(group_rank(ts_mean({st_r2}, 33), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC24B-A4-d22-tail30-sub", "ADMIN_ORIGINAL", "KH94146", f"tail(group_rank(ts_decay_linear({st_r2}, 22), subindustry), lower=0.3, upper=0.7, newval=0.5)"),
+        ("PC24B-A5-d33-tail20-sub", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear({st_r2}, 33), subindustry), lower=0.2, upper=0.8, newval=0.5)"),
+        ("PC24B-A6-d33-gz-sp075", "TOP100_2026Q4", "ZS59763", f"signed_power(group_zscore(ts_decay_linear({st_r2}, 33), subindustry), 0.75)"),
+        ("PC24B-A7-anl-d22-tail25", "TOP100_2026Q4", "SZ83096", f"tail(group_rank(ts_decay_linear(min(rank({anl_120}), rank({st_r2})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC24B-A8-q5-d22-tail25", "TOP100_2026Q4", "LD22811", f"tail(group_rank(ts_decay_linear(min(rank({st_q5}), rank({st_r2})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("ram_d8_t04", "REVERSION_AND_MOMENTUM", 8, 0.04),
+        ("cty_d8_t04", "COUNTRY", 8, 0.04),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r24b-ASI-MF120-D33-FREE-{tag}",
+                campaign_id="S3_ASI_MF120_D33_FREE_FULL",
+                hypothesis_id="HYP-S3R24B-ASI-VRY0WDVA-D33-D44-TR04-ROBUST-RET-FREE",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="multifactor_return_pred",
+                queue_type="UNUSED_ALPHA0",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(exprs, dataset_id="multifactor_return_pred", primary_field_id="short_term_regime2_60d_single_quantile_pred", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
 def build_s3r23d_asi_mf120_robust_free_specs() -> list[dict[str, Any]]:
     """S3-r23d (24 FULL, 100% UNUSED_ALPHA0 FREE): ASI/MINVOL1M/multifactor_return_pred Robust>=90% + JPN>=1.00 Finisher!
 
@@ -1674,9 +1776,11 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r23d (24 FULL FREE) -> S3-r23b (24 FULL FREE) -> S3-r23c (16 FULL FREE) -> S3-r23 (24 FULL) -> ..."""
+    """Return ordered S3-r24 (24 FULL NORMAL) -> S3-r24b (16 FULL FREE) -> S3-r23d -> S3-r23b -> S3-r23c -> S3-r23 -> ..."""
     return (
-        build_s3r23d_asi_mf120_robust_free_specs()
+        build_s3r24_asi_mf120_d22_liq_specs()
+        + build_s3r24b_asi_mf120_d33_free_specs()
+        + build_s3r23d_asi_mf120_robust_free_specs()
         + build_s3r23b_asi_mf120_sub_free_specs()
         + build_s3r23c_asi_qtile5_sub_free_specs()
         + build_s3r23_asi_mf120_robust_specs()

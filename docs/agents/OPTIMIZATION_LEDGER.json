@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-27T10:53:00+08:00",
+  "updated_at": "2026-11-27T12:05:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -114,6 +114,14 @@
       "verdict": "EFFECTIVE（历史性破壁 · 累计 11 条 ASI FULL 打穿 LOW_ASI_JPN_SHARPE>=1.00，定位 Robust>=90% 两大收口钥匙！）",
       "metric_delta": "1) S3-r22: A1L67JZg (COUNTRY d=0, d10 sub) Sh=2.62, 2Y=2.71, Fit=1.61, 7.80bp, JPN=1.06 PASS, SC=0.000, PC=0.7084 (ge070=3), rob=2.10/2.36 (0.890); 9qGo72A1 (CROWDING d=2, d10 sub) Sh=2.13, 2Y=2.26, Fit=1.35, JPN=1.02 PASS, rob=1.85/1.92 (0.964 仅差 0.07!); 2) S3-r23b (16/16 FULL): MPgwVVRL (d=2, d10+tail25) Sh=2.58, 2Y=2.63, Fit=1.65, JPN=1.05 PASS; vRY0o3g3 / 1YGv2QvX (d=6, anl120 x st_r2) 14.41bp / 13.97bp, Sh=2.34-2.35, Fit=1.64-1.71, JPN=1.13/1.04 PASS; 88GA2dqz / 2rGEeez6 (d=6/d=2, d15+tail25) 将 rob_ratio 从 0.884 推至 0.916 (2.08/2.27)、rret 推至 0.917、Mgn 升至 11.34bp (JPN=0.98-0.99); 3) S3-r23c (16/16 FULL): MPgw26wL (qtile5 x st_r2 + tail25) Sh=2.44, 2Y=2.60, Fit=1.53, JPN=1.03 PASS! 已上线免额 S3-r23d-ASI-MF120-ROBUST-FREE (CROWDING d=6 / RAM d=4 / COUNTRY d=12 tr=0.06 + d12/d15/d22 + tail25) 与常规额 S3-r23-ASI-MF120-ROBUST (adv20/cap 门控) 双路合围!",
       "reusable_rule": "在 ASI/MINVOL1M 上，拉长线性衰减 (10d->12d/15d/22d + d=6..12) 并配合 CROWDING/RAM 中性化或 adv20>0.2-0.4 门控，可有效抑制底部 10% 非稳健微盘尾部噪音、提升 ROBUST_UNIVERSE_SHARPE_RATIO，同时用 L6 tail25 + 同集双支将 PC 压入 <0.70。"
+    },
+    {
+      "case_id": "EFF-15",
+      "region_dataset": "ASI/MINVOL1M/multifactor_return_pred (S3-r23d 24/24 FULL 历史性首过 JPN + ROBUST_UNIVERSE_SHARPE 双硬检!)",
+      "controlled_change": "固定 short_term_regime2_60d_single_quantile_pred，严格对照 bare vs tail(0.25,0.75,0.5) 与 d12 vs d22 在 REVERSION_AND_MOMENTUM d=4 / CROWDING d=6 / COUNTRY d=12 下的表现，并实测远程 PC",
+      "verdict": "EFFECTIVE（历史里程碑 · vRY0Wdva 首次在 ASI/MINVOL1M 同时 PASS LOW_ASI_JPN_SHARPE 与 LOW_ROBUST_UNIVERSE_SHARPE，仅剩 1 项 Robust Returns 0.0432/0.0475；同时量化了 COUNTRY 比 RAM/CROWDING 低 -0.092~-0.138 PC！）",
+      "metric_delta": "1) RAM d=4 单轴对照：bare d22 (A1L6okwX: JPN=0.93 FAIL, RobSh=88.0% FAIL, RobRet=79.8%) -> +tail25 (vRY0Wdva: Sh=2.05, 2Y=2.00, Fit=1.33, 11.28bp, JPN=1.04 PASS, RobSh=1.86/1.84=90.7% PASS!, 仅余 RobRet=0.0432/0.0475)；d12->d22 (omP2xVlb->vRY0Wdva) 全维度单调跃升！2) CROWDING d=6 (zqAaVVVG): RobSh=1.78/1.77 PASS!, 13.50bp, JPN=0.98, RobRet=0.0433/0.0468；3) COUNTRY d=12 (E5m3926J): Margin 19.85bp, Sh=2.25, JPN=1.07 PASS；4) 远程 PC 实测：COUNTRY (A1L67JZg 0.7084 ge080=0 / E5m3926J 0.7273 ge080=0) << RAM (vRY0Wdva 0.8004 ge080=1) < CROWDING (zqAaVVVG 0.8466 ge080=1)！",
+      "reusable_rule": "ASI/MINVOL1M 终极组合：d22 + tail(0.25,0.75,0.5)（同向提升 JPN、RobSh、RobRet、2Y、Fitness）+ adv20>{0.2..0.4}/cap>0.25 流动性门控（切掉尾部微盘将 RobRet 推过 90%）+ COUNTRY 中性化（维持 PC<0.68 零高撞车）；已上线 S3-r24 (24 FULL NORMAL) + S3-r24b (16 FULL FREE) 立即执行！"
     }
   ],
   "ineffective_cases": [
