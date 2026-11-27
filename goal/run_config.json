@@ -6,8 +6,14 @@
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × 5地区轮巡 × 3模板族配对 × >4000自动切免额)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · 独立文档/台账/标签，不接入主调度器)"
   },
-  "updated_at": "2026-11-26T17:05:00+08:00",
+  "updated_at": "2026-11-26T21:35:00+08:00",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
+  "concurrency_limits": {
+    "glb_max_threads": 3,
+    "other_regions_max_threads": 4,
+    "enforced_in_code": "wq_research_v2/src/wq_research_v2/sim_runner.py (MAX_THREADS_GLB=3, MAX_THREADS_OTHER_REGION=4) & daemon_ra_runner.py (parse_region_caps)",
+    "rule": "GLB 最多 3 个线程，其他所有地区最多 4 个线程（严禁突破）"
+  },
   "schedule_and_redundancy": {
     "check_interval_hours": "3-4",
     "cron_expression": "0 */3 * * *",
@@ -40,12 +46,11 @@
   },
   "description": "WorldQuant BRAIN D1-Only RA 统一启动与方向配置文件（多地区精选种子 × 多模板族配对、额度 >4000 自动切免额字段、Stage 1-2 QUICK 快筛、3-4 小时定时复查）。",
   "direction": {
-    "regions": ["EUR", "USA", "GLB", "ASI", "KOR"],
+    "regions": ["ASI", "EUR", "USA", "KOR"],
     "region_caps": {
+      "ASI": 2,
       "EUR": 1,
-      "USA": 2,
-      "GLB": 1,
-      "ASI": 1,
+      "USA": 1,
       "KOR": 1
     },
     "diverse_template_packs": ["core_50_50", "admin_ts_regime", "nonlinear_tail_group"],

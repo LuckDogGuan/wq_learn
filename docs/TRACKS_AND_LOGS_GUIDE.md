@@ -43,6 +43,12 @@
   - `≥ 0.80` 桶碰撞数：`0 → ≤ 2`；
   - 专项降 PC 最多轮次：**`2 轮 → 3 轮`**（比之前多优化 1 轮）；超过 3 轮无改善或明显拥挤（`pc_max > 0.78` 或 `≥ 0.70` 碰撞 `> 10`）再归档 `PC_STUCK_DORMANT` 休眠。
 
+### 4. 地区并发线程上限红线（代码与文档双重强制）
+
+代码固化于 `wq_research_v2.sim_runner.WeightedSlotSemaphore`（`MAX_THREADS_GLB = 3`、`MAX_THREADS_OTHER_REGION = 4`）及 `daemon_ra_runner.parse_region_caps()`：
+- **`GLB` 地区**：最多 **`3` 个并发线程**（即使命令行传入更大值也会被自动截断至 `3`）；
+- **其他所有地区**（`USA / EUR / ASI / KOR / DEU / HKG / GBR / CHN / IND / AMR`）：最多 **`4` 个并发线程**（即使命令行传入更大值也会被自动截断至 `4`）。
+
 ---
 
 ## 三、如何快速切换或调用某条路线
