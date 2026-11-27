@@ -1,5 +1,9 @@
 # SPC 日志入口
 
+## 2026-11-27 · SPC 计权核验与 DeepSeek 候选
+
+- [Osmosis 与 SPC 更新记录](../../../../docs/整理与研究/records/experiments/osmosis_spc_20261127.md)记录了本轮前后快照、榜单基线、HTTP 429 对账及以 DeepSeek V3.2 为首的备选。
+
 ## 2026-11-26：适配 `modelFamily` 新接口、补齐第 50 位并升级 29 条旧模型至最新旗舰组合
 
 - [API 实时核验与升级记录（2026-11-26）](API_实时核验_20261126.md)：补齐失效空缺的第 50 位（`AM409`），并将原 10 条 `gpt-4o`、15 条 `claude-opus-4-7`、4 条 `gemini-3.5-flash` 全部安全升级至多家族最新旗舰模型，同时保留 20 条 `deepseek.v3.2` 不动。
