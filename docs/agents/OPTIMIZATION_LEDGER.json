@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-27T20:15:00+08:00",
+  "updated_at": "2026-11-28T00:22:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -162,6 +162,30 @@
       "verdict": "[有效] 历史性通关 ASI/MINVOL1M！单批斩获 3 条 100% 全绿 0-FAIL RA FULL 冠军，akR2rQr9 (9.94bp, SC 0.000 PC 0.655) 入库 OS #99 助推账号达成 100/100 OS！",
       "metric_delta": "1) 在 rank(adv20)>0.38 + d15_tail 下：false=0.25 (RR5ZJlJn: JPN=0.99/1.00, RobSh=1.70/1.64 PASS, RobRet=0.0376/0.0353 PASS) → false=0.26 (e718lVlz d=4: Sh=1.86, 2Y=2.04, Fit=1.05, 9.87bp, JPN=1.01/1.00 PASS, RobSh=1.72/1.67 PASS, RobRet=0.0380/0.0358 PASS, 0-FAIL!) → false=0.27 (akR2rQr9 d=4: Sh=1.90, 2Y=2.08, Fit=1.08, TO=8.13%, 9.94bp, JPN=1.02/1.00 PASS, RobSh=1.74/1.71 PASS, RobRet=0.0383/0.0364 PASS, Official SC=0.000, Official PC=0.6555, 0-FAIL! 以及 akR2r631 d=3: Sh=1.89, 2Y=2.08, Fit=1.07, 9.51bp, JPN=1.03/1.00 PASS, RobSh=1.73/1.70 PASS, RobRet=0.0381/0.0363 PASS, 0-FAIL!)，在 false∈{0.26,0.27} 与 d∈{3,4} 上连续无悬崖全部 0-FAIL！2) 在固定 adv20>0.35 下 false=0.27/0.28 (ZYXwRgOx/XgNwjVda) 亦将 JPN 推至 1.00-1.01 PASS（RobSh=1.74/1.75 仅差 0.01）。",
       "reusable_rule": "ASI/MINVOL1M 的 [0,1] tail(group_rank(ts_decay_linear(x, 15), subindustry), 0.25, 0.75, 0.5) 模板在 COUNTRY d={3,4} tr=0.08 maxTrade=ON 下，配 if_else(rank(adv20) > 0.38, expr, 0.26..0.27) 可同时稳过 JPN>=1.01、RobSh>=1.02x、RobRet>=1.05x 与 PC<0.66（深度 5 标 OVER_NESTED_TEMP_PC_FIX）；已立即将该黄金门控移植至正交集 ASI/model25 (100-OS SC=0.023) 与 qtile5 (100-OS SC=0.472) 上线 S3-r29。"
+    },
+    {
+      "case_id": "EFF-21",
+      "region_dataset": "[V][C] EUR/TOP2500/model110 · mdl110_score · D1 QUICK NORMAL",
+      "controlled_change": "保持 SUBINDUSTRY、decay=0、truncation=0.04 和 maxTrade=OFF。对比同字段、同样回填 21 日的 E5m0L2N0（signed_power + group_zscore）与 ZYXwM1Xn（ts_decay_linear 10 + group_neutralize）。",
+      "verdict": "[有效] 这对模板中，ZYXwM1Xn 的 QUICK Margin 更高、换手更低，优先保留一个 FULL 复核名额。",
+      "metric_delta": "Margin 11.26→26.66bp，换手 20.18%→7.02%，Sharpe 2.44→2.11，Fitness 1.83→1.82。100 个平台 OS 与本地缓存逐个相同，20 个 EUR 对手 PnL 齐全。两者本地 SC 为 0.4293、0.4380，对手均为 1YzPGVEk；两条自身相关 0.9758（1,020 个共同日差分）。",
+      "reusable_rule": "按同簇 Margin 选 ZYXwM1Xn，换手低于 8%，跳过降换手。计划只切 FULL，指纹 47dfdd9e96eb96eebf2918b39b7d902dbbb6a040032a59b853b97f217cde8cbe 未入账。随后同表达式以 nanHandling=OFF 执行 FULL，PC 0.9971，见 INEFF-22。"
+    },
+    {
+      "case_id": "EFF-22",
+      "region_dataset": "[V][C] USA/TOP3000/analyst11 · 两对 D1 QUICK NORMAL 同表达式",
+      "controlled_change": "固定表达式、decay=0、truncation=0.04、nanHandling=ON、maxTrade=OFF，仅将 SUBINDUSTRY 改为 REVERSION_AND_MOMENTUM。",
+      "verdict": "[有效] 只在这两对样本改善 Fitness。两对均损失 Margin，仍未过 RA 硬检。",
+      "metric_delta": "E5mYKPPL→mLKJj519：Fitness 0.81→0.87、Sharpe 1.37→1.34、2Y 2.11→1.76、Margin 13.55→10.29bp、TO 6.49%→10.14%，集中度均 FAIL。6XG39EnE→qM5vjLzv：Fitness 0.77→0.84、Sharpe 1.33→1.32、Margin 13.03→10.00bp、TO 6.41%→10.19%。",
+      "reusable_rule": "在这两对模板上，改 RAM 有助于 Fitness，但最高只到 0.87。继续用现有 QUICK 队列寻找更强的母版，两对结果均保留以供后续对照。"
+    },
+    {
+      "case_id": "EFF-23",
+      "region_dataset": "[V][C] ASI/MINVOL1M/price_signal_dl & multifactor_return_pred · 100-OS SC + 远程 PC 直方图双正交探查",
+      "controlled_change": "对 ASI/MINVOL1M 既有高 Sharpe 候选 d59AaaMg (price_signal_dl normalized_volume_indicator_2, RAM d=4 tr=0.04 QUICK Sh=1.74/2Y=2.56/Fit=1.00) 与 vRY0o3g3 (multifactor_return_pred anl_120 x st_r2, COUNTRY d=6 FULL Sh=2.34/2Y=1.95/Fit=1.64/14.41bp/JPN=1.13 PASS) 执行 100-OS 本地 SC 与远程 PC 直方图检验。",
+      "verdict": "[有效] 锁定两条低 SC 且 PC 稀疏可救 (PC_RESCUE_NEAR_SPARSE, >=0.80 碰撞为 0) 的 ASI 正交母版！",
+      "metric_delta": "1) d59AaaMg 对 OS #99 akR2rQr9 的 100-OS SC=0.1405 (86% 正交)，远程 PC 直方图 >=0.70 仅 2 条、>=0.80 为 0 条、[0.6,0.7] 19 条；2) vRY0o3g3 对 akR2rQr9 的 100-OS SC=0.3618，远程 PC 直方图 >=0.70 仅 6 条、>=0.80 为 0 条，且已在无门控 FULL 下实证 LOW_ASI_JPN_SHARPE=1.13/1.00 PASS。",
+      "reusable_rule": "晋级 Stage-3 FULL 前先用 100-OS SC + 远程 PC 直方图过滤拥挤信号；对已确认 PC_RESCUE_NEAR_SPARSE (ge070<=6, ge080=0) 的 d59AaaMg 与 vRY0o3g3 上线 S3-r32-ASI-PSD-D59-FULL 与 S3-r32-ASI-ANL-PSD-GENTLE (adv20>{0.15,0.20,0.25} + anl_120 x nv2 跨集双支，全用 subindustry + ts_decay_linear 杜绝 sector/ts_mean 停滞)。"
     }
   ],
   "ineffective_cases": [
@@ -316,6 +340,45 @@
       "verdict": "[无效] 0/64 达到 Sharpe>=0.80（maxSh=0.36, maxFit=0.07, TO=44%-64%），立即止损下线。",
       "metric_delta": "最高 ZYXwKEZQ (COUNTRY ts_delta 22) Sh=0.36, 2Y=0.72, Fit=0.04, Mgn=0.23bp；1 算子直出 6XGPe3P5 Sh=0.32, Fit=0.04；22d 均值 j2Vl0jlW Sh=0.18, Mgn=1.23bp。",
       "root_cause_and_ban": "news84 单字段在泛欧 D1 无截面区分度，立即从守护进程移除；EUR:2 切换至另一 0-OS 空白高倍率塔 EUR/D1/sentiment (1.4x) 的满覆盖纯 MATRIX 数据集 sentiment21 (cov=1.000, dCov=1.000, aCnt=5..10)。"
+    },
+    {
+      "case_id": "INEFF-20",
+      "region_dataset": "[V][C] ASI/MINVOL1M/multifactor_return_pred · S3-r30-ASI-ANL120-ORTHO，16/16 D1 FULL NORMAL",
+      "controlled_change": "同 COUNTRY decay=6、truncation=0.08、maxTrade=ON，以 1YGv2QvX 为无门控 d10_tail 对照。Jj309nje 加 adv20>0.38、false=0.27 门控并把内层窗口改为 15 日。Jj309nje→9qGPn9ZK 固定门控和设置，仅改窗口 15→22。",
+      "verdict": "[无效] r30 的 16 条均有 JPN、Robust Sharpe 和 Robust Returns 三项 FAIL。r29 的母版 JPN 不足解释不了本批失败，r30 对照母版 JPN 已达 1.04。",
+      "metric_delta": "1YGv2QvX→Jj309nje：JPN 1.04→0.78，Sharpe 2.35→2.13，Fitness 1.71→1.42，Margin 13.97→16.06bp。Jj309nje→9qGPn9ZK：Margin 16.06→18.57bp，换手 6.94%→5.97%，JPN 0.78→0.79，Robust Sharpe 1.61/1.92→1.59/1.90，Robust Returns 0.0440/0.0501→0.0437/0.0500。",
+      "root_cause_and_ban": "母版到子代是门控和内层窗口的组合变化，无法单独归因到门控。单独拉长 15→22 日未修通任何硬检。结束该家族的门控迁移扫描，避免继续压低已低于 8% 的换手。"
+    },
+    {
+      "case_id": "INEFF-21",
+      "region_dataset": "[V][C] EUR/TOP2500/sentiment21 · EUR_SNT21_PYRAMID_NORM，72/72 D1 QUICK NORMAL",
+      "controlled_change": "8 个 MATRIX 字段，72 个唯一指纹，固定 SUBINDUSTRY、decay=0、truncation=0.04、maxTrade=OFF，覆盖单字段模板和 1 批双支。",
+      "verdict": "[无效] 正向 Sharpe ≥0.80 与 ≥1.25 均为 0/72，结束本轮筛选。",
+      "metric_delta": "最高 6XGPWp55 Sharpe 0.69、Fitness 0.21、换手 17.70%、Margin 1.84bp。qM5kRxGj Sharpe 0.65、Margin 2.16bp。已执行结果均为 SUBINDUSTRY。",
+      "root_cause_and_ban": "本轮结论限已实际回测的设置和模板。真实非零覆盖、更新频率、RAM 与 COUNTRY 效果仍待验证。"
+    },
+    {
+      "case_id": "INEFF-22",
+      "region_dataset": "[V][C] EUR/TOP2500/model110 · S3-r31-EUR-M110-ZYX-FULL-sub_d0_t04 · 8/8 D1 FULL NORMAL",
+      "controlled_change": "固定 FULL、SUBINDUSTRY、decay=0、truncation=0.04、nanHandling=OFF、maxTrade=OFF，以 omPA3dpn 为母版逐一复核表达式里的分组切换和流动性门控。QUICK 与 FULL 比较同时变更了 nanHandling。",
+      "verdict": "[无效] 8 条 FULL 中 7 条 LOW_2Y_SHARPE 低于 1.58，1 条缺该检查。已查的两条 PC 均高于 0.98，无交付候选。",
+      "metric_delta": "omPA3dpn：Sh 2.11、Fit 1.82、2Y 1.23、Margin 26.66bp、SC 0.4380、PC 0.9971，PC≥0.70 桶共 568 条。omPA3dpn→E5mYgdWK 仅改表达式分组 subindustry→country 与 industry 交叉分组，Sh 2.11→2.18、2Y 1.23→1.04、Margin 26.66→23.30bp。加 adv20>0.12 门控的 3qG3aNZN，Sh 2.07、Margin 25.58bp，缺 LOW_2Y_SHARPE。该组最高 2Y 为 6XG3ak8J 的 1.51，PC 0.9888，PC≥0.70 桶共 452 条。",
+      "root_cause_and_ban": "两条实测 PC 均超专项救援上限 0.78，收口。原始检查列表的 WARNING 和缺项须单独核验。相同 QUICK/FULL 四项摘要指标只能记作观测一致，晋级设置核对仍须包含 nanHandling、truncation 和实际模式。"
+    },
+    {
+      "case_id": "INEFF-23",
+      "region_dataset": "[V][U] ASI/MINVOL1M/multifactor_return_pred · S3-r31-ASI-ANL120-RAW-FULL-cty_d0_t08 · 8/8 RESULTS_UNOBSERVED",
+      "controlled_change": "在服务重启后 16 秒并发提交含 5 条 group_rank(ts_mean(..., 22), sector) 的 8 条 ASI FULL 任务。",
+      "verdict": "[无效] 8/8 在 progress=0.35 停滞 360 秒，经单次只读对账后落入 RESULTS_UNOBSERVED。",
+      "metric_delta": "0/8 观测到完成结果，reconcile_attempts=1，按 AGENTS.md 红线 #5 严禁盲重发相同未观测指纹。",
+      "root_cause_and_ban": "ASI FULL 批次避免使用高耗时 ts_mean(22) + sector 组合，后续 S3-r32 统一采用已验证 100% 零超时的 ts_decay_linear(10/15) + subindustry / country*industry。"
+    },
+    {
+      "case_id": "INEFF-24",
+      "region_dataset": "[V][C] EUR/analyst11 (0/56) · USA/shortinterest6 (0/64) · USA/analyst11 QPWqKVO5 远程 PC 拥挤核验",
+      "controlled_change": "在 EUR/TOP2500/analyst11、USA/TOP3000/shortinterest6、USA/TOP3000/analyst11 上跑 Stage 1-2 D1 QUICK NORMAL 初筛，并对 USA/analyst11 头部候选 QPWqKVO5 (Sh=1.20, 2Y=1.75, 16.95bp, 100-OS SC=0.6090) 查远程 PC 直方图。",
+      "verdict": "[无效] EUR/analyst11 (maxSh=0.45) 与 USA/shortinterest6 (maxSh=0.42) 均 0 条达 0.80 自动早停；USA/analyst11 单集远程 PC >=0.70 碰撞高达 7,018 条 (PC_ABANDON_CROWDED_OR_FAR)。",
+      "root_cause_and_ban": "立即从 CURATED_RA_D1_CAMPAIGNS 下线已早停/已跑完的上述 4 批，避免单集晋级 USA/analyst11；换入实盘核验高覆盖纯 MATRIX 常规新集 EUR/analyst10、EUR/institutions6、USA/fundamental72 (aCnt=1..2)、USA/institutions6 与 ASI/mmp_nlp_sentiment (0-OS other 1.3x)。"
     }
   ]
 }

@@ -166,3 +166,12 @@
   - **立即热部署免费 Stage-3 + Wave-3 空白塔矿脉**：① **`S3-r22-USA-MF120-FREE`（24 FULL `UNUSED_ALPHA0` FREE）** 融合 `q1_r60 × q5_r60 × seasonal_r120 / regime2_r120` + `d5/d10/tvr15/tail25` 直冲美股免费 `Useful`；② **`USA_MF120_V2_FREE`** 引入 `ASI 2.87` 核弹的美股同源字段 **`short_term_regime2_quantile1_r60_pred`**；③ 新增两大 `other 1.4×` 空白塔免额集 **`USA_FINNEWS_NLP_FREE`**（`cov=1.000`）与 **`USA_MMP_NLP_FREE`**（`cov=0.979–1.000`）！
 - **2026-11-27 08:52（2 小时定时审计 #16 · 日官方回测狂破 **`8,548`**（连续 12h 零 `429`！）+ Phase-2 免额全线跑完，无缝切回剩余 `460` 常规额发射 `S3-r23-ASI` + `S3-r20-EUR`！）**：
   - `S3-r22-USA-MF120-FREE`（24/24 `FULL`）：最高 `omP2g7X2`（`tail25`, `Sh=1.33, 2Y=1.74, 5.76bp`）；`USA_MF120_V2_FREE` 出 `mLKOVed9`（`short_term_regime2_quantile1_r60_pred`, `Sh=1.49`）；`USA/finnews_nlp_scores`（`2/104, max=0.81`）与 `USA/mmp_nlp_sentiment`（`1/64, max=0.84`）已自动早停。Phase-2 全部 `4,188` 条免费回测已收官，守护进程即将在 `08:55–10:15 CST` 自动消耗剩余 `460` 常规额度执行 `S3-r23-ASI-MF120-ROBUST` + `S3-r20-EUR-1YG-HIGHMGN`，随后优雅休眠至 `13:00 CST` 美东换日！
+
+### 2026-11-28 00:13 · 常规快筛与中性化对照
+
+- **[V] 新增的 analyst11、model110 各有 4 条 QUICK 达 Sharpe≥1.25。** 已核的 `vRYxL3aw` 为 18.37bp、换手 4.71%，Sharpe 1.31、Fitness 0.77、2Y 1.26。 `E5mYKPPL` 两年 Sharpe 2.11，Sharpe 1.37、Fitness 0.81，集中度 FAIL。直接转 FULL 前仍须筛查硬检短板和同簇重复。
+- **[V][C] 两对 analyst11 单改 SUBINDUSTRY→RAM，Fitness 分别从 0.81→0.87、0.77→0.84，Margin 从 13.55→10.29bp、13.03→10.00bp。** `E5mYKPPL`→`mLKJj519` 的 2Y 为 2.11→1.76，两条均有 Sharpe、Fitness、集中度 FAIL。见 EFF-22。现有 NORMAL QUICK 继续筛查这两个方向。
+- **[V] `USA_SI6_SMARTHOLD_NORM` 的 64 条 D1 QUICK 已完成并自动早停。** 0/64 达正向 Sharpe 0.80，最高 0.42。
+- **2026-11-28 00:22（2 小时定时审计 #24 · 远程 PC 直方图排雷 `USA/analyst11` (`QPWqKVO5` `>=0.70` 碰撞 `7,018` 条，记入 `INEFF-24`) + 下线已完结 3 批 + 换装超低拥挤 `USA/fundamental72` (`aCnt=1..2`) 与满覆盖 `USA/institutions6` (`cov=1.000`) 纯 `MATRIX` 常规新矿脉！）**：
+  - `USA_ANL11_PYRAMID_NORM`（`384/384 QUICK` 完成，产出 `86` S1、`4` S2，最高 `E5mYKPPL` `Sh=1.37, 2Y=2.11, 13.55bp, 100-OS SC=0.6332`）经远程 PC 直方图预检，头部 `QPWqKVO5`（`CROWDING Sh=1.20, 2Y=1.75, 16.95bp, 100-OS SC=0.6090`）在生产库 **`>=0.70` 碰撞高达 `7,018` 条（`>=0.80` 达 `198` 条，`PC_ABANDON_CROWDED_OR_FAR`）**，避免盲目投入 Stage-3 `FULL` 浪费额度（记入 `INEFF-24`）；
+  - 下线已跑完/早停的 `USA_SI6_SMARTHOLD_NORM`（`0/64`）、`USA_ANL11_PYRAMID_NORM`（`384/384`）、`USA_M110_PYRAMID_NORM`（`384/384`），立即换入实盘核验超低拥挤纯 `MATRIX` 常规新集 **`USA_FND72_PIT_NORM`（`USA/TOP3000/fundamental72` Point-in-Time 财报，**`aCnt=1..2`**, `cov=0.790–0.905, dCov=1.00`）** 与 **`USA_INST6_OWNERSHIP_NORM`（`USA/TOP3000/institutions6` 机构持股，**`cov=1.000`**, `dCov=0.9507`）**，全速推进 `2,920 -> 4,500` 常规额度！

@@ -1233,6 +1233,83 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
 }
 
 
+def build_s3r32_asi_psd_anl_ortho_full_specs() -> list[dict[str, Any]]:
+    """S3-r32 (16 FULL, NORMAL): ASI/price_signal_dl d59AaaMg (100-OS SC=0.1405, PC ge070=2) Exact FULL Promotion + ASI/multifactor_return_pred Ultra-Gentle Gate & Cross-DS Ortho!
+
+    Triggered by 2-hour Audit #24 (2026-11-28 00:20 CST):
+      - Pack A (8 FULL NORMAL, ASI/MINVOL1M/price_signal_dl, REVERSION_AND_MOMENTUM d=4 tr=0.04 maxTrade=ON):
+        Live 100-OS SC & remote PC histogram verification (`EFF-23`) proved that `d59AaaMg`
+        (`group_rank(ts_decay_linear(ts_backfill(normalized_volume_indicator_2, 21), 10), group_cartesian_product(country, industry))`,
+        `QUICK Sh=1.74, 2Y=2.56, Fit=1.00, Sub-Uni=1.19/0.51 PASS, TO=16.22%, Margin=6.64bp`) has
+        `100-OS SC = 0.1405` vs `OS #99` `akR2rQr9` (`86%` orthogonal!) AND remote PC histogram
+        `alphas_ge_070 = 2, alphas_ge_080 = 0` (`PC_RESCUE_NEAR_SPARSE`)! Promotes `d59AaaMg` to `FULL`
+        under its exact `REVERSION_AND_MOMENTUM d=4, tr=0.04, maxTrade=ON` settings plus 1-axis controlled
+        variants (`subindustry`, `d15`, `tail25`, `adv20>{0.35, 0.38} false=0.27`, `nv2 x nv1/tr4`).
+      - Pack B (8 FULL NORMAL, ASI/MINVOL1M/multifactor_return_pred, COUNTRY d=4 tr=0.08 maxTrade=ON):
+        Strictly uses `subindustry` + `ts_decay_linear` (zero `sector`/`ts_mean` stalls, per `INEFF-23`).
+        Tests ultra-gentle liquidity gates `if_else(rank(adv20) > {0.15, 0.20, 0.25}, ..., {0.26, 0.27})`
+        on `1YGv2QvX` / `vRY0o3g3` (`anl_120 x st_r2 d10 + tail25`, `FULL JPN=1.04..1.13 PASS,
+        100-OS SC=0.3618, PC ge070=6, ge080=0`) plus cross-dataset `anl_120 x normalized_volume_indicator_2`.
+    """
+    ci = "group_cartesian_product(country, industry)"
+    nv2 = "ts_backfill(normalized_volume_indicator_2, 21)"
+    nv1 = "ts_backfill(normalized_volume_indicator_1, 21)"
+    tr4 = "ts_backfill(raw_trend_indicator_4, 21)"
+
+    psd_exprs: list[tuple[str, str, str, str]] = [
+        ("PC32-A1-d59-exact-full", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({nv2}, 10), {ci})"),
+        ("PC32-A2-d59-sub", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({nv2}, 10), subindustry)"),
+        ("PC32-A3-d59-d15-ci", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear({nv2}, 15), {ci})"),
+        ("PC32-A4-d59-tail25-ci", "ADMIN_ORIGINAL", "KH94146", f"tail(group_rank(ts_decay_linear({nv2}, 10), {ci}), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC32-A5-d59-adv35-f27", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.35, tail(group_rank(ts_decay_linear({nv2}, 15), {ci}), lower=0.25, upper=0.75, newval=0.5), 0.27)"),
+        ("PC32-A6-d59-adv38-f27", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.38, tail(group_rank(ts_decay_linear({nv2}, 15), subindustry), lower=0.25, upper=0.75, newval=0.5), 0.27)"),
+        ("PC32-A7-nv2-nv1-ci", "TOP100_2026Q4", "SZ83096", f"group_rank(ts_decay_linear(min(rank({nv2}), rank({nv1})), 10), {ci})"),
+        ("PC32-A8-nv2-tr4-ci", "TOP100_2026Q4", "LD22811", f"group_rank(ts_decay_linear(min(rank({nv2}), rank({tr4})), 10), {ci})"),
+    ]
+
+    anl120 = "ts_backfill(analyst_120d_single_quantile_pred, 21)"
+    st_r2 = "ts_backfill(short_term_regime2_60d_single_quantile_pred, 21)"
+    dual_anl_st = f"min(rank({anl120}), rank({st_r2}))"
+    dual_1yg = f"tail(group_rank(ts_decay_linear({dual_anl_st}, 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    dual_anl_nv2 = f"tail(group_rank(ts_decay_linear(min(rank({anl120}), rank({nv2})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+
+    anl_gentle_exprs: list[tuple[str, str, str, str]] = [
+        ("PC32-B1-1yg-adv15-f27", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.15, {dual_1yg}, 0.27)"),
+        ("PC32-B2-1yg-adv20-f27", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.2, {dual_1yg}, 0.27)"),
+        ("PC32-B3-1yg-adv25-f27", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.25, {dual_1yg}, 0.27)"),
+        ("PC32-B4-1yg-adv20-f26", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.2, {dual_1yg}, 0.26)"),
+        ("PC32-B5-anl120-nv2-sub", "TOP100_2026Q4", "ZS59763", dual_anl_nv2),
+        ("PC32-B6-anl120-nv2-adv25-f27", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.25, {dual_anl_nv2}, 0.27)"),
+        ("PC32-B7-anl120-nv2-adv35-f27", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.35, {dual_anl_nv2}, 0.27)"),
+        ("PC32-B8-anl120-d15-sub-raw", "TOP100_2026Q4", "LD22811", f"tail(group_rank(ts_decay_linear({anl120}, 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+    ]
+
+    return [
+        _pack(
+            batch_id="S3-r32-ASI-PSD-D59-FULL-ram_d4_t04",
+            campaign_id="S3_ASI_PSD_D59_EXACT_FULL",
+            hypothesis_id="HYP-S3R32-ASI-PSD-D59AAAMG-SC014-PCGE2-FULL",
+            region="ASI",
+            universe="MINVOL1M",
+            dataset_id="price_signal_dl",
+            queue_type="NORMAL",
+            settings=_make_settings("ASI", "MINVOL1M", "REVERSION_AND_MOMENTUM", decay=4, truncation=0.04, max_trade="ON"),
+            items=_build_items(psd_exprs, dataset_id="price_signal_dl", primary_field_id="normalized_volume_indicator_2", tag_suffix="ram_d4_t04"),
+        ),
+        _pack(
+            batch_id="S3-r32-ASI-ANL-PSD-GENTLE-cty_d4_t08",
+            campaign_id="S3_ASI_ANL_PSD_GENTLE_GATE",
+            hypothesis_id="HYP-S3R32-ASI-1YGV2QVX-GENTLE-ADV15-25-AND-NV2-CROSS",
+            region="ASI",
+            universe="MINVOL1M",
+            dataset_id="multifactor_return_pred",
+            queue_type="NORMAL",
+            settings=_make_settings("ASI", "MINVOL1M", "COUNTRY", decay=4, truncation=0.08, max_trade="ON"),
+            items=_build_items(anl_gentle_exprs, dataset_id="multifactor_return_pred", primary_field_id="analyst_120d_single_quantile_pred", tag_suffix="cty_d4_t08"),
+        ),
+    ]
+
+
 def build_s3r31_eur_m110_asi_anl_full_specs() -> list[dict[str, Any]]:
     """S3-r31 (16 FULL, NORMAL): EUR/model110 ZYXwM1Xn (26.66bp, Sh=2.11, SC=0.438) FULL Verification + ASI/multifactor_return_pred Standalone anl_120/60 (24.8bp, SC=0.214) FULL Verification!
 
@@ -2297,9 +2374,10 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r31 (16 FULL EUR M110 ZYX + ASI ANL120 Raw) -> S3-r30 -> S3-r29 -> ..."""
+    """Return ordered S3-r32 (16 FULL ASI PSD d59AaaMg + ASI ANL Gentle/Cross) -> S3-r31 -> S3-r30 -> ..."""
     return (
-        build_s3r31_eur_m110_asi_anl_full_specs()
+        build_s3r32_asi_psd_anl_ortho_full_specs()
+        + build_s3r31_eur_m110_asi_anl_full_specs()
         + build_s3r30_asi_anl120_ortho_specs()
         + build_s3r29_asi_ortho_m25_q5_specs()
         + build_s3r28_asi_a1lq_fin_specs()
