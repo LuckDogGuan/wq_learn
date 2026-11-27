@@ -1,16 +1,16 @@
 # WorldQuant BRAIN D1 RA 批次复盘与阶段漏斗总账（自动生成）
 
-- **生成时间 (UTC)**：`2026-11-27T20:04:09.167429+00:00`
-- **总批次数**：`2585`（等级分布：`{'BEST': 186, 'GOOD': 318, 'NORMAL': 1275, 'BAD': 702, 'TIMEOUT_BUG': 104}`）
-- **全库阶段过关统计**：有效完成 `19193` · 未观测 `815` · **一阶段 (`Sh≥0.80`) 过 `3556` 个** · **二阶段 (`Sh≥1.25`) 过 `1577` 个** · **三阶段 (`Sh≥1.58 & Fit≥1.0`) 过 `634` 个**（已核 0-FAIL `177` 个）
+- **生成时间 (UTC)**：`2026-11-27T20:15:58.235538+00:00`
+- **总批次数**：`2600`（等级分布：`{'BEST': 186, 'GOOD': 318, 'NORMAL': 1280, 'BAD': 711, 'TIMEOUT_BUG': 105}`）
+- **全库阶段过关统计**：有效完成 `19345` · 未观测 `823` · **一阶段 (`Sh≥0.80`) 过 `3565` 个** · **二阶段 (`Sh≥1.25`) 过 `1577` 个** · **三阶段 (`Sh≥1.58 & Fit≥1.0`) 过 `634` 个**（已核 0-FAIL `177` 个）
 
 ## 1. 分地区阶段漏斗统计
 
 | 地区 | 完成数 | 未观测 | 一阶段过 (`≥0.80`) | 二阶段过 (`≥1.25`) | 三阶段过 (`≥1.58 & Fit≥1`) | 已核 0-FAIL |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
-| **USA** | 9258 | 160 | 1383 | 313 | 54 | 54 |
-| **EUR** | 5436 | 408 | 1143 | 675 | 274 | 70 |
-| **ASI** | 3256 | 31 | 1003 | 589 | 306 | 53 |
+| **USA** | 9314 | 168 | 1390 | 313 | 54 | 54 |
+| **EUR** | 5492 | 408 | 1143 | 675 | 274 | 70 |
+| **ASI** | 3296 | 31 | 1005 | 589 | 306 | 53 |
 | **DEU** | 430 | 8 | 2 | 0 | 0 | 0 |
 | **GLB** | 351 | 136 | 24 | 0 | 0 | 0 |
 | **KOR** | 170 | 24 | 0 | 0 | 0 | 0 |
@@ -75,7 +75,7 @@
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-DUAL-REVERSION_AND_MOMENTUM-00` | EUR/`ai_equity_alpha` | `analyst_opinion_metric` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll HTTP 500) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-01-lignment_rank_d1-STATISTICAL` | EUR/`model238` | `global_screening_factor_alignment_rank_d1` | `STATISTICAL|d=0|tr=0.04` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Unobserved after 1 reconcile: Poll timeout) |
 
-## 4. 全批次精简台账（展示前 120 / 2585 批）
+## 4. 全批次精简台账（展示前 120 / 2600 批）
 
 | 等级 | 地区 | 数据集 | 主字段 | 模板 | 配置 | 完成/未观测 | S1/S2/S3 | Max Sh | Avg Mgn |
 | :-: | :-: | --- | --- | --- | --- | :-: | :-: | :-: | :-: |

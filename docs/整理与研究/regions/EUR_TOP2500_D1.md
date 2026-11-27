@@ -199,3 +199,7 @@
 - **[V] EUR/analyst_consensus 已早停**。64 条 NORMAL QUICK 无一达到 Sharpe 0.80，最高 0.41，守护进程已记录自动停止。EUR/ai_factor_transfer 暂沿现有队列，前 72 条中 1 条达 1.25，该条台账 2Y 为 0.34。
 - **2026-11-28 04:16（2 小时定时审计 #26 · 下线已早停 `EUR_ANL_CONSENSUS_NORM` (`0/64`) + `EUR_AIFACT_TRANSFER_NORM` 累计完成 `304 QUICK` + 官方日总回测突破 `4,824 / 4,500`！）**：
   - 已从 `CURATED_RA_D1_CAMPAIGNS` 下线 `EUR_ANL_CONSENSUS_NORM`（`64/64 QUICK`, `0/64 >= 0.80`, `INEFF-28`）；`EUR_AIFACT_TRANSFER_NORM` 已完成 `304 QUICK`（`19` S1, `2` S2, `GrQ6d11O Sh=1.29`），随常规队列完成最后 ~120 条 `NORMAL` 回测后将自动切入 Phase-2 `UNUSED_ALPHA0` 免额队列。
+- **2026-11-28 06:20 CST（2小时定时复盘 #27：EST 2026-11-27 跑满 `4,504 NORMAL` / 官方 `4,952` 条切入 Phase-2 `ALPHA0_EXEMPT_ONLY` + 上线两大未触达 `Alphas=0` 纯 `MATRIX` 活动）**：
+  - `EUR_AIFACT_TRANSFER_NORM` 累计完成 `360 QUICK`（`19` S1, `2` S2: `GrQ6d11O Sh=1.29, 3.15bp`、`E5mbgaxG Sh=1.25, 2.07bp`）。
+  - 随 EST `2026-11-27` 常规完成数达到 **`4,504 >= 4,500`**（官方日回测数 **`4,952`**），守护进程已自动切入 **Phase-2 `ALPHA0_EXEMPT_ONLY`（零常规额度消耗）**。
+  - 为填满 EST `2026-11-27` 剩余 ~6.5 小时的免额窗口，已通过 BRAIN `/data-fields?order=alphaCount` 实盘筛出并热部署两个全新未触达 `alphaCount == 0` 纯 `MATRIX` 高覆盖活动：**`EUR_M77_PMM_FREE`（`EUR/TOP2500/model77`，4 个未触达免额字段 `cov=0.858..0.888, dCov=1.000`）** 与 **`EUR_AINEWS_NLP_FREE`（`EUR/TOP2500/ai_news_scores`，8 个未触达免额字段 `cov=0.792, dCov=0.900`，直攻 `0-OS` 空白 `EUR/D1/news 1.2x` 塔）**！

@@ -6,7 +6,7 @@
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >=4500切Alphas=0)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)"
   },
-  "updated_at": "2026-11-28T04:15:00+08:00",
+  "updated_at": "2026-11-28T06:20:00+08:00",
   "mainline_policy": "主线=点塔(Pyramid)：某 category 已有>5个可点(可交付)因子即转其他 categories；docs/agents/TODO_20261127.md 为顺手/空闲项，核心是验证模板与操作符(T17，额度500-1000 FULL，PC仅记录不设门槛)。",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "context_compaction_rule": "任何 AI 工具（Antigravity / Claude Code / Codex / Cursor）启动或上下文超长重置（/compact）后，只读本文件 + docs/agents/OPTIMIZATION_LEDGER.json + AGENTS.md（总计 < 8KB），绝不重读数万行历史聊天记录！",
@@ -73,7 +73,8 @@
       "current_seed_campaigns": [
         "[V] 同步广州 os_pnl_cache.db 至 100/100 OS 后，实测 USA/model31 既有 0-FAIL SC_PASS 候选对 e71w5Qrl / E5mWLW0J 的 100-OS SC 均升至 0.7115-0.9876 (SC_READY_HIGH)，确认 model31 (ass_tvr/acc) 全簇饱和（INEFF-26）。",
         "[V] USA_FND72_PIT_NORM (1/64, max=0.83) 与 USA_INST6_OWNERSHIP_NORM (0/72, max=0.76) 已触发自动早停并下线（INEFF-26）。",
-        "[V][U] USA/ai_equity_alpha 已完成 168 条 NORMAL QUICK，11 条 Sharpe≥1.25。单轴对照证实 SUBINDUSTRY (O06kqe1b: 39.70bp, SC=0.6340, PC=0.8355 ge070=439) 切换至 REVERSION_AND_MOMENTUM (LL86Rx8e: Sh=1.45, Fit=0.90, TO=6.81%, 14.25bp, 100-OS SC=0.4754) 可将 >=0.70 碰撞从 439 条砍至 2 条（EFF-26）；已热部署 S3-r34-USA-AIEQ-LL8-LOWPC-ram_d4_t06 (8 FULL)！"
+        "[V][U] USA/ai_equity_alpha 已完成 224 条 NORMAL QUICK（32 S1, 11 S2）。三轴单变量对照证实 SUBINDUSTRY (O06kqe1b: ge070=439) 与 CROWDING (RR5Y7Mwd: Sh=1.29, 34.03bp, SC=0.5596, ge070=457；sent5 d59mjbM2 ge070=1,608) 均高度拥挤，唯有 REVERSION_AND_MOMENTUM (LL86Rx8e: Sh=1.45, Fit=0.90, TO=6.81%, 14.25bp, SC=0.4754, ge070=2) 砍掉 99.5% 碰撞（EFF-26/EFF-27）；已下线 0/200 S2 的 USA_AIFACT_TRANSFER_NORM（INEFF-29）。",
+        "[V][U] EST 2026-11-27 常规额度已跑满 4,504 条（官方 4,952 条）并自动切入 Phase-2 ALPHA0_EXEMPT_ONLY！实测 USA 免额种子 WjYKKQgQ (SC=0.3229, PC ge070=0 PC_PASS_STRICT!)、58GRGe1k (2Y=2.04, SC=0.3094, PC ge070=1)、A1L6LpQY (d22+tail25, Fit=0.77, 7.67bp, SC=0.3492, PC ge070=1) 与 RR5nb5oj (epsl ts_rank 252, 2Y=2.23, 8.96bp, SC=0.6071) 正交低相关（EFF-27），已热部署零额度 S3-r35-USA-MF120-ANLREV-FREE (8 FULL UNUSED_ALPHA0) 与 USA_EARNCALL_EMBED_FREE (other 1.4x)！"
       ]
     },
     {
@@ -126,11 +127,11 @@
       ],
       "current_seed_campaigns": [
         "[V] EUR_ANL10_SMARTEST_NORM (1/64, max=0.83) 与 EUR_INST6_OWNERSHIP_NORM (1/80, max=0.80) 已触发自动早停并下线（INEFF-26）。",
-        "[V] S3-r33-EUR-OPEFF-SI6-ORTHO 8/8 NORMAL FULL，Fitness、Sub-Universe 和 IS Ladder 均 8/8 FAIL。EUR/analyst_consensus 0/64 达 Sharpe 0.80，已自动早停并从守护进程下线（INEFF-28）；EUR/ai_factor_transfer 已完成 304 QUICK（19 S1, 2 S2, maxSh=1.29）。"
+        "[V][U] EUR/ai_factor_transfer 已完成 360 QUICK（19 S1, 2 S2: GrQ6d11O Sh=1.29, E5mbgaxG Sh=1.25）。随 EST 2026-11-27 跑满 4,504 NORMAL 自动切入 Phase-2 ALPHA0_EXEMPT_ONLY，已热部署两个全新未触达 alphaCount==0 纯 MATRIX 活动 EUR_M77_PMM_FREE (4 字段 cov=0.86-0.89) 与 EUR_AINEWS_NLP_FREE (8 字段 cov=0.79, 0-OS news 1.2x 空白塔)！"
       ]
     },
     {
-      "region": "ASI+KOR (ASI:1，优先 ASI/analyst_consensus x analyst39 S3-r34 FULL)",
+      "region": "ASI+KOR (ASI:1，Phase-2 优先 S3-r35 免额 FULL + ASI_OTH496_RET_FREE；常规队列首位 S3-r34 FULL)",
       "universe": "ASI:MINVOL1M / KOR:TOP600",
       "slots": 1,
       "active_useful_champions": [
@@ -154,16 +155,16 @@
       "current_seed_campaigns": [
         "[V] S3-r32-ASI-PSD-D59-FULL (8/8 FULL)、S3-r32-ASI-ANL-PSD-GENTLE (8/8 FULL) 与 S3-r31-ASI-ANL120-RAW-FULL (8/8 FULL) 全部完成（INEFF-25）：实证 price_signal_dl 在 FULL 下 Sh=0.15-0.78 属 QUICK 假象，且 anl_120 任何 adv20>0.15..0.38 门控均伤日本中盘（JPN=0.73-0.78），果断收口。",
         "[V] S3-r33-ASI-MF120-Q5STR2-GATE 8/8 NORMAL FULL，1 条同时通过两项 Robust，8 条日本子检全失败（EFF-25、INEFF-27）。",
-        "[V][U] ASI/analyst_consensus 104 条 NORMAL QUICK 中 6 条 Sharpe≥1.25（e71Kn6Wg Sh=1.78, 2Y=1.87, Fit=1.16, 16.57bp, 100-OS SC=0.0671, PC=0.7593 ge080=0；9qGKw1k1 Sh=1.76, 2Y=2.01, Fit=1.16, 14.89bp, SC=0.1211）；ASI/analyst39 120 条 QUICK 中 np6oOoRl 达 Sh=1.62, 100-OS SC=0.0976, PC=0.6172 (ge070=0, PC_PASS_STRICT!)，0mGdKd3r 达 2Y=2.16, 37.34bp（EFF-26）；已热部署 S3-r34-ASI-ANLCONS-E71-FULL-cty_d0_t04 (8 FULL)！"
+        "[V][U] ASI/analyst_consensus 已完成 120 QUICK（22 S1, 6 S2, 2 S3: e71Kn6Wg Sh=1.78, SC=0.0671）、ASI/analyst39 已完成 136 QUICK（17 S1, 4 S2, 1 S3: np6oOoRl Sh=1.62, SC=0.0976, PC=0.6172 ge070=0!），其 S3-r34 (8 FULL NORMAL) 已锁定在常规队列首位；同时针对当前 Phase-2 ALPHA0_EXEMPT_ONLY 热部署零额度 S3-r35-ASI-MF120-CONFGATE-FREE (8 FULL UNUSED_ALPHA0) 与 ASI_OTH496_RET_FREE (0-OS other 1.3x 空白塔，8 个 cov=0.94-1.00 免额 MATRIX 字段)！"
       ]
     }
   ],
   "quota_and_isolated_experiments": {
     "est_2026_11_26_official_sims_final": 10020,
-    "today_est_2026_11_27_official_sims": 4824,
-    "today_normal_completed_est": 4376,
+    "today_est_2026_11_27_official_sims": 4952,
+    "today_normal_completed_est": 4504,
     "today_alpha0_completed_est": 344,
-    "phase2_alpha0_active": false,
+    "phase2_alpha0_active": true,
     "alpha0_auto_switch_threshold": 4500,
     "concurrency_limits": {
       "glb_max_threads": 3,

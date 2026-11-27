@@ -1212,7 +1212,7 @@ def build_asi_eur_s3r19_breakout_specs() -> list[dict[str, Any]]:
     return specs
 
 
-# Live-verified alphaCount==0 fields used in UNUSED_ALPHA0 Stage-3 FULL batches (2026-11-27).
+# Live-verified alphaCount==0 fields used in UNUSED_ALPHA0 Stage-3 FULL batches (2026-11-27/28).
 S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
     "img30d_return_tercile_confidence0_zackbatch": 0,
     "img30d_return_tercile_confidence2_zackbatch": 0,
@@ -1225,12 +1225,100 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
     "short_term_regime2_60d_single_quantile_pred": 0,
     "analyst_120d_single_quantile_pred": 0,
     "short_term_60d_qtile5_class_pred": 0,
+    "short_term_60d_5quantile_confidence_score": 0,
+    "long_term_120d_5quantile_confidence_score": 0,
     "long_term_quantile1_r60_pred": 0,
     "long_term_quantile5_r60_pred": 0,
     "long_term_seasonal_quantile1_r120_pred": 0,
     "long_term_regime2_quantile1_r120_pred": 0,
     "short_hedge3_60d_single_quantile_pred": 0,
+    "mean_revisioncluster_revision_pct_quarterly_eps_long": 0,
+    "oth496_returns60_t": 0,
+    "oth496_returns252_t": 0,
 }
+
+
+def build_s3r35_usa_asi_alpha0_free_full_specs() -> list[dict[str, Any]]:
+    """S3-r35 (16 FULL, 100% UNUSED_ALPHA0 FREE): USA/multifactor_return_pred (PC ge070=0..1, SC=0.31..0.35) x analyst_revision_horizons (2Y=2.23) FULL Finisher + ASI/multifactor_return_pred Confidence-Gated & other496 Orthogonal FULL!
+
+    Triggered by 2-hour Audit #27 (2026-11-28 06:16 CST) after EST 2026-11-27 crossed 4,504 NORMAL
+    simulations (4,952 official sims) and entered Phase-2 `ALPHA0_EXEMPT_ONLY` (ZERO daily quota cost!):
+      - Pack A (8 FULL UNUSED_ALPHA0 FREE, USA/TOP3000/multifactor_return_pred, SUBINDUSTRY d=4 tr=0.06):
+        Live 100-OS SC & remote PC histogram verification (`EFF-27`) proved that 4 `alphaCount==0` seeds:
+          * `WjYKKQgQ` (`long_term_seasonal_quantile1_r120_pred`, `Sh=1.53`): `100-OS SC=0.3229`, `PC ge070=0 (PC_PASS_STRICT!)`
+          * `58GRGe1k` (`long_term_quantile5_r60_pred`, `Sh=1.47, 2Y=2.04`): `100-OS SC=0.3094`, `PC ge070=1, ge080=0`
+          * `A1L6LpQY` (`long_term_quantile1_r60_pred` `d22+tail25`, `Sh=1.41, Fit=0.77, TO=9.74%, 7.67bp`): `100-OS SC=0.3492`, `PC ge070=1, ge080=0`
+          * `RR5nb5oj` / `akRqV77w` (`mean_revisioncluster_revision_pct_quarterly_eps_long` `ts_rank 252`, `Sh=1.41..1.47, 2Y=1.78..2.23, Fit=0.74..0.82, 8.96bp`): `100-OS SC=0.5656..0.6071`
+        Promotes `RR5nb5oj` and `A1L6LpQY` to `FULL`, upgrades `q1_60 x q5_60/s1_120` from 10d -> 22d `ts_decay_linear` + L6 `tail25`,
+        and fuses `ts_rank(epsl, 252)` with `q1_60`, `q5_60`, and `s1_120` at ZERO daily quota cost!
+      - Pack B (8 FULL UNUSED_ALPHA0 FREE, ASI/MINVOL1M/multifactor_return_pred, COUNTRY d=4 tr=0.08 maxTrade=ON):
+        Applies 100% `alphaCount==0` confidence-score gating (`long_term_120d_5quantile_confidence_score` &
+        `short_term_60d_5quantile_confidence_score`) and `other496` (`oth496_returns60_t`, `oth496_returns252_t`,
+        `alphaCount==0, cov=0.986..1.000`) onto `MPgw26wL` (`qtile5 x st_r2`, `JPN=1.03 PASS, 100-OS SC=0.5421, PC ge070=0`)
+        and `1YGv2QvX` (`anl_120 x st_r2`, `14.41bp, JPN=1.13 PASS, 100-OS SC=0.3618`).
+    """
+    q1 = "ts_backfill(long_term_quantile1_r60_pred, 21)"
+    q5 = "ts_backfill(long_term_quantile5_r60_pred, 21)"
+    s1 = "ts_backfill(long_term_seasonal_quantile1_r120_pred, 21)"
+    epsl_r252 = "ts_rank(ts_backfill(mean_revisioncluster_revision_pct_quarterly_eps_long, 21), 252)"
+
+    usa_free_exprs: list[tuple[str, str, str, str]] = [
+        ("PC35-A1-rr5n-epsl-r252-d10", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({epsl_r252}, 10), subindustry)"),
+        ("PC35-A2-epsl-r252-d22-tail25", "ADMIN_ORIGINAL", "WL13229", f"tail(group_rank(ts_decay_linear({epsl_r252}, 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC35-A3-a1l-q1-d22-tail25", "ADMIN_ORIGINAL", "KH94146", f"tail(group_rank(ts_decay_linear({q1}, 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC35-A4-q1-q5-d22-tail25", "ADMIN_ORIGINAL", "KH94146", f"tail(group_rank(ts_decay_linear(min(rank({q1}), rank({q5})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC35-A5-q1-s1-d22-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank({q1}), rank({s1})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC35-A6-epsl-x-q1-d22-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank({epsl_r252}), rank({q1})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC35-A7-epsl-x-q5-d22-tail25", "TOP100_2026Q4", "SZ83096", f"tail(group_rank(ts_decay_linear(min(rank({epsl_r252}), rank({q5})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC35-A8-epsl-x-s1-d22-tail25", "TOP100_2026Q4", "LD22811", f"tail(group_rank(ts_decay_linear(min(rank({epsl_r252}), rank({s1})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+    ]
+
+    st_r2 = "ts_backfill(short_term_regime2_60d_single_quantile_pred, 21)"
+    st_q5 = "ts_backfill(short_term_60d_qtile5_class_pred, 21)"
+    anl_120 = "ts_backfill(analyst_120d_single_quantile_pred, 21)"
+    conf_120 = "ts_backfill(long_term_120d_5quantile_confidence_score, 21)"
+    conf_60 = "ts_backfill(short_term_60d_5quantile_confidence_score, 21)"
+    ret60 = "ts_backfill(oth496_returns60_t, 21)"
+    ret252 = "ts_backfill(oth496_returns252_t, 21)"
+
+    mpgw_d15 = f"tail(group_rank(ts_decay_linear(min(rank({st_q5}), rank({st_r2})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    anl_d15 = f"tail(group_rank(ts_decay_linear(min(rank({anl_120}), rank({st_r2})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+
+    asi_free_exprs: list[tuple[str, str, str, str]] = [
+        ("PC35-B1-mpgw-conf120-g35-f27", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank({conf_120}) > 0.35, {mpgw_d15}, 0.27)"),
+        ("PC35-B2-mpgw-conf60-g35-f27", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank({conf_60}) > 0.35, {mpgw_d15}, 0.27)"),
+        ("PC35-B3-anl-conf120-g35-f27", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank({conf_120}) > 0.35, {anl_d15}, 0.27)"),
+        ("PC35-B4-anl-conf60-g35-f27", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank({conf_60}) > 0.35, {anl_d15}, 0.27)"),
+        ("PC35-B5-anl-x-conf120-d15", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank({anl_120}), rank({conf_120})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC35-B6-q5-x-conf120-d15", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank({st_q5}), rank({conf_120})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC35-B7-anl-x-oth496-r60-d15", "TOP100_2026Q4", "SZ83096", f"tail(group_rank(ts_decay_linear(min(rank({anl_120}), rank({ret60})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC35-B8-q5-x-oth496-r252-d15", "TOP100_2026Q4", "LD22811", f"tail(group_rank(ts_decay_linear(min(rank({st_q5}), rank({ret252})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+    ]
+
+    return [
+        _pack(
+            batch_id="S3-r35-USA-MF120-ANLREV-FREE-sub_d4_t06",
+            campaign_id="S3_USA_MF120_ANLREV_ALPHA0_FULL",
+            hypothesis_id="HYP-S3R35-USA-MF120-PCGE0-X-ANLREV-2Y223-FREE-FULL",
+            region="USA",
+            universe="TOP3000",
+            dataset_id="multifactor_return_pred",
+            queue_type="UNUSED_ALPHA0",
+            settings=_make_settings("USA", "TOP3000", "SUBINDUSTRY", decay=4, truncation=0.06),
+            items=_build_items(usa_free_exprs, dataset_id="multifactor_return_pred", primary_field_id="long_term_quantile1_r60_pred", tag_suffix="sub_d4_t06"),
+        ),
+        _pack(
+            batch_id="S3-r35-ASI-MF120-CONFGATE-FREE-cty_d4_t08",
+            campaign_id="S3_ASI_MF120_CONFGATE_ALPHA0_FULL",
+            hypothesis_id="HYP-S3R35-ASI-MPGW26WL-1YGV2QVX-ALPHA0-CONF-GATE-FREE-FULL",
+            region="ASI",
+            universe="MINVOL1M",
+            dataset_id="multifactor_return_pred",
+            queue_type="UNUSED_ALPHA0",
+            settings=_make_settings("ASI", "MINVOL1M", "COUNTRY", decay=4, truncation=0.08, max_trade="ON"),
+            items=_build_items(asi_free_exprs, dataset_id="multifactor_return_pred", primary_field_id="short_term_60d_qtile5_class_pred", tag_suffix="cty_d4_t08"),
+        ),
+    ]
 
 
 def build_s3r34_asi_anlcons_usa_aieq_specs() -> list[dict[str, Any]]:
@@ -2537,9 +2625,10 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r34 (16 FULL ASI ANLCONS + USA AIEQ) -> S3-r33 -> S3-r32 -> ..."""
+    """Return ordered S3-r35 (16 FULL FREE) -> S3-r34 (16 FULL NORMAL) -> S3-r33 -> ..."""
     return (
-        build_s3r34_asi_anlcons_usa_aieq_specs()
+        build_s3r35_usa_asi_alpha0_free_full_specs()
+        + build_s3r34_asi_anlcons_usa_aieq_specs()
         + build_s3r33_asi_q5str2_eur_opeff_si6_specs()
         + build_s3r32_asi_psd_anl_ortho_full_specs()
         + build_s3r31_eur_m110_asi_anl_full_specs()

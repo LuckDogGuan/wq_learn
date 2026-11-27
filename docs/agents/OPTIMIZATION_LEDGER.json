@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-28T03:17:38+08:00",
+  "updated_at": "2026-11-28T06:20:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -210,6 +210,14 @@
       "verdict": "[有效] 1) USA 单改 SUBINDUSTRY->RAM 将 >=0.70 生产碰撞从 439 条砍至 2 条 (-99.5%!) 且 Sharpe 从 1.41 升至 1.45、100-OS SC 从 0.6340 降至 0.4754；2) ASI/analyst39 np6oOoRl 实测 PC=0.6172 (ge070=0, PC_PASS_STRICT) 且 100-OS SC=0.0976，与 e71Kn6Wg (Sh=1.78, 2Y=1.87, Fit=1.16, 16.57bp, 100-OS SC=0.0671) 形成互补。",
       "metric_delta": "1) USA O06kqe1b (SUBINDUSTRY: Sh=1.41, Fit=0.89, 39.70bp, SC=0.6340, PC=0.8355, ge070=439) -> LL86Rx8e (RAM: Sh=1.45, Fit=0.90, TO=6.81%, 14.25bp, SC=0.4754, PC ge070=2 [0.7-0.8=1, >=0.8=1])；2) ASI e71Kn6Wg (Sh=1.78, 2Y=1.87, Fit=1.16, TO=6.38%, 16.57bp, 100-OS SC=0.0671, PC=0.7593 ge080=0) + np6oOoRl (Sh=1.62, 100-OS SC=0.0976, PC=0.6172 ge070=0!) + 0mGdKd3r (2Y=2.16, 37.34bp, SC=-0.0614)。",
       "reusable_rule": "1) 在 USA/ai_equity_alpha 上锁定 REVERSION_AND_MOMENTUM (d=4, tr=0.06) 配 L6 tail25 与 sent3 x sent4/5 双支上线 S3-r34-USA-AIEQ-LL8-LOWPC；2) 将 ASI/analyst_consensus e71Kn6Wg/9qGKw1k1 原式同参转 FULL 并融合 PC=0.6172 的 anl39_qepsinclxo 上线 S3-r34-ASI-ANLCONS-E71-FULL。"
+    },
+    {
+      "case_id": "EFF-27",
+      "region_dataset": "[V][C] USA/TOP3000/ai_equity_alpha (3-Way Neutralization PC Proof: SUBINDUSTRY vs CROWDING vs RAM) & USA/multifactor_return_pred x analyst_revision_horizons (100% Alphas=0 FREE SC/PC Discovery)",
+      "controlled_change": "1) 在 USA/TOP3000/ai_equity_alpha 上固定 group_rank(ts_decay_linear(ts_backfill(analyst_sentiment_score_3, 21), 10), subindustry) 与 d=0, tr=0.04，补齐第三轴 CROWDING (RR5Y7Mwd) 与 SUBINDUSTRY (O06kqe1b)、REVERSION_AND_MOMENTUM (LL86Rx8e) 的 100-OS SC 与远程 PC 直方图三方对照；2) 在 EST 2026-11-27 跑满 4,504 条 NORMAL（官方 4,952 条）自动切入 Phase-2 ALPHA0_EXEMPT_ONLY 时，对 USA 全部 Alphas=0 (alphaCount==0) 头部种子执行 100-OS SC 与远程 PC 直方图检验。",
+      "verdict": "[有效] 1) 三轴单变量对照证实 CROWDING (ge070=457) 与 SUBINDUSTRY (ge070=439) 同样高度拥挤，唯有 REVERSION_AND_MOMENTUM (ge070=2) 能单独砍掉 99.5% 生产碰撞；2) 锁定 4 条 100-OS SC=0.3094-0.3492 且远程 PC ge070=0..1 的 USA 免额 (alphaCount==0) 种子！",
+      "metric_delta": "1) USA/ai_equity_alpha sent3 三轴对照：SUBINDUSTRY (O06kqe1b: Sh=1.41, 39.70bp, SC=0.6340, ge070=439) vs CROWDING (RR5Y7Mwd: Sh=1.29, 34.03bp, SC=0.5596, ge070=457；sent5 d59mjbM2 ge070=1,608) vs REVERSION_AND_MOMENTUM (LL86Rx8e: Sh=1.45, Fit=0.90, TO=6.81%, 14.25bp, SC=0.4754, ge070=2!)；2) USA/multifactor_return_pred 免额种子：WjYKKQgQ (lsq1_r120, Sh=1.53) 100-OS SC=0.3229、PC ge070=0 (PC_PASS_STRICT!)；58GRGe1k (lq5_r60, Sh=1.47, 2Y=2.04) 100-OS SC=0.3094、PC ge070=1, ge080=0；A1L6LpQY (lq1_r60 d22+tail25, Sh=1.41, Fit=0.77, TO=9.74%, 7.67bp) 100-OS SC=0.3492、PC ge070=1, ge080=0；RR5nb5oj/akRqV77w (epsl ts_rank 252, Sh=1.41-1.47, 2Y=1.78-2.23, Fit=0.74-0.82, 8.96bp) 100-OS SC=0.5656-0.6071。",
+      "reusable_rule": "1) USA/ai_equity_alpha Stage-3 严禁使用 CROWDING/SUBINDUSTRY，必须锁定 REVERSION_AND_MOMENTUM；2) 趁 EST 2026-11-27 剩余 6.5 小时处于 Phase-2 ALPHA0_EXEMPT_ONLY（零常规额度消耗），立即上线 100% 免额 S3-r35 (16 FULL UNUSED_ALPHA0: USA epsl_r252 x q1/q5/s1 d22+tail25 + ASI confidence-score 门控 & other496 正交双支) 与 4 个全新未触达 alphaCount==0 纯 MATRIX 活动 (EUR_M77_PMM_FREE, EUR_AINEWS_NLP_FREE, USA_EARNCALL_EMBED_FREE, ASI_OTH496_RET_FREE)，同时保留 S3-r34 (16 FULL NORMAL) 位于常规队列首位。"
     }
   ],
   "ineffective_cases": [
@@ -435,6 +443,14 @@
       "verdict": "[无效] 8/8 Fitness、Sub-Universe、IS Ladder FAIL。四条 operating_efficiency 双支最高 Sharpe 0.80。同轮 EUR/analyst_consensus 0/64 达 Sharpe 0.80，最高 0.41，已自动早停。",
       "metric_delta": "母版至两条同式变体 Sh 1.95→1.72→1.42，Fitness 1.09→0.92→0.70，Margin 9.53→8.26→6.83bp。Sub-Universe 0.46/1.01→0.48/0.89→0.54/0.74，全为 FAIL。台账 2Y 摘要 1.52→1.41→1.37，平台对应检查为 IS Ladder。",
       "root_cause_and_ban": "停止该组合的门槛扫描。母版低 PC 与硬检状态分别判定。operating_efficiency 相关母版与双支的表达式及多项设置有差异，归因限于实发组合。"
+    },
+    {
+      "case_id": "INEFF-29",
+      "region_dataset": "[V][C] USA/TOP3000/ai_factor_transfer (0/200 S2) & 7 个 Phase-2 自动早停 UNUSED_ALPHA0 活动收口",
+      "controlled_change": "1) USA_AIFACT_TRANSFER_NORM 完成 200 条 D1 QUICK NORMAL；2) 守护进程在 normal_done=4,504 (>=4,500) 自动切入 Phase-2 ALPHA0_EXEMPT_ONLY 时，对既有 7 个 UNUSED_ALPHA0 活动执行正向 Sharpe>=0.80 早停检验。",
+      "verdict": "[无效] 1) USA_AIFACT_TRANSFER_NORM 200 条 QUICK 仅 6 条 >=0.80、0 条 >=1.25 (maxSh=1.02)；2) USA/finnews_nlp_scores (2/104)、USA/mmp_nlp_sentiment (1/64)、USA/board_network (2/148)、EUR/model264 (0/64)、EUR/other460 (1/80)、EUR/analyst_revision_horizons (0/88)、KOR/fundamental93 (0/72) 均因命中率 <2% 自动早停。",
+      "metric_delta": "USA/ai_factor_transfer 6/200 S1, 0/200 S2 (maxSh=1.02, maxMgn=9.59bp)；7 个免额集 maxSh=0.52-0.84，0 条 >=1.25，导致 Phase-2 免额队列耗尽进入 SLEEP_CAP_REACHED。",
+      "root_cause_and_ban": "从 CURATED_RA_D1_CAMPAIGNS 下线 USA_AIFACT_TRANSFER_NORM 及上述已早停免额集，补充实盘 API 核验未触达的 28 个 alphaCount==0 纯 MATRIX 高覆盖字段（EUR/model77 4 字段、EUR/ai_news_scores 8 字段、USA/earningscall_embed 8 字段、ASI/other496 8 字段）与 S3-r35 (16 FULL UNUSED_ALPHA0)，确保 Phase-2 免额窗口满载运行。"
     }
   ]
 }
