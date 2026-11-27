@@ -1233,6 +1233,57 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
 }
 
 
+def build_s3r28_asi_a1lq_fin_specs() -> list[dict[str, Any]]:
+    """S3-r28 (16 FULL, NORMAL): ASI/MINVOL1M/multifactor_return_pred A1Lqx17g (PC=0.6648, RobSh+RobRet PASS, JPN=0.97) 0.03-JPN Finisher!
+
+    Triggered by 2-hour Audit #20 (2026-11-27 16:12 CST) after S3-r27 (24/24 FULL) & remote PC verification:
+      - In S3-r27, `A1Lqx17g` (`COUNTRY d=4, tr=0.08`, `if_else(rank(adv20) > 0.35, d15_tail, 0.25)`) achieved:
+        * `Sharpe = 1.88 (PASS)` | `2Y = 2.03 (IS_LADDER 2.03/2.02 PASS)` | `Fitness = 1.06 (PASS)`
+        * `Turnover = 8.02%` | `Margin = 9.88bp` | `Sub-Universe = 1.41/0.55 (PASS)`
+        * `LOW_ROBUST_UNIVERSE_SHARPE.WITH_RATIO = 1.70 / 1.69 (100.6% PASS!!)`
+        * `LOW_ROBUST_UNIVERSE_RETURNS = 0.0370 / 0.0356 (103.9% PASS!!)`
+        * `Local 98-OS SC = 0.000 (PASS!!)` | `Remote PC = 0.6648 (ge070 = 0, ge080 = 0, PC_PASS_STRICT!!)`
+        * ONLY remaining check: `LOW_ASI_JPN_SHARPE = 0.97 / 1.00` (missed by `0.03` ONLY; `0.98/1.00` at `d=0,2` `0mGnjoJ2` `PC=0.6585`)!
+      - Controlled narrow-axis micro-grid around `A1Lqx17g` (`COUNTRY d={3, 4}, tr=0.08, maxTrade=ON`):
+        * Fixing `rank(adv20) > 0.35` & `d15_tail`, test `false in {0.26, 0.27, 0.28}` (trading 1-2% of the +3.9% RobRet buffer for +0.03..+0.06 JPN);
+        * Test `rank(adv20) > 0.38` with `false in {0.25, 0.26, 0.27}` and `d12/d14` at `(0.35, 0.26)`.
+    """
+    specs: list[dict[str, Any]] = []
+    st_r2 = "ts_backfill(short_term_regime2_60d_single_quantile_pred, 21)"
+    d12_tail = f"tail(group_rank(ts_decay_linear({st_r2}, 12), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    d14_tail = f"tail(group_rank(ts_decay_linear({st_r2}, 14), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+    d15_tail = f"tail(group_rank(ts_decay_linear({st_r2}, 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"
+
+    exprs: list[tuple[str, str, str, str]] = [
+        ("PC28-A1-d15-adv35-f26", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, {d15_tail}, 0.26)"),
+        ("PC28-A2-d15-adv35-f27", "ADMIN_ORIGINAL", "WL13229", f"if_else(rank(adv20) > 0.35, {d15_tail}, 0.27)"),
+        ("PC28-A3-d15-adv35-f28", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.35, {d15_tail}, 0.28)"),
+        ("PC28-A4-d15-adv38-f25", "ADMIN_ORIGINAL", "KH94146", f"if_else(rank(adv20) > 0.38, {d15_tail}, 0.25)"),
+        ("PC28-A5-d15-adv38-f26", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.38, {d15_tail}, 0.26)"),
+        ("PC28-A6-d15-adv38-f27", "TOP100_2026Q4", "ZS59763", f"if_else(rank(adv20) > 0.38, {d15_tail}, 0.27)"),
+        ("PC28-A7-d14-adv35-f26", "TOP100_2026Q4", "SZ83096", f"if_else(rank(adv20) > 0.35, {d14_tail}, 0.26)"),
+        ("PC28-A8-d12-adv35-f26", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.35, {d12_tail}, 0.26)"),
+    ]
+    for tag, neut, dec, trunc in [
+        ("cty_d3_t08", "COUNTRY", 3, 0.08),
+        ("cty_d4_t08", "COUNTRY", 4, 0.08),
+    ]:
+        specs.append(
+            _pack(
+                batch_id=f"S3-r28-ASI-MF120-A1LQ-FIN-{tag}",
+                campaign_id="S3_ASI_MF120_A1LQ_FINISHER",
+                hypothesis_id="HYP-S3R28-ASI-A1LQX17G-PC0665-ROB-PASS-JPN097-TO-100",
+                region="ASI",
+                universe="MINVOL1M",
+                dataset_id="multifactor_return_pred",
+                queue_type="NORMAL",
+                settings=_make_settings("ASI", "MINVOL1M", neut, decay=dec, truncation=trunc, max_trade="ON"),
+                items=_build_items(exprs, dataset_id="multifactor_return_pred", primary_field_id="short_term_regime2_60d_single_quantile_pred", tag_suffix=tag),
+            )
+        )
+    return specs
+
+
 def build_s3r27_asi_mf120_interp_specs() -> list[dict[str, Any]]:
     """S3-r27 (24 FULL, NORMAL): ASI/MINVOL1M/multifactor_return_pred False-Branch Interpolation (0.15..0.35) Finisher!
 
@@ -2045,9 +2096,10 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r27 (24 FULL) -> S3-r27b (16 FULL EUR) -> S3-r26 -> S3-r26b -> S3-r25 -> ..."""
+    """Return ordered S3-r28 (16 FULL ASI A1Lqx17g Finisher) -> S3-r27 -> S3-r27b -> ..."""
     return (
-        build_s3r27_asi_mf120_interp_specs()
+        build_s3r28_asi_a1lq_fin_specs()
+        + build_s3r27_asi_mf120_interp_specs()
         + build_s3r27b_eur_1yg_13bp_specs()
         + build_s3r26_asi_mf120_liq50_n05_specs()
         + build_s3r26b_eur_m238_ortho_specs()

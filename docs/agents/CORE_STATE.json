@@ -3,10 +3,10 @@
   "active_track_name": "多域星阵路径 (Multi-Region Matrix v2.0)",
   "track_registry": {
     "baseline_v1": "基础优化路径 (Baseline v1.0 · 冻结于 d1_ra_baseline_v1_frozen.json)",
-    "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >4000切Alphas=0)",
+    "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >=4500切Alphas=0)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)"
   },
-  "updated_at": "2026-11-27T14:46:00+08:00",
+  "updated_at": "2026-11-27T16:15:00+08:00",
   "mainline_policy": "主线=点塔(Pyramid)：某 category 已有>5个可点(可交付)因子即转其他 categories；docs/agents/TODO_20261127.md 为顺手/空闲项，核心是验证模板与操作符(T17，额度500-1000 FULL，PC仅记录不设门槛)。",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "context_compaction_rule": "任何 AI 工具（Antigravity / Claude Code / Codex / Cursor）启动或上下文超长重置（/compact）后，只读本文件 + docs/agents/OPTIMIZATION_LEDGER.json + AGENTS.md（总计 < 8KB），绝不重读数万行历史聊天记录！",
@@ -18,7 +18,7 @@
     "gold_regular_operators_count": 81,
     "never_auto_submit": true,
     "margin_first_priority": "所有条件通过时，严格优先保留 Margin (bp) 更高的因子",
-    "alias_and_tag_rule": "凡 RA 0-FAIL + SC < 0.65 必写别名 'SC 0.xxx PC 0.xxx'；全过且正交(<0.68)打 'Useful'，仅 PC 未过或同簇次优打 'SC_PASS'"
+    "alias_and_tag_rule": "凡 RA 0-FAIL + SC < 0.65 必写别名 'SC 0.xxx PC 0.xxx'；全过且正交(<0.68)打 'Useful'，仅 PC 未过或同簇次优打 'SC_PASS'；指标参数全过线即自动执行 PATCH 修改并向用户提示，无需事前询问（仍严禁 /submit）"
   },
   "active_focus_markets_1_to_2": [
     {
@@ -107,7 +107,7 @@
           "official_pc": 0.5898,
           "nesting_depth": 5,
           "op_count": 7,
-          "status": "USEFUL_TAGGED_AUDIT18_HIGHEST_MARGIN_READY_FOR_MANUAL_98_OS"
+          "status": "LIVE_OS_SUBMITTED_2026_11_27"
         },
         {
           "alpha_id": "1YG578aX",
@@ -125,8 +125,9 @@
         }
       ],
       "current_seed_campaigns": [
-        "S3-r27b-EUR-1YG-13BP (16 FULL NORMAL · 立即发射! 针对 S3-r20 中仅差 0.02-0.07 Sub-Uni 的高 Margin 三杰 2rGPb8N6 [10.56bp, Sub=1.07/1.09]、N1Kkvxb7 [12.07bp, Sub=0.99/1.05]、RR50nj7j [13.26bp, Sub=0.94/1.01]，单轴将 adv20 门控从 0.10 微调至 {0.14,0.16,0.18,0.20}，把 6XGgvmpY 从 10.25bp 推升至 12.5-14bp!)",
-        "S3-r20-EUR-1YG-HIGHMGN (16/16 FULL 已完胜: 诞生 10.25bp Useful 冠军 6XGgvmpY [SC 0.255 PC 0.590] + 9.06bp SC_PASS 0mGn32A6; 1YG578aX 已清理为纯 SC_PASS)",
+        "[V] S3-r27b-EUR-1YG-13BP 16/16 FULL 完成，5 条回测硬检 0 FAIL。BRAIN 实测 5 条与已入 OS 的 6XGgvmpY 的 SC/PC 均 >0.99，结束该家族；本轮未新增打标。",
+        "[V] S3-r20 代表 6XGgvmpY 10.25bp，2026-11-27 15:22:37 +08:00 进入 OS；0mGn32A6 与 1YG578aX 为历史 SC_PASS。",
+        "[U] 下轮优先 EUR/TOP2500/news84（Pyramid EUR/D1/news 现有 OS=0）：MATRIX median_primary_sentiment_score_transfer（cov=0.7986、dateCov=1.00、aCnt=7）；先探真实覆盖、更新频率，再用 D1 QUICK 单字段验正向情绪假说。",
         "S3-r26b-EUR-M238-ORTHO (16/16 FULL 完成: QPWmawe5 21.10bp/Sh=1.50 但 Sub-Uni=0.41/0.78 FAIL，已止损记入 INEFF-14)"
       ]
     },
@@ -136,7 +137,8 @@
       "slots": 1,
       "active_useful_champions": [],
       "current_seed_campaigns": [
-        "S3-r27-ASI-MF120-INTERP (24 FULL NORMAL · 立即发射! 全库 700+ ASI FULL 数据挖掘锁定唯一双过 RobSh+RobRet 的机制为 if_else false 分支微负倾: 2rGPdR1N/blx753Y6 [false=0.0 -> RobSh+RobRet 双 PASS, Fit=0.90] vs pwWQ1QNb/3qGgR3dZ [false=0.5 -> JPN=1.17..1.28 PASS, Fit=1.65]; 在 false_val ∈ {0.15, 0.22, 0.28} 精确插值并配国别 group_rank(adv20, country)>0.20/0.25 + COUNTRY d={0,2,4}，一举同时通关 RobSh+RobRet+JPN+Fit+PC<0.68!)",
+        "[V] S3-r27-ASI-MF120-INTERP 24/24 FULL 完成，0/24 全过；JPN 2/24 过线，双 Robust 1/24 过线。A1Lqx17g JPN 0.97/1.00，RobSh 1.70/1.69、RobRet 0.0370/0.0356。",
+        "[U] A1Lqx17g 下一轮主对照为 S3-r28 的 COUNTRY decay=4、truncation=0.08、ASI maxTrade=ON、D1 FULL 子组：固定 rank(adv20)>0.35 和前置 15 日窗，仅看 false=0.26/0.27/0.28。深度 5 标 OVER_NESTED_TEMP_PC_FIX；三点无 RA 全过则休眠。已见本地批次定义，广州台账尚未观测到 r28。",
         "S3-r26-ASI-MF120-LIQ50-N05 (完成: 3qGgR3dZ 创 JPN=1.28/1.00 新高, Sh=2.44, Fit=1.65; omPQN0Rb 12.54bp, JPN=1.05 PASS)",
         "S3-r25-ASI-MF120-NEUT05 (24/24 FULL 完成: pwWQ1QNb JPN=1.17 PASS/Sh=2.47/Fit=1.59, KPVxwxGN 10.1bp/JPN=1.01 PASS/minRob=0.918)",
         "ASI/model25 (JPN=0.70..0.89, 49.8bp) 留作备选"
@@ -145,18 +147,18 @@
   ],
   "quota_and_isolated_experiments": {
     "est_2026_11_26_official_sims_final": 10020,
-    "today_est_2026_11_27_official_sims": 240,
-    "today_normal_completed_est": 176,
+    "today_est_2026_11_27_official_sims": 880,
+    "today_normal_completed_est": 792,
     "today_alpha0_completed_est": 64,
     "phase2_alpha0_active": false,
-    "alpha0_auto_switch_threshold": 4160,
+    "alpha0_auto_switch_threshold": 4500,
     "concurrency_limits": {
       "glb_max_threads": 3,
       "other_regions_max_threads": 4,
       "enforced_in_code": "sim_runner.WeightedSlotSemaphore (MAX_THREADS_GLB=3, MAX_THREADS_OTHER_REGION=4) + daemon_ra_runner.parse_region_caps",
       "guangzhou_live_config": "EUR:2, USA:2, ASI:1, KOR:1 (global slots=4, 完全符合上限)"
     },
-    "policy": "严格先后次序（不混跑）：先跑满 4,000 个常规额度（NORMAL_ONLY），跑完后再自动切入运行 UNUSED_ALPHA0 豁免字段队列（有效期至 2026-12-06）。",
+    "policy": "严格先后次序（不混跑）：先跑满 4,500 个常规额度（NORMAL_ONLY，稍微超出一点无妨），跑完后再自动切入运行 UNUSED_ALPHA0 豁免字段队列（有效期至 2026-12-06）。",
     "universal_turnover_policy": "全路线通用：TO > 18% 执行单变量降换手梯队（decay/平滑/tvr_decay/无tail0时hump，禁trade_when）；TO < 8% 跳过降换手。",
     "relaxed_pc_policy": "Useful 交付仍要求 PC < 0.70；但降 PC 准入放宽至 pc_max<=0.78、>=0.70<=10、>=0.80<=2，专项优化最多 3 轮（多优化 1 轮）。",
     "review_schedule": "每 3-4 小时自动复查（cron: 0 */3 * * *）",
