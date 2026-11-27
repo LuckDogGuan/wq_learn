@@ -116,3 +116,12 @@
 - **[V] r28 完成 16/16 D1 FULL，3 条回测硬检零 FAIL。** `akR2rQr9` 的 Margin 为 9.94bp，JPN 为 1.02/1.00，Robust Sharpe 为 1.74/1.71，Robust Returns 为 0.0383/0.0364。平台已存在 `Useful` 与别名 `SC 0.000 PC 0.655`，北京时间 17:25:38 进入 OS。原始 PC 为 0.6555，官方 `/check` 返回 `ALREADY_SUBMITTED`。当前平台 100 个 OS 与本地缓存逐个匹配，SC 引擎自排除后无同地区对手。
 - **[V][C] 原母版窄轴收口。** `adv20>0.35`、`COUNTRY decay=4` 的三个 false 点均有 FAIL。固定 `false=0.27`，把门槛从 0.35 调到 0.38 后，Robust Sharpe 实值维持 1.74，门槛由 1.75 降到 1.71。两条零 FAIL 备选 `e718lVlz` 和 `akR2r631` 的本地 SC 与平台 PC 分别为 0.9996 和 0.9993，池内相关均 ≥0.9989。官方 `/check` 两条均为 HTTP 200 空体，已有 `SC_IS_HIGHT` 标签保留。见 EFF-20、INEFF-17。
 - **[V] r29 已由广州启动。** 18:19:10 提交 `COUNTRY decay=4` 的 8 条，`CROWDING decay=2` 的 8 条已排队。均为 ASI/MINVOL1M、D1 FULL NORMAL、truncation 0.08 和该专项的 maxTrade ON。首检完成 0/16，达标 0，待判 16。两组同时变化中性化与 decay，优先同设置对比信号，跨设置差异按组合效应记录。计划在 21:19 前按现有巡检回看；达回测硬检后再进入 Stage 4。
+
+### 2026-11-27 21:18 · r29、r30 闭环
+
+- **[V][C] r29 与 r30 各 16/16 D1 FULL NORMAL 完成，0 条回测硬检全过。** r29 的 16 条均失败于 JPN。r30 于 20:15:30–20:22:34 执行，16 个唯一指纹，16 条同时失败于 JPN、Robust Sharpe 和 Robust Returns。两个批次的表达式均未命中禁用算子。
+- **[V][C] r30 门控迁移结束。** 同设置的无门控母版 `1YGv2QvX` 的 JPN 为 1.04。加门控并改内层窗口后的 `Jj309nje` 的 JPN 为 0.78。固定门控后，内层窗口 15→22 日的 `9qGPn9ZK` 将 Margin 从 16.06 提高到 18.57bp，JPN 仅从 0.78 到 0.79，两项 Robust 仍失败。见 INEFF-20。
+- **[V] 21:18 仍有 8 条 ASI D1 QUICK Alpha0 在途和 40 条排队。** 广州在常规完成 2,080 条时走了常规队列耗尽的回退分支，低于 4,500 切换线。下轮复核当前队列和额度顺序。两条 ASI FULL 路线本轮均无 Stage 4 候选。
+- **2026-11-27 22:12（2 小时定时审计 #23 · `S3-r30` 16/16 `FULL` 归因完成 → 热部署无门控单支 `S3-r31-ASI-ANL120-RAW-FULL`（`j2VNLJNW 24.82bp, 100-OS SC=0.2137`）原式同参转 `FULL`！）**：
+  - `S3-r30`（`INEFF-20`）证实 `adv20 > 0.35..0.38` 门控在 `analyst_120d × st_r2` 上会误切日本中盘股（`JPN` 从无门控 `1YGv2QvX` 的 `1.04` 降至 `0.78–0.82`）；
+  - 立即停止对 `analyst_120d` 套用流动性门控，上线 **`S3-r31-ASI-ANL120-RAW-FULL-cty_d0_t08`（8 FULL `NORMAL`, `COUNTRY d=0, tr=0.08, maxTrade=ON`）**，将从未跑过 `FULL` 的高 Margin 无门控单支 **`j2VNLJNW`（`group_rank(ts_mean(ts_backfill(analyst_120d_single_quantile_pred, 21), 22), sector)`, `QUICK Sh=1.59, 2Y=1.78, Fit=1.12, TO=4.98%, Margin=24.82bp, 100-OS SC=0.2137`）**、**`d59e8ong`（`analyst_60d m22 sector`, `22.35bp, 100-OS SC=0.2185`）**、**`A1LqJmOX`（`analyst_60d d22 tail25`, `11.00bp, 100-OS SC=0.2489`）**、**`gJr7OY0v`（`analyst_60d_qtile5 m22 sector`, `17.82bp, 100-OS SC=0.2349`）** 直接原式同参切换 `FULL` 实盘检验！

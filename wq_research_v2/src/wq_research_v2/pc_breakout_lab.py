@@ -1233,6 +1233,87 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
 }
 
 
+def build_s3r31_eur_m110_asi_anl_full_specs() -> list[dict[str, Any]]:
+    """S3-r31 (16 FULL, NORMAL): EUR/model110 ZYXwM1Xn (26.66bp, Sh=2.11, SC=0.438) FULL Verification + ASI/multifactor_return_pred Standalone anl_120/60 (24.8bp, SC=0.214) FULL Verification!
+
+    Triggered by 2-hour Audit #23 (2026-11-27 22:10 CST):
+      - Pack A (8 FULL NORMAL, EUR/TOP2500/model110, SUBINDUSTRY d=0 tr=0.04):
+        Executes EFF-21 (`CORE_STATE.json` priority): same-expression same-parameter `QUICK -> FULL` verification
+        of `ZYXwM1Xn` (`group_neutralize(ts_decay_linear(ts_backfill(mdl110_score, 21), 10), subindustry)`,
+        `QUICK Sh=2.11, Fit=1.82, TO=7.02%, Margin=26.66bp, 100-OS SC=0.4380`), `E5m0L2N0` (`Sh=2.44, 11.26bp,
+        100-OS SC=0.4293`), `akR2wXZv` (`mdl110_value`, `Sh=1.70, Fit=1.04, TO=3.94%, Margin=23.69bp`), and
+        1-axis neighbors (`country*industry`, `tail25`, `adv20>0.12`, `score x value/anl_sent`).
+      - Pack B (8 FULL NORMAL, ASI/MINVOL1M/multifactor_return_pred, COUNTRY d=0 tr=0.08 maxTrade=ON):
+        S3-r30 (`INEFF-20`) proved that `adv20 > 0.35..0.38` gating hurts `analyst_120d`'s Japanese mid-cap signal
+        (`JPN 1.04 -> 0.78`). Meanwhile, standalone un-gated `j2VNLJNW` (`anl_120 m22 sector`, `QUICK Sh=1.59,
+        2Y=1.78, Fit=1.12, TO=4.98%, Margin=24.82bp, 100-OS SC=0.2137`), `d59e8ong` (`anl_60 m22 sector`,
+        `22.35bp, Sh=1.57, 2Y=1.75, 100-OS SC=0.2185`), `A1LqJmOX` (`anl_60 d22 tail25`, `11.00bp, Sh=1.57,
+        2Y=1.75, 100-OS SC=0.2489`), and `gJr7OY0v` (`anl_60_qtile5 m22 sector`, `17.82bp, 100-OS SC=0.2349`)
+        have never been tested in `FULL`! Pack B promotes them directly to `FULL` without artificial liquidity cuts.
+    """
+    specs: list[dict[str, Any]] = []
+    ci = "group_cartesian_product(country, industry)"
+
+    # --- Pack A (8 FULL NORMAL): EUR/TOP2500/model110 ZYXwM1Xn (26.66bp, SC=0.4380) FULL Verification ---
+    m110_sc = "ts_backfill(mdl110_score, 21)"
+    m110_val = "ts_backfill(mdl110_value, 21)"
+    m110_as = "ts_backfill(mdl110_analyst_sentiment, 21)"
+
+    eur_exprs: list[tuple[str, str, str, str]] = [
+        ("PC31-E1-zyx-m110sc-gneut-d10", "ADMIN_ORIGINAL", "WL13229", f"group_neutralize(ts_decay_linear({m110_sc}, 10), subindustry)"),
+        ("PC31-E2-e5m-m110sc-sp15-ind", "ADMIN_ORIGINAL", "WL13229", f"signed_power(group_zscore({m110_sc}, industry), 1.5)"),
+        ("PC31-E3-akr-m110val-gneut-d10", "ADMIN_ORIGINAL", "KH94146", f"group_neutralize(ts_decay_linear({m110_val}, 10), subindustry)"),
+        ("PC31-E4-m110sc-gneut-ci-d10", "ADMIN_ORIGINAL", "KH94146", f"group_neutralize(ts_decay_linear({m110_sc}, 10), {ci})"),
+        ("PC31-E5-m110sc-tail25-d10", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear({m110_sc}, 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC31-E6-m110sc-val-gneut-d10", "TOP100_2026Q4", "ZS59763", f"group_neutralize(ts_decay_linear(min(rank({m110_sc}), rank({m110_val})), 10), subindustry)"),
+        ("PC31-E7-m110sc-as-gneut-d10", "TOP100_2026Q4", "SZ83096", f"group_neutralize(ts_decay_linear(min(rank({m110_sc}), rank({m110_as})), 10), subindustry)"),
+        ("PC31-E8-m110sc-adv12-gneut-d10", "TOP100_2026Q4", "LD22811", f"if_else(rank(adv20) > 0.12, group_neutralize(ts_decay_linear({m110_sc}, 10), subindustry), 0)"),
+    ]
+    specs.append(
+        _pack(
+            batch_id="S3-r31-EUR-M110-ZYX-FULL-sub_d0_t04",
+            campaign_id="S3_EUR_M110_ZYX_FULL_VERIFY",
+            hypothesis_id="HYP-S3R31-EUR-ZYXWM1XN-2666BP-SC0438-QUICK-TO-FULL",
+            region="EUR",
+            universe="TOP2500",
+            dataset_id="model110",
+            queue_type="NORMAL",
+            settings=_make_settings("EUR", "TOP2500", "SUBINDUSTRY", decay=0, truncation=0.04),
+            items=_build_items(eur_exprs, dataset_id="model110", primary_field_id="mdl110_score", tag_suffix="sub_d0_t04"),
+        )
+    )
+
+    # --- Pack B (8 FULL NORMAL): ASI/MINVOL1M/multifactor_return_pred Standalone anl_120/60 (SC=0.21-0.25) FULL Verification ---
+    anl_120 = "ts_backfill(analyst_120d_single_quantile_pred, 21)"
+    anl_60 = "ts_backfill(analyst_60d_single_quantile_pred, 21)"
+    anl_q5 = "ts_backfill(analyst_60d_qtile5_class_pred, 21)"
+
+    asi_exprs: list[tuple[str, str, str, str]] = [
+        ("PC31-A1-j2v-anl120-m22-sec", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_mean({anl_120}, 22), sector)"),
+        ("PC31-A2-d59-anl60-m22-sec", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_mean({anl_60}, 22), sector)"),
+        ("PC31-A3-a1l-anl60-d22-tail25", "ADMIN_ORIGINAL", "KH94146", f"tail(group_rank(ts_decay_linear({anl_60}, 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC31-A4-np6-anl120-d22-tail25", "ADMIN_ORIGINAL", "KH94146", f"tail(group_rank(ts_decay_linear({anl_120}, 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC31-A5-gjr-anlq5-m22-sec", "TOP100_2026Q4", "ZS59763", f"group_rank(ts_mean({anl_q5}, 22), sector)"),
+        ("PC31-A6-anl120-anl60-m22-sec", "TOP100_2026Q4", "ZS59763", f"group_rank(ts_mean(min(rank({anl_120}), rank({anl_60})), 22), sector)"),
+        ("PC31-A7-anl120-anl60-d22-tail25", "TOP100_2026Q4", "SZ83096", f"tail(group_rank(ts_decay_linear(min(rank({anl_120}), rank({anl_60})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC31-A8-anl120-m22-tail25-sec", "TOP100_2026Q4", "LD22811", f"tail(group_rank(ts_mean({anl_120}, 22), sector), lower=0.25, upper=0.75, newval=0.5)"),
+    ]
+    specs.append(
+        _pack(
+            batch_id="S3-r31-ASI-ANL120-RAW-FULL-cty_d0_t08",
+            campaign_id="S3_ASI_ANL120_RAW_FULL_VERIFY",
+            hypothesis_id="HYP-S3R31-ASI-J2VNLJNW-2482BP-SC0214-QUICK-TO-FULL",
+            region="ASI",
+            universe="MINVOL1M",
+            dataset_id="multifactor_return_pred",
+            queue_type="NORMAL",
+            settings=_make_settings("ASI", "MINVOL1M", "COUNTRY", decay=0, truncation=0.08, max_trade="ON"),
+            items=_build_items(asi_exprs, dataset_id="multifactor_return_pred", primary_field_id="analyst_120d_single_quantile_pred", tag_suffix="cty_d0_t08"),
+        )
+    )
+    return specs
+
+
 def build_s3r30_asi_anl120_ortho_specs() -> list[dict[str, Any]]:
     """S3-r30 (16 FULL, NORMAL): ASI/MINVOL1M Orthogonal 1YGv2QvX/vRY0o3g3 (anl_120 x st_r2, 14.4bp, JPN=1.13 PASS, 100-OS SC=0.3618) Finisher!
 
@@ -2216,9 +2297,10 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r30 (16 FULL ASI ANL120 Ortho) -> S3-r29 -> S3-r28 -> ..."""
+    """Return ordered S3-r31 (16 FULL EUR M110 ZYX + ASI ANL120 Raw) -> S3-r30 -> S3-r29 -> ..."""
     return (
-        build_s3r30_asi_anl120_ortho_specs()
+        build_s3r31_eur_m110_asi_anl_full_specs()
+        + build_s3r30_asi_anl120_ortho_specs()
         + build_s3r29_asi_ortho_m25_q5_specs()
         + build_s3r28_asi_a1lq_fin_specs()
         + build_s3r27_asi_mf120_interp_specs()

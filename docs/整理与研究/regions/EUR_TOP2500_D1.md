@@ -172,3 +172,12 @@
 - **[V]** BRAIN 复核 `median_primary_sentiment_score_transfer` 为 EUR/TOP2500/D1 的 `news84` MATRIX 字段，覆盖率 0.7986、历史覆盖 1.00、已有 Alpha 数 7，新闻金字塔倍率 1.4。检验假说为较正面的新闻情绪对横截面后续收益有正向预测力。
 - **[V]** 广州守护进程 18:19:12 开始提交。当前定义 9 批、72 条 D1 QUICK NORMAL。8 批已入台账，其中 16 条已提交、48 条排队，另 8 条尚未入台账。首检完成 0，达标 0，待判 72。实查已排任务为 decay 0、truncation 0.04、maxTrade OFF，包含 SUBINDUSTRY、REVERSION_AND_MOMENTUM、COUNTRY 三种中性化。计划在 21:19 前按现有巡检回看正向 Sharpe ≥0.80 命中与 ≥1.25 的晋级种子。
 - **[U]** 台账已看到模板快筛，真实非零覆盖和 5/22/66 日更新频率尚待探查。已用现有生成器核对探针定义，晋级 FULL 前核实覆盖与更新频率。
+
+### 2026-11-27 21:18 · 情绪快筛收口与 model110 晋级预核
+
+- **[V][C] news84 在 64 条有结果后停止，0 条达标，已有 INEFF-19。** 初始规划中另有 8 条未入台账。sentiment21 的 72 个唯一指纹在 20:15–20:25 全部完成，均为 D1 QUICK NORMAL、SUBINDUSTRY。0/72 达正向 Sharpe 0.80，最高 `6XGPWp55` 为 0.69、换手 17.70%。见 INEFF-21。
+- **[V][C] model110 预核保留 `ZYXwM1Xn`。** `mdl110_score` 的平台覆盖率 0.8525、历史覆盖 0.9507。该候选 QUICK Sharpe 2.11、Fitness 1.82、Margin 26.66bp、换手 7.02%。对 `E5m0L2N0`，1,020 个共同日的 PnL 差分相关为 0.9758。100 个 OS 的平台名单与本地缓存逐个一致，20 个 EUR 对手 PnL 齐全，两候选本地 SC 分别为 0.4380 和 0.4293。见 EFF-21。
+- **[U] FULL 晋级条件。** 常规队列执行顺序恢复后重查指纹，只保留 `ZYXwM1Xn` 的原表达式和设置做 D1 FULL，换手低于 8%，跳过降换手。FULL 硬检零 FAIL 才进入 Stage 4。本轮已核对广州台账，未见同表达式与设置的在途或已完成 FULL。
+- **2026-11-27 22:12（2 小时定时审计 #23 · 下线 `EUR_SNT21_PYRAMID_NORM` (`0/72`) + 热部署 `S3-r31-EUR-M110-ZYX-FULL` 落地 `ZYXwM1Xn` (`26.66bp, SC=0.4380`) 原式同参转 `FULL` + 补入 `EUR/analyst11` (ESG `1.3x`) 等 4 大全新 `NORMAL` 矩阵矿脉恢复常规队列！）**：
+  - 已从守护进程移除 `EUR_SNT21_PYRAMID_NORM`（`72/72 QUICK` `0/72 >= 0.80`，`INEFF-21`），并补入实盘核验 `cov=0.80–0.86, dCov=0.95–1.00` 的 4 个全新 `NORMAL` 纯 `MATRIX` 机构活动：**`EUR_ANL11_PYRAMID_NORM`（`EUR/TOP2500/analyst11` ESG `aCnt=2..7`，攻打仅 `1 OS` 的 `EUR/D1/analyst 1.3x` 塔）**、**`USA_M110_PYRAMID_NORM`（`USA/TOP3000/model110`）**、**`USA_SI6_SMARTHOLD_NORM`（`USA/TOP3000/shortinterest6`）**、**`USA_ANL11_PYRAMID_NORM`（`USA/TOP3000/analyst11`）**，彻底恢复 `NORMAL_ONLY` 队列（直冲 `4,500` 常规额度不提前回退 `Alpha0`！）；
+  - 同时上线 **`S3-r31-EUR-M110-ZYX-FULL-sub_d0_t04`（8 FULL `NORMAL`, `SUBINDUSTRY d=0, tr=0.04`）**，对 `EFF-21` 选定的 **`ZYXwM1Xn`（`group_neutralize(ts_decay_linear(ts_backfill(mdl110_score, 21), 10), subindustry)`, `QUICK Sh=2.11, Fit=1.82, TO=7.02%, Margin=26.66bp, 100-OS SC=0.4380`）** 及 **`E5m0L2N0`（`Sh=2.44, 11.26bp, 100-OS SC=0.4293`）**、**`akR2wXZv`（`mdl110_value`, `23.69bp, TO=3.94%`）** 执行原式同参 `FULL` 复核！

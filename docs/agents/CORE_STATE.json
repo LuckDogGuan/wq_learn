@@ -6,7 +6,7 @@
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >=4500切Alphas=0)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)"
   },
-  "updated_at": "2026-11-27T20:15:00+08:00",
+  "updated_at": "2026-11-27T22:12:00+08:00",
   "mainline_policy": "主线=点塔(Pyramid)：某 category 已有>5个可点(可交付)因子即转其他 categories；docs/agents/TODO_20261127.md 为顺手/空闲项，核心是验证模板与操作符(T17，额度500-1000 FULL，PC仅记录不设门槛)。",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "context_compaction_rule": "任何 AI 工具（Antigravity / Claude Code / Codex / Cursor）启动或上下文超长重置（/compact）后，只读本文件 + docs/agents/OPTIMIZATION_LEDGER.json + AGENTS.md（总计 < 8KB），绝不重读数万行历史聊天记录！",
@@ -125,10 +125,10 @@
         }
       ],
       "current_seed_campaigns": [
-        "[V] EUR_NEWS84_PYRAMID_NORM (news84 median_primary_sentiment_score_transfer) 64/64 QUICK 完成，0/64 达 Sh>=0.80 (maxSh=0.36, Fit=0.04, TO=63.9%)，已立即下线止损并记入 INEFF-19。",
-        "[U] 已置顶热部署 EUR_SNT21_PYRAMID_NORM (EUR/TOP2500/sentiment21，攻打 0-OS 空白金字塔 EUR/D1/sentiment 1.4x)：精选 8 个 cov=1.000、dateCov=1.000、aCnt=5..10 的纯 MATRIX 情绪置信度与分布字段在 QUICK 模式快筛。",
-        "[V] S3-r27b-EUR-1YG-13BP 16/16 FULL 完成，5 条回测硬检 0 FAIL，与已入 100-OS 的 6XGgvmpY (10.25bp) SC/PC >0.99，已打标 SC_IS_HIGHT 并收口。",
-        "S3-r26b-EUR-M238-ORTHO (16/16 FULL 完成: QPWmawe5 21.10bp/Sh=1.50 但 Sub-Uni=0.41/0.78 FAIL，已止损记入 INEFF-14)"
+        "[V] EUR_SNT21_PYRAMID_NORM 完成 72/72 D1 QUICK NORMAL，0/72 达正向 Sharpe 0.80，最高 0.69，已从守护进程下线收口（INEFF-21）。",
+        "[U] 已上线热部署 S3-r31-EUR-M110-ZYX-FULL-sub_d0_t04 (8 FULL NORMAL)：对 EFF-21 选定的 ZYXwM1Xn (QUICK Sh=2.11, Margin=26.66bp, TO=7.02%, 100-OS SC=0.4380) 与 E5m0L2N0 (Sh=2.44, 100-OS SC=0.4293)、akR2wXZv (mdl110_value 23.69bp) 执行原式同参 FULL 复核。",
+        "[U] 已上线 EUR_ANL11_PYRAMID_NORM (EUR/TOP2500/analyst11 ESG aCnt=2..7, cov=0.80-0.82, 攻打 EUR/D1/analyst 1.3x 塔) 携手 USA_M110_PYRAMID_NORM / USA_SI6_SMARTHOLD_NORM / USA_ANL11_PYRAMID_NORM 补充全新 NORMAL 队列，恢复 100% NORMAL_ONLY 顺序执行。",
+        "[V] S3-r27b-EUR-1YG-13BP 16/16 FULL 完成，5 条回测硬检 0 FAIL，与已入 100-OS 的 6XGgvmpY (10.25bp) SC/PC >0.99，已打标 SC_IS_HIGHT 并收口。"
       ]
     },
     {
@@ -154,17 +154,17 @@
         }
       ],
       "current_seed_campaigns": [
-        "[V] S3-r29-ASI-ORTHO-M25-Q5 16/16 FULL 完成，0/16 全过（记入 INEFF-18）：78Gqnr5O (model25 ev_to_ebitda + adv20>0.38) 保持 45.60bp、Sh=1.77、2Y=2.18、Fit=1.59 并打穿 RobSh (1.61/1.59 PASS)，Jj30vk2x (qtile5) 双过 RobSh+RobRet，但二者 standalone JPN 分别仅 0.60 与 0.80-0.91/1.00。",
-        "[U] 已热部署 S3-r30-ASI-ANL120-ORTHO (16 FULL NORMAL)：锁定已在 FULL 实证 JPN=1.04-1.13/1.00 PASS 且经 100-OS 实测与 akR2rQr9 完全正交的 1YGv2QvX/vRY0o3g3 (analyst_120d x st_r2, 13.97-14.41bp, 100-OS SC=0.3618 < 0.65) 及 analyst_120d/60d (j2VNLJNW 24.82bp, 100-OS SC=0.2137)，单轴施加 akR2rQr9 通关门控 if_else(rank(adv20)>{0.35,0.38}, ..., {0.25,0.26,0.27}) 同步打穿双项 Robust 与 JPN>=1.04！",
+        "[V] S3-r30-ASI-ANL120-ORTHO 完成 16/16 D1 FULL NORMAL，16/16 同时失败于 JPN (0.78-0.82/1.00) 和两项 Robust，结束门控迁移轴（INEFF-20）。",
+        "[U] 已上线热部署 S3-r31-ASI-ANL120-RAW-FULL-cty_d0_t08 (8 FULL NORMAL)：将无门控高 Margin 正交单支 j2VNLJNW (analyst_120d m22 sector, QUICK Sh=1.59, 2Y=1.78, Fit=1.12, TO=4.98%, Margin=24.82bp, 100-OS SC=0.2137) 与 d59e8ong (analyst_60d 22.35bp, SC=0.2185)、A1LqJmOX (analyst_60d d22 tail25, SC=0.2489)、gJr7OY0v (17.82bp, SC=0.2349) 原式同参转 FULL 核验！",
         "[V] S3-r28-ASI-MF120-A1LQ-FIN 16/16 FULL 完成，诞生 3 条 0-FAIL RA FULL 冠军：akR2rQr9 (9.94bp, SC 0.000 PC 0.655, Useful + OS #99，携手 GBR omq9KAO2 达成 100/100 OS)、e718lVlz (9.87bp, SC_IS_HIGHT)、akR2r631 (9.51bp, SC_IS_HIGHT)。"
       ]
     }
   ],
   "quota_and_isolated_experiments": {
     "est_2026_11_26_official_sims_final": 10020,
-    "today_est_2026_11_27_official_sims": 2168,
-    "today_normal_completed_est": 2040,
-    "today_alpha0_completed_est": 128,
+    "today_est_2026_11_27_official_sims": 2488,
+    "today_normal_completed_est": 2080,
+    "today_alpha0_completed_est": 336,
     "phase2_alpha0_active": false,
     "alpha0_auto_switch_threshold": 4500,
     "concurrency_limits": {
@@ -187,20 +187,25 @@
     }
   },
   "codex_latest_inspection": {
-    "observed_at": "2026-11-27T18:19:46+08:00",
+    "observed_at": "2026-11-27T21:18:22+08:00",
     "platform_date": "2026-11-27",
-    "platform_activity_simulations": 1608,
-    "guangzhou_completed": {"normal": 1496, "alpha0": 64, "full": 128, "quick": 1432},
-    "latest_simulation_quota_remaining": 3472,
-    "quota_note": "64 条 Alpha0 在美东换日后、北京时间 13:00–13:29 执行，低于当日 NORMAL 4,500 切换线。当前两个新方向均为 NORMAL。",
-    "active_service": "18:18:49 +08:00 启动，4 总槽，EUR:2/USA:2/ASI:1/KOR:1，Stage 1–2 QUICK、Stage 3 FULL。地区分配与 run_config.json 的 ASI:2/EUR:1/USA:1/KOR:1 有差异，均低于地区硬上限。",
-    "followup_window": {"start": "2026-11-27T18:19:10+08:00", "planned_review_by": "2026-11-27T21:19:10+08:00", "mode": "复用广州守护进程和既有三小时巡检"},
+    "platform_activity_simulations": null,
+    "platform_activity_note": "活动 MCP 返回目录，广州环境凭据认证 HTTP 401，本轮官方活动数待核。",
+    "guangzhou_completed": {"normal": 2080, "alpha0": 232, "full": 160, "quick": 2152},
+    "latest_simulation_quota_remaining": 5000,
+    "quota_note": "20:36 的常规提交额度头为 2896/5000。20:40 起守护进程以常规队列耗尽回退到 Alpha0，切换时常规完成 2080，低于 4500。已用当前实现复现。21:15 的 5000/5000 来自 Alpha0 提交，常规余额当前值待核。SQLite 的 104 条常规 QUEUED 来自 11 月 25–26 日。",
+    "active_service": "20:15:05 +08:00 启动，4 总槽，EUR:2/USA:2/ASI:1/KOR:1，Stage 1–2 QUICK、Stage 3 FULL、MemoryMax=512 MiB。地区分配与 run_config.json 的 ASI:2/EUR:1/USA:1/KOR:1 有差异，均符合地区硬上限。",
+    "followup_window": {"start": "2026-11-27T21:18:22+08:00", "planned_review_by": "2026-11-28T00:18:22+08:00", "mode": "复用既有三小时巡检。核对 ASI 在途 8 条与排队 40 条的结果及常规队列顺序，EUR FULL 候选待常规执行恢复，再查指纹并决定是否晋级。"},
     "active_wave": [
-      {"campaign": "S3-r29-ASI-ORTHO-M25-Q5", "mode": "D1 FULL NORMAL", "planned": 16, "submitted": 8, "queued": 8, "completed": 0, "met_condition": 0, "pending": 16, "condition": "RA 回测硬检零 FAIL 后核验 SC、池内正交、PC 与官方终检，再按 Margin 决策"},
-      {"campaign": "EUR_NEWS84_PYRAMID_NORM", "mode": "D1 QUICK NORMAL", "planned": 72, "submitted": 16, "queued": 48, "not_materialized": 8, "completed": 0, "met_condition": 0, "pending": 72, "condition": "先看正向 Sharpe ≥0.80 的筛选命中，≥1.25 的种子再做覆盖、去重和 FULL 晋级评估"}
+      {"campaign": "S3-r29-ASI-ORTHO-M25-Q5", "mode": "D1 FULL NORMAL", "planned": 16, "completed": 16, "met_condition": 0, "pending": 0, "condition": "RA 回测硬检零 FAIL"},
+      {"campaign": "EUR_NEWS84_PYRAMID_NORM", "mode": "D1 QUICK NORMAL", "planned": 72, "completed": 64, "not_materialized_at_stop": 8, "met_condition": 0, "pending": 0, "condition": "正向 Sharpe ≥0.80，≥1.25 晋级"},
+      {"campaign": "S3-r30-ASI-ANL120-ORTHO", "mode": "D1 FULL NORMAL", "planned": 16, "completed": 16, "met_condition": 0, "pending": 0, "condition": "RA 回测硬检零 FAIL"},
+      {"campaign": "EUR_SNT21_PYRAMID_NORM", "mode": "D1 QUICK NORMAL", "planned": 72, "completed": 72, "met_condition": 0, "pending": 0, "condition": "正向 Sharpe ≥0.80，≥1.25 晋级"}
     ],
     "r28_stage4": "16/16 FULL，3 条回测硬检零 FAIL。100 个平台 OS 与本地 SC 缓存 ID 完全一致。akR2rQr9 已入 OS，PC 0.6555，现行 SC 引擎自排除后无 ASI 对手。两个簇内备选 SC/PC 0.9996、0.9993，官方 /check 空体待判，保留现有标签。原 adv20>0.35 的母版扫描收口。",
-    "older_unfinished": "130 条历史 SUBMITTED，涉及 18 个批次，114 条无批次进度 URL。当前 PENDING_RECONCILE 为 0，历史记录与新提交分开计数。"
+    "older_unfinished": "130 条历史 SUBMITTED，涉及 18 批，本轮未再次对账。当日 40 条 RESULTS_UNOBSERVED 均已对账 1 次。当前 PENDING_RECONCILE 为 0。",
+    "effects": {"new_simulations_dispatched": 0, "alpha_patches": 0, "alpha_submits": 0},
+    "workflow_blocker": "T02 上轮已复现。定时巡检禁止改现有代码，修复和验收继续待办。"
   },
   "stage_settings_contract": {
     "stage_1_and_2": {
