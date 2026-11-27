@@ -45,3 +45,17 @@
   1. **种子筛选固化**：严格执行华子哥 WDS 四差距 + 顾问课堂 53 课规则（[worldquant-classroom-reference](docs/顾问课堂视频总结/worldquant-classroom-reference/SKILL.md) / `field_screener.py`：选新集/`Alphas=0`、明确经济假设、`cov>=0.75`、`dateCov>=0.60`、必要时 6 步探查字段真实更新频率）。
   2. **Stage 1–2 标准化快筛**：默认固定 `decay=0`、`neutralization=SUBINDUSTRY`，支持开启 `FAST/QUICK` 模式（`simulationMode="QUICK", testPeriod="P0Y0M"`）初筛与 `seed_pruner.py`（`jaccard=0.78`）剪枝。
   3. **Stage 3–4 强制 `FULL` + 控制变量法**：Stage 3 严禁 `FAST/QUICK`；子 Agent 每轮只改 1–2 个参数（如 `decay ∈ {0, 5, 20}` 轮询），嵌套 `>=5` 层标 `OVER_NESTED_TEMP_PC_FIX`（严禁 `tail(..., newval=0)` 外套 `hump`）；下轮必先验真并将 **`[有效] xxx 情况有效`** / **`[无效] yyy 情况无效`** 写入 [OPTIMIZATION_LEDGER.json](docs/agents/OPTIMIZATION_LEDGER.json)。
+
+## Agent skills
+
+### Issue tracker
+
+Local markdown: specs and tickets live under `.scratch/<feature>/` (tracked by git). See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five roles (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`), used only for tickets, never for Alpha tags. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: root `GLOSSARY.md` + `docs/adr/`. See `docs/agents/domain.md`.

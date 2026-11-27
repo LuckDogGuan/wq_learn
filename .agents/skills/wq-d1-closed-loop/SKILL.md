@@ -10,7 +10,7 @@ description: "WorldQuant BRAIN D1-Only RA 跨 AI 工具通用闭环技能（主 
 ## 1. 启动第一步：只读加载轻量核心上下文（防上下文爆炸）
 
 每次启动或 `/compact` 后，**只读以下 4 个轻量文件**（绝不扫描历史长对话）：
-0. `goal/run_config.json` 与 `goal/START_HERE.md`（统一启动配置：自定义/默认 `Region`、`Universe`、`Category`、`Research Mode`、Stage 1-2 `QUICK` 模式、模板比例 `5:5 -> 8:2`、子代理默认 Google Neon + 思考强度「中 (`medium`)」或切换 ChatGPT）
+0. `goal/run_config.json` 与 `goal/START_HERE.md`（统一启动配置：自定义/默认 `Region`、`Universe`、`Category`、`Research Mode`、Stage 1-2 `QUICK` 模式、模板比例 `5:5 -> 8:2`、子代理默认 `dsh-opencode-go/deepseek-v4.1-flash`（先 probe，≤4 轮即弃））
 1. `AGENTS.md`（硬红线：严格 `delay==1`、禁用 `+/*/trade_when`、精确 81 个 Gold 算子、零自动 `/submit`、Margin 优先、`Useful`/`SC_PASS` + `SC 0.xxx PC 0.xxx` 别名、8:2 查资料优先级）
 2. `docs/agents/CORE_STATE.json`（当前专注的 1–2 个地区/数据集、现役 `Useful` 冠军、阶段 1–4 参数契约、Baseline v1.0 回退指针）
 3. `docs/agents/OPTIMIZATION_LEDGER.json`（上轮哪些优化**有效 `[EFFECTIVE]`**、哪些**无效 `[INEFFECTIVE]`**）
@@ -51,7 +51,9 @@ description: "WorldQuant BRAIN D1-Only RA 跨 AI 工具通用闭环技能（主 
      - 轴 2（Neutralization 轮询）：固定最优 Decay，轮询 `SUBINDUSTRY` → `INDUSTRY` / `REVERSION_AND_MOMENTUM` / `CROWDING` / `STATISTICAL`；
      - 轴 3（单一短板手术 & **通用降换手规则**）：按 8:2 优先级（80% 王哥 + Top100 顾问 + 管理员/课堂53课）针对唯一 FAIL 项做单步改造；**所有流程必须检查换手率（`evaluate_turnover_action`）**：若 `TO > 18%` 则执行单变量降换手梯队（`decay ∈ {0, 5, 20}` → 前置/后置 `ts_decay_linear(10/22)`/`ts_mean(5/10/22)` → `ts_target_tvr_decay(lambda_max<=0.9)` → 仅无 `tail(newval=0)` 外壳时试 `hump(0.01)`，永久禁 `trade_when`）；**若 `TO < 8%`（换手偏低）则跳过降换手步骤**，避免稀释 Sharpe 或触发 `LOW_TURNOVER`。
    - **2–3 轮止损休眠铁律（`should_shelve_stalled_seed`）**：若某种子连续专一优化 **2–3 轮** 仍无有效提升，立刻停止消耗额度，打上 `STALLED_DORMANT_AFTER_3_ROUNDS` 标签连同瓶颈原因归档，留待未来找到新优化方法再定向唤醒。
-   - **子代理默认配置**：默认使用 Google Neon 模型（`Model="inherit"`），思考强度默认设为 **中 (`medium`)**（兼容在 ChatGPT / Codex / Claude Code 中按 `goal/run_config.json` 切换模型）。
+    - **子代理默认配置**：默认 DSH，`dsh-opencode-go/deepseek-v4.1-flash`（tier=flash），启用前先 `dsh_worker_probe`（可用性未验证，probe 只证明 no-op 调用成功）；**每个子代理对一个任务负责完整闭环：提出意见 → 修改 → 结果（含自验证与回报），严禁把同一流程拆给多个代理接力**；**任务包按定时巡检间隔的 1.5 倍设计并留冗余**（3h 间隔 → 约 4.5h 工作量，超 2h 的拆成带检查点的段）；**每个子代理最多 4 轮对话，用满即丢弃换新**，状态靠 `docs/agents/TODO_20261127.md`、`.scratch/` 与账本文件传递；简报用 `docs/agents/SUBAGENT_BRIEF_TEMPLATE.md`，并禁止 commit/push/回测/submit；主 Agent 派单并以 `git diff` 与测试复核后写入有效/无效归因。其余见 `goal/run_config.json` → `subagent_profile`。
+    - **证据分级**：结论一律标 `[V]` 已验证 / `[R]` 有报告未复核 / `[C]` 条件成立 / `[U]` 未验证，写账本时必须带标与适用坐标（见 `docs/agents/TODO_20261127.md` §0）。
+    - **无新指令时**：按 `docs/agents/TODO_20261127.md` 自上而下执行第一个 `pending` 项，做完立即标记。
 3. **嵌套层数治理**：
    - 调用 `compute_expression_nesting_metrics(expr)` 检查 `operator_count` 与 `nesting_depth`；
    - 优先保持 `operator_count <= 6`、`nesting_depth <= 4`；若 `nesting_depth >= 5` 或 `operator_count >= 7`，必须打上 `OVER_NESTED_TEMP_PC_FIX` 标签并完整记录每一层参数。

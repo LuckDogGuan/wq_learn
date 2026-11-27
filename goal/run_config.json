@@ -76,12 +76,31 @@
     ]
   },
   "subagent_profile": {
-    "default_provider": "google",
-    "default_model": "neon",
-    "antigravity_subagent_model_param": "inherit",
-    "default_thinking_effort": "medium",
-    "rationale": "默认使用 Google 模型（Neon/Gemini），子代理默认思考强度设为『中 (medium)』，兼顾单轴控制变量推理质量与响应速度，防止子代理过度发散耗时。",
+    "default_provider": "dsh-opencode-go",
+    "default_model": "deepseek-v4.1-flash",
+    "dispatch_tool": "dsh_run_worker / dsh_spawn_worker (tier=flash)",
+    "probe_first": "每次启用前先 dsh_worker_probe(provider=dsh-opencode-go, model=deepseek-v4.1-flash)；名称可用性为未验证项，probe 仅证明 no-op 调用成功",
+    "max_dialogue_rounds_per_subagent": 4,
+    "discard_after_max_rounds": true,
+    "state_carrier": "docs/agents/TODO_20261127.md + OPTIMIZATION_LEDGER.json + CORE_STATE.json（不依赖子代理对话记忆）",
+    "brief_rules": "自包含：绝对路径、验收标准、禁止触碰项；明确不 commit/push/回测/submit；同仓同时最多 1 个写入型子代理",
+    "closed_loop": "一个子代理对一个任务负责完整闭环：提出意见 -> 修改 -> 结果（含自验证与回报）；严禁把同一流程拆给多个代理接力执行",
+    "main_agent_owns": "主 Agent 负责派单、方向决策，并用 git diff / 测试复核子代理回报后写入有效/无效归因；不替子代理做闭环里的修改",
+    "task_sizing": {
+      "redundancy_multiplier": 1.5,
+      "basis": "每个子代理任务包按定时巡检间隔的 1.5 倍设计（cron 0 */3 * * * 即 3h 间隔 -> 备足约 4.5h 工作量），留冗余防止中途断粮；与 schedule_and_redundancy.queue_redundancy_multiplier 一致",
+      "execution_note": "dsh_run_worker 单次最长 7200s；超过 2h 的任务包拆成带检查点的段，由同一子代理用 dsh_spawn_worker 分段推进并把进度写入文件；总对话轮数仍受 max_dialogue_rounds_per_subagent=4 约束"
+    },
+    "updated_at": "2026-11-27T15:05:00+08:00",
+    "rationale": "用户 2026-11-27 指定：子代理统一用 dsh-opencode-go/deepseek-v4.1-flash，≤4 轮即弃，防上下文遗忘。原默认 Google Neon/medium 降为 override 预设。",
     "override_presets": {
+      "google_neon_medium_legacy": {
+        "provider": "google",
+        "model": "neon",
+        "antigravity_model": "inherit",
+        "thinking_effort": "medium",
+        "note": "旧默认，仅在用户显式要求时启用"
+      },
       "google_neon_medium": {
         "provider": "google",
         "model": "neon",
