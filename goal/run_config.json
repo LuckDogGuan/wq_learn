@@ -1,6 +1,7 @@
 {
   "schema_version": "wq_d1_goal_run_config_v1",
-  "active_track_name": "多域星阵路径 (Multi-Region Matrix v2.0)",
+  "default_track_id": "alphaforge_agy_dsh_v4",
+  "active_track_name": "锻造闭环路径 (AlphaForge AGY-DSH v4.0)",
   "track_registry": {
     "baseline_v1": "基础优化路径 (Baseline v1.0 · EUR/USA 双区单模板冻结版)",
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × 5地区轮巡 × 3模板族配对 × >=4500自动切免额)",

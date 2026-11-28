@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_compact_core_state_v1",
-  "active_track_name": "多域星阵路径 (Multi-Region Matrix v2.0)",
+  "active_track_name": "锻造闭环路径 (AlphaForge AGY-DSH v4.0)",
   "track_registry": {
     "baseline_v1": "基础优化路径 (Baseline v1.0 · 冻结于 d1_ra_baseline_v1_frozen.json)",
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >=4500切Alphas=0)",
@@ -10,7 +10,7 @@
   "updated_at": "2026-11-28T15:20:41+08:00",
   "mainline_policy": "主线=点塔(Pyramid)：某 category 已有>5个可点(可交付)因子即转其他 categories；docs/agents/TODO_20261127.md 为顺手/空闲项，核心是验证模板与操作符(T17，额度500-1000 FULL，PC仅记录不设门槛)。",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
-  "context_compaction_rule": "任何 AI 工具（Antigravity / Claude Code / Codex / Cursor）启动或上下文超长重置（/compact）后，只读本文件 + docs/agents/OPTIMIZATION_LEDGER.json + AGENTS.md（总计 < 8KB），绝不重读数万行历史聊天记录！",
+  "context_compaction_rule": "启动或 /compact 后应用 AGENTS.md，先读 forge handoff 摘要，再按案例编号核对必要证据。完整状态、历史台账、运行日志与对话继续留存。",
   "immutable_red_lines": {
     "delay": 1,
     "ra_ppa_separated": true,
