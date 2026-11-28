@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-28T17:07:00+08:00",
+  "updated_at": "2026-11-28T17:48:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -267,6 +267,14 @@
       "verdict": "[有效] CLI 内绑定、探测和真实派单验证通过。按结构化工具事件判断，worker 状态 done 且实际读取 1 次。",
       "metric_delta": "原调用在配置审批处失败。授权后 hub-12-mx06pnyf 返回 done 但工具调用 0 次，验收失败。允许指定只读命令后 hub-13-mx06roht 执行 1 次并回传正确路线。",
       "reusable_rule": "非交互运行按需配置单工具授权。验收核对真实探测和 job 证据，派单简报明确可用的只读工具。"
+    },
+    {
+      "case_id": "EFF-34",
+      "region_dataset": "[V][C] EUR/TOP2500/ai_equity_alpha (akRPAAox 100-OS SC=0.2109 & PC=0.6359 ge070=0) + 跨纽约日滚动窗口立即停止边界修复 & 4 槽 NORMAL 纯 MATRIX 满仓补给",
+      "controlled_change": "1) 对 EUR_AIEQ_VEC_FREE (272 QUICK) 头部免额种子 akRPAAox (group_zscore(ts_mean(ts_backfill(vec_avg(analyst_opinion_metric_8), 21), 22), subindustry), RAM d=0, tr=0.04, Sh=1.36, Fit=0.70, TO=2.66%, 21.84bp) 执行 100-OS SC 与远程 PC 直方图检验；2) 在 daemon_ra_runner.py 新增 should_stop_rolling_window() 检测 live_est_day != window_est_day 立即终止跨日 ALPHA0_EXEMPT_ONLY 窗口；3) 下线已跑完的 EUR_AIFACT_TRANSFER_NORM (432/432)、USA_AIEQ_ALPHA_NORM (440/440) 与早停的 USA_SNT23_MATRIX_FREE (0/64)，补入 6 个高覆盖纯 MATRIX NORMAL 活动与 KOR/model31 免额集。",
+      "verdict": "[有效] 1) akRPAAox 同时通过 100-OS SC=0.2109 (<0.65) 与严格远程 PC=0.6359 (ge070=0, ge080=0, PC_PASS_STRICT!)；2) 彻底根治 INEFF-40 换日窗口溢出并恢复 EUR:2, USA:2, ASI:1, KOR:1 四槽常规满载！",
+      "metric_delta": "1) EST 2026-11-27 官方日回测最终收官于 7,548 / 4,500 条 (167.7% 日目标，SQLite 4,504 NORMAL + 2,908 UNUSED_ALPHA0 = 7,412 条完成，0 次 429)；2) EUR akRPAAox: Sh=1.36, TO=2.66%, 21.84bp, 100-OS SC=0.2109, Remote PC=0.6359 (ge070=0)；3) ASI/analyst39 xAlmXAmn (Sh=1.32, 2Y=2.15, 37.12bp): 100-OS SC=-0.0685，但远程 PC=0.7762 (ge070=24, PC_ABANDON_CROWDED_OR_FAR)，拦截盲目升 FULL。",
+      "reusable_rule": "1) 滚动窗口回调必须每次核对 current_est_platform_date() != window_est_day，确保 13:00 CST 美东换日秒停 Phase-2 Alpha0 并切回新日 NORMAL_ONLY；2) 当主力地区 NORMAL 活动完结时，必须及时补入高覆盖纯 MATRIX NORMAL 活动防止并发槽空置。"
     }
   ],
   "ineffective_cases": [
@@ -587,7 +595,7 @@
       "controlled_change": "只读核对 sim_tasks 的 submitted_at_utc 与 completed_at_utc、实际额度头、守护日志及本地选队代码。",
       "verdict": "[无效] 13:00 换日后 ASI/KOR 仍新发 4 批、32 条 Alpha0 QUICK。另有 8 条换日前发出，换日后完成。13:12:29 起恢复 NORMAL，当前常规优先。",
       "metric_delta": "4 批新发时间为北京时间 13:00:22、13:01:48、13:04:14、13:07:20，最后一批 13:11:55 完成。15:18:21 的 HTTP 201 额度头余 4,520/5,000。",
-      "root_cause_and_ban": "本地代码仅在滚动窗口开始重判平台日，符合观测，远端部署版本和运行时窗口边界待核。沿现有常规队列继续，勿用按完成日计的 40 条推断 40 条均为换日后新发。"
+      "root_cause_and_ban": "本地代码仅在滚动窗口开始重判平台日，符合观测，远端部署版本和运行时窗口边界待核。沿现有常规队列继续，勿用按完成日计的 40 条推断 40 条均为换日后新发。已在 Audit #30 新增 should_stop_rolling_window(window_est_day, live_est_day, ...) 并在 test_daemon_ra_runner.py 固化单测，换日即停 Phase-2 窗口。"
     }
   ]
 }

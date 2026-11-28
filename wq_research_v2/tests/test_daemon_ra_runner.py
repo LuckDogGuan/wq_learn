@@ -13,6 +13,7 @@ from wq_research_v2.daemon_ra_runner import (
     select_stage12_templates,
     should_early_stop_dataset,
     should_shelve_stalled_seed,
+    should_stop_rolling_window,
 )
 from wq_research_v2.expr_validator import ExprValidator
 from wq_research_v2.ledger_store import LedgerStore
@@ -250,3 +251,42 @@ def test_collect_balanced_runnable_window_prevents_dedup_starvation() -> None:
     assert len(win) == 8
     regs = [w["region"] for w in win]
     assert regs == ["EUR", "EUR", "USA", "ASI", "EUR", "EUR", "USA", "ASI"]
+
+
+def test_should_stop_rolling_window_halts_alpha0_immediately_on_est_day_rollover() -> None:
+    # Same EST day in ALPHA0_EXEMPT_ONLY -> continue window
+    assert not should_stop_rolling_window(
+        window_est_day="2026-11-27",
+        live_est_day="2026-11-27",
+        q_mode="ALPHA0_EXEMPT_ONLY",
+        normal_done=4504,
+        completed_in_win=64,
+        alpha0_switch_threshold=4500,
+        daily_target=4500,
+        has_pending_alpha0=True,
+        api_remaining=520,
+    )
+    # EST midnight rollover (13:00 CST) -> MUST halt ALPHA0_EXEMPT_ONLY immediately (INEFF-40 fix!)
+    assert should_stop_rolling_window(
+        window_est_day="2026-11-27",
+        live_est_day="2026-11-28",
+        q_mode="ALPHA0_EXEMPT_ONLY",
+        normal_done=4504,
+        completed_in_win=8,
+        alpha0_switch_threshold=4500,
+        daily_target=4500,
+        has_pending_alpha0=True,
+        api_remaining=5000,
+    )
+    # NORMAL_ONLY reaching alpha0_switch_threshold -> stop window to trigger Phase-2 switch
+    assert should_stop_rolling_window(
+        window_est_day="2026-11-28",
+        live_est_day="2026-11-28",
+        q_mode="NORMAL_ONLY",
+        normal_done=4488,
+        completed_in_win=16,
+        alpha0_switch_threshold=4500,
+        daily_target=4500,
+        has_pending_alpha0=True,
+        api_remaining=496,
+    )

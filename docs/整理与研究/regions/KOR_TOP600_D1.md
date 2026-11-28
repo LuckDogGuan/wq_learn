@@ -11,3 +11,5 @@
 - **2026-11-25 19:16（1 小时定时检查 #1）**：`KOR / behavioral_signals` 完成 `38` 条 `0` 命中（最高 `+0.52`），已止损停跑，KOR 直切散户论坛情绪 **`equity_forum_data`**（`1.6×`）。
 
 - **2026-11-28 09:20 Codex 巡检 [V]**。守护日志确认 KOR/model138 免额线 56 条完成，1 条正向 Sharpe≥0.80（1.79%），最高 0.81，已触发早停。平台 `6XGqboq5` 的 Sharpe 0.81、Margin 21.83bp。后续由现有守护队列切换活动。
+- **2026-11-28 17:48 CST（2小时定时复盘 #30：为 `KOR:1` 补入纯 `MATRIX` 常规新集 `KOR_M109_FUND_NORM` (`model109`, `1.6x`) 与 Phase-2 100% 免额集 `KOR_M31_ERQ_FREE` (`model31`, `cov=1.000, aCnt=0`)！）**：
+  - 经 BRAIN `/data-fields` 实盘核验，为 `0-OS` 空白 `KOR/TOP600`（全塔 `1.6×` 倍率）补入两大高覆盖纯 `MATRIX` 机构数据集：① 常规队列 **`KOR_M109_FUND_NORM`（`KOR/TOP600/model109`，8 个分析师预期扩散与周转率 `MATRIX` 字段 `cov=0.802..0.907, dCov=0.951, aCnt=0..4, maxTrade=ON`）**；② Phase-2 免额队列 **`KOR_M31_ERQ_FREE`（`KOR/TOP600/model31` StarMine Earnings Quality，8 个 `alphaCount == 0` 纯 `MATRIX` 字段 `cov=1.000, dCov=1.000, maxTrade=ON`）**！

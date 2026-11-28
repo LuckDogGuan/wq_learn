@@ -47,63 +47,163 @@ HIGH_BASE_MULTI_MARKET_ORDER: list[str] = [
 # Verified clean D1 RA seed pools (ALL live-checked against cnhkmcp get_datafields on 2026-11-25).
 CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
     # ==================== AUDIT #23 FRESH NORMAL PURE-MATRIX PYRAMID MINES (EUR/analyst11 + USA/model110 + USA/shortinterest6 + USA/analyst11) ====================
-    # ==================== AUDIT #25 PYRAMID-FIRST NORMAL MATRIX MINES (2026-11-28 02:20 CST) ====================
-    # Retired early-stopped EUR_ANL10_SMARTEST_NORM (1/64 >= 0.80), EUR_INST6_OWNERSHIP_NORM (1/80 >= 0.80),
-    # USA_FND72_PIT_NORM (1/64 >= 0.80), USA_INST6_OWNERSHIP_NORM (0/72 >= 0.80), and ASI_MMP_NLP_NORM
-    # (0/56 >= 0.80, INEFF-26). Replaced with 6 live-verified high-coverage (cov=0.84..1.00) pure-MATRIX
-    # NORMAL campaigns across EUR:2, USA:2, ASI:1 to push NORMAL completions from 3,384 -> 4,500+!
+    # ==================== AUDIT #30 EST 2026-11-28 NORMAL PURE-MATRIX REFILL (EUR:2 + USA:2 + ASI:1 + KOR:1) ====================
+    # Retired completed EUR_AIFACT_TRANSFER_NORM (432/432 QUICK completed, 19 S1, 2 S2, GrQ6d11O Sh=1.29),
+    # completed USA_AIEQ_ALPHA_NORM (440/440 QUICK completed, 67 S1, 26 S2, LL86Rx8e Sh=1.45 RAM PC ge070=2),
+    # and auto-stopped USA_SNT23_MATRIX_FREE (0/64 >= 0.80, maxSh=0.37, INEFF-37).
+    # Added 6 fresh live-verified high-coverage (cov=0.80..1.00, dCov=0.95..1.00) pure-MATRIX NORMAL campaigns
+    # across EUR:2, USA:2, ASI:1, KOR:1 (plus KOR_M31_ERQ_FREE for Phase-2 Alphas=0) to push EST 2026-11-28
+    # NORMAL completions from 776 -> 4,500+!
     {
-        "campaign_id": "EUR_AIFACT_TRANSFER_NORM",
+        "campaign_id": "EUR_M50_COUNTRY_NORM",
         "region": "EUR",
         "universe": "TOP2500",
-        "dataset_id": "ai_factor_transfer",
+        "dataset_id": "model50",
         "queue_type": "NORMAL",
         "field_type": "MATRIX",
         "template_packs": ["core_50_50", "nonlinear_tail_group"],
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["REVERSION_AND_MOMENTUM", "COUNTRY"],
+        "default_neut": "REVERSION_AND_MOMENTUM",
+        "alt_neuts": ["SUBINDUSTRY", "COUNTRY"],
         "fields": [
-            "volume_anomaly_price_positioning_2",
-            "typical_price_bollinger_band_position_2",
-            "liquidity_weighted_returns_ma",
-            "volume_anomaly_price_positioning",
-            "money_flow_strength_typical_price_2",
-            "volume_trend_money_flow_interaction",
-            "balanced_price_oscillator_2",
-            "typical_price_bollinger_band_position",
+            "country_level_external_financing_score",
+            "country_level_analyst_forecast_revision_score",
+            "country_level_earnings_valuation_score",
+            "country_level_profitability_score",
+            "country_level_financial_leverage_score",
+            "country_level_fundamental_stability_score",
+            "country_level_shareholder_yield_score",
+            "country_level_analyst_forecast_dispersion_score",
         ],
     },
-    # Retired EUR_ANL_CONSENSUS_NORM (64/64 QUICK completed with 0/64 >= 0.80, maxSh=0.41, INEFF-28).
     {
-        "campaign_id": "USA_AIEQ_ALPHA_NORM",
+        "campaign_id": "EUR_NEWS85_PYRAMID_NORM",
+        "region": "EUR",
+        "universe": "TOP2500",
+        "dataset_id": "news85",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "template_packs": ["core_50_50", "nonlinear_tail_group"],
+        "default_neut": "REVERSION_AND_MOMENTUM",
+        "alt_neuts": ["SUBINDUSTRY", "COUNTRY"],
+        "fields": [
+            "sentiment2_highest_score",
+            "sentiment2_distribution_skewness",
+            "sentiment1_distribution_skewness",
+            "sentiment_overall_median",
+            "sentiment_overall_minimum",
+            "sentiment1_median_value",
+            "sentiment2_aggregate_total",
+            "sentiment1_aggregate_total",
+        ],
+    },
+    {
+        "campaign_id": "USA_AIEQ_ALPHA_V2_NORM",
         "region": "USA",
         "universe": "TOP3000",
         "dataset_id": "ai_equity_alpha",
         "queue_type": "NORMAL",
         "field_type": "MATRIX",
         "template_packs": ["core_50_50", "nonlinear_tail_group"],
-        "default_neut": "SUBINDUSTRY",
-        "alt_neuts": ["REVERSION_AND_MOMENTUM", "CROWDING"],
+        "default_neut": "REVERSION_AND_MOMENTUM",
+        "alt_neuts": ["SUBINDUSTRY", "CROWDING"],
         "fields": [
-            "analyst_earnings_surprise_score_2",
-            "analyst_sentiment_score_3",
-            "analyst_sentiment_score_4",
-            "analyst_sentiment_score_5",
-            "analyst_sentiment_score_6",
-            "asset_turnover_ratio_metric_2",
-            "asset_utilization_score_3",
-            "business_model_opacity_score_2",
+            "analyst_recommendation_consensus",
+            "asset_impairment_risk_score_21",
+            "asset_impairment_risk_score_3",
+            "business_model_volatility_metric",
+            "analyst_earnings_surprise_score",
+            "analyst_forecast_change_metric",
+            "analyst_opinion_metric_3",
+            "analyst_sentiment_score_2",
         ],
     },
-    # Retired USA_AIFACT_TRANSFER_NORM at Audit #27 (200/200 QUICK completed, 0/200 Sharpe>=1.25, maxSh=1.02, INEFF-29).
-    # ==================== AUDIT #27/#28/#29 PHASE-2 FRESH UNTOUCHED ALPHACOUNT==0 MINES (2026-11-28 10:15 CST) ====================
-    # EST 2026-11-27 reached 4,504 NORMAL + 1,628 UNUSED_ALPHA0 = 6,132 SQLite completed (6,268 official sims, 139.3% daily target!).
-    # Retired completed EUR_M77_PMM_FREE (316/316 QUICK completed, 1YGLr8Ak PC=0.8854 ge070=1,077, admin_ts_regime 0/88 >= 0.80, INEFF-34)
-    # and auto-stopped KOR_M138_QUALITY_FREE (56/56 QUICK, 1/56 >= 0.80, maxSh=0.81, INEFF-34).
-    # Added 4 fresh live-verified alphaCount==0 campaigns: EUR_AIEQ_VEC_FREE (EUR/ai_equity_alpha 6 untouched VECTOR fields cov=0.86),
-    # USA_ANL10_SURP_FREE (USA/analyst10 8 untouched MATRIX SmartEstimate Surprise fields cov>=0.78),
-    # USA_SNT23_MATRIX_FREE (USA/sentiment23 7 untouched MATRIX fields, 1.5x sentiment Pyramid),
-    # and ASI_AIEQ_VEC_V2_FREE (ASI/ai_equity_alpha next 8 untouched VECTOR fields cov=0.97 after Wave 1 yielded 4x PC_PASS_STRICT < 0.62!).
+    {
+        "campaign_id": "USA_OTH596_SENT_NORM",
+        "region": "USA",
+        "universe": "TOP3000",
+        "dataset_id": "other596",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "template_packs": ["core_50_50", "nonlinear_tail_group"],
+        "default_neut": "REVERSION_AND_MOMENTUM",
+        "alt_neuts": ["SUBINDUSTRY", "CROWDING"],
+        "fields": [
+            "oth596_3neg_conf_low",
+            "oth596_3neg_conf_up",
+            "oth596_3neg_max",
+            "oth596_2neg_conf_low",
+            "oth596_2neg_conf_up",
+            "oth596_2neg_max",
+            "oth596_2neg_median",
+            "oth596_2neut_conf_low",
+        ],
+    },
+    {
+        "campaign_id": "ASI_SNT23_PYRAMID_NORM",
+        "region": "ASI",
+        "universe": "MINVOL1M",
+        "dataset_id": "sentiment23",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "max_trade": "ON",
+        "template_packs": ["core_50_50", "nonlinear_tail_group"],
+        "default_neut": "COUNTRY",
+        "alt_neuts": ["SUBINDUSTRY", "REVERSION_AND_MOMENTUM"],
+        "fields": [
+            "snt23_2neut_min_12",
+            "snt23_2pos_min_13",
+            "snt23_2neut_mean_15",
+            "snt23_2neut_median_2",
+            "snt23_2pos_conf_low_10",
+            "snt23_2pos_mean_1",
+            "snt23_3dts_tuen",
+            "snt23_2pos_conf_up_11",
+        ],
+    },
+    {
+        "campaign_id": "KOR_M109_FUND_NORM",
+        "region": "KOR",
+        "universe": "TOP600",
+        "dataset_id": "model109",
+        "queue_type": "NORMAL",
+        "field_type": "MATRIX",
+        "max_trade": "ON",
+        "template_packs": ["core_50_50", "nonlinear_tail_group"],
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["INDUSTRY", "REVERSION_AND_MOMENTUM"],
+        "fields": [
+            "analyst_recommendation_count",
+            "analyst_recommendation_diffusion_3m",
+            "analyst_ebitda_diffusion_fy1_3m",
+            "asset_turnover_change_yoy",
+            "analyst_dividend_diffusion_fy1_3m",
+            "accruals_percentage_earnings",
+            "asset_turnover_ratio_2",
+            "analyst_book_value_diffusion_fy1_3m",
+        ],
+    },
+    {
+        "campaign_id": "KOR_M31_ERQ_FREE",
+        "region": "KOR",
+        "universe": "TOP600",
+        "dataset_id": "model31",
+        "queue_type": "UNUSED_ALPHA0",
+        "field_type": "MATRIX",
+        "max_trade": "ON",
+        "template_packs": ["core_50_50", "nonlinear_tail_group"],
+        "default_neut": "SUBINDUSTRY",
+        "alt_neuts": ["INDUSTRY", "REVERSION_AND_MOMENTUM"],
+        "fields": [
+            "cashflow_factor_score_prev_quarter",
+            "cashflow_factor_score_prev_year",
+            "earnings_quality_raw_score_prev_quarter",
+            "earnings_quality_region_rank_prev_quarter",
+            "gross_profit_margin_prev_quarter",
+            "gross_profit_margin_prev_year",
+            "leverage_ratio_prev_quarter",
+            "book_value_per_share_prev_year",
+        ],
+    },
     {
         "campaign_id": "EUR_AIEQ_VEC_FREE",
         "region": "EUR",
@@ -142,26 +242,6 @@ CURATED_RA_D1_CAMPAIGNS: list[dict[str, Any]] = [
             "anl10_nerrevise_value_fy2_2001",
             "anl10_nerrevise_ratio_to_consensus_fq2_2016",
             "anl10_nerrevise_ratio_to_close_fy2_2018",
-        ],
-    },
-    {
-        "campaign_id": "USA_SNT23_MATRIX_FREE",
-        "region": "USA",
-        "universe": "TOP3000",
-        "dataset_id": "sentiment23",
-        "queue_type": "UNUSED_ALPHA0",
-        "field_type": "MATRIX",
-        "template_packs": ["core_50_50", "nonlinear_tail_group"],
-        "default_neut": "REVERSION_AND_MOMENTUM",
-        "alt_neuts": ["SUBINDUSTRY", "CROWDING"],
-        "fields": [
-            "snt23_4neut_median_106",
-            "snt23_4neut_mean_109",
-            "snt23_4neut_conf_up_117",
-            "snt23_4neut_min_125",
-            "snt23_4dts_sop_126",
-            "snt23_5neut_median_185",
-            "snt23_5neut_max_186",
         ],
     },
     {
@@ -1686,6 +1766,33 @@ def collect_balanced_runnable_window(
     return window
 
 
+def should_stop_rolling_window(
+    *,
+    window_est_day: str,
+    live_est_day: str,
+    q_mode: str,
+    normal_done: int,
+    completed_in_win: int,
+    alpha0_switch_threshold: int,
+    daily_target: int,
+    has_pending_alpha0: bool,
+    api_remaining: Optional[int] = None,
+    max_batches: Optional[int] = None,
+    batches_executed: int = 0,
+) -> bool:
+    """Stop the current rolling window immediately on EST platform day rollover, quota floor, or phase switch."""
+    if live_est_day != window_est_day:
+        return True
+    if max_batches is not None and batches_executed >= max_batches:
+        return True
+    if api_remaining is not None and api_remaining <= 80:
+        return True
+    if q_mode == "ALPHA0_EXEMPT_ONLY":
+        return False
+    threshold = alpha0_switch_threshold if has_pending_alpha0 else daily_target
+    return (normal_done + completed_in_win) >= threshold
+
+
 def run_ra_production_loop(
     *,
     regions: Optional[list[str]] = None,
@@ -1902,14 +2009,25 @@ def run_ra_production_loop(
             touched_regions: set[str] = set()
 
             def _should_stop_now() -> bool:
-                if max_batches is not None and batches_executed >= max_batches:
-                    return True
                 rem_snap = quota.last_snapshot
-                if rem_snap and rem_snap.endpoint == "/simulations" and rem_snap.remaining_val is not None and rem_snap.remaining_val <= 80:
-                    return True
-                if q_mode == "ALPHA0_EXEMPT_ONLY":
-                    return False
-                return (normal_done + completed_in_win) >= alpha0_switch_threshold if has_pending_alpha0 else (normal_done + completed_in_win) >= daily_target
+                rem_val = (
+                    rem_snap.remaining_val
+                    if (rem_snap and rem_snap.endpoint == "/simulations")
+                    else None
+                )
+                return should_stop_rolling_window(
+                    window_est_day=est_day,
+                    live_est_day=current_est_platform_date(),
+                    q_mode=q_mode,
+                    normal_done=normal_done,
+                    completed_in_win=completed_in_win,
+                    alpha0_switch_threshold=alpha0_switch_threshold,
+                    daily_target=daily_target,
+                    has_pending_alpha0=has_pending_alpha0,
+                    api_remaining=rem_val,
+                    max_batches=max_batches,
+                    batches_executed=batches_executed,
+                )
 
             def _on_done(bid: str, reg: str, n_items: int, res: dict[str, int], elapsed: float) -> None:
                 nonlocal batches_executed, total_completed, gate1_hits, gate3_hits, completed_in_win

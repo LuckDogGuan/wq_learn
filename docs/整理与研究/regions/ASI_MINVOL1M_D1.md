@@ -197,3 +197,6 @@
 
 - [V] BRAIN QUICK 母版 `Jj3XEbgl` 原始 2Y 1.51、Fitness 0.90。高 Margin 母版 `2rGZzJnP` 原始 2Y 0.57、Fitness 0.87。两条均已进入 r37 的单次对账范围。保留 `Jj3XEbgl` 作为低 PC、接近 2Y 门槛的参考。
 - [V][U] 广州尾日志已见常规进度估计到 696/4500，`api_rem=?`；当前精确台账和额度待核。下一轮筛现有 ASI 常规队列的新种子，正向 Sharpe≥1.25 且指纹可执行时做同参 QUICK→FULL。验原始 2Y、Fitness、JPN 和 Robust。此轮新增回测 0。
+- **2026-11-28 17:48 CST（2小时定时复盘 #30：`ASI/analyst39` 新种子 `xAlmXAmn` (`Sh=1.32, 2Y=2.15, 37.12bp`) 100-OS SC 与远程 PC 直方图预检排雷 + 热部署 `ASI_SNT23_PYRAMID_NORM` 纯 `MATRIX` 攻打 `0-OS` `ASI/D1/sentiment 1.4x` 塔！）**：
+  - 对 EST `2026-11-28` `ASI_ANL39_STARMINE_NORM`（当日已完成 `248 QUICK`）新产出的唯一 `Sharpe >= 1.25` 种子 **`xAlmXAmn`**（`tail(group_rank(ts_decay_linear(ts_backfill(anl39_qepsinclxo, 21), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)`, `COUNTRY d=0, tr=0.04, maxTrade=ON`, `Sh=1.32, Fit=0.77, 2Y=2.15, TO=2.41%, Margin=37.12bp`）执行 `100-OS` 本地 SC 与远程 PC 直方图预检：虽对 `OS #99` `akR2rQr9` 的 **`100-OS SC = -0.0685 (< 0.65 PASS)`**，但远程 **`PC = 0.7762, >=0.70 碰撞达 24 条（>=0.80 0 条，PC_ABANDON_CROWDED_OR_FAR）`**，按先验 PC 直方图排雷铁律不盲目投入 Stage-3 `FULL`（`EFF-34`）；
+  - 同时为即将收尾的 `ASI:1` 常规队列补入实盘 API 核验满覆盖纯 `MATRIX` 新活动 **`ASI_SNT23_PYRAMID_NORM`（`ASI/MINVOL1M/sentiment23`，8 个 `cov=0.956, dCov=1.000, aCnt=2..5, maxTrade=ON` 纯 `MATRIX` 字段，直攻 `0-OS` 空白 `ASI/D1/sentiment 1.4x` 塔）**！

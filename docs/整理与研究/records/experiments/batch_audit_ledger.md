@@ -1,17 +1,17 @@
 # WorldQuant BRAIN D1 RA 批次复盘与阶段漏斗总账（自动生成）
 
-- **生成时间 (UTC)**：`2026-11-28T06:03:18.624885+00:00`
-- **总批次数**：`2986`（等级分布：`{'BEST': 179, 'GOOD': 357, 'NORMAL': 1464, 'BAD': 866, 'TIMEOUT_BUG': 120}`）
-- **全库阶段过关统计**：有效完成 `22277`（`FULL` `7009` + `QUICK` `15268`） · 未观测 `943` · **一阶段 (`Sh≥0.80`) 过 `3839` 个** · **二阶段 (`Sh≥1.25`) 过 `1649` 个** · **三阶段 (`Sh≥1.58 & Fit≥1.0`) 过 `645` 个**（已核 0-FAIL `50` 个）
+- **生成时间 (UTC)**：`2026-11-28T09:36:05.661428+00:00`
+- **总批次数**：`3050`（等级分布：`{'BEST': 179, 'GOOD': 358, 'NORMAL': 1491, 'BAD': 897, 'TIMEOUT_BUG': 125}`）
+- **全库阶段过关统计**：有效完成 `22717`（`FULL` `7009` + `QUICK` `15708`） · 未观测 `983` · **一阶段 (`Sh≥0.80`) 过 `3875` 个** · **二阶段 (`Sh≥1.25`) 过 `1650` 个** · **三阶段 (`Sh≥1.58 & Fit≥1.0`) 过 `645` 个**（已核 0-FAIL `50` 个）
 - **口径说明（T03/T04）**：历史 `sharpe_2y`（2026-11-28 T03 修复前已落库行）在平台未返回 `LOW_2Y_SHARPE` 时可能含 `IS_LADDER_SHARPE` 值；新入库严格仅取 `LOW_2Y_SHARPE`，且已有 `COMPLETED_FULL` 行永久不回写。
 
 ## 1. 分地区阶段漏斗统计
 
 | 地区 | 完成数 | 未观测 | 一阶段过 (`≥0.80`) | 二阶段过 (`≥1.25`) | 三阶段过 (`≥1.58 & Fit≥1`) | 已核 0-FAIL |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
-| **USA** | 3846 | 192 | 1568 | 370 | 60 | 0 |
+| **USA** | 3846 | 192 | 1576 | 370 | 60 | 0 |
 | **EUR** | 1732 | 416 | 1169 | 676 | 274 | 0 |
-| **ASI** | 544 | 87 | 1059 | 603 | 311 | 50 |
+| **ASI** | 544 | 127 | 1087 | 604 | 311 | 50 |
 | **DEU** | 430 | 8 | 2 | 0 | 0 | 0 |
 | **KOR** | 98 | 56 | 16 | 0 | 0 | 0 |
 | **CHN** | 90 | 24 | 0 | 0 | 0 | 0 |
@@ -56,7 +56,12 @@
 | **TIMEOUT_BUG** | `RA-v4-ASI_AIEQ_VEC_V2_FREE-05-cal_indicators_2-COUNTRY` | ASI/`ai_equity_alpha` | `combined_technical_indicators_2` | `COUNTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 360s [zombie DEL) |
 | **TIMEOUT_BUG** | `RA-v4-ASI_AIEQ_VEC_V2_FREE-07-yst_view_score_2-REVERSION_AND_MOMENTUM` | ASI/`ai_equity_alpha` | `analyst_view_score_2` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 360s [zombie DEL) |
 | **TIMEOUT_BUG** | `RA-v4-ASI_ANL39_STARMINE_NORM-02-anl39_qtotd2eq2-COUNTRY` | ASI/`analyst39` | `anl39_qtotd2eq2` | `COUNTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 360s [zombie DEL) |
+| **TIMEOUT_BUG** | `RA-v4-ASI_ANL39_STARMINE_NORM-nonlin-00-anl39_agrosmgn2-COUNTRY` | ASI/`analyst39` | `anl39_agrosmgn2` | `COUNTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 360s [zombie DEL) |
+| **TIMEOUT_BUG** | `RA-v4-ASI_ANL39_STARMINE_NORM-nonlin-01-anl39_qtanbvps-SUBINDUSTRY` | ASI/`analyst39` | `anl39_qtanbvps` | `SUBINDUSTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 360s [zombie DEL) |
+| **TIMEOUT_BUG** | `RA-v4-ASI_ANL_CONSENSUS_NORM-02-_annual12_tribes-REVERSION_AND_MOMENTUM` | ASI/`analyst_consensus` | `median_estimate_targetprice_annual12_tribes` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 360s [zombie DEL) |
+| **TIMEOUT_BUG** | `RA-v4-ASI_ANL_CONSENSUS_NORM-07-_annual12_tribes-REVERSION_AND_MOMENTUM` | ASI/`analyst_consensus` | `mean_estimate_targetprice_annual12_tribes` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 360s [zombie DEL) |
 | **TIMEOUT_BUG** | `RA-v4-ASI_ANL_CONSENSUS_NORM-DUAL-COUNTRY-00` | ASI/`analyst_consensus` | `min_estimate_fxadj_targetprice_annual12_tribes` | `COUNTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Missing child alpha_id (status=FAIL)) |
+| **TIMEOUT_BUG** | `RA-v4-ASI_ANL_CONSENSUS_NORM-nonlin-00-_annual12_tribes-REVERSION_AND_MOMENTUM` | ASI/`analyst_consensus` | `min_estimate_fxadj_targetprice_annual12_tribes` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 360s [zombie DEL) |
 | **TIMEOUT_BUG** | `S3-r16-ASI-BEHAV-TOFIX-slow_d5_t08` | ASI/`behavioral_signals` | `consecutive_return_streak_length` | `SLOW|d=5|tr=0.08` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 360s [zombie DEL) |
 | **TIMEOUT_BUG** | `S3-r16-ASI-M39-FULL-slow_d0_t08` | ASI/`model39` | `industry_value_momentum_rank_float` | `SLOW|d=0|tr=0.08` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 360s [zombie DEL) |
 | **TIMEOUT_BUG** | `S3-r35-ASI-MF120-CONFGATE-FREE-cty_d4_t08` | ASI/`multifactor_return_pred` | `short_term_60d_qtile5_class_pred` | `COUNTRY|d=4|tr=0.08` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Missing child alpha_id (status=FAIL)) |
@@ -70,13 +75,8 @@
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-01-evision_factor_3-CROWDING` | EUR/`ai_equity_alpha` | `analyst_forecast_revision_factor_3` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.15 for 240s) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-01-evision_factor_3-REVERSION_AND_MOMENTUM` | EUR/`ai_equity_alpha` | `analyst_forecast_revision_factor_3` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-02-opinion_metric_6-CROWDING` | EUR/`ai_equity_alpha` | `analyst_opinion_metric_6` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.90 for 240s [zombie DEL) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-03-opinion_metric_8-CROWDING` | EUR/`ai_equity_alpha` | `analyst_opinion_metric_8` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.15 for 240s [zombie DEL) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-03-opinion_metric_8-REVERSION_AND_MOMENTUM` | EUR/`ai_equity_alpha` | `analyst_opinion_metric_8` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-04-evision_factor_2-CROWDING` | EUR/`ai_equity_alpha` | `analyst_forecast_revision_factor_2` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-04-evision_factor_2-REVERSION_AND_MOMENTUM` | EUR/`ai_equity_alpha` | `analyst_forecast_revision_factor_2` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-05-evision_factor_4-CROWDING` | EUR/`ai_equity_alpha` | `analyst_forecast_revision_factor_4` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
 
-## 4. 全批次精简台账（展示前 120 / 2986 批）
+## 4. 全批次精简台账（展示前 120 / 3050 批）
 
 | 等级 | 地区 | 数据集 | 主字段 | 模板 | 配置 | 完成/未观测 | S1/S2/S3 | Max Sh | Avg Mgn |
 | :-: | :-: | --- | --- | --- | --- | :-: | :-: | :-: | :-: |
