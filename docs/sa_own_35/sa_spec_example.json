@@ -1,0 +1,16 @@
+{
+  "batch_id": "SA-EUR-OWN-20261128-001",
+  "region": "EUR",
+  "universe": "TOP2500",
+  "selection": "own && (prod_correlation > 0) && (prod_correlation < 0.6) && (operator_count >= 2) && (operator_count <= 8) && (datafield_count <= 4) && (decay <= 5) && (truncation <= 0.1) && (universe != 'ILLIQUID_MINVOL1M')",
+  "combo": "1",
+  "settings": {
+    "neutralization": "SUBINDUSTRY",
+    "selectionLimit": 100,
+    "selectionHandling": "POSITIVE",
+    "componentActivation": "IS"
+  },
+  "items": [
+    {}
+  ]
+}

@@ -67,7 +67,8 @@
   "alphaforge_review_controls": {
     "p0_execution_entry_guards": {
       "enforce_normal_before_alpha0": true,
-      "alpha0_switch_threshold": 4500,
+      "alpha0_switch_threshold": 4200,
+      "sa_daily_sim_budget": 400,
       "block_terminal_and_unobserved_fingerprints": true,
       "completed_full_immutable": true,
       "reconcile_once_max": 1,

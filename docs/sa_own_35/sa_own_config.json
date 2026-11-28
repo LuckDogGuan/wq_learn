@@ -1,0 +1,59 @@
+{
+  "schema_version": "wq_d1_sa_own_config_v1",
+  "track_id": "super_alpha_own_v1",
+  "track_name": "SuperAlpha 独立路线 (SuperAlpha Own v1.0)",
+  "log_prefix": "[TRACK:super_alpha_own_v1]",
+  "base_track_ref": {
+    "track_id": "alphaforge_agy_dsh_v4",
+    "note": "继承路线④的 P0 门禁/断点续传/日志隔离工程闭环；只做 SuperAlpha，绝不写 RA 主线库 data/wq_v2_ledger.db"
+  },
+  "updated_at": "2026-11-28T17:15:00+08:00",
+  "design_source": [
+    "docs/整理与研究/records/rules/WQ_RULES_PYTHON_AND_SUPER_ALPHA_RESEARCH_20261126.md",
+    "reference/forum/top100_2026Q4/R032_ZS59763_[SuperAlpha]SELECTION框架-v2经验分享_33745533142679.md",
+    "reference/forum/top100_2026Q4/R012_JR23144_【开箱即用断点续传】稳定产出 own 三五SA 架构_35480270155543.md",
+    "reference/forum/admin_posts/KH94146/03-【进阶学习】Super Alpha 每日获得额外1-60USD来此学习置顶的_43208281917591.md"
+  ],
+  "quota_budget": {
+    "sa_daily_sim_budget": 400,
+    "ra_daily_target": 4200,
+    "platform_daily_ceiling": 5000,
+    "safety_margin": 400,
+    "note": "SA 回测与 Regular/Python 共享平台 5,000/天（POST /simulations 全部计入）；SA 提交配额 1条/天独立于 4条 RA/天"
+  },
+  "concurrency": {
+    "sa_max_workers": 3,
+    "note": "SA 单次回测更重（5-15 分钟），贺六浑实测 MAX_WORKERS=3；不占用 RA 主线的 GLB<=3 / 其他区<=4 线程预算"
+  },
+  "selection_combo_defaults": {
+    "selection": "own && (prod_correlation > 0) && (prod_correlation < 0.6) && (operator_count >= 2) && (operator_count <= 8) && (datafield_count <= 4) && (decay <= 5) && (truncation <= 0.1) && (universe != 'ILLIQUID_MINVOL1M')",
+    "combo": "1",
+    "selection_limit": 100,
+    "selection_handling": "POSITIVE",
+    "component_activation": "IS",
+    "reality_check_activation": "OS",
+    "note": "等权 combo=1 是第一基准；进阶才用 combo_a(alpha, mode='algo1') / 风险平价，combo 算子<=3 且永不给因子负权重"
+  },
+  "immutable_red_lines": {
+    "delay_locked": 1,
+    "never_auto_submit": true,
+    "sa_submission_manual": "每天 1 条 SA 提交完全由用户网页端手动完成",
+    "sa_max_workers": 3,
+    "isolated_ledger_only": true,
+    "never_route_sa_through_ra_expr_validator": true
+  },
+  "storage_and_logs": {
+    "dedicated_ledger_db": "data/sa_own_ledger.db",
+    "dedicated_run_log": "docs/sa_own_35/sa_own_35_log.md",
+    "readonly_sc_cache_db": "data/sc_cache_v2/os_pnl_cache.db",
+    "do_not_touch": "data/wq_v2_ledger.db（RA 主线库，只读复用）"
+  },
+  "runner": {
+    "module": "wq_research_v2.sa_runner",
+    "cli_preview": "python -m wq_research_v2 sa preview --spec <spec.json>",
+    "cli_run": "python -m wq_research_v2 sa run --spec <spec.json> --budget 400 --workers 3",
+    "cli_resume": "python -m wq_research_v2 sa resume",
+    "cli_status": "python -m wq_research_v2 sa status --region EUR",
+    "cli_ammo": "python -m wq_research_v2 sa ammo --region EUR --limit 100"
+  }
+}

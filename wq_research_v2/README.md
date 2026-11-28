@@ -54,6 +54,13 @@ python -m wq_research_v2 forge preflight --region USA --queue NORMAL --normal-co
 python -m wq_research_v2 forge funnel --db data/wq_v2_ledger.db
 python -m wq_research_v2 forge dsh-brief --region USA --universe TOP3000 --dataset ai_equity_alpha --failure HIGH_PC --goal "只读复核 PC 分布与单轴修复假设"
 python scripts/ops/launch_alphaforge_v4.py --region USA --universe TOP3000 --dataset ai_equity_alpha
+
+# 12. 路线 ⑤（SuperAlpha Own v1.0）：type=SUPER 回测（SA 400/天、并发 3、独立 data/sa_own_ledger.db、零 /submit）
+python -m wq_research_v2 sa status --region EUR        # 只读核验 >=100 OS 解锁 own SA
+python -m wq_research_v2 sa ammo --region EUR --limit 100   # 只读盘点 own 弹药库
+python -m wq_research_v2 sa preview --spec docs/sa_own_35/sa_spec_example.json   # 0 成本预览 payload
+python -m wq_research_v2 sa run --spec docs/sa_own_35/sa_spec_example.json --budget 400 --workers 3
+python -m wq_research_v2 sa resume
 ```
 
 ## 模块清单

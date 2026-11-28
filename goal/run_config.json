@@ -4,9 +4,10 @@
   "active_track_name": "锻造闭环路径 (AlphaForge v4.0)",
   "track_registry": {
     "baseline_v1": "基础优化路径 (Baseline v1.0 · EUR/USA 双区单模板冻结版)",
-    "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × 5地区轮巡 × 3模板族配对 × >=4500自动切免额)",
+    "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × 5地区轮巡 × 3模板族配对 × >=4200自动切免额)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · 独立文档/台账/标签，不接入主调度器)",
-    "alphaforge_agy_dsh_v4": "锻造闭环路径 (AlphaForge v4.0 · P0/P1/P2，Codex CLI 主控 + DSH 子代理 + 历史经验复用)"
+    "alphaforge_agy_dsh_v4": "锻造闭环路径 (AlphaForge v4.0 · P0/P1/P2，Codex CLI 主控 + DSH 子代理 + 历史经验复用)",
+    "super_alpha_own_v1": "SuperAlpha 独立路线 (SuperAlpha Own v1.0 · type=SUPER 回测 · SA 400/天 · 独立 data/sa_own_ledger.db)"
   },
   "updated_at": "2026-11-28T16:52:00+08:00",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
@@ -38,11 +39,13 @@
   },
   "quota_alpha0_switch": {
     "execution_order": "SEQUENTIAL_NORMAL_FIRST_NO_CONCURRENT_MIX",
-    "alpha0_switch_threshold": 4500,
-    "daily_target": 4500,
-    "below_threshold_mode": "NORMAL_ONLY（不要同步混跑！先跑满 4,500 个常规额度，略微超出无妨）",
-    "at_or_above_threshold_mode": "ALPHA0_EXEMPT_ONLY（跑满 4,500 常规额度后，再自动切入运行 Alphas=0 豁免字段队列）",
+    "alpha0_switch_threshold": 4200,
+    "daily_target": 4200,
+    "below_threshold_mode": "NORMAL_ONLY（不要同步混跑！先跑满 4,200 个常规额度，略微超出无妨）",
+    "at_or_above_threshold_mode": "ALPHA0_EXEMPT_ONLY（跑满 4,200 常规额度后，再自动切入运行 Alphas=0 豁免字段队列）",
     "alpha0_free_until": "2026-12-06",
+    "sa_daily_sim_budget": 400,
+    "sa_budget_note": "SuperAlpha（路线⑤ super_alpha_own_v1）每日回测预算 400，与 RA/Python 共享平台 5,000/天；SA 提交配额 1条/天独立于 4条 RA。RA 4,200 + SA 400 = 4,600，留 400 安全垫。",
     "inspection": {
       "mcp_server": "guangzhou-ssh",
       "mcp_tool": "mcp__guangzhou_ssh__run_command",
@@ -67,7 +70,7 @@
     ],
     "forbidden_ops": ["trade_when", "ts_target_tvr_decay(lambda_max>1)", "hump(outside tail newval=0)"]
   },
-  "description": "WorldQuant BRAIN D1-Only RA 统一启动与方向配置文件（多地区精选种子 × 多模板族配对、额度 >=4500 自动切免额字段、全指标过线自动 PATCH 打标并提示、Stage 1-2 QUICK 快筛、3-4 小时定时复查）。",
+  "description": "WorldQuant BRAIN D1-Only RA 统一启动与方向配置文件（多地区精选种子 × 多模板族配对、额度 >=4200 自动切免额字段、SuperAlpha 路线⑤ 独立 400/天、全指标过线自动 PATCH 打标并提示、Stage 1-2 QUICK 快筛、3-4 小时定时复查）。",
   "direction": {
     "regions": ["ASI", "EUR", "USA", "KOR"],
     "region_caps": {

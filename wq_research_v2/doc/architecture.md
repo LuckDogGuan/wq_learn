@@ -12,6 +12,7 @@
 | 相关性与预检 | `sc_local.py`、`pc_poller.py` | 便携式 `os_pnl_cache.db`（`zlib+float64`）、零假零本地 SC、`N×N` 候选两两矩阵与贪心正交筛选；异步非阻塞远程 PC 与 `/check` 状态机（零 `/submit`） |
 | 评估、消融与停用 | `ra_evaluator.py`、`ablation_engine.py`、`blacklist_registry.py`、`pyramid_planner.py` | 厂字型秒杀、D1 四关评价、零 `+`/`*` 双分支消融、Stage-0 快速降级与 200 样本作用域自动停用/一键恢复、5:5 批次规划 |
 | 路线 ④ 锻造闭环与经验复用 | `experience_reuser.py`、`alphaforge_v4.py` | 历史经验按坐标及瓶颈检索，包含 P0 入口门禁及美东日漏斗、P1 失败反馈及换向、P2 三主一备清单。Codex CLI 主控，DSH 子代理只读核验。 |
+| 路线 ⑤ SuperAlpha 独立线 | `sa_runner.py` | `type=SUPER` 单发回测、`MAX_WORKERS=3`、独立 SQLite `data/sa_own_ledger.db`（WAL 断点续传 + reconcile-once + SA 每日 400 预算硬上限）。selection/combo 为 SA 方言，不进 RA `ExprValidator`；零 `/submit`。 |
 
 ## 2. 故障恢复与断点续传机制
 

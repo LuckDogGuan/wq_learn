@@ -33,6 +33,12 @@ from wq_research_v2.legacy_merger import (
 from wq_research_v2.pc_poller import PCPoller
 from wq_research_v2.pyramid_planner import build_stage0_probe_spec
 from wq_research_v2.quota_tracker import QuotaTracker, current_est_platform_date
+from wq_research_v2.sa_runner import (
+    SA_TRACK_ID,
+    SaOwnLedger,
+    SaRunner,
+    build_sa_payload,
+)
 from wq_research_v2.sc_local import LocalSCEngine
 from wq_research_v2.sim_runner import SimRunner
 from wq_research_v2.tagger import USEFUL_TAG, apply_alpha_tag
@@ -40,6 +46,72 @@ from wq_research_v2.tagger import USEFUL_TAG, apply_alpha_tag
 
 def _parse_csv(raw: str) -> list[str]:
     return [x.strip() for x in raw.replace(";", ",").split(",") if x.strip()]
+
+
+def _sa_status(auth: BrainAuthSession, region: str) -> dict[str, Any]:
+    """Read-only SuperAlpha eligibility query (never prints credentials): genius level +
+    submitted REGULAR alpha count + existing SUPER alpha count."""
+    out: dict[str, Any] = {"region": region.upper()}
+    try:
+        prof = auth.get("/users/self", timeout=30)
+        if prof.status_code == 200:
+            out["genius_level"] = prof.json().get("geniusLevel")
+        else:
+            out["profile_http"] = prof.status_code
+    except Exception as exc:  # pragma: no cover - live network
+        out["profile_error"] = type(exc).__name__
+
+    try:
+        r = auth.get(
+            "/users/self/alphas?limit=1&hidden=false&status!=UNSUBMITTED&status!=IS_FAIL&type!=SUPER",
+            timeout=30,
+        )
+        if r.status_code == 200:
+            out["submitted_regular_count"] = r.json().get("count")
+        else:
+            out["regular_count_http"] = r.status_code
+    except Exception as exc:  # pragma: no cover - live network
+        out["regular_count_error"] = type(exc).__name__
+
+    try:
+        r = auth.get("/users/self/alphas?limit=1&hidden=false&type=SUPER", timeout=30)
+        if r.status_code == 200:
+            out["super_alpha_count"] = r.json().get("count")
+        else:
+            out["sa_count_http"] = r.status_code
+    except Exception as exc:  # pragma: no cover - live network
+        out["sa_count_error"] = type(exc).__name__
+    return out
+
+
+def _sa_ammo(auth: BrainAuthSession, region: str, limit: int) -> dict[str, Any]:
+    """Read-only SuperAlpha 'own 弹药库' listing: submitted REGULAR D1 alphas for a region."""
+    reg = region.upper()
+    url = (
+        f"/users/self/alphas?limit={max(1, min(500, int(limit)))}&hidden=false"
+        f"&status!=UNSUBMITTED&status!=IS_FAIL&type!=SUPER"
+        f"&settings.delay=1&settings.region={reg}&order=-is.sharpe"
+    )
+    try:
+        resp = auth.get(url, timeout=30)
+        if resp.status_code != 200:
+            return {"region": reg, "http": resp.status_code}
+        data = resp.json()
+        rows = []
+        for a in data.get("results") or []:
+            ism = a.get("is") or {}
+            rows.append(
+                {
+                    "id": a.get("id"),
+                    "name": a.get("name"),
+                    "sharpe": ism.get("sharpe"),
+                    "fitness": ism.get("fitness"),
+                    "prod_correlation": ism.get("prodCorrelation"),
+                }
+            )
+        return {"region": reg, "count": data.get("count"), "results": rows}
+    except Exception as exc:  # pragma: no cover - live network
+        return {"region": reg, "error": type(exc).__name__}
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -171,6 +243,16 @@ def build_parser() -> argparse.ArgumentParser:
     p_fg.add_argument("--model", default=None)
     p_fg.add_argument("--input", type=Path, default=None, help="JSON candidate list for 3+1 roster")
     p_fg.add_argument("--json", dest="as_json", action="store_true")
+
+    # sa (Route ⑤: super_alpha_own_v1 — SuperAlpha backtest + read-only ammo/status, isolated ledger)
+    p_sa = sub.add_parser("sa", help="Route ⑤ SuperAlpha backtest (preview/run/resume) + read-only status/ammo")
+    p_sa.add_argument("action", choices=["preview", "run", "resume", "status", "ammo"])
+    p_sa.add_argument("--spec", type=Path, default=None, help="JSON spec {region, universe, selection, combo, settings, items[]}")
+    p_sa.add_argument("--region", default="EUR", help="Region for status/ammo (default EUR)")
+    p_sa.add_argument("--universe", default="TOP2500", help="Universe for ammo/status")
+    p_sa.add_argument("--budget", type=int, default=400, help="SuperAlpha daily simulation budget")
+    p_sa.add_argument("--workers", type=int, default=3, help="SuperAlpha concurrency (max 3)")
+    p_sa.add_argument("--limit", type=int, default=100, help="Read-only ammo list page size")
 
     return p
 
@@ -396,6 +478,36 @@ def main(argv: Optional[list[str]] = None) -> int:
             print(json.dumps(out, indent=2, ensure_ascii=False))
             return 0
 
+    if args.cmd == "sa" and args.action == "preview":
+        # Offline SuperAlpha payload preview (zero API cost) — review before running.
+        spec = json.loads(args.spec.read_text(encoding="utf-8")) if args.spec else {}
+        region = str(spec.get("region") or args.region).upper()
+        universe = str(spec.get("universe") or args.universe).upper()
+        base_settings = dict(spec.get("settings") or {})
+        base_settings.setdefault("region", region)
+        base_settings.setdefault("universe", universe)
+        base_settings.setdefault("delay", 1)
+        base_settings.setdefault("selectionLimit", 100)
+        base_settings.setdefault("selectionHandling", "POSITIVE")
+        base_settings.setdefault("componentActivation", "IS")
+        base_selection = str(spec.get("selection") or "").strip()
+        base_combo = str(spec.get("combo") or "").strip()
+        if not base_selection or not base_combo:
+            raise SystemExit("sa preview requires --spec with 'selection' and 'combo'")
+        payloads = []
+        for item in (spec.get("items") or [{}]):
+            item_settings = dict(base_settings)
+            item_settings.update(item.get("settings_override") or {})
+            payloads.append(
+                build_sa_payload(
+                    str(item.get("selection") or base_selection),
+                    str(item.get("combo") or base_combo),
+                    item_settings,
+                )
+            )
+        print(json.dumps({"track_id": SA_TRACK_ID, "payloads": payloads}, indent=2, ensure_ascii=False))
+        return 0
+
     # Live read-only / authenticated commands
     ledger = LedgerStore()
     quota = QuotaTracker(ledger)
@@ -469,6 +581,28 @@ def main(argv: Optional[list[str]] = None) -> int:
                 pending = ledger.get_resumable_tasks()
                 print(json.dumps({"resumable_count": len(pending), "task_ids": [t["task_id"] for t in pending[:20]]}, indent=2))
             return 0
+
+        if args.cmd == "sa":
+            sa_ledger = SaOwnLedger()
+            try:
+                if args.action == "run":
+                    if not args.spec:
+                        raise SystemExit("--spec is required for sa run")
+                    spec = json.loads(args.spec.read_text(encoding="utf-8"))
+                    runner = SaRunner(auth, sa_ledger, quota, daily_budget=args.budget, max_workers=args.workers)
+                    bid, runnable, skipped = runner.prepare_batch_tasks(spec)
+                    res = runner.run_prepared_tasks(bid, runnable)
+                    print(json.dumps({"batch_id": bid, "skipped": len(skipped), **res}, indent=2, ensure_ascii=False))
+                elif args.action == "resume":
+                    pending = sa_ledger.get_resumable_tasks()
+                    print(json.dumps({"resumable_count": len(pending), "task_ids": [t["task_id"] for t in pending[:20]]}, indent=2))
+                elif args.action == "status":
+                    print(json.dumps(_sa_status(auth, args.region), indent=2, ensure_ascii=False))
+                elif args.action == "ammo":
+                    print(json.dumps(_sa_ammo(auth, args.region, args.limit), indent=2, ensure_ascii=False))
+                return 0
+            finally:
+                sa_ledger.close()
     finally:
         auth.close()
         ledger.close()

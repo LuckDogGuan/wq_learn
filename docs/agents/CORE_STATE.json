@@ -3,9 +3,10 @@
   "active_track_name": "锻造闭环路径 (AlphaForge v4.0)",
   "track_registry": {
     "baseline_v1": "基础优化路径 (Baseline v1.0 · 冻结于 d1_ra_baseline_v1_frozen.json)",
-    "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >=4500切Alphas=0)",
+    "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >=4200切Alphas=0)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)",
-    "alphaforge_agy_dsh_v4": "锻造闭环路径 (AlphaForge v4.0 · Codex CLI 主控 + DSH 子代理 + 历史经验复用 · docs/alphaforge_v4/)"
+    "alphaforge_agy_dsh_v4": "锻造闭环路径 (AlphaForge v4.0 · Codex CLI 主控 + DSH 子代理 + 历史经验复用 · docs/alphaforge_v4/)",
+    "super_alpha_own_v1": "SuperAlpha 独立路线 (SuperAlpha Own v1.0 · type=SUPER 回测 · SA 400/天 · data/sa_own_ledger.db · docs/sa_own_35/)"
   },
   "updated_at": "2026-11-28T17:07:00+08:00",
   "alphaforge_next_direction": "ASI/MINVOL1M 新低相关种子。先看现有 analyst39/analyst_consensus 常规队列，出现正向 Sharpe≥1.25 的新指纹后才做表达式与设置同参、仅 QUICK→FULL 的对照；看原始 2Y≥1.58、Fitness≥1.00、JPN 和 Robust。Jj3XEbgl 仅作低 PC／近 2Y 参考，r37 未观测指纹不重发。",
