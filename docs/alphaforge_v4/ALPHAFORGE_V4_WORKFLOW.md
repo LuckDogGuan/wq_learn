@@ -19,7 +19,7 @@ flowchart TD
     end
 
     subgraph AGY["主控逻辑：Antigravity CLI (agy)"]
-        A1["1) 启动极简上下文 (<8 KB)<br/>读取 AGENTS.md + alphaforge_v4_config.json + CORE_STATE + OPTIMIZATION_LEDGER"]
+        A1["1) 启动<br/>应用 AGENTS.md，读取 forge handoff 摘要，按案例编号查证"]
         A2["2) P0 执行入口硬门禁 (wq_research_v2 forge preflight & funnel)<br/>• 常规完成 <4500 严禁发 UNUSED_ALPHA0<br/>• 拦截 COMPLETED/SUBMITTED/PENDING_RECONCILE/RESULTS_UNOBSERVED 指纹<br/>• 美东平台日对账 + 进度耗时指标 (last_completed / oldest_pending)"]
         A3["3) 方向决策 + 历史经验卡片注入<br/>• 匹配 Region/Universe/Dataset/瓶颈码 -> 生成 <=3.8KB 经验卡<br/>• 核查 PPA-First 结构 (ops<=8 & fields<=3) 与换向预算"]
         A4["5) 主 Agent 独立验真与收口<br/>• 校验 DSH 回执证据 + ExprValidator Gold-81 预检<br/>• Stage 1-2 QUICK / Stage 3-4 强制 FULL (1:1 同参)<br/>• 写回 [有效]/[无效] 至 OPTIMIZATION_LEDGER.json"]
@@ -72,10 +72,13 @@ python -m wq_research_v2 forge funnel --db data/wq_v2_ledger.db
 ```
 
 ### Step 1 · 启动 Antigravity CLI (`agy`) 主控
-使用跨平台启动器（默认 **dry-run 只预览不执行**，确认无误后加 `--execute` 拉起 `agy`）：
+使用跨平台启动器。默认只输出一行摘要，`--show-prompt` 可查看完整提示。正式启动时，启动器会设置 Python 模块路径并保留独立的 CLI 日志。
 ```powershell
-# 预览 Antigravity CLI 启动命令与注入的历史经验提示词
-python scripts/ops/launch_alphaforge_v4.py --region USA --universe TOP3000 --dataset ai_equity_alpha --goal "复核上轮结果并推进单轴降 PC"
+# 预览默认启动
+python scripts/ops/launch_alphaforge_v4.py
+
+# 只读验收默认路线、Antigravity CLI 与 DSH 派单
+python scripts/ops/launch_alphaforge_v4.py --verify
 
 # 交互模式直接启动 Antigravity CLI 主控
 python scripts/ops/launch_alphaforge_v4.py --region USA --universe TOP3000 --dataset ai_equity_alpha --interactive --execute
@@ -83,6 +86,8 @@ python scripts/ops/launch_alphaforge_v4.py --region USA --universe TOP3000 --dat
 # 单轮无交互模式（--print）运行巡检并落日志
 python scripts/ops/launch_alphaforge_v4.py --region USA --universe TOP3000 --dataset ai_equity_alpha --effort high --execute
 ```
+
+每次实际启动的 CLI 日志默认保存在 `data/alphaforge_v4_runs/`，路线回执继续追加到 [alphaforge_v4_log.md](alphaforge_v4_log.md)。广州台账或配额只取得旧快照时，记录观测时间，等待当日证据再下发回测。
 
 ### Step 2 · `agy` 主控调用 DSH 子代理（严格 3 步规范）
 1. **绑定并探测**：调用 `dsh_worker_config(enabled=true, mode="hub", escalate_on_failure=false)` 核实 `flash` 绑定为 `dsh-opencode-go/deepseek-v4.1-flash`，再调用 `dsh_worker_probe(tier="flash", provider="dsh-opencode-go", model="deepseek-v4.1-flash")` 确认 `tool_call_verified=true`。

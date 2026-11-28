@@ -59,9 +59,7 @@
 
 ## 三、如何快速切换或调用某条路线
 
-- **继续当前「多域星阵路径」闭环**（3 小时定时自动复查，也可随时手动口令触发）：直接发送 [goal/START_HERE.md](file:///c:/Wq/WorldQuant%20Brain/goal/START_HERE.md) 默认一键启动句即可。
+- **继续「多域星阵路径」**：在启动口令里明确指定路线 ②。广州现有守护仍按已有部署运行。
 - **回退「基础优化路径」**：按 [D1_RA_BASELINE_V1_MANUAL.md](file:///c:/Wq/WorldQuant%20Brain/docs/整理与研究/workflow/D1_RA_BASELINE_V1_MANUAL.md) 恢复广州启动命令至 `EUR,USA` 冻结版参数。
 - **人工单启「亚太孤岛实验线」**：在对话中明确指示“按「亚太孤岛实验线」独立配置启动 `ASI-D1` 探索（落盘 `data/asi_isolated_ledger.db` 并记录至 `asi_experiment_log.md`）”。
-- **启动「路线 ④：锻造闭环路径（AlphaForge AGY-DSH v4.0）」**：
-  - 预览命令与注入的历史经验：`python scripts/ops/launch_alphaforge_v4.py --region USA --universe TOP3000 --dataset ai_equity_alpha`
-  - 使用 Antigravity CLI (`agy`) 主控正式启动（内置调用 DSH 子代理）：追加 `--interactive --execute` 或 `--execute`；或调用 `python -m wq_research_v2 forge {experience|preflight|funnel|ppa-check|dsh-brief|agy-cmd|roster}` 执行各环节门禁与简报编译。
+- **启动默认路线 ④「锻造闭环路径」**。入口、验收命令和日志位置见 [START_HERE.md](../goal/START_HERE.md)。

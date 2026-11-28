@@ -39,7 +39,7 @@
 
 ## 3. 跨 AI 工具续接与「主 Agent + 子 Agent」控制变量闭环 (`wq-d1-closed-loop`)
 
-- **防上下文爆炸启动协议**：切换任何 AI 工具（Claude Code / Cursor / Codex / Antigravity）或执行 `/compact` 后，**只读 3 个轻量真源（`< 8 KB`）**：本文件 + [CORE_STATE.json](docs/agents/CORE_STATE.json) + [OPTIMIZATION_LEDGER.json](docs/agents/OPTIMIZATION_LEDGER.json)（详细切换与启动口令见 [HANDOFF_GUIDE.md](docs/agents/HANDOFF_GUIDE.md)，跨工具技能见 [.agents/skills/wq-d1-closed-loop/SKILL.md](.agents/skills/wq-d1-closed-loop/SKILL.md)）。
+- **精简启动**：新会话或 `/compact` 后按 [START_HERE.md](goal/START_HERE.md) 启动。先读 `forge handoff` 的摘要，再从 [核心状态](docs/agents/CORE_STATE.json) 和 [归因台账](docs/agents/OPTIMIZATION_LEDGER.json) 取需要复核的条目。完整日志继续留存。
 - **基础版/通用版冻结真源**：当前已跑通 `4,893 FULL/天` 的稳定流水线已完整冻结于 [d1_ra_baseline_v1_frozen.json](docs/整理与研究/workflow/d1_ra_baseline_v1_frozen.json) 与 [D1_RA_BASELINE_V1_MANUAL.md](docs/整理与研究/workflow/D1_RA_BASELINE_V1_MANUAL.md)；任何流程修改若劣化可一键回退。
 - **任务时长与中途检查**：常规任务按预计工作量和运行强度设计为 **3–24 小时**。预计超过 **6 小时**的任务，启动后最迟 **4 小时**做第一次轻量检查，此后相邻两次检查最多间隔 **4 小时**。优先用现有巡检，只读核对是否按计划运行、已完成数和满足本轮条件数（待判定单列）。具体口径见 [闭环技能](.agents/skills/wq-d1-closed-loop/SKILL.md)。
 - **主从闭环与阶段纪律**：

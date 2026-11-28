@@ -5,15 +5,12 @@ description: "WorldQuant BRAIN D1-Only RA 跨 AI 工具通用闭环技能（主 
 
 # WorldQuant BRAIN D1-Only 跨工具闭环技能 (`wq-d1-closed-loop`)
 
-本技能将研究状态与对话历史彻底解耦，确保在 **Antigravity、Claude Code、Cursor、Codex** 等任何 AI 工具中均以 `< 8 KB` 极简上下文启动「采集 → Stage 1-2 快筛剪枝 → Stage 3 控制变量精修 → Stage 4 终检打标 → 有效/无效归因闭环」。
+本技能以本地状态接续「采集 → Stage 1–2 快筛剪枝 → Stage 3 控制变量精修 → Stage 4 终检打标 → 有效/无效归因」。
 
 ## 1. 启动第一步：只读加载轻量核心上下文（防上下文爆炸）
 
-每次启动或 `/compact` 后，**只读以下 4 个轻量文件**（绝不扫描历史长对话）：
-0. `goal/run_config.json` 与 `goal/START_HERE.md`（统一启动配置：自定义/默认 `Region`、`Universe`、`Category`、`Research Mode`、Stage 1-2 `QUICK` 模式、模板比例 `5:5 -> 8:2`、子代理默认 `dsh-opencode-go/deepseek-v4.1-flash`（先 probe，最多 4 轮，保留会话））
-1. `AGENTS.md`（硬红线：严格 `delay==1`、禁用 `+/*/trade_when`、精确 81 个 Gold 算子、零自动 `/submit`、Margin 优先、`Useful`/`SC_PASS` + `SC 0.xxx PC 0.xxx` 别名、8:2 查资料优先级）
-2. `docs/agents/CORE_STATE.json`（当前专注的 1–2 个地区/数据集、现役 `Useful` 冠军、阶段 1–4 参数契约、Baseline v1.0 回退指针）
-3. `docs/agents/OPTIMIZATION_LEDGER.json`（上轮哪些优化**有效 `[EFFECTIVE]`**、哪些**无效 `[INEFFECTIVE]`**）
+1. 应用 `AGENTS.md`。按 `goal/START_HERE.md` 运行 `forge handoff`，以 `default_track_id` 确定默认路线。路线 ④ 的启动与只读验收入口见 [AlphaForge SOP](../../../docs/alphaforge_v4/ALPHAFORGE_V4_WORKFLOW.md)。
+2. 核验摘要所指的上轮批次及 `case_id`，按需抽读 `CORE_STATE.json` 和 `OPTIMIZATION_LEDGER.json` 的原始条目。派单时只取 `goal/run_config.json` 的 `subagent_profile`。运行日志、完整台账和历史对话留存，遇具体证据缺口再查询。
 
 > 若后续流程修改效果不如预期，随时对照或回退至冻结基准版：`docs/整理与研究/workflow/d1_ra_baseline_v1_frozen.json` 与 `docs/整理与研究/workflow/D1_RA_BASELINE_V1_MANUAL.md`。
 
@@ -35,7 +32,7 @@ description: "WorldQuant BRAIN D1-Only RA 跨 AI 工具通用闭环技能（主 
 
 ### Step A · 主 Agent 验真上轮结果并输出「有效 / 无效」归因
 1. 按 `goal/run_config.json` 的 `quota_alpha0_switch.inspection` 通过广州 SSH MCP 只读查询最新完成批次和配额。本地 `data/wq_v2_ledger.db` 可用于核对已同步的历史批次。
-2. 与母版基线（Parent Baseline）对比，必须明确归纳并追加写入 `docs/agents/OPTIMIZATION_LEDGER.json`：
+2. 与母版基线（Parent Baseline）对比，复核已有归因的编号，只将新的归因追加至 `docs/agents/OPTIMIZATION_LEDGER.json`：
    - **`[有效] xxx 的情况是有效的`**：写明在什么 Region/Dataset/母版上，单改了哪 1–2 个参数，使 Sharpe / 2Y / Fitness / Margin / PC 改善了多少；
    - **`[无效] yyy 的情况是无效的`**：写明什么改动导致指标劣化或超时，提取禁止重演规则。
 3. 对任何新产出的 RA 硬检 `0-FAIL` 候选，立即按 Stage-4 规程执行：
