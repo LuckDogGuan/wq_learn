@@ -1,0 +1,147 @@
+{
+  "schema_version": "wq_d1_alphaforge_v4_config_v1",
+  "track_id": "alphaforge_agy_dsh_v4",
+  "track_name": "锻造闭环路径 (AlphaForge AGY-DSH v4.0)",
+  "log_prefix": "[TRACK:alphaforge_agy_dsh_v4]",
+  "base_track_ref": {
+    "track_id": "baseline_v1",
+    "frozen_json": "docs/整理与研究/workflow/d1_ra_baseline_v1_frozen.json",
+    "manual_md": "docs/整理与研究/workflow/D1_RA_BASELINE_V1_MANUAL.md"
+  },
+  "design_source": "doc/ALPHAFORGE_WORKFLOW_REVIEW_20261128.md",
+  "updated_at": "2026-11-28T08:50:00+08:00",
+  "orchestration": {
+    "main_controller": {
+      "runtime": "antigravity_cli",
+      "cli_binary": "agy",
+      "windows_default_path": "C:/Users/31186/.gemini/bin/agy.exe",
+      "default_mode": "accept-edits",
+      "default_effort": "high",
+      "context_budget_kb": 8,
+      "owns": [
+        "P0 执行入口硬门禁（额度切换/指纹去重/D1-Only/Decision-#3/并发上限）",
+        "历史经验复用卡注入（OPTIMIZATION_LEDGER + reusable_experience_rules + sc_pass_pc_rescue_queue + worldquant-experience-reuse）",
+        "研究方向调度、2 批同因换向预算（Pivot Budget）与 PPA-First 归因",
+        "DSH 子代理探测、派单与证据独立验真",
+        "Stage-4 本地 SC / 池内正交 / 远程 PC / 全过线自动 PATCH（绝不调 /submit）",
+        "三主一备（3+1）金字塔人工复核清单编排与台账落盘"
+      ]
+    },
+    "subagent_worker": {
+      "runtime": "dsh_crew_mcp",
+      "mcp_server": "dsh-crew",
+      "hub_mode": "hub",
+      "default_provider": "dsh-opencode-go",
+      "default_model": "deepseek-v4.1-flash",
+      "dispatch_tier": "flash",
+      "dispatch_effort": "high",
+      "escalate_on_failure": false,
+      "probe_before_dispatch": true,
+      "max_concurrent_readonly_workers": 2,
+      "max_concurrent_writer_workers": 1,
+      "max_dialogue_rounds_per_worker": 4,
+      "retain_session_history": true,
+      "forbid_recursive_worker_spawn": true,
+      "brief_generator": "python -m wq_research_v2 forge dsh-brief"
+    }
+  },
+  "historical_experience_reuse": {
+    "engine_module": "wq_research_v2.experience_reuser.ExperienceReuser",
+    "cli_command": "python -m wq_research_v2 forge experience",
+    "read_only_sources": [
+      "docs/agents/OPTIMIZATION_LEDGER.json",
+      "wq_research_v2/config/reusable_experience_rules.json",
+      "docs/整理与研究/records/experiments/sc_pass_pc_rescue_queue.json",
+      "~/.gemini/antigravity/skills/worldquant-experience-reuse/references/rules.jsonl"
+    ],
+    "knowledge_priority_80_20": {
+      "primary_80_pct": [
+        "worldquant-brain-cyber-game-king (王哥 ZS59763 #32)",
+        "wq-top-advisors-skill (Top100 黄金顾问)",
+        "Admin Original Posts (WL13229 / KH94146) + 顾问课堂 53 课"
+      ],
+      "fallback_20_pct": "普通论坛帖子（仅 80% 主栈无法解决时使用）"
+    },
+    "inject_into_agy_prompt": true,
+    "inject_into_dsh_brief": true,
+    "max_card_bytes": 3800
+  },
+  "alphaforge_review_controls": {
+    "p0_execution_entry_guards": {
+      "enforce_normal_before_alpha0": true,
+      "alpha0_switch_threshold": 4500,
+      "block_terminal_and_unobserved_fingerprints": true,
+      "completed_full_immutable": true,
+      "reconcile_once_max": 1,
+      "allow_post_429_retry_default": false,
+      "platform_timezone": "America/New_York"
+    },
+    "p1_feedback_and_pivot_loop": {
+      "return_failure_packet_to_origin_direction": true,
+      "block_duplicate_sibling_family": true,
+      "max_falsifiable_axes_per_round": 1,
+      "same_failure_pivot_budget_batches": 2,
+      "exclude_pending_and_platform_faults_from_pivot_budget": true,
+      "explicit_ppa_first_attribution": true,
+      "progress_metrics_enabled": [
+        "last_completed_utc",
+        "oldest_pending_age_sec",
+        "first_completion_after_restart_sec"
+      ]
+    },
+    "p2_roster_and_yield": {
+      "manual_review_roster_pattern": "3_PRIMARY_PLUS_1_ORTHOGONAL_BACKUP",
+      "roster_is_not_submit_quota": true,
+      "max_pairwise_corr": 0.68,
+      "margin_first_priority": true,
+      "crowding_prior_unknown_when_insufficient_evidence": true,
+      "track_verified_candidates_per_100_full": true
+    }
+  },
+  "immutable_red_lines": {
+    "delay_locked": 1,
+    "ra_ppa_separated": true,
+    "forbidden_operators": ["add", "multiply", "trade_when", "+", "*"],
+    "canonical_dual_branch": "min(rank(expr_A), rank(expr_B)) / reverse(min(...))",
+    "never_auto_submit": true,
+    "auto_patch_on_all_pass_with_user_notice": true,
+    "concurrency_limits": {
+      "glb_max_threads": 3,
+      "other_regions_max_threads": 4
+    },
+    "memory_max_mb": 512,
+    "no_local_web_gui": true,
+    "universal_turnover_policy": {
+      "skip_low_turnover_lt": 0.08,
+      "reduce_high_turnover_gt": 0.18
+    },
+    "relaxed_pc_rescue_policy": {
+      "useful_pc_hard_lt": 0.70,
+      "rescue_pc_max": 0.78,
+      "rescue_ge_070_max": 10,
+      "rescue_ge_080_max": 2,
+      "max_pc_opt_rounds": 3
+    },
+    "stage_modes": {
+      "stage_1_and_2": "QUICK_OR_FULL (default decay=0, SUBINDUSTRY, truncation=0.04, P0Y0M)",
+      "stage_3_and_4": "FULL_LOCKED (1:1 exact QUICK->FULL first round per EFF-28)"
+    }
+  },
+  "storage_and_logs": {
+    "dedicated_ledger_db": "data/alphaforge_v4_ledger.db",
+    "readonly_main_ledger_db": "data/wq_v2_ledger.db",
+    "readonly_sc_cache_db": "data/sc_cache_v2/os_pnl_cache.db",
+    "dedicated_run_log": "docs/alphaforge_v4/alphaforge_v4_log.md",
+    "shared_experience_writeback": "docs/agents/OPTIMIZATION_LEDGER.json",
+    "platform_tags": {
+      "ra_all_pass": "Useful",
+      "ra_sc_pass_only": "SC_PASS",
+      "alias_format": "SC 0.xxx PC 0.xxx"
+    }
+  },
+  "schedule_and_inspection": {
+    "planned_task_window_hours": "3-24",
+    "light_check_max_interval_hours": 4,
+    "no_tight_60s_polling": true
+  }
+}
