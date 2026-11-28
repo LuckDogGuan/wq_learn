@@ -32,6 +32,7 @@ def _make_settings(
     decay: int,
     truncation: float,
     max_trade: str = "OFF",
+    nan_handling: str = "OFF",
 ) -> dict[str, Any]:
     return {
         "instrumentType": "EQUITY",
@@ -43,7 +44,7 @@ def _make_settings(
         "truncation": float(truncation),
         "pasteurization": "ON",
         "unitHandling": "VERIFY",
-        "nanHandling": "OFF",
+        "nanHandling": nan_handling,
         "maxTrade": max_trade,
         "language": "FASTEXPR",
         "visualization": False,
@@ -1231,11 +1232,86 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
     "long_term_quantile5_r60_pred": 0,
     "long_term_seasonal_quantile1_r120_pred": 0,
     "long_term_regime2_quantile1_r120_pred": 0,
+    "short_term_regime2_quantile1_r60_pred": 0,
     "short_hedge3_60d_single_quantile_pred": 0,
     "mean_revisioncluster_revision_pct_quarterly_eps_long": 0,
     "oth496_returns60_t": 0,
     "oth496_returns252_t": 0,
 }
+
+
+def build_s3r36_usa_alpha0_exact_full_specs() -> list[dict[str, Any]]:
+    """S3-r36 (16 FULL, 100% UNUSED_ALPHA0 FREE): Strictly Single-Variable (QUICK -> FULL only!) Verification of Top USA Alphas=0 Seeds!
+
+    Triggered by 2-hour Audit #28 (2026-11-28 08:12 CST) after `INEFF-30` showed that changing
+    `decay: 0 -> 4`, `truncation: 0.04 -> 0.06`, and `nanHandling: ON -> OFF` simultaneously in `S3-r35`
+    confounded the `QUICK -> FULL` mode transition:
+      - Pack A (8 FULL UNUSED_ALPHA0 FREE, USA/TOP3000/multifactor_return_pred, SUBINDUSTRY d=0 tr=0.04 nanHandling=ON):
+        Exact 1-for-1 setting match with the `SUBINDUSTRY` `QUICK` parents (changing ONLY `simulationMode: QUICK -> FULL`):
+          1) `RR5X05Yj` (`group_zscore(ts_backfill(long_term_quantile1_r60_pred, 21), industry)`, `QUICK Sh=1.59, SC=0.3199, PC ge070=2`)
+          2) `QPWeWxYg` (`signed_power(group_zscore(ts_backfill(long_term_quantile1_r60_pred, 21), industry), 1.5)`, `QUICK Sh=1.53`)
+          3) `2rGE6rgN` (`signed_power(group_zscore(ts_backfill(long_term_seasonal_quantile1_r120_pred, 21), industry), 1.5)`, `QUICK Sh=1.51`)
+          4) `RR5X9dAd` (`signed_power(group_zscore(ts_backfill(long_term_regime2_quantile1_r120_pred, 21), industry), 1.5)`, `QUICK Sh=1.50`)
+          5) `mLKOVed9` (`group_zscore(ts_backfill(short_term_regime2_quantile1_r60_pred, 21), industry)`, `QUICK Sh=1.49`)
+          6) `58GRGe1k` (`signed_power(group_zscore(ts_backfill(long_term_quantile5_r60_pred, 21), industry), 1.5)`, `QUICK Sh=1.47, 2Y=2.04, SC=0.3094, PC ge070=1`)
+          7) `A1L6LpQY` (`tail(group_rank(ts_decay_linear(ts_backfill(long_term_quantile1_r60_pred, 21), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)`, `QUICK Sh=1.41, Fit=0.77, 7.67bp, SC=0.3492, PC ge070=1` — direct controlled pair vs `omPvj8Ak` d=4/tr=0.06/nan=OFF)
+          8) `RR5nb5oj` (`group_rank(ts_decay_linear(ts_rank(ts_backfill(mean_revisioncluster_revision_pct_quarterly_eps_long, 21), 252), 10), subindustry)`, `QUICK Sh=1.41, 2Y=2.23, Fit=0.74, 8.96bp, SC=0.6071` — direct controlled pair vs `e71KMkgd` d=4/tr=0.06/nan=OFF)
+      - Pack B (8 FULL UNUSED_ALPHA0 FREE, USA/TOP3000/multifactor_return_pred, CROWDING d=0 tr=0.04 nanHandling=ON):
+        Exact 1-for-1 setting match with the `CROWDING` `QUICK` parents (including `WjYKKQgQ` `Sh=1.53, 100-OS SC=0.3229, PC ge070=0 PC_PASS_STRICT!`).
+    """
+    q1 = "ts_backfill(long_term_quantile1_r60_pred, 21)"
+    q5 = "ts_backfill(long_term_quantile5_r60_pred, 21)"
+    s1 = "ts_backfill(long_term_seasonal_quantile1_r120_pred, 21)"
+    r1 = "ts_backfill(long_term_regime2_quantile1_r120_pred, 21)"
+    st1 = "ts_backfill(short_term_regime2_quantile1_r60_pred, 21)"
+    epsl_r252 = "ts_rank(ts_backfill(mean_revisioncluster_revision_pct_quarterly_eps_long, 21), 252)"
+
+    sub_exact_exprs: list[tuple[str, str, str, str]] = [
+        ("PC36-A1-rr5x-q1-gz-ind", "ADMIN_ORIGINAL", "WL13229", f"group_zscore({q1}, industry)"),
+        ("PC36-A2-mlko-st1-gz-ind", "ADMIN_ORIGINAL", "WL13229", f"group_zscore({st1}, industry)"),
+        ("PC36-A3-a1l6-q1-d22-tail25", "ADMIN_ORIGINAL", "KH94146", f"tail(group_rank(ts_decay_linear({q1}, 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC36-A4-rr5n-epsl-r252-d10", "ADMIN_ORIGINAL", "KH94146", f"group_rank(ts_decay_linear({epsl_r252}, 10), subindustry)"),
+        ("PC36-A5-qpwe-q1-sp15-ind", "TOP100_2026Q4", "SZ83096", f"signed_power(group_zscore({q1}, industry), 1.5)"),
+        ("PC36-A6-2rge-s1-sp15-ind", "TOP100_2026Q4", "SZ83096", f"signed_power(group_zscore({s1}, industry), 1.5)"),
+        ("PC36-A7-rr5x9-r1-sp15-ind", "TOP100_2026Q4", "ZS59763", f"signed_power(group_zscore({r1}, industry), 1.5)"),
+        ("PC36-A8-58gr-q5-sp15-ind", "TOP100_2026Q4", "LD22811", f"signed_power(group_zscore({q5}, industry), 1.5)"),
+    ]
+
+    crd_exact_exprs: list[tuple[str, str, str, str]] = [
+        ("PC36-B1-qpwe-q1-gz-ind", "ADMIN_ORIGINAL", "WL13229", f"group_zscore({q1}, industry)"),
+        ("PC36-B2-9qgo-s1-gz-ind", "ADMIN_ORIGINAL", "WL13229", f"group_zscore({s1}, industry)"),
+        ("PC36-B3-blxp-r1-gz-ind", "ADMIN_ORIGINAL", "KH94146", f"group_zscore({r1}, industry)"),
+        ("PC36-B4-xalm-st1-gz-ind", "ADMIN_ORIGINAL", "KH94146", f"group_zscore({st1}, industry)"),
+        ("PC36-B5-wjyk-s1-sp15-ind", "TOP100_2026Q4", "SZ83096", f"signed_power(group_zscore({s1}, industry), 1.5)"),
+        ("PC36-B6-d59e-r1-sp15-ind", "TOP100_2026Q4", "SZ83096", f"signed_power(group_zscore({r1}, industry), 1.5)"),
+        ("PC36-B7-kq8e-q1-sp15-ind", "TOP100_2026Q4", "ZS59763", f"signed_power(group_zscore({q1}, industry), 1.5)"),
+        ("PC36-B8-q1-s1-d22-tail25", "TOP100_2026Q4", "LD22811", f"tail(group_rank(ts_decay_linear(min(rank({q1}), rank({s1})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+    ]
+
+    return [
+        _pack(
+            batch_id="S3-r36-USA-ALPHA0-EXACT-FULL-sub_d0_t04",
+            campaign_id="S3_USA_ALPHA0_EXACT_SUB_FULL",
+            hypothesis_id="HYP-S3R36-USA-ALPHA0-SUB-D0-TR04-NANON-EXACT-FULL",
+            region="USA",
+            universe="TOP3000",
+            dataset_id="multifactor_return_pred",
+            queue_type="UNUSED_ALPHA0",
+            settings=_make_settings("USA", "TOP3000", "SUBINDUSTRY", decay=0, truncation=0.04, nan_handling="ON"),
+            items=_build_items(sub_exact_exprs, dataset_id="multifactor_return_pred", primary_field_id="long_term_quantile1_r60_pred", tag_suffix="sub_d0_t04"),
+        ),
+        _pack(
+            batch_id="S3-r36-USA-ALPHA0-EXACT-FULL-crd_d0_t04",
+            campaign_id="S3_USA_ALPHA0_EXACT_CRD_FULL",
+            hypothesis_id="HYP-S3R36-USA-WJYKKQGQ-PCGE0-CRD-D0-TR04-NANON-EXACT-FULL",
+            region="USA",
+            universe="TOP3000",
+            dataset_id="multifactor_return_pred",
+            queue_type="UNUSED_ALPHA0",
+            settings=_make_settings("USA", "TOP3000", "CROWDING", decay=0, truncation=0.04, nan_handling="ON"),
+            items=_build_items(crd_exact_exprs, dataset_id="multifactor_return_pred", primary_field_id="long_term_seasonal_quantile1_r120_pred", tag_suffix="crd_d0_t04"),
+        ),
+    ]
 
 
 def build_s3r35_usa_asi_alpha0_free_full_specs() -> list[dict[str, Any]]:
@@ -1383,7 +1459,7 @@ def build_s3r34_asi_anlcons_usa_aieq_specs() -> list[dict[str, Any]]:
             universe="MINVOL1M",
             dataset_id="analyst_consensus",
             queue_type="NORMAL",
-            settings=_make_settings("ASI", "MINVOL1M", "COUNTRY", decay=0, truncation=0.04, max_trade="ON"),
+            settings=_make_settings("ASI", "MINVOL1M", "COUNTRY", decay=0, truncation=0.04, max_trade="ON", nan_handling="ON"),
             items=_build_items(asi_cons_exprs, dataset_id="analyst_consensus", primary_field_id="max_estimate_targetprice_annual12_tribes", tag_suffix="cty_d0_t04"),
         ),
         _pack(
@@ -1394,7 +1470,7 @@ def build_s3r34_asi_anlcons_usa_aieq_specs() -> list[dict[str, Any]]:
             universe="TOP3000",
             dataset_id="ai_equity_alpha",
             queue_type="NORMAL",
-            settings=_make_settings("USA", "TOP3000", "REVERSION_AND_MOMENTUM", decay=4, truncation=0.06),
+            settings=_make_settings("USA", "TOP3000", "REVERSION_AND_MOMENTUM", decay=0, truncation=0.04, nan_handling="ON"),
             items=_build_items(usa_aieq_exprs, dataset_id="ai_equity_alpha", primary_field_id="analyst_sentiment_score_3", tag_suffix="ram_d4_t06"),
         ),
     ]
@@ -2625,9 +2701,10 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r35 (16 FULL FREE) -> S3-r34 (16 FULL NORMAL) -> S3-r33 -> ..."""
+    """Return ordered S3-r36 (16 FULL FREE exact) -> S3-r35 -> S3-r34 (16 FULL NORMAL exact) -> ..."""
     return (
-        build_s3r35_usa_asi_alpha0_free_full_specs()
+        build_s3r36_usa_alpha0_exact_full_specs()
+        + build_s3r35_usa_asi_alpha0_free_full_specs()
         + build_s3r34_asi_anlcons_usa_aieq_specs()
         + build_s3r33_asi_q5str2_eur_opeff_si6_specs()
         + build_s3r32_asi_psd_anl_ortho_full_specs()

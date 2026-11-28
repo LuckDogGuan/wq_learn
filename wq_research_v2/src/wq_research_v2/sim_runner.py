@@ -178,6 +178,14 @@ def build_sim_payload(
     }
 
 
+def extract_sharpe_2y_from_checks(checks: Optional[list[dict[str, Any]]]) -> Optional[float]:
+    """Extract ONLY LOW_2Y_SHARPE from BRAIN IS checks (never conflate IS_LADDER_SHARPE with 2Y Sharpe)."""
+    for chk in checks or []:
+        if isinstance(chk, dict) and chk.get("name") == "LOW_2Y_SHARPE" and chk.get("value") is not None:
+            return float(chk["value"])
+    return None
+
+
 class SimRunner:
     """Concurrent slot-mapped simulation runner backed by SQLite Checkpoint ledger."""
 
@@ -641,11 +649,7 @@ class SimRunner:
             ism = adata.get("is") or {}
             checks = ism.get("checks") or []
             rn = ism.get("riskNeutralized") or {}
-            sh_2y = None
-            for chk in checks:
-                if chk.get("name") in ("LOW_2Y_SHARPE", "IS_LADDER_SHARPE") and chk.get("value") is not None:
-                    sh_2y = float(chk["value"])
-                    break
+            sh_2y = extract_sharpe_2y_from_checks(checks)
             self.ledger.mark_task_completed(
                 t["task_id"],
                 simulation_mode=t["simulation_mode"],

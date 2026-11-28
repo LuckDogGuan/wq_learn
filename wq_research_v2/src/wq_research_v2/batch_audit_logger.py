@@ -18,18 +18,46 @@ from pathlib import Path
 from typing import Any, Optional
 
 
-def _parse_checks_zero_fail(checks_json: Optional[str]) -> tuple[bool, list[str]]:
-    """Return (is_verified_zero_fail, fail_names). Empty/missing checks is NEVER treated as verified pass."""
+def classify_checks_state(checks_json: Optional[str]) -> tuple[str, list[str]]:
+    """Classify BRAIN IS checks into three states: ('VERIFIED_ZERO_FAIL' | 'HAS_FAIL' | 'UNVERIFIED', names).
+
+    - 'HAS_FAIL': at least one check has result == 'FAIL' (returns list of failing check names).
+    - 'UNVERIFIED': checks_json is missing/empty/invalid, or any check has result in ('PENDING', 'ERROR')
+      or an unrecognized status outside ('PASS', 'WARNING') (returns list of unverified check names).
+    - 'VERIFIED_ZERO_FAIL': non-empty checks list where every check is 'PASS' or 'WARNING' (0 FAIL, 0 PENDING/ERROR).
+    """
     if not checks_json:
-        return False, []
+        return "UNVERIFIED", []
     try:
         checks = json.loads(checks_json)
     except Exception:
-        return False, []
+        return "UNVERIFIED", []
     if not isinstance(checks, list) or not checks:
-        return False, []
-    fails = [str(c.get("name") or "UNKNOWN") for c in checks if isinstance(c, dict) and c.get("result") == "FAIL"]
-    return (len(fails) == 0), fails
+        return "UNVERIFIED", []
+    fails: list[str] = []
+    unverified: list[str] = []
+    valid_seen = 0
+    for c in checks:
+        if not isinstance(c, dict):
+            return "UNVERIFIED", ["MALFORMED_CHECK"]
+        valid_seen += 1
+        name = str(c.get("name") or "UNKNOWN")
+        res = str(c.get("result") or "").upper()
+        if res == "FAIL":
+            fails.append(name)
+        elif res in ("PENDING", "ERROR") or res not in ("PASS", "WARNING"):
+            unverified.append(f"{name}:{res or 'MISSING'}")
+    if fails:
+        return "HAS_FAIL", fails
+    if unverified or valid_seen == 0:
+        return "UNVERIFIED", unverified
+    return "VERIFIED_ZERO_FAIL", []
+
+
+def _parse_checks_zero_fail(checks_json: Optional[str]) -> tuple[bool, list[str]]:
+    """Return (is_verified_zero_fail, fail_or_unverified_names). Empty/PENDING/ERROR is NEVER treated as verified pass."""
+    state, names = classify_checks_state(checks_json)
+    return (state == "VERIFIED_ZERO_FAIL"), names
 
 
 def _extract_settings_compact(settings_json: Optional[str]) -> str:
@@ -85,7 +113,15 @@ def build_batch_audit_report(
     stage3_sh: float = 1.58,
     stage3_fit: float = 1.00,
 ) -> dict[str, Any]:
-    """Build complete per-batch funnel ledger, global/regional stage counts, and BEST/BAD postmortems."""
+    """Build complete per-batch funnel ledger, global/regional stage counts, and BEST/BAD postmortems.
+
+    Funnel Export Accounting Contract (T03/T04):
+    - `completed_full` strictly counts `COMPLETED_FULL` (`simulationMode == 'FULL'`) tasks.
+    - `completed_quick` strictly counts `COMPLETED_QUICK` (`simulationMode == 'QUICK'`) tasks.
+    - `completed_total` = `completed_full + completed_quick`.
+    - `stage3_verified_zero_fail` counts only `VERIFIED_ZERO_FAIL` tasks (0 FAIL and 0 PENDING/ERROR).
+    - Historical `sharpe_2y` rows written before T03 (2026-11-28) may contain `IS_LADDER_SHARPE` when `LOW_2Y_SHARPE` was absent.
+    """
     p = Path(db_path)
     conn = sqlite3.connect(f"file:{p}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
@@ -112,7 +148,7 @@ def build_batch_audit_report(
         SELECT batch_id, region, universe, COALESCE(dataset_id, 'unknown') AS dataset_id,
                COALESCE(primary_field_id, 'unknown') AS primary_field_id,
                COALESCE(template_id, 'unknown') AS template_id,
-               status, alpha_id, sharpe, fitness, sharpe_2y, margin, turnover,
+               simulation_mode, status, alpha_id, sharpe, fitness, sharpe_2y, margin, turnover,
                settings_json, checks_json, error_reason, est_platform_date
         FROM sim_tasks
         """
@@ -123,13 +159,16 @@ def build_batch_audit_report(
     region_totals: dict[str, dict[str, int]] = {}
     overall = {
         "total_rows": 0,
+        "completed_total": 0,
         "completed_full": 0,
+        "completed_quick": 0,
         "unobserved": 0,
         "dedup_skipped": 0,
         "stage1_pass_sh080": 0,
         "stage2_pass_sh125": 0,
         "stage3_pass_sh158_fit1": 0,
         "stage3_verified_zero_fail": 0,
+        "stage3_unverified_checks": 0,
         "stage4_sc_pass": 0,
         "stage4_pc_pass": 0,
     }
@@ -138,18 +177,22 @@ def build_batch_audit_report(
         bid = str(r["batch_id"])
         reg = str(r["region"] or "?").upper()
         st = str(r["status"] or "")
+        sim_mode = str(r["simulation_mode"] or "").upper()
         overall["total_rows"] += 1
 
         rt = region_totals.setdefault(
             reg,
             {
                 "total_rows": 0,
+                "completed_total": 0,
                 "completed_full": 0,
+                "completed_quick": 0,
                 "unobserved": 0,
                 "stage1_pass": 0,
                 "stage2_pass": 0,
                 "stage3_pass": 0,
                 "zero_fail_s3": 0,
+                "unverified_s3": 0,
                 "sc_pass": 0,
                 "pc_pass": 0,
             },
@@ -168,12 +211,15 @@ def build_batch_audit_report(
                 "settings_compact": _extract_settings_compact(r["settings_json"]),
                 "total": 0,
                 "done": 0,
+                "done_full": 0,
+                "done_quick": 0,
                 "unobs": 0,
                 "dedup": 0,
                 "stage1_pass": 0,
                 "stage2_pass": 0,
                 "stage3_pass": 0,
                 "zero_fail_s3": 0,
+                "unverified_s3": 0,
                 "sc_pass": 0,
                 "pc_pass": 0,
                 "sharpes": [],
@@ -205,8 +251,17 @@ def build_batch_audit_report(
             continue
 
         b["done"] += 1
-        overall["completed_full"] += 1
-        rt["completed_full"] += 1
+        overall["completed_total"] += 1
+        rt["completed_total"] += 1
+        is_full = (st == "COMPLETED_FULL" and sim_mode != "QUICK")
+        if is_full:
+            b["done_full"] += 1
+            overall["completed_full"] += 1
+            rt["completed_full"] += 1
+        else:
+            b["done_quick"] += 1
+            overall["completed_quick"] += 1
+            rt["completed_quick"] += 1
 
         sh = r["sharpe"]
         fit = r["fitness"]
@@ -232,11 +287,15 @@ def build_batch_audit_report(
                 b["stage3_pass"] += 1
                 overall["stage3_pass_sh158_fit1"] += 1
                 rt["stage3_pass"] += 1
-                zf_ok, _ = _parse_checks_zero_fail(r["checks_json"])
-                if zf_ok:
+                chk_state, _ = classify_checks_state(r["checks_json"])
+                if chk_state == "VERIFIED_ZERO_FAIL":
                     b["zero_fail_s3"] += 1
                     overall["stage3_verified_zero_fail"] += 1
                     rt["zero_fail_s3"] += 1
+                elif chk_state == "UNVERIFIED":
+                    b["unverified_s3"] += 1
+                    overall["stage3_unverified_checks"] += 1
+                    rt["unverified_s3"] += 1
         if s2y is not None:
             b["two_ys"].append(float(s2y))
         if mgn is not None:
@@ -307,15 +366,18 @@ def build_batch_audit_report(
 def render_batch_audit_markdown(report: dict[str, Any], *, max_rows: int = 120) -> str:
     """Render concise human-readable Markdown ledger for quick review and next-session loading."""
     ov = report["overall_funnel"]
+    comp_total = ov.get("completed_total", ov["completed_full"])
+    comp_quick = ov.get("completed_quick", 0)
     lines = [
         "# WorldQuant BRAIN D1 RA 批次复盘与阶段漏斗总账（自动生成）",
         "",
         f"- **生成时间 (UTC)**：`{report['generated_at_utc']}`",
         f"- **总批次数**：`{report['total_batches']}`（等级分布：`{report['grade_counts']}`）",
-        f"- **全库阶段过关统计**：有效完成 `{ov['completed_full']}` · 未观测 `{ov['unobserved']}` · "
+        f"- **全库阶段过关统计**：有效完成 `{comp_total}`（`FULL` `{ov['completed_full']}` + `QUICK` `{comp_quick}`） · 未观测 `{ov['unobserved']}` · "
         f"**一阶段 (`Sh≥0.80`) 过 `{ov['stage1_pass_sh080']}` 个** · "
         f"**二阶段 (`Sh≥1.25`) 过 `{ov['stage2_pass_sh125']}` 个** · "
         f"**三阶段 (`Sh≥1.58 & Fit≥1.0`) 过 `{ov['stage3_pass_sh158_fit1']}` 个**（已核 0-FAIL `{ov['stage3_verified_zero_fail']}` 个）",
+        "- **口径说明（T03/T04）**：历史 `sharpe_2y`（2026-11-28 T03 修复前已落库行）在平台未返回 `LOW_2Y_SHARPE` 时可能含 `IS_LADDER_SHARPE` 值；新入库严格仅取 `LOW_2Y_SHARPE`，且已有 `COMPLETED_FULL` 行永久不回写。",
         "",
         "## 1. 分地区阶段漏斗统计",
         "",

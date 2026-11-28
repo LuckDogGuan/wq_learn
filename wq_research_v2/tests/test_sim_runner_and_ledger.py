@@ -6,7 +6,12 @@ from pathlib import Path
 
 from wq_research_v2.ledger_store import LedgerStore
 from wq_research_v2.quota_tracker import QuotaTracker
-from wq_research_v2.sim_runner import SimRunner, WeightedSlotSemaphore, pack_multisim_batches
+from wq_research_v2.sim_runner import (
+    SimRunner,
+    WeightedSlotSemaphore,
+    extract_sharpe_2y_from_checks,
+    pack_multisim_batches,
+)
 
 
 class _MockResponse:
@@ -127,3 +132,21 @@ def test_reconcile_once_never_resends_on_post_failure(tmp_path: Path) -> None:
     assert len(runnable_restart) == 0 and len(skipped_restart) == 2
     assert ledger.get_task_status(runnable[0]["task_id"]) == "RESULTS_UNOBSERVED"
     ledger.close()
+
+
+def test_extract_sharpe_2y_from_checks_strictly_ignores_ladder_sharpe() -> None:
+    """T03 guard: sharpe_2y must ONLY take LOW_2Y_SHARPE, never IS_LADDER_SHARPE."""
+    # Case 1: Only IS_LADDER_SHARPE present (e.g. gJrA5ONJ) -> None
+    only_ladder = [{"name": "IS_LADDER_SHARPE", "result": "FAIL", "value": 1.56, "limit": 1.58}]
+    assert extract_sharpe_2y_from_checks(only_ladder) is None
+
+    # Case 2: Only LOW_2Y_SHARPE present -> 2.15
+    only_2y = [{"name": "LOW_2Y_SHARPE", "result": "PASS", "value": 2.15, "limit": 1.58}]
+    assert extract_sharpe_2y_from_checks(only_2y) == 2.15
+
+    # Case 3: Both present with IS_LADDER_SHARPE appearing first -> strictly takes LOW_2Y_SHARPE (1.85)
+    both = [
+        {"name": "IS_LADDER_SHARPE", "result": "PASS", "value": 2.42, "limit": 1.58},
+        {"name": "LOW_2Y_SHARPE", "result": "PASS", "value": 1.85, "limit": 1.58},
+    ]
+    assert extract_sharpe_2y_from_checks(both) == 1.85

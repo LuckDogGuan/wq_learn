@@ -1,16 +1,16 @@
 # WorldQuant BRAIN D1 RA 批次复盘与阶段漏斗总账（自动生成）
 
-- **生成时间 (UTC)**：`2026-11-27T20:15:58.235538+00:00`
-- **总批次数**：`2600`（等级分布：`{'BEST': 186, 'GOOD': 318, 'NORMAL': 1280, 'BAD': 711, 'TIMEOUT_BUG': 105}`）
-- **全库阶段过关统计**：有效完成 `19345` · 未观测 `823` · **一阶段 (`Sh≥0.80`) 过 `3565` 个** · **二阶段 (`Sh≥1.25`) 过 `1577` 个** · **三阶段 (`Sh≥1.58 & Fit≥1.0`) 过 `634` 个**（已核 0-FAIL `177` 个）
+- **生成时间 (UTC)**：`2026-11-27T23:14:17.731735+00:00`
+- **总批次数**：`2654`（等级分布：`{'BEST': 186, 'GOOD': 318, 'NORMAL': 1295, 'BAD': 749, 'TIMEOUT_BUG': 106}`）
+- **全库阶段过关统计**：有效完成 `19757` · 未观测 `831` · **一阶段 (`Sh≥0.80`) 过 `3577` 个** · **二阶段 (`Sh≥1.25`) 过 `1577` 个** · **三阶段 (`Sh≥1.58 & Fit≥1.0`) 过 `634` 个**（已核 0-FAIL `177` 个）
 
 ## 1. 分地区阶段漏斗统计
 
 | 地区 | 完成数 | 未观测 | 一阶段过 (`≥0.80`) | 二阶段过 (`≥1.25`) | 三阶段过 (`≥1.58 & Fit≥1`) | 已核 0-FAIL |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
-| **USA** | 9314 | 168 | 1390 | 313 | 54 | 54 |
-| **EUR** | 5492 | 408 | 1143 | 675 | 274 | 70 |
-| **ASI** | 3296 | 31 | 1005 | 589 | 306 | 53 |
+| **USA** | 9370 | 168 | 1394 | 313 | 54 | 54 |
+| **EUR** | 5784 | 408 | 1151 | 675 | 274 | 70 |
+| **ASI** | 3360 | 39 | 1005 | 589 | 306 | 53 |
 | **DEU** | 430 | 8 | 2 | 0 | 0 | 0 |
 | **GLB** | 351 | 136 | 24 | 0 | 0 | 0 |
 | **KOR** | 170 | 24 | 0 | 0 | 0 | 0 |
@@ -53,6 +53,7 @@
 | **TIMEOUT_BUG** | `RA-v4-ASI_ANL39_STARMINE_NORM-02-anl39_qtotd2eq2-COUNTRY` | ASI/`analyst39` | `anl39_qtotd2eq2` | `COUNTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 360s [zombie DEL) |
 | **TIMEOUT_BUG** | `RA-v4-ASI_ANL_CONSENSUS_NORM-DUAL-COUNTRY-00` | ASI/`analyst_consensus` | `min_estimate_fxadj_targetprice_annual12_tribes` | `COUNTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Missing child alpha_id (status=FAIL)) |
 | **TIMEOUT_BUG** | `S3-r16-ASI-BEHAV-TOFIX-slow_d5_t08` | ASI/`behavioral_signals` | `consecutive_return_streak_length` | `SLOW|d=5|tr=0.08` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.35 for 360s [zombie DEL) |
+| **TIMEOUT_BUG** | `S3-r35-ASI-MF120-CONFGATE-FREE-cty_d4_t08` | ASI/`multifactor_return_pred` | `short_term_60d_qtile5_class_pred` | `COUNTRY|d=4|tr=0.08` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Missing child alpha_id (status=FAIL)) |
 | **TIMEOUT_BUG** | `RA-CHN_OTH496_RATIOS_FREE-oth496_curr_ratio-SUBINDUSTRY` | CHN/`other496` | `oth496_curr_ratio` | `SUBINDUSTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll timeout) |
 | **TIMEOUT_BUG** | `RA-CHN_OTH496_RATIOS_FREE-oth496_lt_lev-SUBINDUSTRY` | CHN/`other496` | `oth496_lt_lev` | `SUBINDUSTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll timeout) |
 | **TIMEOUT_BUG** | `RA-v3-CHN_ANL45_FREE-06-urn_excluding_fx-SUBINDUSTRY` | CHN/`analyst45` | `aggregate_return_excluding_fx` | `SUBINDUSTRY|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: POST exception: ConnectionError) |
@@ -73,9 +74,8 @@
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-07-yst_view_score_2-CROWDING` | EUR/`ai_equity_alpha` | `analyst_view_score_2` | `CROWDING|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Sim ERROR: There was an error while running the simulation. Please try again or ) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-07-yst_view_score_2-REVERSION_AND_MOMENTUM` | EUR/`ai_equity_alpha` | `analyst_view_score_2` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll stalled at progress=0.15 for 240s) |
 | **TIMEOUT_BUG** | `RA-v4-EUR_AIEQ_ALPHA_VEC_NORM-DUAL-REVERSION_AND_MOMENTUM-00` | EUR/`ai_equity_alpha` | `analyst_opinion_metric` | `REVERSION_AND_MOMENTUM|d=0|tr=0.04` | 0/8 | `None` | All tasks unobserved (check HTTP 429 or poll timeout) (Unobserved after 1 reconcile: Poll HTTP 500) |
-| **TIMEOUT_BUG** | `RA-v4-EUR_M238_SMARTHOLDINGS_NORM-01-lignment_rank_d1-STATISTICAL` | EUR/`model238` | `global_screening_factor_alignment_rank_d1` | `STATISTICAL|d=0|tr=0.04` | 0/8 | `None` | Risk-model neutralization timeout/429 on wide universe; lower concurrency or raise timeout (Unobserved after 1 reconcile: Poll timeout) |
 
-## 4. 全批次精简台账（展示前 120 / 2600 批）
+## 4. 全批次精简台账（展示前 120 / 2654 批）
 
 | 等级 | 地区 | 数据集 | 主字段 | 模板 | 配置 | 完成/未观测 | S1/S2/S3 | Max Sh | Avg Mgn |
 | :-: | :-: | --- | --- | --- | --- | :-: | :-: | :-: | :-: |

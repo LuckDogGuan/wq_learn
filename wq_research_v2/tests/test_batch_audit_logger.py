@@ -4,7 +4,9 @@ from __future__ import annotations
 import json
 
 from wq_research_v2.batch_audit_logger import (
+    _parse_checks_zero_fail,
     build_batch_audit_report,
+    classify_checks_state,
     render_batch_audit_markdown,
 )
 from wq_research_v2.ledger_store import LedgerStore
@@ -183,3 +185,60 @@ def test_sc_pc_alias_format_and_margin_first_ranking() -> None:
         {"alpha_id": "C_MID_MGN", "margin_bp": 18.6, "sharpe": 2.5, "fitness": 2.3},
     ])
     assert [x["alpha_id"] for x in ranked] == ["B_HIGH_MGN", "C_MID_MGN", "A_LOW_MGN"]
+
+
+def test_classify_checks_state_three_states_and_mode_split(tmp_path) -> None:
+    """T04 guard: PENDING/ERROR/empty checks must be UNVERIFIED (not VERIFIED_ZERO_FAIL), and FULL vs QUICK split."""
+    assert classify_checks_state(None) == ("UNVERIFIED", [])
+    assert classify_checks_state("[]") == ("UNVERIFIED", [])
+    assert classify_checks_state(json.dumps([{"name": "LOW_SHARPE", "result": "PASS"}, {"name": " matches_themes", "result": "WARNING"}])) == (
+        "VERIFIED_ZERO_FAIL",
+        [],
+    )
+    assert classify_checks_state(json.dumps([{"name": "LOW_SHARPE", "result": "PASS"}, {"name": "SELF_CORRELATION", "result": "PENDING"}])) == (
+        "UNVERIFIED",
+        ["SELF_CORRELATION:PENDING"],
+    )
+    assert classify_checks_state(json.dumps([{"name": "PROD_CORRELATION", "result": "ERROR"}])) == (
+        "UNVERIFIED",
+        ["PROD_CORRELATION:ERROR"],
+    )
+    assert classify_checks_state(json.dumps([{"name": "LOW_2Y_SHARPE", "result": "FAIL"}])) == (
+        "HAS_FAIL",
+        ["LOW_2Y_SHARPE"],
+    )
+    assert _parse_checks_zero_fail(json.dumps([{"name": "SELF_CORRELATION", "result": "PENDING"}]))[0] is False
+
+    db_path = tmp_path / "split_modes.db"
+    ledger = LedgerStore(db_path)
+    try:
+        est = current_est_platform_date()
+        ledger.create_batch("B-MIX", hypothesis_id="H", queue_type="NORMAL", source_side="MIXED_4_4", region="USA", universe="TOP3000", delay=1, simulation_mode="FULL", slots_required=1)
+        for idx, (mode, st, chk_res) in enumerate([
+            ("FULL", "COMPLETED_FULL", "PASS"),
+            ("QUICK", "COMPLETED_QUICK", "PENDING"),
+        ]):
+            tid = f"B-MIX-{idx}"
+            ledger.upsert_sim_task({
+                "task_id": tid, "batch_id": "B-MIX", "payload_fingerprint": f"fp-{tid}",
+                "canonical_dedup_key": f"dk-{tid}", "source_side": "ADMIN_ORIGINAL",
+                "template_id": "T1", "queue_type": "NORMAL", "region": "USA", "universe": "TOP3000",
+                "delay": 1, "dataset_id": "model31", "primary_field_id": "f1",
+                "simulation_mode": mode, "expression": f"rank(x_{idx})",
+                "settings_json": '{"neutralization":"SUBINDUSTRY"}', "status": "QUEUED", "est_platform_date": est,
+            })
+            ledger.mark_task_completed(
+                tid, simulation_mode=mode, alpha_id=f"A_{idx}", sharpe=1.75, fitness=1.15,
+                turnover=0.06, margin=0.0012, sharpe_2y=1.80,
+                checks_json=json.dumps([{"name": "LOW_SHARPE", "result": chk_res}]),
+            )
+    finally:
+        ledger.close()
+
+    rep = build_batch_audit_report(db_path)
+    ov = rep["overall_funnel"]
+    assert ov["completed_full"] == 1
+    assert ov["completed_quick"] == 1
+    assert ov["completed_total"] == 2
+    assert ov["stage3_verified_zero_fail"] == 1
+    assert ov["stage3_unverified_checks"] == 1

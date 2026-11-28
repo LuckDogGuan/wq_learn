@@ -161,3 +161,10 @@
   - 为充分利用 EST `2026-11-27` 剩余 ~6.5 小时的免额窗口（零常规额度消耗），立即热部署：
     1. **`S3-r35-ASI-MF120-CONFGATE-FREE-cty_d4_t08`（8 FULL `UNUSED_ALPHA0`, `COUNTRY d=4, tr=0.08, maxTrade=ON`）**：全部使用 `alphaCount == 0` 免额字段，以 `long_term_120d_5quantile_confidence_score` / `short_term_60d_5quantile_confidence_score` 置信度分位门控（`> 0.35, false=0.27`）及 `other496`（`oth496_returns60_t`, `oth496_returns252_t`）正交双支作用于已过日本子检的 `MPgw26wL`（`JPN=1.03 PASS, SC=0.5421, PC ge070=0`）与 `1YGv2QvX`（`14.41bp, JPN=1.13 PASS, SC=0.3618`）！
     2. **`ASI_OTH496_RET_FREE`（`ASI/MINVOL1M/other496`, 8 个未触达 `alphaCount == 0` 纯 `MATRIX` 字段 `cov=0.941..1.000, dCov=1.000, maxTrade=ON`）**：直攻 `0-OS` 空白 `ASI/D1/other 1.3x` 点塔！
+- **2026-11-28 08:15 CST（2小时定时复盘 #28：`S3-r35-ASI` 未观测保护 + `S3-r34-ASI` `nanHandling=ON` 1:1 对齐 + `ASI/KOR` 全新免额 `VECTOR` 活动热部署）**：
+  - `S3-r35-ASI-MF120-CONFGATE-FREE-cty_d4_t08`（8 条 `FULL UNUSED_ALPHA0`）经单次只读对账后因平台未返回子 Alpha ID 落入 `RESULTS_UNOBSERVED`（`INEFF-31`，已由 `has_completed_fingerprint` 永久拦截不重发）；`ASI_OTH496_RET_FREE` 完成 `64 QUICK`（`0/64 >= 0.80, maxSh=0.56`）自动早停并下线（`INEFF-32`）。
+  - 已将常规队列首位的 **`S3-r34-ASI-ANLCONS-E71-FULL-cty_d0_t04`** 显式对齐为 **`nanHandling="ON", decay=0, truncation=0.04, maxTrade="ON"`**（与 `QUICK` 母版 `e71Kn6Wg` / `9qGKw1k1` 除 `simulationMode` 外 100% 一致，`EFF-28`）。
+  - 为 `ASI:1` 与 `KOR:1` 槽位热部署 3 个高覆盖未触达 `alphaCount == 0` 免额活动：**`ASI_AIEQ_VEC_FREE`（`ASI/MINVOL1M/ai_equity_alpha`, 8 字段 `cov=0.970, dCov=0.951, maxTrade=ON`）**、**`KOR_M138_QUALITY_FREE`（`KOR/TOP600/model138`, 8 字段 `cov=0.862, dCov=0.951, maxTrade=ON`, `0-OS` 空白 `KOR` 塔）** 与 **`KOR_AIEQ_VEC_FREE`（`KOR/TOP600/ai_equity_alpha`, 8 字段 `cov=1.000, dCov=0.951, maxTrade=ON`）**！
+
+- **2026-11-28 Codex 复核 [V][U]**。r34 无已发任务。计划 A1/A2 与 `e71Kn6Wg`、`9qGKw1k1` 表达式相同，计划 `nanHandling=OFF`，平台两条 QUICK 母版均为 ON。仅切 FULL 的验真待做。既有 `analyst_consensus` DUAL COUNTRY 00 有 8 条在单次对账后仍无子 ID，标记 `RESULTS_UNOBSERVED`。
+- **r35-ASI [V][U]**。06:24:41 由原守护进程提交 8 条 D1 FULL Alpha0。191.8 秒后仍无子 ID，8 个唯一指纹均对账一次，状态 `RESULTS_UNOBSERVED`，门控与融合效果待验（INEFF-31）。沿已有 `ASI_OTH496_RET_FREE` 队列核对正向命中率。
