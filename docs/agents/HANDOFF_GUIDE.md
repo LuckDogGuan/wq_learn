@@ -1,7 +1,7 @@
 # 跨 AI 工具无缝切换与「主 Agent + 子 Agent」自动清空上下文闭环指南
 
 > [!IMPORTANT]
-> 本指南参考 `/setup-matt-pocock-skills` 的**仓库级契约化配置思想**，将我们的研究记忆、当前进度、经验法则与控制变量归因**100% 剥离出冗长的聊天记录**，固化为本地轻量 JSON/Markdown 真源。无论您随时切换到 **Claude Code、Cursor、Codex CLI、还是开启全新的 Antigravity 对话**，或是使用 `/compact` 清空上下文，只需 **1 句话启动指令** 即可在 `< 8 KB` 核心上下文内无缝接续运行！
+> 切换工具或使用 `/compact` 后，按 [启动页](../../goal/START_HERE.md) 读取 `forge handoff` 摘要。原始记录按案例和批次查询。
 
 ---
 
@@ -11,8 +11,8 @@
 
 | 层级 | 文件路径 | 体积上限 | 作用与更新机制 |
 | :-: | --- | :-: | --- |
-| **L1 核心脉搏**（每次必读） | [docs/agents/CORE_STATE.json](file:///c:/Wq/WorldQuant%20Brain/docs/agents/CORE_STATE.json) | `< 4 KB` | 仅保存：硬红线、当前专注的 1–2 个地区/数据集、现役 `Useful` 冠军（含嵌套层数标记与精确参数）、阶段 1–4 开关契约、Baseline v1.0 回退指针。 |
-| **L2 经验归因账本**（主从闭环必读） | [docs/agents/OPTIMIZATION_LEDGER.json](file:///c:/Wq/WorldQuant%20Brain/docs/agents/OPTIMIZATION_LEDGER.json) | `< 6 KB` | 仅保存结构化的 **`[有效] xxx 的情况是有效的（ΔSh/ΔMgn/ΔPC）`** 与 **`[无效] yyy 的情况是无效的（根因与禁令）`**，杜绝重复踩坑。 |
+| **L1 核心状态** | [CORE_STATE.json](CORE_STATE.json) | 完整留存 | 摘要显示最近观测、已结束批次和后续方向。 |
+| **L2 经验归因账本** | [OPTIMIZATION_LEDGER.json](OPTIMIZATION_LEDGER.json) | 完整留存 | 摘要列近期有效与无效案例，按 case_id 抽取原始数值及适用条件。 |
 | **L3 流程与规则真源**（按需抽读） | [AGENTS.md](file:///c:/Wq/WorldQuant%20Brain/AGENTS.md)<br>[d1_ra_baseline_v1_frozen.json](file:///c:/Wq/WorldQuant%20Brain/docs/整理与研究/workflow/d1_ra_baseline_v1_frozen.json)<br>[reusable_experience_rules.json](file:///c:/Wq/WorldQuant%20Brain/wq_research_v2/config/reusable_experience_rules.json) | 静态文件 | 冻结版 Baseline v1.0 完整参数、华子哥+顾问课堂 53 课种子筛选规则、81 个 Gold 算子白名单。 |
 
 > **自动清空上下文建议**：
@@ -24,11 +24,7 @@
 
 我们已在仓库内内置了通用跨平台 Skill：[`.agents/skills/wq-d1-closed-loop/SKILL.md`](file:///c:/Wq/WorldQuant%20Brain/.agents/skills/wq-d1-closed-loop/SKILL.md)（同时同步至全局 `~/.gemini/antigravity/skills/wq-d1-closed-loop/SKILL.md`）并在 `AGENTS.md` 写入了标准 `## Agent skills` 入口。
 
-### 启动口令（复制这一句话给任何 AI 工具即可）：
-
-```text
-请读取 AGENTS.md、docs/agents/CORE_STATE.json 和 docs/agents/OPTIMIZATION_LEDGER.json，按 wq-d1-closed-loop 技能启动「主Agent方向决策 + 子Agent控制变量优化」闭环，先检查上轮结果哪些有效、哪些无效，再决定下一轮优化方向。
-```
+直接使用 [启动页](../../goal/START_HERE.md) 的默认口令。
 
 ---
 
@@ -41,7 +37,7 @@ sequenceDiagram
     participant S as 子 Agent (单变量/双参定向优化)
     participant E as 广州/本地 Python 引擎 (SQLite + BRAIN API)
 
-    U->>M: 触发新一轮巡检 (仅加载 CORE_STATE + OPTIMIZATION_LEDGER < 8KB)
+    U->>M: 触发新一轮巡检，读取 forge handoff 摘要
     M->>E: 只读查询上轮批次实盘结果 (wq_v2_ledger.db)
     M->>M: 验真归因：对照基线判定上轮改动<br/>写入 [有效] xxx 情况有效 / [无效] yyy 情况无效
     M->>M: 决定本轮 1-2 个主攻方向<br/>(例：Stage 1-2 跑新集 FAST 初筛；或对 Stage 2 强种子做 decay∈{0,5,20} 控制变量精修)
