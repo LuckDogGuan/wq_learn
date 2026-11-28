@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-28T10:18:00+08:00",
+  "updated_at": "2026-11-28T12:19:23+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -242,7 +242,15 @@
       "controlled_change": "1) 对 ASI_AIEQ_VEC_FREE 产出的 4 条头部免额种子 omPzepln (Sh=1.59)、E5maYx81 (Sh=1.53, Fit=1.10)、2rGZzJnP (Sh=1.50, 52.56bp)、Jj3XEbgl (Sh=1.46, 2Y=1.51, 33.51bp) 执行 100-OS SC 与远程 PC 直方图检验；2) 对 EFF-29 的同式单轴对照对 N1KjM87p (SUBINDUSTRY) vs O06mao7b (REVERSION_AND_MOMENTUM) 及 YPlkq0lA (buzz4 RAM) 执行 100-OS SC 与远程 PC 直方图检验；3) 对 USA_SNT21_MATRIX_FREE 头部双支 np6zVvLw (Sh=1.45) 执行 100-OS SC 与远程 PC 直方图检验。",
       "verdict": "[有效] 1) ASI/ai_equity_alpha 4 条头部种子全部满足 100-OS SC < 0.18 且远程 PC < 0.62 (ge070=0, PC_PASS_STRICT!)；2) USA/ai_equity_alpha 单改 SUBINDUSTRY->RAM 将 >=0.70 生产碰撞从 1,080 条砍至 1 条 (-99.91%!)；3) USA/sentiment21 np6zVvLw 实测 100-OS SC=0.1819、远程 PC=0.5551 (ge070=0, PC_PASS_STRICT!)。",
       "metric_delta": "1) ASI: omPzepln (SC=-0.0973, PC=0.5968 ge070=0), E5maYx81 (SC=-0.0523, PC=0.6196 ge070=0), 2rGZzJnP (SC=0.1747, PC=0.5372 ge070=0, 52.56bp), Jj3XEbgl (SC=0.0966, PC=0.4979 ge070=0, 33.51bp)；2) USA buzz_trend_metric_3: N1KjM87p (SUBINDUSTRY: SC=0.4453, PC=0.8041, ge070=1,080, ge080=2) -> O06mao7b (RAM: SC=0.3466, PC=0.7793, ge070=1, ge080=0)；YPlkq0lA (buzz4 RAM: SC=0.4005, PC=0.7214, ge070=2, ge080=0)；3) USA sentiment21 np6zVvLw (RAM: Sh=1.45, TO=27.68%, SC=0.1819, PC=0.5551 ge070=0)。",
-      "reusable_rule": "1) 因 ASI QUICK 不含日本子检与 Robust，立即按 100% 相同设置 (COUNTRY, d=0, tr=0.04, maxTrade=ON, nanHandling=ON) 将上述 4 条 PC<0.62 的 ASI 免额种子晋级零额度 S3-r37-ASI-AIEQ-EXACT-FULL (8 FULL UNUSED_ALPHA0) 并增补 ASI_AIEQ_VEC_V2_FREE；2) 按 100% 相同设置 (RAM, d=0, tr=0.04, nanHandling=ON) 将 O06mao7b 与 np6zVvLw 晋级 S3-r37-USA-AIEQ-SNT21-RAM-FREE (8 FULL UNUSED_ALPHA0)，配 d22+tail25 与高 2Y 分支补强 LOW_2Y_SHARPE。"
+      "reusable_rule": "1) ASI 4 条 QUICK 母版的低 PC 保留在各自设置。计划 S3-r37-ASI 只对 A1–A3 保持 COUNTRY 同参，A4 E5maYx81 的母版为 RAM，计划另改 COUNTRY。实跑一次对账后 8 条未观测，见 INEFF-36。2) USA O06mao7b 与 np6zVvLw 的同参 FULL 对照及公式变体见 EFF-31、INEFF-35。"
+    },
+    {
+      "case_id": "EFF-31",
+      "region_dataset": "[V][C] USA/TOP3000/ai_equity_alpha × sentiment21 · S3-r37-USA-AIEQ-SNT21-RAM-FREE-ram_d0_t04 · 8 D1 FULL UNUSED_ALPHA0",
+      "controlled_change": "固定 FULL、RAM、decay=0、truncation=0.04、nanHandling=ON、maxTrade=OFF。B1 原式对照 B3（22 日平滑与 tail25）和 B6（加 cashflow_trend_analysis_101 分支，同时改为 15 日平滑与 tail25）。B2 原式对照 B4（融合和平滑位置重排，22 日平滑与 tail25）。",
+      "verdict": "[有效] B3 小幅改善 Sharpe、Fitness、2Y 和 Margin。B6 明显改善 2Y 且保留 Sharpe、Fitness 的数值过线，仍低于 2Y 1.58。B4 降换手但损伤 Sharpe、2Y 和子池，未改善准入。 B6 的 PC=0.8159，≥0.70 桶 821，≥0.80 桶 3，已越过项目 PC 救援上限。",
+      "metric_delta": "blxPWALl→88G6KXzX 的 Sharpe 1.67→1.68、Fitness 1.13→1.16、2Y 0.55→0.63、Margin 12.51→13.58bp。blxPWALl→xAlzm5kb 的 Sharpe 1.67→1.59、Fitness 1.13→1.17、2Y 0.55→1.45、Margin 12.51→15.50bp。9qG6Akw9→N1Kj58rw 的换手 27.68%→17.98%、Sharpe 1.45→1.40、2Y 1.12→0.99、子池 0.30→-0.05，Margin 2.38→3.75bp。",
+      "reusable_rule": "证据适用于实跑组合。B6 只作为 2Y 指标改善的历史对照，结束该组合降 PC，不派生救援批次。B3 仍有 2Y 短板，B4 结束当前组合。"
     }
   ],
   "ineffective_cases": [
@@ -516,6 +524,54 @@
       "verdict": "[无效] 1) 1YGLr8Ak 虽 100-OS SC=0.4580，但远程 PC=0.8854 (>=0.70 碰撞达 1,077 条，>=0.80 达 58 条，PC_ABANDON_CROWDED_OR_FAR)，且新增 88 条 admin_ts_regime 0/88 >= 0.80 (maxSh=0.64)；2) KOR_M138_QUALITY_FREE 56 条 QUICK 仅 1 条 >=0.80 (6XGqboq5 Sh=0.81)，已触发守护进程自动早停。",
       "metric_delta": "EUR_M77_PMM_FREE 累计 316 QUICK 仅 8 条 >=0.80、0 条 >=1.25 (maxSh=1.02, 1YGLr8Ak PC ge070=1,077)；KOR_M138_QUALITY_FREE 1/56 >= 0.80 (maxSh=0.81, 21.83bp)。",
       "root_cause_and_ban": "立即从 CURATED_RA_D1_CAMPAIGNS 下线已完结的 EUR_M77_PMM_FREE 与已早停的 KOR_M138_QUALITY_FREE；换入实盘核验未触达 alphaCount==0 活动 EUR_AIEQ_VEC_FREE (EUR/ai_equity_alpha 6 个 VECTOR 字段 cov=0.86)、USA_ANL10_SURP_FREE (USA/analyst10 8 个 MATRIX 字段)、USA_SNT23_MATRIX_FREE (USA/sentiment23 7 个 MATRIX 字段) 与 ASI_AIEQ_VEC_V2_FREE (ASI/ai_equity_alpha 下一批 8 个 VECTOR 字段 cov=0.97)。"
+    },
+    {
+      "case_id": "INEFF-35",
+      "region_dataset": "[V][C] USA/TOP3000/ai_equity_alpha × sentiment21 · r37 B1–B8",
+      "controlled_change": "B1 O06mao7b→blxPWALl 与 B2 np6zVvLw→9qG6Akw9 逐项比较 BRAIN 表达式和全量 settings，只有 simulationMode 由 QUICK 改为 FULL；同批其他 6 条调公式。",
+      "verdict": "[无效] 两组只切 FULL 的主要数值均未提升。平台详情 4 条有明确 FAIL、4 条检查未定，已确认 RA 硬检 0/8。",
+      "metric_delta": "B1/B2 的 Sharpe、Fitness、原始 LOW_2Y_SHARPE、Margin、换手变化均为零。全批 Sharpe 0.94–1.68、Fitness 0.37–1.17、Margin 2.38–15.50bp。4 条无明确 FAIL 的 B1/B3/B5/B6，原始 2Y 分别 0.55、0.63、0.86、1.45，全部低于 1.58，详情 REGULAR_SUBMISSION=PENDING。B7/B8 只有 IS_LADDER_SHARPE。 BRAIN 非空远端 SC/PC（≥0.70/≥0.80 桶）为 blxPWALl 0.3455/0.7793（1/0）、88G6KXzX 0.3499/0.7795（1/0）、xAlzm5kb 0.5908/0.8159（821/3）、akRPWGnW 0.3450/0.7207（1/0）。",
+      "root_cause_and_ban": "同参切 FULL 用于补检查证据。本组的 B1 在 QUICK 显示 LOW_2Y_SHARPE FAIL、FULL 显示 WARNING，数值仍为 0.55。凭数值门槛和官方检查推进，避免为改善数值重发同指纹。"
+    },
+    {
+      "case_id": "INEFF-36",
+      "region_dataset": "[V][U] ASI/MINVOL1M/ai_equity_alpha · S3-r37-ASI-AIEQ-EXACT-FULL-cty_d0_t04",
+      "controlled_change": "计划 8 D1 FULL UNUSED_ALPHA0，COUNTRY、decay=0、truncation=0.04、nanHandling=ON、maxTrade=ON。平台复核 A1–A3 的 QUICK 母版与计划设置相符；A4 母版 E5maYx81 实为 RAM，在计划中还切换了 COUNTRY。",
+      "verdict": "[未验证] 0/8 有可观测子 Alpha，8 条一次对账后未观测。A1–A3 的模式效果、A4 中性化效果、A5–A8 结构效果与 JPN/Robust 全部待验证。",
+      "metric_delta": "广州日志耗时 546.7 秒，done=0 / unobs=8。批次导出记录 Poll stalled at progress=0.35 for 360s，原因字段后半截被截断。未取得当日 SQLite 指纹和实际配额头。",
+      "root_cause_and_ban": "保留八个已对账位置，原批次不得重发。将 E5maYx81 的低 PC 证据限定在 RAM 母版，不迁移给 COUNTRY。"
+    },
+    {
+      "case_id": "INEFF-37",
+      "region_dataset": "[V][C] USA/TOP3000/sentiment23 · USA_SNT23_MATRIX_FREE",
+      "controlled_change": "沿守护进程 Phase-2 现有 D1 QUICK 免额初筛队列执行正向 Sharpe≥0.80 早停。",
+      "verdict": "[无效] 0/64 命中，守护进程已按方向早停。",
+      "metric_delta": "最高正向 Sharpe 0.37。",
+      "root_cause_and_ban": "按既有早停处理，本巡检沿 USA analyst10 与 ASI AIEQ V2 的既有队列跟进。"
+    },
+    {
+      "case_id": "INEFF-38",
+      "region_dataset": "[V][U] ASI/MINVOL1M/analyst_consensus · S3-r34-ASI-ANLCONS-E71-FULL-cty_d0_t04",
+      "controlled_change": "8/8 D1 FULL NORMAL，8 个唯一指纹。BRAIN 确认 COUNTRY、decay=0、truncation=0.04、nanHandling=ON、maxTrade=ON。A1 e71Kn6Wg→LL8XEJO9、A2 9qGKw1k1→e712NR8l 的表达式与全部其他平台设置相同。A3 相对 A1 只外加 tail25，A5/A6 在 A3 的 tail 上加 adv20 门控（阈值 0.35/0.38，false=0.27）。",
+      "verdict": "[无效] 两组 QUICK→FULL 的平台数值下降。8 条全有 JPN、Robust Sharpe Ratio、Robust Returns FAIL，RA 硬检 0/8。",
+      "metric_delta": "A1 Sharpe/Fitness/原始 2Y/Margin 从 1.78/1.16/1.87/16.57bp 到 1.63/1.02/1.77/15.94bp，A2 从 1.76/1.16/2.01/14.89bp 到 1.62/1.04/1.83/14.67bp。A3 对 A1 的原始 2Y +0.08、JPN +0.03，仍失败。A6 P0Plx9qE 对 A3 整体 Sharpe 1.64→1.93、Fitness 1.03→1.34、Margin 15.99→17.56bp，但 JPN 0.55→0.46，Robust Sharpe 1.19→1.53 仍未过。A5–A8 缺独立 LOW_2Y_SHARPE。",
+      "root_cause_and_ban": "收口这八个指纹。可见设置只差 simulationMode，历史 QUICK 与本次 FULL 的执行日期不同，无法单独识别后端版本或样本数据变化。不要用总体指标或 Ladder 替代 JPN、Robust 和真实 2Y。"
+    },
+    {
+      "case_id": "INEFF-39",
+      "region_dataset": "[V][U] USA/TOP3000/ai_equity_alpha · S3-r34-USA-AIEQ-LL8-LOWPC-ram_d4_t06",
+      "controlled_change": "8/8 D1 FULL NORMAL，8 个唯一指纹。批名后缀为历史命名，台账与 BRAIN 实际均为 RAM、decay=0、truncation=0.04、nanHandling=ON、maxTrade=OFF。B1 LL86Rx8e→VkMlM5WV 同表达式、同设置只切 FULL；B2/B3 相对 B1 只换成 sent4/sent5，B4 同 sent3 改平滑窗口并加 tail25。",
+      "verdict": "[无效] B1 切 FULL 后主要数值完全一致。B2/B3 换字段后整体下降。B4 整体略升、2Y下降。全批 4 条明确 FAIL、4 条官方检查待定，且 8 条均低于 Fitness 1.00 和原始 2Y 1.58，确认 RA 硬检 0/8。",
+      "metric_delta": "B1 1.45/0.90/1.28/14.25bp/6.81% 不变。B2/B3 Sharpe 1.38/1.37、Fitness 0.83/0.84、Margin 13.65/13.27bp。B4 xAlzlWZp 为 1.47/0.94/1.24/14.96bp；最高原始 2Y 为 B5 xAlzlWJg 的 1.38。",
+      "root_cause_and_ban": "停在现有结果，不重发。以后以实际 settings 比较母版与受控变量。本批无候选进入 Stage 4 SC/PC 终检。"
+    },
+    {
+      "case_id": "INEFF-40",
+      "region_dataset": "[V][U] 广州 D1 RA 常规与免额队列跨纽约平台日切换（2026-11-28）",
+      "controlled_change": "只读核对 sim_tasks 的 submitted_at_utc 与 completed_at_utc、实际额度头、守护日志及本地选队代码。",
+      "verdict": "[无效] 13:00 换日后 ASI/KOR 仍新发 4 批、32 条 Alpha0 QUICK。另有 8 条换日前发出，换日后完成。13:12:29 起恢复 NORMAL，当前常规优先。",
+      "metric_delta": "4 批新发时间为北京时间 13:00:22、13:01:48、13:04:14、13:07:20，最后一批 13:11:55 完成。15:18:21 的 HTTP 201 额度头余 4,520/5,000。",
+      "root_cause_and_ban": "本地代码仅在滚动窗口开始重判平台日，符合观测，远端部署版本和运行时窗口边界待核。沿现有常规队列继续，勿用按完成日计的 40 条推断 40 条均为换日后新发。"
     }
   ]
 }

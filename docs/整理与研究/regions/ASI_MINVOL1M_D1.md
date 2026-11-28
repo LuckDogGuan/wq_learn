@@ -179,3 +179,16 @@
   - **立即热部署 `S3-r37-ASI-AIEQ-EXACT-FULL-cty_d0_t04`（8 FULL `UNUSED_ALPHA0`）与 `ASI_AIEQ_VEC_V2_FREE`**：
     - 因 ASI `QUICK` 模式不跑 `LOW_ASI_JPN_SHARPE` 与 `ROBUST_UNIVERSE`，`S3-r37-ASI` 100% 锁定 `COUNTRY, decay=0, truncation=0.04, maxTrade="ON", nanHandling="ON"`（与 `QUICK` 母版完全一致，零每日额度消耗！），对 `omPzepln`、`2rGZzJnP`、`Jj3XEbgl`、`E5maYx81` 及王哥 L6 `tail25`、`imp4 × rev(imp41) / bs4` 互补双/三支执行 `FULL` 实盘检验！
     - 同步上线 **`ASI_AIEQ_VEC_V2_FREE`（`ASI/MINVOL1M/ai_equity_alpha` 下一批 8 个未触达 `alphaCount == 0` `VECTOR` 字段 `cov=0.970, dCov=0.951, maxTrade=ON`）**，并下线 `1/56` 自动早停的 `KOR_M138_QUALITY_FREE`（`INEFF-34`）。
+
+### 2026-11-28 12:19 CST · r37 ASI 一次对账后未观测
+
+- [V] `S3-r37-ASI-AIEQ-EXACT-FULL-cty_d0_t04` 计划为 8 条 D1 FULL 免额。广州守护日志记录 546.7 秒、`done=0 / unobs=8`，审计导出记录一次对账后仍未观测，轮询在 0.35 停滞 360 秒。保留原批次，等待台账指纹可读。
+- [V][U] 平台确认 A1–A3 的 QUICK 母版 `omPzepln`、`2rGZzJnP`、`Jj3XEbgl` 与计划的 COUNTRY 设置匹配，A4 `E5maYx81` 用 RAM。本批的 JPN、Robust、模式和设置效果均待验证。见 `INEFF-36`。
+- [V] `ASI_AIEQ_VEC_V2_FREE` 现有队列仍有完成日志。平台 09:20–12:12:45 按对应字段匹配出 136 条 D1 QUICK，7 条 Sharpe≥0.80，0 条≥1.25，最高 1.12。下一窗口沿既有队列复核。
+
+### 2026-11-28 15:20 CST · r34 ASI 完成，日本子池与 Robust 全批失败
+
+- [V] `S3-r34-ASI-ANLCONS-E71-FULL-cty_d0_t04` 13:12:29 发出、13:17:10 完成。SQLite 8/8 D1 FULL NORMAL，8 个唯一指纹，无未观测。BRAIN 确认 COUNTRY、decay=0、truncation=0.04、nanHandling=ON、maxTrade=ON。A1 `e71Kn6Wg→LL8XEJO9`、A2 `9qGKw1k1→e712NR8l` 的表达式与其余设置一致。Sharpe 分别 1.78→1.63、1.76→1.62，原始 2Y 1.87→1.77、2.01→1.83。后端版本和历史母版的数据快照未知。
+- [V] 8 条全有 JPN、Robust Sharpe Ratio 与 Robust Returns FAIL。A6 `P0Plx9qE` 总体 Sharpe 1.93、Fitness 1.34、Margin 17.56bp，JPN 0.46，Robust Sharpe 1.53，只有 Ladder 2.42。相对 A3 的 tail 基线，该门控抬高总体和 Robust Sharpe，同时压低 JPN。A5–A8 均缺独立 2Y。见 `INEFF-38`。
+- [V] `ASI_AIEQ_VEC_V2_FREE` 累计 232 条完成，15 条≥0.80，0 条≥1.25，最高 1.16。另有 16 个未观测指纹。15:18 台账中已有常规 `ASI_ANL39_STARMINE_NORM` 为 96 完成、1 条≥0.80、0 条≥1.25、48 排队、8 已提交、8 未观测；`ASI_ANL_CONSENSUS_NORM` 为 80 完成、3 条≥0.80、0 条≥1.25、64 排队、16 未观测。下一窗口随现有常规队列复核。
+- [V] r35/r37 ASI 分别为 8 个唯一指纹、各对账一次后未观测。保留原结果。

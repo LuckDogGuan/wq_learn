@@ -205,3 +205,15 @@
   - **立即热部署 `S3-r37-USA-AIEQ-SNT21-RAM-FREE-ram_d0_t04`（8 FULL `UNUSED_ALPHA0`）与两大全新 `alphaCount == 0` 纯 `MATRIX` 活动**：
     - `S3-r37-USA` 100% 锁定 `REVERSION_AND_MOMENTUM, decay=0, truncation=0.04, nanHandling="ON"`（与 `O06mao7b` 及 `np6zVvLw` 设置完全一致），测试 `O06mao7b` 与 `np6zVvLw` 原式 `FULL`、`d22+tail25`（对 `np6zVvLw` `TO=27.7% > 18%` 执行通用降换手梯队），以及 `buzz3` 与高 2Y 分支 `buzz4` (`2Y=1.15`)、`cf101` (`2Y=1.24, 16.31bp`)、`epsl ts_rank 252` (`FULL 2Y=2.23`)、`snt21_4neg_conf_low_171` (`PC=0.5551`) 的双支融合！
     - 新增实盘核验 `alphaCount == 0` 纯 `MATRIX` 免费集 **`USA_ANL10_SURP_FREE`（`USA/TOP3000/analyst10`, 8 个 SmartEstimate Predicted Surprise & Innovation `MATRIX` 字段 `cov>=0.78`）** 与 **`USA_SNT23_MATRIX_FREE`（`USA/TOP3000/sentiment23`, 7 个 `MATRIX` 字段，`1.5x` 情绪塔）**！
+
+### 2026-11-28 12:19 CST · r37 USA 逐条复核
+
+- [V] `S3-r37-USA-AIEQ-SNT21-RAM-FREE-ram_d0_t04` 8/8 完成。BRAIN 确认八条均为 USA/TOP3000、D1 FULL、RAM、decay=0、truncation=0.04、nanHandling=ON、maxTrade=OFF。B1 `O06mao7b→blxPWALl`、B2 `np6zVvLw→9qG6Akw9` 仅切模式，Sharpe、Fitness、`LOW_2Y_SHARPE`、Margin、换手一致。
+- [V] 4 条有明确 FAIL，4 条 `REGULAR_SUBMISSION=PENDING` 且原始 2Y 均低于 1.58。B3 `88G6KXzX` 的 2Y 0.63、Margin 13.58bp；B6 `xAlzm5kb` 以 2Y 1.45、Margin 15.50bp 领先，PC 0.8159，≥0.70 桶 821。已确认 RA 硬检 0，见 `EFF-31`、`INEFF-35`。
+- [V] `USA_SNT23_MATRIX_FREE` 0/64 命中 Sharpe≥0.80，最高 0.37，守护进程已早停。`USA_ANL10_SURP_FREE` 对应字段在平台 09:20–12:12:45 匹配出 256 条 D1 QUICK，17 条 Sharpe≥0.80，0 条≥1.25，最高 0.97。下一窗口沿既有队列复核。
+
+### 2026-11-28 15:20 CST · r34 USA 完成，实跑设置与母版对齐
+
+- [V] `S3-r34-USA-AIEQ-LL8-LOWPC-ram_d4_t06` 13:12:31 发出、13:14:00 完成。SQLite 8/8 D1 FULL NORMAL，8 个唯一指纹，无未观测。BRAIN 实际设置为 RAM、decay=0、truncation=0.04、nanHandling=ON、maxTrade=OFF。批名仍保留旧后缀。B1 `LL86Rx8e→VkMlM5WV` 只切 FULL，Sharpe 1.45、Fitness 0.90、原始 2Y 1.28、Margin 14.25bp、换手 6.81% 全部持平。
+- [V] 换 sent4/sent5 后 Sharpe 1.38/1.37，低于 sent3。B4 `xAlzlWZp` 延长平滑并加 tail25，Sharpe 1.47、Fitness 0.94、Margin 14.96bp，原始 2Y 降至 1.24。全批 4 条明确 FAIL，4 条官方检查待定，8 条 Fitness 均 <1.00、原始 2Y 均 <1.58，无 Stage 4 候选。见 `INEFF-39`。
+- [V] `USA_ANL10_SURP_FREE` 累计 320 条完成，22 条≥0.80、0 条≥1.25，最高 0.99。新平台日 `USA_AIEQ_ALPHA_NORM` 208 条 QUICK 完成，35 条≥0.80、15 条≥1.25，最高 1.47。台账未见该常规活动当前仍排队或在途的任务。

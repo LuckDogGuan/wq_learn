@@ -9,3 +9,5 @@
 - **独立漏斗快照**：`data/exports/kor_ra_funnel_latest.json`。
 
 - **2026-11-25 19:16（1 小时定时检查 #1）**：`KOR / behavioral_signals` 完成 `38` 条 `0` 命中（最高 `+0.52`），已止损停跑，KOR 直切散户论坛情绪 **`equity_forum_data`**（`1.6×`）。
+
+- **2026-11-28 09:20 Codex 巡检 [V]**。守护日志确认 KOR/model138 免额线 56 条完成，1 条正向 Sharpe≥0.80（1.79%），最高 0.81，已触发早停。平台 `6XGqboq5` 的 Sharpe 0.81、Margin 21.83bp。后续由现有守护队列切换活动。
