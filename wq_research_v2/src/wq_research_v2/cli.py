@@ -11,7 +11,7 @@ from wq_research_v2.ablation_engine import build_dual_branch_ablation
 from wq_research_v2.alphaforge_v4 import (
     attribute_ppa_first_routing,
     build_agy_cli_command,
-    build_agy_main_prompt,
+    build_controller_prompt,
     build_dsh_subagent_brief,
     build_platform_day_funnel,
     build_startup_handoff,
@@ -359,12 +359,13 @@ def main(argv: Optional[list[str]] = None) -> int:
             print(brief)
             return 0
         if args.action == "agy-cmd":
-            prompt = build_agy_main_prompt(
+            prompt = build_controller_prompt(
                 region=args.region,
                 universe=args.universe,
                 dataset_id=args.dataset,
                 goal=args.goal,
                 failure_code=args.failure,
+                controller="Antigravity CLI (agy)",
                 reuser=reuser,
             )
             cmd = build_agy_cli_command(

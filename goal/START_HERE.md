@@ -6,13 +6,15 @@
 按 wq-d1-closed-loop 启动默认路线。应用 AGENTS.md，先读 forge handoff 摘要，按案例编号验真上轮有效和无效结果，再派 DSH 只读核验并确定下一轮的单一变量。保留完整日志和台账。
 ```
 
-运行以下命令时以仓库根目录为工作目录。
+在仓库根目录执行。主控用 Codex CLI，子代理用 DSH。
 
 ```powershell
 # 一行预览
 python scripts/ops/launch_alphaforge_v4.py
-# 只读验收
+# 只读验收 Codex CLI 和启动摘要
 python scripts/ops/launch_alphaforge_v4.py --verify
+# 从 Codex CLI 验收 DSH 工具链，成功时输出真实 job 回执
+python scripts/ops/launch_alphaforge_v4.py --verify-dsh
 # 正式运行一轮
 python scripts/ops/launch_alphaforge_v4.py --execute
 ```

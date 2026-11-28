@@ -1,7 +1,7 @@
 {
   "schema_version": "wq_d1_alphaforge_v4_config_v1",
   "track_id": "alphaforge_agy_dsh_v4",
-  "track_name": "锻造闭环路径 (AlphaForge AGY-DSH v4.0)",
+  "track_name": "锻造闭环路径 (AlphaForge v4.0)",
   "log_prefix": "[TRACK:alphaforge_agy_dsh_v4]",
   "base_track_ref": {
     "track_id": "baseline_v1",
@@ -9,13 +9,11 @@
     "manual_md": "docs/整理与研究/workflow/D1_RA_BASELINE_V1_MANUAL.md"
   },
   "design_source": "doc/ALPHAFORGE_WORKFLOW_REVIEW_20261128.md",
-  "updated_at": "2026-11-28T08:50:00+08:00",
+  "updated_at": "2026-11-28T16:52:00+08:00",
   "orchestration": {
     "main_controller": {
-      "runtime": "antigravity_cli",
-      "cli_binary": "agy",
-      "windows_default_path": "C:/Users/31186/.gemini/bin/agy.exe",
-      "default_mode": "accept-edits",
+      "runtime": "codex_cli",
+      "cli_binary": "codex",
       "default_effort": "high",
       "context_budget_kb": 8,
       "owns": [
@@ -29,7 +27,7 @@
     },
     "subagent_worker": {
       "runtime": "dsh_crew_mcp",
-      "mcp_server": "dsh-crew",
+      "mcp_server": "dsh_crew",
       "hub_mode": "hub",
       "default_provider": "dsh-opencode-go",
       "default_model": "deepseek-v4.1-flash",
@@ -62,7 +60,7 @@
       ],
       "fallback_20_pct": "普通论坛帖子（仅 80% 主栈无法解决时使用）"
     },
-    "inject_into_agy_prompt": true,
+    "inject_into_controller_prompt": true,
     "inject_into_dsh_brief": true,
     "max_card_bytes": 3800
   },

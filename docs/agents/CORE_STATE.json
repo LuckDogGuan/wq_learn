@@ -1,13 +1,14 @@
 {
   "schema_version": "wq_d1_compact_core_state_v1",
-  "active_track_name": "锻造闭环路径 (AlphaForge AGY-DSH v4.0)",
+  "active_track_name": "锻造闭环路径 (AlphaForge v4.0)",
   "track_registry": {
     "baseline_v1": "基础优化路径 (Baseline v1.0 · 冻结于 d1_ra_baseline_v1_frozen.json)",
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >=4500切Alphas=0)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)",
-    "alphaforge_agy_dsh_v4": "锻造闭环路径 (AlphaForge AGY-DSH v4.0 · 基于基础路线扩展，Antigravity CLI 主控 + DSH 子代理 + 自动历史经验复用 · docs/alphaforge_v4/)"
+    "alphaforge_agy_dsh_v4": "锻造闭环路径 (AlphaForge v4.0 · Codex CLI 主控 + DSH 子代理 + 历史经验复用 · docs/alphaforge_v4/)"
   },
-  "updated_at": "2026-11-28T15:20:41+08:00",
+  "updated_at": "2026-11-28T17:07:00+08:00",
+  "alphaforge_next_direction": "ASI/MINVOL1M 新低相关种子。先看现有 analyst39/analyst_consensus 常规队列，出现正向 Sharpe≥1.25 的新指纹后才做表达式与设置同参、仅 QUICK→FULL 的对照；看原始 2Y≥1.58、Fitness≥1.00、JPN 和 Robust。Jj3XEbgl 仅作低 PC／近 2Y 参考，r37 未观测指纹不重发。",
   "mainline_policy": "主线=点塔(Pyramid)：某 category 已有>5个可点(可交付)因子即转其他 categories；docs/agents/TODO_20261127.md 为顺手/空闲项，核心是验证模板与操作符(T17，额度500-1000 FULL，PC仅记录不设门槛)。",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "context_compaction_rule": "启动或 /compact 后应用 AGENTS.md，先读 forge handoff 摘要，再按案例编号核对必要证据。完整状态、历史台账、运行日志与对话继续留存。",

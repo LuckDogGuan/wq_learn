@@ -192,3 +192,8 @@
 - [V] 8 条全有 JPN、Robust Sharpe Ratio 与 Robust Returns FAIL。A6 `P0Plx9qE` 总体 Sharpe 1.93、Fitness 1.34、Margin 17.56bp，JPN 0.46，Robust Sharpe 1.53，只有 Ladder 2.42。相对 A3 的 tail 基线，该门控抬高总体和 Robust Sharpe，同时压低 JPN。A5–A8 均缺独立 2Y。见 `INEFF-38`。
 - [V] `ASI_AIEQ_VEC_V2_FREE` 累计 232 条完成，15 条≥0.80，0 条≥1.25，最高 1.16。另有 16 个未观测指纹。15:18 台账中已有常规 `ASI_ANL39_STARMINE_NORM` 为 96 完成、1 条≥0.80、0 条≥1.25、48 排队、8 已提交、8 未观测；`ASI_ANL_CONSENSUS_NORM` 为 80 完成、3 条≥0.80、0 条≥1.25、64 排队、16 未观测。下一窗口随现有常规队列复核。
 - [V] r35/r37 ASI 分别为 8 个唯一指纹、各对账一次后未观测。保留原结果。
+
+### 2026-11-28 16:52 CST · 路线 ④ 只读复核
+
+- [V] BRAIN QUICK 母版 `Jj3XEbgl` 原始 2Y 1.51、Fitness 0.90。高 Margin 母版 `2rGZzJnP` 原始 2Y 0.57、Fitness 0.87。两条均已进入 r37 的单次对账范围。保留 `Jj3XEbgl` 作为低 PC、接近 2Y 门槛的参考。
+- [V][U] 广州尾日志已见常规进度估计到 696/4500，`api_rem=?`；当前精确台账和额度待核。下一轮筛现有 ASI 常规队列的新种子，正向 Sharpe≥1.25 且指纹可执行时做同参 QUICK→FULL。验原始 2Y、Fitness、JPN 和 Robust。此轮新增回测 0。

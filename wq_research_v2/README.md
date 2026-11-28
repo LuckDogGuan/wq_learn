@@ -48,7 +48,7 @@ python -m wq_research_v2 legacy merge
 python -m wq_research_v2 legacy stats
 python -m wq_research_v2 legacy screen --region USA,EUR,GLB --tier TIER_S_READY_CHECK,TIER_A_PARAM_TUNE --top 25
 
-# 11. 路线 ④（AlphaForge AGY-DSH v4.0）：历史经验复用、P0 入口预检、美东日漏斗、DSH 简报与 Antigravity CLI 启动预览
+# 11. 路线 ④（AlphaForge v4.0）：历史经验复用、P0 预检、美东日漏斗、DSH 简报与 Codex CLI 启动预览
 python -m wq_research_v2 forge experience --region USA --universe TOP3000 --dataset ai_equity_alpha --failure HIGH_PC
 python -m wq_research_v2 forge preflight --region USA --queue NORMAL --normal-completed 1200 --stage STAGE_3 --mode FULL
 python -m wq_research_v2 forge funnel --db data/wq_v2_ledger.db

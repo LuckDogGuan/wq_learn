@@ -1,8 +1,8 @@
-"""Route ④ (`alphaforge_agy_dsh_v4`) — AlphaForge AGY-DSH Closed-Loop Research Engine.
+"""Route ④ (`alphaforge_agy_dsh_v4`) — AlphaForge Closed-Loop Research Engine.
 
 Built strictly on top of Baseline v1 (`d1_ra_baseline_v1_frozen.json`) and `wq_research_v2`,
 implementing the P0/P1/P2 review recommendations from `doc/ALPHAFORGE_WORKFLOW_REVIEW_20261128.md`:
-- Main controller: Antigravity CLI (`agy`) owning preflight, direction selection, verification,
+- Main controller: Codex CLI owning preflight, direction selection, verification,
   state writes, and Margin-first auto-PATCH (ZERO `/submit` calls).
 - Subagent delegation: DSH Crew MCP (`dsh-opencode-go/deepseek-v4.1-flash`, `tier=flash`,
   `effort=high`, probe-first, max 2 concurrent read-only workers, max 4 dialogue rounds per worker).
@@ -24,7 +24,7 @@ P0/P1/P2 deterministic primitives implemented here:
    2 consecutive same-root-cause batches while excluding `PENDING` / `RESULTS_UNOBSERVED` / platform faults.
 5. P2 3-Primary + 1-Backup ("三主一备") Pyramid Manual-Review Roster: selects orthogonal (`<0.68`)
    same-day verified passing candidates by Pyramid priority & Margin DESC, reporting gaps honestly.
-6. Antigravity CLI (`agy`) command/prompt builder & self-contained DSH subagent brief compiler.
+6. Controller prompt and self-contained DSH subagent brief.
 """
 from __future__ import annotations
 
@@ -53,7 +53,7 @@ from wq_research_v2.sim_runner import MAX_THREADS_GLB, MAX_THREADS_OTHER_REGION
 
 
 TRACK_ID = "alphaforge_agy_dsh_v4"
-TRACK_NAME_ZH = "锻造闭环路径 (AlphaForge AGY-DSH v4.0)"
+TRACK_NAME_ZH = "锻造闭环路径 (AlphaForge v4.0)"
 TRACK_LOG_PREFIX = "[TRACK:alphaforge_agy_dsh_v4]"
 BASE_TRACK_ID = "baseline_v1"
 
@@ -791,17 +791,18 @@ def build_startup_handoff() -> dict[str, Any]:
     config = json.loads((REPO_ROOT / "goal/run_config.json").read_text(encoding="utf-8-sig"))
     state = json.loads((REPO_ROOT / "docs/agents/CORE_STATE.json").read_text(encoding="utf-8-sig"))
     ledger = json.loads((REPO_ROOT / "docs/agents/OPTIMIZATION_LEDGER.json").read_text(encoding="utf-8-sig"))
-    inspection = state["codex_latest_inspection"]
+    inspection = state.get("codex_latest_inspection", {})
     return {
         "default_track_id": config["default_track_id"],
-        "as_of": inspection["observed_at"],
-        "planned_followup": inspection["followup_window"]["batch_scope"],
+        "inspection_as_of": inspection.get("observed_at"),
+        "planned_followup": inspection.get("followup_window", {}).get("batch_scope", []),
+        "next_direction": state.get("alphaforge_next_direction"),
         "closed_wave": [
             {key: batch[key] for key in ("campaign", "completed", "hard_fail", "met_condition")}
-            for batch in inspection["closed_wave"]
+            for batch in inspection.get("closed_wave", [])
         ],
         "latest_cases": {
-            kind: [{key: case[key] for key in ("case_id", "verdict")} for case in ledger[kind][-2:]]
+            kind: [{key: case[key] for key in ("case_id", "verdict")} for case in ledger[kind][-3:]]
             for kind in ("effective_cases", "ineffective_cases")
         },
     }
@@ -884,16 +885,17 @@ def build_dsh_subagent_brief(
     )
 
 
-def build_agy_main_prompt(
+def build_controller_prompt(
     *,
     region: str = "USA",
     universe: str = "TOP3000",
     dataset_id: str = "",
     goal: str = "执行 Route ④ 锻造闭环巡检、失败归因与单轴推进",
     failure_code: str = "",
+    controller: str = "Codex CLI",
     reuser: Optional[ExperienceReuser] = None,
 ) -> str:
-    """Build compact (< 6 KB) Antigravity CLI (`agy`) main-controller boot prompt for Route ④."""
+    """Build the Route ④ controller prompt with coordinate-matched experience."""
     exp_reuser = reuser or ExperienceReuser()
     packet = exp_reuser.retrieve(
         region=region,
@@ -906,29 +908,31 @@ def build_agy_main_prompt(
         top_audited=2,
     )
     exp_card = packet.render_compact_markdown(max_bytes=2400)
+    handoff = json.dumps(build_startup_handoff(), ensure_ascii=False, separators=(",", ":"))
 
     return (
-        f"你是 WorldQuant BRAIN 路线 ④「{TRACK_NAME_ZH}」(`{TRACK_ID}`) 的 Antigravity CLI (`agy`) 主控 Agent。\n"
+        f"你是 WorldQuant BRAIN 路线 ④「{TRACK_NAME_ZH}」(`{TRACK_ID}`) 的 {controller} 主控 Agent。\n"
         f"本轮目标：{goal}（坐标：{region.upper()}/{universe.upper()}/{dataset_id or '按当前高优空位'}）。\n\n"
         "### 一、精简启动\n"
-        "1. 应用 `AGENTS.md`；运行 `python -m wq_research_v2 forge handoff`，仅按 case_id 读取需要验真的原始条目。"
-        "不展开完整状态、经验台账、运行日志或旧对话；历史经验卡随本提示附上。\n"
+        "1. 应用 `AGENTS.md`；使用下方 `forge handoff` 摘要，仅按 case_id 读取需要验真的原始条目。"
+        "全局经验先读默认行为摘要；状态、台账和日志按需核对，历史经验卡随本提示附上。\n"
         "2. 严格遵守所有红线：D1-Only、禁 `+/*/add/multiply/trade_when`、零自动 `/submit`、"
         "全过线自动 `PATCH` 并提示（Margin 优先）、`GLB<=3`/其他区`<=4`、只对账 1 次、不覆盖 `COMPLETED_FULL`。\n\n"
         "### 二、执行入口硬门禁（P0）与 DSH 子代理编排\n"
         "1. **先做 P0 预检与平台日漏斗对账**：运行 `python -m wq_research_v2 forge preflight` 与 "
         "`python -m wq_research_v2 forge funnel`，确认 `NORMAL < 4500` 前绝不混发 `UNUSED_ALPHA0`，"
-        "已终结/未观测指纹绝不重发。\n"
-        "2. **DSH 子代理派单（必须先 probe）**：通过 `dsh-crew` MCP 先调 `dsh_worker_config` 确认 "
+        "已终结/未观测指纹绝不重发；当日台账或额度无法核实时，本轮只读归因。\n"
+        "2. **DSH 子代理派单（必须先 probe）**：通过 `dsh_crew` MCP 先调 `dsh_worker_config` 确认 "
         "`mode=hub, enabled=true, escalate_on_failure=false, flash=dsh-opencode-go/deepseek-v4.1-flash`，"
         "再调 `dsh_worker_probe(tier=flash, provider=dsh-opencode-go, model=deepseek-v4.1-flash)`；"
         "探测通过后用 `python -m wq_research_v2 forge dsh-brief` 生成带历史经验与失败反馈的自包含简报，"
-        "调用 `dsh_run_worker` / `dsh_spawn_worker`（最多同时 2 组只读研究子代理，每子代理最多 4 轮，保留会话）。\n"
+        "通过 `dsh_run_worker` 派只读任务，每子代理最多 4 轮，保留会话。\n"
         "3. **失败传回原方向 + 2 批换向预算（P1）**：若同一方向连续 2 批卡在同一策略失败项（排除 PENDING/未观测/平台故障），"
         "立即封存同族候选并换向；遇结构符合 `ops<=8 && fields<=3` 时显式核查 PPA-First 归因。\n"
         "4. **主 Agent 独立验真与收口**：主 Agent 独立复核 DSH 证据、执行 Stage-4 本地 SC/正交/远程 PC 与三主一备人工复核清单（P2），"
-        "写回 `[有效]/[无效]` 至 `OPTIMIZATION_LEDGER.json` 并追加战报至 `docs/alphaforge_v4/alphaforge_v4_log.md`（前缀 `[TRACK:alphaforge_agy_dsh_v4]`）。\n\n"
-        f"{exp_card}\n"
+        "写回新归因并追加战报至 `docs/alphaforge_v4/alphaforge_v4_log.md`（前缀 `[TRACK:alphaforge_agy_dsh_v4]`）。"
+        "最终汇报最多 12 行，给上轮结论、未验证项、一次 DSH 回执和下轮唯一变量。\n\n"
+        f"启动摘要\n{handoff}\n\n{exp_card}\n"
     )
 
 

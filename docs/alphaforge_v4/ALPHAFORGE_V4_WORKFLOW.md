@@ -1,13 +1,13 @@
-# 路线 ④：锻造闭环路径（AlphaForge AGY-DSH v4.0）标准操作流程（SOP）
+# 路线 ④：锻造闭环路径（AlphaForge v4.0）
 
 > **路线标识**：`alphaforge_agy_dsh_v4` · 日志前缀 `[TRACK:alphaforge_agy_dsh_v4]`  
 > **构建基座**：基于冻结基线 **路线 ①（`baseline_v1`）** 与 `wq_research_v2` D1-Only 引擎扩展，完整落地 [doc/ALPHAFORGE_WORKFLOW_REVIEW_20261128.md](../../doc/ALPHAFORGE_WORKFLOW_REVIEW_20261128.md) 中的 P0 / P1 / P2 工程闭环。  
-> **主从编排**：**Antigravity CLI (`agy`) 负责主控逻辑**，**DSH (`dsh-crew` MCP) 负责子代理调研/诊断/单轴核验**，并内置 **`ExperienceReuser`** 自动复用全部历史经验。  
+> **主从编排**：Codex CLI 主控，`dsh_crew` MCP 子代理只读核验，`ExperienceReuser` 按本轮坐标检索历史经验。
 > **配置文件**：[alphaforge_v4_config.json](alphaforge_v4_config.json) · **专属运行日志**：[alphaforge_v4_log.md](alphaforge_v4_log.md) · **四条路线总手册**：[TRACKS_AND_LOGS_GUIDE.md](../TRACKS_AND_LOGS_GUIDE.md)
 
 ---
 
-## 一、核心架构图（Antigravity CLI 主控 + DSH 子代理 + 历史经验复用）
+## 一、Codex CLI 主控与 DSH 子代理
 
 ```mermaid
 flowchart TD
@@ -18,7 +18,7 @@ flowchart TD
         E4["worldquant-experience-reuse/references/rules.jsonl<br/>跨会话审计规则与反例边界"]
     end
 
-    subgraph AGY["主控逻辑：Antigravity CLI (agy)"]
+    subgraph CODEX["主控逻辑：Codex CLI"]
         A1["1) 启动<br/>应用 AGENTS.md，读取 forge handoff 摘要，按案例编号查证"]
         A2["2) P0 执行入口硬门禁 (wq_research_v2 forge preflight & funnel)<br/>• 常规完成 <4500 严禁发 UNUSED_ALPHA0<br/>• 拦截 COMPLETED/SUBMITTED/PENDING_RECONCILE/RESULTS_UNOBSERVED 指纹<br/>• 美东平台日对账 + 进度耗时指标 (last_completed / oldest_pending)"]
         A3["3) 方向决策 + 历史经验卡片注入<br/>• 匹配 Region/Universe/Dataset/瓶颈码 -> 生成 <=3.8KB 经验卡<br/>• 核查 PPA-First 结构 (ops<=8 & fields<=3) 与换向预算"]
@@ -46,8 +46,8 @@ flowchart TD
 | 维度 | 路线 ① 基础优化路径 (`baseline_v1`) | 路线 ④ 锻造闭环路径 (`alphaforge_agy_dsh_v4`) |
 | --- | --- | --- |
 | **硬红线与核心引擎** | `delay=1`、禁 `+`/`*`/`trade_when`、Gold-81、零 `/submit`、`GLB<=3`/他区`<=4`、512M RAM、WAL | **100% 继承**，零突破、零自动提交 |
-| **主从编排方式** | 人工/通用对话 + 后台守护 | **Antigravity CLI (`agy`) 主控** + **`dsh-crew` MCP 子代理**（先 probe、最多 2 组只读并发、每组 ≤4 轮） |
-| **历史经验复用** | 人工翻阅文档与台账 | **`ExperienceReuser` 自动按坐标+瓶颈检索 4 大历史真源**，生成 `≤3.8KB` 经验卡注入 `agy` 主提示词与每次 DSH 简报 |
+| **主从编排方式** | 人工/通用对话 + 后台守护 | Codex CLI 主控与 `dsh_crew` MCP 子代理（先 probe，最多 2 组只读并发，每组 ≤4 轮） |
+| **历史经验复用** | 人工翻阅文档与台账 | `ExperienceReuser` 按坐标和瓶颈检索历史真源，生成经验卡供 Codex CLI 与 DSH 简报使用 |
 | **P0 执行入口门禁** | 依赖调度器常规顺序 | `forge preflight` 入口硬拦截：**`NORMAL < 4500` 拒绝 `UNUSED_ALPHA0`**；拦截已终结/未观测指纹重发；美东日漏斗去重对账 |
 | **P1 失败回传与换向** | 人工复盘决定是否止损 | **结构化失败反馈包回传原方向**（含低 localSC+高 PC 归因、屏蔽同族变体、单轴可证伪假设）+ **连续 2 批同因失败强制换向**（待判/未观测不计入失败预算） |
 | **P1 PPA-First 归因** | 靠人工识别 UI 报错 | `forge ppa-check` 自动统计非豁免算子/字段数，独立保留 403、原始 checks 与 UI `Prod Correlation FAIL` 假象来源 |
@@ -71,33 +71,35 @@ python -m wq_research_v2 forge preflight --region USA --queue NORMAL --normal-co
 python -m wq_research_v2 forge funnel --db data/wq_v2_ledger.db
 ```
 
-### Step 1 · 启动 Antigravity CLI (`agy`) 主控
-使用跨平台启动器。默认只输出一行摘要，`--show-prompt` 可查看完整提示。正式启动时，启动器会设置 Python 模块路径并保留独立的 CLI 日志。
+### Step 1 · 启动 Codex CLI 主控
+
+使用启动器调用 `codex exec`。默认只输出一行摘要，`--show-prompt` 可查看完整提示。正式启动时，启动器设置 Python 模块路径并保留独立的 CLI 日志。
 ```powershell
 # 预览默认启动
 python scripts/ops/launch_alphaforge_v4.py
 
-# 只读验收默认路线、Antigravity CLI 与 DSH 派单
+# 只读验收默认路线和 Codex CLI
 python scripts/ops/launch_alphaforge_v4.py --verify
+# 验收 Codex CLI 内的 DSH 探测和派单
+python scripts/ops/launch_alphaforge_v4.py --verify-dsh
 
-# 交互模式直接启动 Antigravity CLI 主控
-python scripts/ops/launch_alphaforge_v4.py --region USA --universe TOP3000 --dataset ai_equity_alpha --interactive --execute
-
-# 单轮无交互模式（--print）运行巡检并落日志
+# 正式运行一轮
 python scripts/ops/launch_alphaforge_v4.py --region USA --universe TOP3000 --dataset ai_equity_alpha --effort high --execute
 ```
 
-每次实际启动的 CLI 日志默认保存在 `data/alphaforge_v4_runs/`，路线回执继续追加到 [alphaforge_v4_log.md](alphaforge_v4_log.md)。广州台账或配额只取得旧快照时，记录观测时间，等待当日证据再下发回测。
+启动器优先使用 Codex 桌面提供的 CLI，终端可用 `--codex-bin` 显式选择安装路径。每次实际启动的 CLI 日志保存在 `data/alphaforge_v4_runs/`，路线回执追加到 [alphaforge_v4_log.md](alphaforge_v4_log.md)。广州台账或配额只取得旧快照时，记录观测时间，等待当日证据再下发回测。
 
-### Step 2 · `agy` 主控调用 DSH 子代理（严格 3 步规范）
+`--verify-dsh` 和 `--execute` 在本次 CLI 进程中授权 DSH 的绑定、探测和单任务派单。交互会话可审批工具调用，无交互 `codex exec` 需要这三项工具级配置。验收通过时退出码为 0，并输出工具事件中的 job ID、实际模型、状态和 token 用量。失败时输出失败步骤，完整事件保存在日志中。
+
+### Step 2 · Codex CLI 调用 DSH 子代理
 1. **绑定并探测**：调用 `dsh_worker_config(enabled=true, mode="hub", escalate_on_failure=false)` 核实 `flash` 绑定为 `dsh-opencode-go/deepseek-v4.1-flash`，再调用 `dsh_worker_probe(tier="flash", provider="dsh-opencode-go", model="deepseek-v4.1-flash")` 确认 `tool_call_verified=true`。
 2. **生成带历史经验与失败反馈的自包含简报**：
    ```powershell
    python -m wq_research_v2 forge dsh-brief --region USA --universe TOP3000 --dataset ai_equity_alpha --failure HIGH_PC --goal "只读复核 S3-r34 候选 PC 分布与单轴修复可行性" --evidence "C:\Wq\WorldQuant Brain\docs\agents\CORE_STATE.json,C:\Wq\WorldQuant Brain\docs\agents\OPTIMIZATION_LEDGER.json"
    ```
 3. **派单与并发边界**：
-   - 单任务阻塞核验用 `dsh_run_worker(tier="flash", effort="high", task=...)`；
-   - 最多同时 **2 组只读研究子代理**（`dsh_spawn_worker(..., allow_concurrent_cwd=true)`）；写操作仅允许主控 `agy` 执行；
+   - 启动器用 `dsh_run_worker(tier="flash", effort="high", task=...)` 做单任务阻塞核验，由主控写入台账。
+   - 交互会话并发派单最多 **2 组只读研究子代理**（`dsh_spawn_worker(..., allow_concurrent_cwd=true)`）。
    - 每个 DSH 子代理最多 **4 轮对话**，达上限停止派发并保留会话与 job ID / provider / model / token 回执。
 
 ### Step 3 · 主控独立验真、Stage-4 自动打标与三主一备清单

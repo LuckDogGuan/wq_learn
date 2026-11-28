@@ -1,14 +1,14 @@
 {
   "schema_version": "wq_d1_goal_run_config_v1",
   "default_track_id": "alphaforge_agy_dsh_v4",
-  "active_track_name": "锻造闭环路径 (AlphaForge AGY-DSH v4.0)",
+  "active_track_name": "锻造闭环路径 (AlphaForge v4.0)",
   "track_registry": {
     "baseline_v1": "基础优化路径 (Baseline v1.0 · EUR/USA 双区单模板冻结版)",
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × 5地区轮巡 × 3模板族配对 × >=4500自动切免额)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · 独立文档/台账/标签，不接入主调度器)",
-    "alphaforge_agy_dsh_v4": "锻造闭环路径 (AlphaForge AGY-DSH v4.0 · 基于基础路线 + AlphaForge P0/P1/P2 逻辑，Antigravity CLI 主控 + DSH 子代理 + 历史经验复用)"
+    "alphaforge_agy_dsh_v4": "锻造闭环路径 (AlphaForge v4.0 · P0/P1/P2，Codex CLI 主控 + DSH 子代理 + 历史经验复用)"
   },
-  "updated_at": "2026-11-27T15:24:00+08:00",
+  "updated_at": "2026-11-28T16:52:00+08:00",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "concurrency_limits": {
     "glb_max_threads": 3,

@@ -11,7 +11,7 @@
 | 并发回测与账本 | `sim_runner.py`、`ledger_store.py` | 加权 `SlotSemaphore`（GLB 占 2 槽）、2–10 Multi-Sim、原生 `QUICK/FULL`、SQLite WAL 8 表 Checkpoint、只对账一次绝不盲重发、Quick/Full 分账 |
 | 相关性与预检 | `sc_local.py`、`pc_poller.py` | 便携式 `os_pnl_cache.db`（`zlib+float64`）、零假零本地 SC、`N×N` 候选两两矩阵与贪心正交筛选；异步非阻塞远程 PC 与 `/check` 状态机（零 `/submit`） |
 | 评估、消融与停用 | `ra_evaluator.py`、`ablation_engine.py`、`blacklist_registry.py`、`pyramid_planner.py` | 厂字型秒杀、D1 四关评价、零 `+`/`*` 双分支消融、Stage-0 快速降级与 200 样本作用域自动停用/一键恢复、5:5 批次规划 |
-| 路线 ④ 锻造闭环与经验复用 | `experience_reuser.py`、`alphaforge_v4.py` | 四层只读历史经验按坐标/瓶颈检索与上下文卡压缩；AlphaForge P0 执行入口门禁与美东日漏斗、P1 失败回传原方向与 2 批换向预算/PPA-First 归因、P2 三主一备人工复核清单，及 Antigravity CLI (`agy`) 主控 + DSH (`dsh-crew`) 子代理简报编排 |
+| 路线 ④ 锻造闭环与经验复用 | `experience_reuser.py`、`alphaforge_v4.py` | 历史经验按坐标及瓶颈检索，包含 P0 入口门禁及美东日漏斗、P1 失败反馈及换向、P2 三主一备清单。Codex CLI 主控，DSH 子代理只读核验。 |
 
 ## 2. 故障恢复与断点续传机制
 

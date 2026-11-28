@@ -5,10 +5,12 @@ import datetime
 import json
 from pathlib import Path
 
+from scripts.ops.launch_alphaforge_v4 import verify_dsh_events
+
 from wq_research_v2.alphaforge_v4 import (
     attribute_ppa_first_routing,
     build_agy_cli_command,
-    build_agy_main_prompt,
+    build_controller_prompt,
     build_dsh_subagent_brief,
     build_failure_feedback_packet,
     build_platform_day_funnel,
@@ -306,6 +308,41 @@ def test_p2_three_plus_one_roster_orthogonality_and_margin_priority() -> None:
     assert "C1_CLONE" in rej_ids
 
 
+def test_dsh_verification_uses_ordered_tool_receipts() -> None:
+    profile = {"default_provider": "dsh-opencode-go", "default_model": "deepseek-v4.1-flash"}
+    provider, model = profile.values()
+    binding = {
+        "mode": "hub", "enabled": True, "escalate_on_failure": False,
+        "bindings": {"flash": {"provider": provider, "model": model}},
+    }
+    probe = {"tool_call_verified": True, "provider": provider, "model": model}
+    worker = {
+        "id": "hub-test", "status": "done", "provider": provider, "model": model,
+        "toolCalls": 1, "result": "alphaforge_agy_dsh_v4", "tokens": {"input": 10, "output": 5},
+    }
+    events = [
+        {
+            "type": "item.completed",
+            "item": {
+                "type": "mcp_tool_call", "server": "dsh_crew", "tool": tool, "status": "completed",
+                "result": {"content": [{"type": "text", "text": json.dumps(data)}], "structured_content": None},
+            },
+        }
+        for tool, data in zip(("dsh_worker_config", "dsh_worker_probe", "dsh_run_worker"), (binding, probe, worker))
+    ]
+    message = {"type": "item.completed", "item": {"type": "agent_message", "text": "ALPHAFORGE_VERIFY_OK"}}
+    assert verify_dsh_events([*events, message], profile)["job_id"] == "hub-test"
+    assert not verify_dsh_events([*events[:2], message], profile)["ok"]
+    assert not verify_dsh_events([events[1], events[0], events[2]], profile)["ok"]
+    worker["toolCalls"] = 0
+    events[2]["item"]["result"]["content"][0]["text"] = json.dumps(worker)
+    assert not verify_dsh_events(events, profile)["ok"]
+    worker["toolCalls"] = 1
+    worker["status"] = "timeout"
+    events[2]["item"]["result"]["content"][0]["text"] = json.dumps(worker)
+    assert not verify_dsh_events(events, profile)["ok"]
+
+
 def test_agy_cli_command_and_dsh_brief_generation(capsys) -> None:
     brief = build_dsh_subagent_brief(
         task_goal="核验 USA/ai_equity_alpha PC 分布与单轴 tail 假设",
@@ -320,9 +357,10 @@ def test_agy_cli_command_and_dsh_brief_generation(capsys) -> None:
     assert "历史经验复用卡" in brief
     assert "严禁递归调用 DSH/子代理" in brief
 
-    prompt = build_agy_main_prompt(region="USA", universe="TOP3000", dataset_id="ai_equity_alpha", failure_code="HIGH_PC")
+    prompt = build_controller_prompt(region="USA", universe="TOP3000", dataset_id="ai_equity_alpha", failure_code="HIGH_PC")
     assert len(prompt.encode("utf-8")) < 8192
     assert "dsh_worker_probe" in prompt
+    assert "Codex CLI" in prompt and "forge handoff" in prompt
 
     cmd = build_agy_cli_command(prompt, agy_bin="agy", interactive=False, effort="high")
     assert cmd[0] == "agy"
@@ -330,6 +368,14 @@ def test_agy_cli_command_and_dsh_brief_generation(capsys) -> None:
     assert "--effort" in cmd
 
     # Smoke test CLI `forge` offline subcommands
+    assert cli_main(["forge", "handoff"]) == 0
+    handoff_output = capsys.readouterr().out
+    handoff = json.loads(handoff_output)
+    assert handoff["default_track_id"] == "alphaforge_agy_dsh_v4"
+    assert 0 < len(handoff["latest_cases"]["effective_cases"]) <= 3
+    assert 0 < len(handoff["latest_cases"]["ineffective_cases"]) <= 3
+    assert len(handoff_output.encode("utf-8")) < 5000
+
     assert cli_main(["forge", "experience", "--region", "USA", "--dataset", "ai_equity_alpha", "--failure", "HIGH_PC"]) == 0
     out = capsys.readouterr().out
     assert "历史经验复用卡" in out

@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-28T12:19:23+08:00",
+  "updated_at": "2026-11-28T17:07:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -251,6 +251,22 @@
       "verdict": "[有效] B3 小幅改善 Sharpe、Fitness、2Y 和 Margin。B6 明显改善 2Y 且保留 Sharpe、Fitness 的数值过线，仍低于 2Y 1.58。B4 降换手但损伤 Sharpe、2Y 和子池，未改善准入。 B6 的 PC=0.8159，≥0.70 桶 821，≥0.80 桶 3，已越过项目 PC 救援上限。",
       "metric_delta": "blxPWALl→88G6KXzX 的 Sharpe 1.67→1.68、Fitness 1.13→1.16、2Y 0.55→0.63、Margin 12.51→13.58bp。blxPWALl→xAlzm5kb 的 Sharpe 1.67→1.59、Fitness 1.13→1.17、2Y 0.55→1.45、Margin 12.51→15.50bp。9qG6Akw9→N1Kj58rw 的换手 27.68%→17.98%、Sharpe 1.45→1.40、2Y 1.12→0.99、子池 0.30→-0.05，Margin 2.38→3.75bp。",
       "reusable_rule": "证据适用于实跑组合。B6 只作为 2Y 指标改善的历史对照，结束该组合降 PC，不派生救援批次。B3 仍有 2Y 短板，B4 结束当前组合。"
+    },
+    {
+      "case_id": "EFF-32",
+      "region_dataset": "[V][U] 路线 ④ · Codex CLI 只读启动",
+      "controlled_change": "完整状态、归因和运行日志留存。启动器投影近期案例、批次和下一步，并将摘要注入 Codex CLI。",
+      "verdict": "[有效] 桌面随附 Codex CLI 用摘要准确回传路线与案例编号。Codex 会话中的独立 DSH 只读派单完成。",
+      "metric_delta": "测试摘要约 2.6 KB，CLI 返回 ALPHAFORGE_VERIFY_OK。独立 DSH hub-11-mx05snxj 输入 5754、输出 3318。",
+      "reusable_rule": "按 case_id 抽取证据，保留原始日志。验证 CLI 内直接派单须取得该次真实回执，独立派单成功与 CLI 内部调用分别记录。"
+    },
+    {
+      "case_id": "EFF-33",
+      "region_dataset": "[V] 路线 ④ · Codex CLI 内 DSH 验收",
+      "controlled_change": "先只改绑定工具的进程级授权，重放原调用。再给绑定、探测、派单各加工具级授权，并把文件核对简报改成执行一条明确的只读命令。",
+      "verdict": "[有效] CLI 内绑定、探测和真实派单验证通过。按结构化工具事件判断，worker 状态 done 且实际读取 1 次。",
+      "metric_delta": "原调用在配置审批处失败。授权后 hub-12-mx06pnyf 返回 done 但工具调用 0 次，验收失败。允许指定只读命令后 hub-13-mx06roht 执行 1 次并回传正确路线。",
+      "reusable_rule": "非交互运行按需配置单工具授权。验收核对真实探测和 job 证据，派单简报明确可用的只读工具。"
     }
   ],
   "ineffective_cases": [
