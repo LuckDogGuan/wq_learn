@@ -14,6 +14,7 @@ from wq_research_v2.alphaforge_v4 import (
     build_agy_main_prompt,
     build_dsh_subagent_brief,
     build_platform_day_funnel,
+    build_startup_handoff,
     evaluate_dispatch_preflight,
     locate_agy_executable,
     select_three_plus_one_roster,
@@ -145,7 +146,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p_fg.add_argument(
         "action",
-        choices=["experience", "preflight", "funnel", "ppa-check", "dsh-brief", "agy-cmd", "roster"],
+        choices=["handoff", "experience", "preflight", "funnel", "ppa-check", "dsh-brief", "agy-cmd", "roster"],
     )
     p_fg.add_argument("--region", default="USA")
     p_fg.add_argument("--universe", default="TOP3000")
@@ -285,6 +286,9 @@ def main(argv: Optional[list[str]] = None) -> int:
             return 0
 
     if args.cmd == "forge":
+        if args.action == "handoff":
+            print(json.dumps(build_startup_handoff(), ensure_ascii=False, indent=2))
+            return 0
         reuser = ExperienceReuser()
         if args.action == "experience":
             pkt = reuser.retrieve(

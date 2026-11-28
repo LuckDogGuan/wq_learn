@@ -786,6 +786,27 @@ def locate_agy_executable() -> Optional[str]:
     return None
 
 
+def build_startup_handoff() -> dict[str, Any]:
+    """Project the current direction and latest cases without loading full logs into the prompt."""
+    config = json.loads((REPO_ROOT / "goal/run_config.json").read_text(encoding="utf-8-sig"))
+    state = json.loads((REPO_ROOT / "docs/agents/CORE_STATE.json").read_text(encoding="utf-8-sig"))
+    ledger = json.loads((REPO_ROOT / "docs/agents/OPTIMIZATION_LEDGER.json").read_text(encoding="utf-8-sig"))
+    inspection = state["codex_latest_inspection"]
+    return {
+        "default_track_id": config["default_track_id"],
+        "as_of": inspection["observed_at"],
+        "planned_followup": inspection["followup_window"]["batch_scope"],
+        "closed_wave": [
+            {key: batch[key] for key in ("campaign", "completed", "hard_fail", "met_condition")}
+            for batch in inspection["closed_wave"]
+        ],
+        "latest_cases": {
+            kind: [{key: case[key] for key in ("case_id", "verdict")} for case in ledger[kind][-2:]]
+            for kind in ("effective_cases", "ineffective_cases")
+        },
+    }
+
+
 def build_dsh_subagent_brief(
     *,
     task_goal: str,
@@ -889,9 +910,9 @@ def build_agy_main_prompt(
     return (
         f"你是 WorldQuant BRAIN 路线 ④「{TRACK_NAME_ZH}」(`{TRACK_ID}`) 的 Antigravity CLI (`agy`) 主控 Agent。\n"
         f"本轮目标：{goal}（坐标：{region.upper()}/{universe.upper()}/{dataset_id or '按当前高优空位'}）。\n\n"
-        "### 一、极简上下文加载（< 8 KB，严禁重读历史长对话）\n"
-        "1. 仅读取：`AGENTS.md`、`docs/alphaforge_v4/alphaforge_v4_config.json`、`docs/agents/CORE_STATE.json`、"
-        "`docs/agents/OPTIMIZATION_LEDGER.json`。\n"
+        "### 一、精简启动\n"
+        "1. 应用 `AGENTS.md`；运行 `python -m wq_research_v2 forge handoff`，仅按 case_id 读取需要验真的原始条目。"
+        "不展开完整状态、经验台账、运行日志或旧对话；历史经验卡随本提示附上。\n"
         "2. 严格遵守所有红线：D1-Only、禁 `+/*/add/multiply/trade_when`、零自动 `/submit`、"
         "全过线自动 `PATCH` 并提示（Margin 优先）、`GLB<=3`/其他区`<=4`、只对账 1 次、不覆盖 `COMPLETED_FULL`。\n\n"
         "### 二、执行入口硬门禁（P0）与 DSH 子代理编排\n"

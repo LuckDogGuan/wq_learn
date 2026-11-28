@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
-"""Cross-platform launcher for Route ④ (`alphaforge_agy_dsh_v4`) using Antigravity CLI (`agy`) + DSH subagents.
-
-Safe by default (dry-run): prints preflight status, detected `agy` binary, injected historical
-experience summary, and the exact `agy` command argv. Pass `--execute` to actually launch `agy`.
-
-Never calls `/submit`, never reads credentials, never modifies existing production daemons.
-"""
+"""Preview, verify or launch the Route ④ Antigravity controller."""
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -47,7 +43,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--print-timeout", default=None, help="Optional timeout for --print mode (e.g. 30m)")
     p.add_argument("--log-file", type=Path, default=None)
     p.add_argument("--agy-bin", default=None, help="Override path to agy executable")
-    p.add_argument("--execute", action="store_true", help="Actually invoke agy (default is dry-run preview)")
+    p.add_argument("--show-prompt", action="store_true", help="Include the full prompt in a dry run")
+    run = p.add_mutually_exclusive_group()
+    run.add_argument("--execute", action="store_true", help="Run the research controller")
+    run.add_argument("--verify", action="store_true", help="Run a read-only controller and DSH smoke test")
     return p
 
 
@@ -60,26 +59,44 @@ def main(argv: Optional[list[str]] = None) -> int:
             pass
 
     args = build_parser().parse_args(argv)
-    reuser = ExperienceReuser()
+    if args.verify and args.interactive:
+        raise SystemExit("--verify requires a non-interactive run")
+    reuser = None if args.verify else ExperienceReuser()
     agy_exe = args.agy_bin or locate_agy_executable()
-
-    prompt = build_agy_main_prompt(
-        region=args.region,
-        universe=args.universe,
-        dataset_id=args.dataset,
-        goal=args.goal,
-        failure_code=args.failure,
-        reuser=reuser,
-    )
+    running = args.execute or args.verify
+    log_file = args.log_file
+    if running and log_file is None:
+        run_stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")
+        log_file = REPO_ROOT / "data" / "alphaforge_v4_runs" / f"{run_stamp}.log"
+    if args.verify:
+        prompt = (
+            "路线④只读验收，禁止写文件、回测、访问 BRAIN、读凭据、改守护进程。"
+            "用终端执行 python -m wq_research_v2 forge handoff，核对 default_track_id=alphaforge_agy_dsh_v4。"
+            "用 dsh-crew 绑定 hub/flash（enabled=true, mode=hub, escalate_on_failure=false, "
+            "flash_provider=dsh-opencode-go, flash_model=deepseek-v4.1-flash），然后对相同 provider/model 调 "
+            "dsh_worker_probe。仅在 tool_call_verified=true 时派一个 flash/high worker，timeout_seconds=60，"
+            f"任务仅只读核对 {REPO_ROOT / 'goal/run_config.json'} 的 default_track_id 并回传值，不准递归。"
+            "汇报最多四行，逐项给出 handoff、probe、真实派单 job ID/status 与 token（若有），明确失败步骤。"
+            "只有三项都观察成功时才另起一行输出 ALPHAFORGE_VERIFY_OK。"
+        )
+    else:
+        prompt = build_agy_main_prompt(
+            region=args.region,
+            universe=args.universe,
+            dataset_id=args.dataset,
+            goal=args.goal,
+            failure_code=args.failure,
+            reuser=reuser,
+        )
     cmd = build_agy_cli_command(
         prompt,
         agy_bin=agy_exe or "agy",
         interactive=bool(args.interactive),
-        mode=args.mode,
+        mode="plan" if args.verify else args.mode,
         effort=args.effort,
         model=args.model,
-        print_timeout=args.print_timeout,
-        log_file=args.log_file,
+        print_timeout=args.print_timeout or ("3m" if args.verify else None),
+        log_file=log_file,
     )
 
     summary = {
@@ -87,25 +104,33 @@ def main(argv: Optional[list[str]] = None) -> int:
         "log_prefix": TRACK_LOG_PREFIX,
         "workspace": str(REPO_ROOT),
         "agy_executable_detected": agy_exe,
-        "experience_sources_loaded": reuser.sources_status(),
         "prompt_bytes": len(prompt.encode("utf-8")),
-        "mode": "EXECUTE" if args.execute else "DRY_RUN_PREVIEW",
+        "mode": "VERIFY" if args.verify else "EXECUTE" if args.execute else "DRY_RUN_PREVIEW",
         "command_preview": cmd[:-1] + [f"<prompt:{len(prompt)} chars>"],
     }
-    print(json.dumps(summary, indent=2, ensure_ascii=False))
+    print(json.dumps(summary, ensure_ascii=False), flush=True)
 
-    if not args.execute:
-        print("\n--- AGY MAIN CONTROLLER PROMPT PREVIEW ---")
-        print(prompt)
-        print("--- END PREVIEW (pass --execute to run agy) ---")
+    if not running:
+        if args.show_prompt:
+            print(prompt)
         return 0
 
     if not agy_exe:
         print("[ERROR] Antigravity CLI (`agy`) not found in PATH or ~/.gemini/bin/agy(.exe).", file=sys.stderr)
         return 2
 
-    proc = subprocess.run(cmd, cwd=str(REPO_ROOT), check=False)
-    return int(proc.returncode)
+    if log_file is not None:
+        runtime_log = REPO_ROOT / log_file
+        runtime_log.parent.mkdir(parents=True, exist_ok=True)
+        if runtime_log.exists():
+            raise SystemExit(f"Log file already exists: {runtime_log}")
+    env = os.environ.copy()
+    env["PYTHONPATH"] = os.pathsep.join(filter(None, [str(SRC_DIR), env.get("PYTHONPATH", "")]))
+    if args.verify:
+        proc = subprocess.run(cmd, cwd=REPO_ROOT, env=env, stdout=subprocess.PIPE, encoding="utf-8", errors="replace")
+        print(proc.stdout, end="")
+        return proc.returncode or (0 if "ALPHAFORGE_VERIFY_OK" in proc.stdout.splitlines() else 1)
+    return subprocess.run(cmd, cwd=REPO_ROOT, env=env, check=False).returncode
 
 
 if __name__ == "__main__":
