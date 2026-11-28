@@ -12,3 +12,10 @@
   - 独立台账：`data/sa_own_ledger.db`（严禁写主线 `wq_v2_ledger.db`）
   - 单测：`wq_research_v2/tests/test_sa_runner.py`
 - **当前状态**：`READY_FOR_MANUAL_LAUNCH`（不干扰广州正在运行的路线②主守护进程；SA 需 ≥100 OS 解锁，status 查询确认后手动启动）。
+
+## 2026-11-28 17:58 CST · 单条平台验收
+
+- [V] 账号为 GOLD。显式过滤 `type=REGULAR&status=ACTIVE` 返回全账号 100 条，EUR D1 有 20 条。原查询的 10,000 含未提交记录，不能视为解锁证据。
+- [V] 预览生成 EUR/TOP2500 D1 的 `SUPER` payload。单条实跑 `SA-EUR-OWN-20261128-001-000` 返回 HTTP 400，未取得模拟或 Alpha ID，独立台账保留 `RESULTS_UNOBSERVED`。只读 `OPTIONS /simulations` 只有 `REGULAR` 与 `REGION_AGNOSTIC`，选腿接口返回 HTTP 403。当前账号尚未验证可运行 SuperAlpha，未重发，未提交。
+- [V] CLI 修复 SA 和 RA 台账隔离，`status` 显示平台能力，`run` 在没有 `SUPER` 时于 POST 前退出。`resume` 当前列出未结任务，自动恢复轮询待实现。
+- [V] DSH 已完成独立只读核验，确认 `resume` 只打印待处理任务。Job `hub-14-mx08g1q0`，`dsh-opencode-go/deepseek-v4.1-flash`，`done`，输入 12,537 / 输出 13,979 tokens，读取 2 次。

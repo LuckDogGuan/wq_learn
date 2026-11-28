@@ -3,18 +3,19 @@
   "active_track_name": "锻造闭环路径 (AlphaForge v4.0)",
   "track_registry": {
     "baseline_v1": "基础优化路径 (Baseline v1.0 · 冻结于 d1_ra_baseline_v1_frozen.json)",
-    "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >=4200切Alphas=0)",
+    "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/ASI/KOR 默认地区 × 3模板族 × >=4200切Alphas=0)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)",
     "alphaforge_agy_dsh_v4": "锻造闭环路径 (AlphaForge v4.0 · Codex CLI 主控 + DSH 子代理 + 历史经验复用 · docs/alphaforge_v4/)",
     "super_alpha_own_v1": "SuperAlpha 独立路线 (SuperAlpha Own v1.0 · type=SUPER 回测 · SA 400/天 · data/sa_own_ledger.db · docs/sa_own_35/)"
   },
-  "updated_at": "2026-11-28T17:48:00+08:00",
+  "updated_at": "2026-11-28T17:57:49+08:00",
   "alphaforge_next_direction": "ASI/MINVOL1M 新低相关种子。先看现有 analyst39/analyst_consensus 常规队列，出现正向 Sharpe≥1.25 的新指纹后才做表达式与设置同参、仅 QUICK→FULL 的对照；看原始 2Y≥1.58、Fitness≥1.00、JPN 和 Robust。Jj3XEbgl 仅作低 PC／近 2Y 参考，r37 未观测指纹不重发。同时已修复 INEFF-40 跨纽约日滚动窗口立即停止边界，并为 EUR:2、USA:2、ASI:1、KOR:1 补入 6 个高覆盖纯 MATRIX NORMAL 活动（EUR/model50、EUR/news85、USA/ai_equity_alpha V2、USA/other596、ASI/sentiment23、KOR/model109）及 Phase-2 免额 KOR/model31，全速冲刺 EST 2026-11-28 4,500 NORMAL 目标。",
   "mainline_policy": "主线=点塔(Pyramid)：某 category 已有>5个可点(可交付)因子即转其他 categories；docs/agents/TODO_20261127.md 为顺手/空闲项，核心是验证模板与操作符(T17，额度500-1000 FULL，PC仅记录不设门槛)。",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "context_compaction_rule": "启动或 /compact 后应用 AGENTS.md，先读 forge handoff 摘要，再按案例编号核对必要证据。完整状态、历史台账、运行日志与对话继续留存。",
   "immutable_red_lines": {
     "delay": 1,
+    "glb_requires_explicit_user_request": true,
     "ra_ppa_separated": true,
     "forbidden_operators": ["add", "multiply", "trade_when", "+", "*"],
     "canonical_dual_branch": "min(rank(expr_A), rank(expr_B)) / reverse(min(...))",
@@ -192,11 +193,12 @@
     }
   },
   "codex_latest_inspection": {
-    "observed_at": "2026-11-28T15:18:21+08:00",
+    "observed_at": "2026-11-28T17:57:49+08:00",
     "platform_date": "2026-11-28",
-    "platform_activity_simulations": null,
-    "platform_activity_note": "BRAIN 活动 MCP 只返回目录。北京时间 12:12:45–15:15:19 Alpha 创建数据 848 IS，全部 D1（832 QUICK、16 FULL）；换日后 512 IS、0 OS。上日 7,435 IS、1 OS。按 Alpha 创建时间统计。",
+    "platform_activity_simulations": 888,
+    "platform_activity_note": "[V] BRAIN GET /users/self/activities/simulations 返回纽约平台日 2026-11-28 的活动数 888。接口未提供实时剩余额度。",
     "guangzhou_ledger": {
+      "observed_at": "2026-11-28T15:18:21+08:00",
       "access": "现有 BatchMode SSH，SQLite mode=ro 与 query_only。广州 MCP 的 Python 调用 APPROVAL_DENIED，sqlite3 不存在（exit 127）。",
       "previous_platform_date": "2026-11-27",
       "previous_completed": 7412,
@@ -220,7 +222,7 @@
       "remaining": 4520,
       "reset_seconds": 78100
     },
-    "active_service": "10:22:21 启动，仍 active/running，MemoryMax=512 MiB。现用 NORMAL，现有 ASI 常规队列仍推进。",
+    "active_service": "[V] 17:51:45 重启，active/running，MemoryMax=512 MiB，四个全局槽，按 EUR/USA/ASI/KOR 调度。日志估计从 824 增至 880，重启后 USA、EUR、ASI 有完成回执。旧队列后段主要由 ASI 单槽推进。线上目标与切换阈值仍为 4500，仓库策略为 4200。持续吞吐待观测。",
     "rollover_note": "13:00 后 ASI/KOR 续发 4 批 Alpha0 QUICK 共 32 条；其余 8 条换日前已发。第一条 NORMAL 提交在 13:12:29。见 INEFF-40。本地窗口逻辑符合观测，远端实际边界仍待核。",
     "closed_wave": [
       {

@@ -10,6 +10,7 @@
 4. **硬保护只读资产与已完成台账**：严禁删除/改写 `legacy_core/Core/runtime_data/`（1,532 文件）、`reference/`（静态参考库）；严禁读取/打印/提交 `Password/config.yaml`；SQLite `COMPLETED_FULL` 行永久不可被重启去重（`DEDUP_SKIPPED`）覆盖。
 5. **只对账一次、绝不盲重发**：遇 `429 / 5xx / 超时 / 缺子 ID` 仅存指纹标 `PENDING_RECONCILE`，冷却后只读对账 1 次，仍未观测落 `RESULTS_UNOBSERVED`。
 6. **无 GUI、广州低内存（1.9 GiB RAM）与地区并发线程上限**：不建本地 Web GUI；后台任务必配 SQLite WAL Checkpoint、10m 认证刷新、10s 重连、流式低内存扫描与 `MemoryMax=512M`；**地区并发硬上限：`GLB` 最多 `3` 个线程，其他所有地区最多 `4` 个线程**（代码层 `WeightedSlotSemaphore` 与 `parse_region_caps` 强制封顶）；新模块必配 `tests/` 单测与 AST 校验。
+7. **GLB 仅限明确指定**：默认研究队列、补队和定时巡检派发均不跑 `GLB`。只有用户明确要求本轮跑 `GLB` 时才启用，仍遵守最多 3 个线程。
 
 ## 2. 核心研究与平台避坑要点（防止再次错过）
 

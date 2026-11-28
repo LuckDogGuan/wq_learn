@@ -27,28 +27,30 @@
 $env:PYTHONPATH="wq_research_v2\src"
 python -m wq_research_v2 sa status --region EUR
 ```
-只读返回 `genius_level` + `submitted_regular_count`（≥100 即解锁 own SA）+ `super_alpha_count`。
+只读返回 `genius_level`、全账户 `active_regular_count`、`super_alpha_count` 和 `super_simulation_available`。以当前账号 `OPTIONS /simulations` 的类型列表核验发单权限。达到 100 条 ACTIVE Regular Alpha 后也要核验权限。
 
 ### Step 2 · 盘点 own 弹药库（0 回测成本）
 ```powershell
 python -m wq_research_v2 sa ammo --region EUR --limit 100
 ```
-只读拉取已提交 D1 REGULAR，确认候选腿数 ≥10 才值得组（王哥+评论区硬约束）。
+只读拉取指定地区的 ACTIVE D1 REGULAR。该数量用于盘点，实际符合 Selection 表达式的组腿数量需另查。
 
 ### Step 3 · 预览 payload（0 回测成本）
 ```powershell
 python -m wq_research_v2 sa preview --spec docs/sa_own_35/sa_spec_example.json
 ```
 
-### Step 4 · 正式回测（400/天上限，并发 3）
+### Step 4 · 单条真实回测验收
 ```powershell
-python -m wq_research_v2 sa run --spec docs/sa_own_35/sa_spec_example.json --budget 400 --workers 3
+python -m wq_research_v2 sa run --spec docs/sa_own_35/sa_spec_example.json --budget 1 --workers 1
 ```
+当前账号须先显示 `super_simulation_available=true`。端到端验收以获得 Alpha ID、读到回测指标并写入 SA 台账为准。
 
-### Step 5 · 断点续传
+### Step 5 · 查看中断任务
 ```powershell
 python -m wq_research_v2 sa resume
 ```
+当前命令只列出台账中的未结任务。自动恢复轮询尚未实现。
 
 ### Selection 铁律（王哥 v2 十步法）
 - `own && prod_correlation∈(0.1,0.6) && operator_count∈[2,8] && datafield_count<=3~4 && decay∈{0,1,3,5} && truncation<=0.1 && universe!='ILLIQUID_MINVOL1M'`

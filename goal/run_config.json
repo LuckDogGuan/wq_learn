@@ -4,7 +4,7 @@
   "active_track_name": "锻造闭环路径 (AlphaForge v4.0)",
   "track_registry": {
     "baseline_v1": "基础优化路径 (Baseline v1.0 · EUR/USA 双区单模板冻结版)",
-    "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × 5地区轮巡 × 3模板族配对 × >=4200自动切免额)",
+    "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × 多地区轮巡 × 3模板族配对 × >=4200自动切免额)",
     "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · 独立文档/台账/标签，不接入主调度器)",
     "alphaforge_agy_dsh_v4": "锻造闭环路径 (AlphaForge v4.0 · P0/P1/P2，Codex CLI 主控 + DSH 子代理 + 历史经验复用)",
     "super_alpha_own_v1": "SuperAlpha 独立路线 (SuperAlpha Own v1.0 · type=SUPER 回测 · SA 400/天 · 独立 data/sa_own_ledger.db)"
@@ -73,6 +73,7 @@
   "description": "WorldQuant BRAIN D1-Only RA 统一启动与方向配置文件（多地区精选种子 × 多模板族配对、额度 >=4200 自动切免额字段、SuperAlpha 路线⑤ 独立 400/天、全指标过线自动 PATCH 打标并提示、Stage 1-2 QUICK 快筛、3-4 小时定时复查）。",
   "direction": {
     "regions": ["ASI", "EUR", "USA", "KOR"],
+    "glb_policy": "默认不跑 GLB。只有用户明确指定本轮跑 GLB 才加入回测队列。",
     "region_caps": {
       "ASI": 2,
       "EUR": 1,

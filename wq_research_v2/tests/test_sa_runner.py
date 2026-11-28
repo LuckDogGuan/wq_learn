@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from wq_research_v2 import cli
 from wq_research_v2.quota_tracker import QuotaTracker
 from wq_research_v2.sa_runner import (
     SA_DEFAULT_DAILY_BUDGET,
@@ -104,6 +105,35 @@ def test_default_templates_sane() -> None:
     assert default_combo_equal_weight() == "1"
     assert SA_DEFAULT_DAILY_BUDGET == 400
     assert SA_MAX_WORKERS == 3
+
+
+def test_sa_cli_stops_before_post_when_super_is_unavailable(monkeypatch, tmp_path, capsys) -> None:
+    class Auth:
+        def __init__(self, **kwargs):
+            pass
+
+        def authenticate(self):
+            pass
+
+        def close(self):
+            pass
+
+        def request(self, method, endpoint, **kwargs):
+            assert (method, endpoint) == ("OPTIONS", "/simulations")
+            choices = [{"value": "REGULAR"}, {"value": "REGION_AGNOSTIC"}]
+            return _MockResponse(200, {"actions": {"POST": {"type": {"choices": choices}}}})
+
+    def unexpected_ledger():
+        pytest.fail("The CLI must stop before opening either ledger")
+
+    monkeypatch.setattr(cli, "BrainAuthSession", Auth)
+    monkeypatch.setattr(cli, "LedgerStore", unexpected_ledger)
+    monkeypatch.setattr(cli, "SaOwnLedger", unexpected_ledger)
+    spec = tmp_path / "sa.json"
+    spec.write_text(json.dumps(_base_spec()), encoding="utf-8")
+
+    assert cli.main(["sa", "run", "--spec", str(spec)]) == 1
+    assert json.loads(capsys.readouterr().out)["super_simulation_available"] is False
 
 
 def test_sa_runner_prepare_run_dedup_and_metrics(tmp_path: Path) -> None:

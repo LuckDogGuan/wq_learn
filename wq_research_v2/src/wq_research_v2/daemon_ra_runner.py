@@ -41,7 +41,7 @@ from wq_research_v2.stage23_refiner import build_all_stage23_refiner_specs
 
 # Default high-Base institutional-alpha-first D1 exploration order (every region tracked independently!)
 HIGH_BASE_MULTI_MARKET_ORDER: list[str] = [
-    "EUR", "USA", "GLB", "ASI", "DEU", "HKG", "KOR"
+    "EUR", "USA", "ASI", "DEU", "HKG", "KOR"
 ]
 
 # Verified clean D1 RA seed pools (ALL live-checked against cnhkmcp get_datafields on 2026-11-25).

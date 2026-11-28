@@ -48,6 +48,17 @@ def _parse_csv(raw: str) -> list[str]:
     return [x.strip() for x in raw.replace(";", ",").split(",") if x.strip()]
 
 
+def _sa_simulation_capability(auth: BrainAuthSession) -> dict[str, Any]:
+    resp = auth.request("OPTIONS", "/simulations", timeout=30)
+    if resp.status_code != 200:
+        return {"super_simulation_available": None, "simulation_options_http": resp.status_code}
+    choices = resp.json().get("actions", {}).get("POST", {}).get("type", {}).get("choices")
+    if not choices:
+        return {"super_simulation_available": None}
+    supported = [choice["value"] for choice in choices]
+    return {"super_simulation_available": "SUPER" in supported, "simulation_types": supported}
+
+
 def _sa_status(auth: BrainAuthSession, region: str) -> dict[str, Any]:
     """Read-only SuperAlpha eligibility query (never prints credentials): genius level +
     submitted REGULAR alpha count + existing SUPER alpha count."""
@@ -63,11 +74,11 @@ def _sa_status(auth: BrainAuthSession, region: str) -> dict[str, Any]:
 
     try:
         r = auth.get(
-            "/users/self/alphas?limit=1&hidden=false&status!=UNSUBMITTED&status!=IS_FAIL&type!=SUPER",
+            "/users/self/alphas?limit=1&type=REGULAR&status=ACTIVE",
             timeout=30,
         )
         if r.status_code == 200:
-            out["submitted_regular_count"] = r.json().get("count")
+            out["active_regular_count"] = r.json().get("count")
         else:
             out["regular_count_http"] = r.status_code
     except Exception as exc:  # pragma: no cover - live network
@@ -81,19 +92,23 @@ def _sa_status(auth: BrainAuthSession, region: str) -> dict[str, Any]:
             out["sa_count_http"] = r.status_code
     except Exception as exc:  # pragma: no cover - live network
         out["sa_count_error"] = type(exc).__name__
+    out.update(_sa_simulation_capability(auth))
     return out
 
 
 def _sa_ammo(auth: BrainAuthSession, region: str, limit: int) -> dict[str, Any]:
     """Read-only SuperAlpha 'own 弹药库' listing: submitted REGULAR D1 alphas for a region."""
     reg = region.upper()
-    url = (
-        f"/users/self/alphas?limit={max(1, min(500, int(limit)))}&hidden=false"
-        f"&status!=UNSUBMITTED&status!=IS_FAIL&type!=SUPER"
-        f"&settings.delay=1&settings.region={reg}&order=-is.sharpe"
-    )
+    params = {
+        "limit": max(1, min(500, limit)),
+        "type": "REGULAR",
+        "status": "ACTIVE",
+        "settings.delay": 1,
+        "settings.region": reg,
+        "order": "-is.sharpe",
+    }
     try:
-        resp = auth.get(url, timeout=30)
+        resp = auth.get("/users/self/alphas", params=params, timeout=30)
         if resp.status_code != 200:
             return {"region": reg, "http": resp.status_code}
         data = resp.json()
@@ -112,6 +127,46 @@ def _sa_ammo(auth: BrainAuthSession, region: str, limit: int) -> dict[str, Any]:
         return {"region": reg, "count": data.get("count"), "results": rows}
     except Exception as exc:  # pragma: no cover - live network
         return {"region": reg, "error": type(exc).__name__}
+
+
+def _run_sa_command(args: argparse.Namespace) -> int:
+    if args.action == "resume":
+        ledger = SaOwnLedger()
+        try:
+            pending = ledger.get_resumable_tasks()
+            print(json.dumps({"resumable_count": len(pending), "task_ids": [task["task_id"] for task in pending[:20]]}, indent=2))
+            return 0
+        finally:
+            ledger.close()
+
+    if args.action == "run" and not args.spec:
+        raise SystemExit("--spec is required for sa run")
+    quota = QuotaTracker()
+    auth = BrainAuthSession(quota_observer=quota.observe_response)
+    try:
+        auth.authenticate()
+        if args.action == "status":
+            out = _sa_status(auth, args.region)
+        elif args.action == "ammo":
+            out = _sa_ammo(auth, args.region, args.limit)
+        else:
+            capability = _sa_simulation_capability(auth)
+            if capability["super_simulation_available"] is not True:
+                print(json.dumps(capability, indent=2))
+                return 1
+            spec = json.loads(args.spec.read_text(encoding="utf-8"))
+            ledger = SaOwnLedger()
+            try:
+                runner = SaRunner(auth, ledger, quota, daily_budget=args.budget, max_workers=args.workers)
+                batch_id, runnable, skipped = runner.prepare_batch_tasks(spec)
+                result = runner.run_prepared_tasks(batch_id, runnable)
+                out = {"batch_id": batch_id, "skipped": len(skipped), **result}
+            finally:
+                ledger.close()
+        print(json.dumps(out, indent=2, ensure_ascii=False))
+        return int(bool(out.get("errors") or out.get("unobserved")))
+    finally:
+        auth.close()
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -508,6 +563,9 @@ def main(argv: Optional[list[str]] = None) -> int:
         print(json.dumps({"track_id": SA_TRACK_ID, "payloads": payloads}, indent=2, ensure_ascii=False))
         return 0
 
+    if args.cmd == "sa":
+        return _run_sa_command(args)
+
     # Live read-only / authenticated commands
     ledger = LedgerStore()
     quota = QuotaTracker(ledger)
@@ -582,27 +640,6 @@ def main(argv: Optional[list[str]] = None) -> int:
                 print(json.dumps({"resumable_count": len(pending), "task_ids": [t["task_id"] for t in pending[:20]]}, indent=2))
             return 0
 
-        if args.cmd == "sa":
-            sa_ledger = SaOwnLedger()
-            try:
-                if args.action == "run":
-                    if not args.spec:
-                        raise SystemExit("--spec is required for sa run")
-                    spec = json.loads(args.spec.read_text(encoding="utf-8"))
-                    runner = SaRunner(auth, sa_ledger, quota, daily_budget=args.budget, max_workers=args.workers)
-                    bid, runnable, skipped = runner.prepare_batch_tasks(spec)
-                    res = runner.run_prepared_tasks(bid, runnable)
-                    print(json.dumps({"batch_id": bid, "skipped": len(skipped), **res}, indent=2, ensure_ascii=False))
-                elif args.action == "resume":
-                    pending = sa_ledger.get_resumable_tasks()
-                    print(json.dumps({"resumable_count": len(pending), "task_ids": [t["task_id"] for t in pending[:20]]}, indent=2))
-                elif args.action == "status":
-                    print(json.dumps(_sa_status(auth, args.region), indent=2, ensure_ascii=False))
-                elif args.action == "ammo":
-                    print(json.dumps(_sa_ammo(auth, args.region, args.limit), indent=2, ensure_ascii=False))
-                return 0
-            finally:
-                sa_ledger.close()
     finally:
         auth.close()
         ledger.close()
