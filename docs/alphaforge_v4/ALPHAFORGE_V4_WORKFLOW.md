@@ -119,3 +119,17 @@ python scripts/ops/launch_alphaforge_v4.py --region USA --universe TOP3000 --dat
 3. **严禁**在 `NORMAL < 4,500` 完成前混发 `UNUSED_ALPHA0`，严禁重发已记录为 `COMPLETED_*` / `PENDING_RECONCILE` / `RESULTS_UNOBSERVED` 的指纹。
 4. **严禁** DSH 子代理递归派生子代理、修改 `reference/` / `legacy_core/Core/runtime_data/` / `Password/config.yaml` 或覆盖 `COMPLETED_FULL` 行。
 5. **严禁** 60 秒高频空转轮询；沿用 3–24 小时任务窗口与最长 4 小时一次的轻量巡检节奏。
+
+---
+
+## 五、知识层增强：本地知识库 MCP 的可复用要点（论坛帖 44557921849623，逐点已验证）
+
+> 来源：论坛帖《进一步增强你的AI检索论坛能力——本地知识库MCP构建（附部分代码）》[原文](https://support.worldquantbrain.com/hc/zh-cn/community/posts/44557921849623)。2026-11-28 用 cnhkmcp（brain_client 认证 + Playwright/Chromium + SSO）读取，正文/评论存 [doc/forum_post_44557921849623.md](../../doc/forum_post_44557921849623.md)，逐点验证表见 [doc/本地知识库MCP_路线4_补充分析_20261128.md](../../doc/本地知识库MCP_路线4_补充分析_20261128.md)。属 AGENTS.md 8:2 的「普通论坛资料（20%）」，仅收录已逐点验证的要点，未实证项一律标 P2 待实测。
+
+1. **极致懒加载（✅ 可直接采纳，零成本）**：MCP/知识服务进程启动阶段严禁同步加载重型依赖（torch / 大模型）；工具首次被调用时才惰性初始化，规避 IDE 的 10s MCP 握手超时误判崩溃。路线④新增 MCP 工具或 forge dsh-brief 简报生成器引入模型/大库时强制遵守。
+2. **代码保护切块 + 全文反查（✅ 可直接采纳）**：ExperienceReuser 生成经验卡（≤3.8KB）与 DSH 简报时，含代码/表达式的条目按代码块边界切分、严禁硬切；卡片只放摘要，命中后回读完整原文，避免切片丢代码与上下文。
+3. **动态采样防信息茧房（✅ 可参考）**：多候选注入时「前 7 核心命中 + 其余随机扩充」混合，避免只回放同一批历史案例。
+4. **双表隔离与优先级（✅ 对齐现有 8:2）**：官方规则与社区经验分表隔离、官方最高优先级；与 config knowledge_priority_80_20 一致，普通论坛资料仅 20% 兜底。
+5. **API 优先、浏览器兜底（与 AGENTS 2.4 一致）**：论坛/平台数据查询优先用已知 API 或 MCP；API/MCP 无法完成（如受限社区 Zendesk API 返回 401）时才用 Playwright + SSO 兜底。爬取链路已实证可用（本会话抓取本贴成功；scripts/forum_crawl/ + reference/forum/ 同法产出）。
+6. **P2 已全部落地 3/3（2026-11-28 更新）**：① LLM 原子化——`scripts/forum_kb/atomize.py` + `ingest_forum.py`（Antigravity CLI `gemini-3.8-flash-medium`，长帖切段）已完成 265 篇 QA；② 向量层——`build_index.py`（lancedb 0.41 + sentence-transformers 6.3 + torch 2.12 CPU，bge-small-zh 512 维）建双表 `wqb_official_guides`（1,928 块）与 `wqb_forum_experiences`（265 篇），中文 BM25 用 ngram(2,3) 分词；③ MCP 服务——`server.py`（FastMCP）暴露 `search_wqb_official_guidelines` / `search_wqb_forum_experience`，官方准则优先 + 候选池随机采样 + 按 ID 回读原文，`verify_mcp.py` stdio 端到端通过。**Windows 特有坑**：进入 anyio 事件循环后再 import numpy/scipy/torch 会卡死扩展 DLL 加载，故 Windows 在事件循环前预导入重库（≈13s 冷启动），Linux 可 `WQB_KB_PRELOAD=0` 走纯懒加载。
+
