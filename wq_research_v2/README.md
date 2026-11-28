@@ -47,6 +47,13 @@ Get-Content -Raw scripts/ops/check_guangzhou_v2.py | ssh guangzhou "/root/minico
 python -m wq_research_v2 legacy merge
 python -m wq_research_v2 legacy stats
 python -m wq_research_v2 legacy screen --region USA,EUR,GLB --tier TIER_S_READY_CHECK,TIER_A_PARAM_TUNE --top 25
+
+# 11. 路线 ④（AlphaForge AGY-DSH v4.0）：历史经验复用、P0 入口预检、美东日漏斗、DSH 简报与 Antigravity CLI 启动预览
+python -m wq_research_v2 forge experience --region USA --universe TOP3000 --dataset ai_equity_alpha --failure HIGH_PC
+python -m wq_research_v2 forge preflight --region USA --queue NORMAL --normal-completed 1200 --stage STAGE_3 --mode FULL
+python -m wq_research_v2 forge funnel --db data/wq_v2_ledger.db
+python -m wq_research_v2 forge dsh-brief --region USA --universe TOP3000 --dataset ai_equity_alpha --failure HIGH_PC --goal "只读复核 PC 分布与单轴修复假设"
+python scripts/ops/launch_alphaforge_v4.py --region USA --universe TOP3000 --dataset ai_equity_alpha
 ```
 
 ## 模块清单
