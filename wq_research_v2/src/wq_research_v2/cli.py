@@ -8,8 +8,19 @@ from pathlib import Path
 from typing import Optional
 
 from wq_research_v2.ablation_engine import build_dual_branch_ablation
+from wq_research_v2.alphaforge_v4 import (
+    attribute_ppa_first_routing,
+    build_agy_cli_command,
+    build_agy_main_prompt,
+    build_dsh_subagent_brief,
+    build_platform_day_funnel,
+    evaluate_dispatch_preflight,
+    locate_agy_executable,
+    select_three_plus_one_roster,
+)
 from wq_research_v2.auth_session import BrainAuthSession
 from wq_research_v2.blacklist_registry import BlacklistRegistry
+from wq_research_v2.experience_reuser import ExperienceReuser
 from wq_research_v2.expr_validator import ExprValidator
 from wq_research_v2.field_screener import FieldScreener
 from wq_research_v2.ledger_store import LedgerStore
@@ -127,6 +138,39 @@ def build_parser() -> argparse.ArgumentParser:
     p_leg.add_argument("--only-compliant", action="store_true")
     p_leg.add_argument("--top", type=int, default=25)
 
+    # forge (Route ④: AlphaForge AGY-DSH v4.0 offline guards, experience reuse, funnel, DSH brief & agy CLI builder)
+    p_fg = sub.add_parser(
+        "forge",
+        help="Route ④ (alphaforge_agy_dsh_v4): experience reuse, P0/P1/P2 guards, funnel, DSH brief & agy command",
+    )
+    p_fg.add_argument(
+        "action",
+        choices=["experience", "preflight", "funnel", "ppa-check", "dsh-brief", "agy-cmd", "roster"],
+    )
+    p_fg.add_argument("--region", default="USA")
+    p_fg.add_argument("--universe", default="TOP3000")
+    p_fg.add_argument("--dataset", default="")
+    p_fg.add_argument("--neut", default="")
+    p_fg.add_argument("--failure", default="")
+    p_fg.add_argument("--ops", default="", help="Comma-separated operator names")
+    p_fg.add_argument("--queue", default="NORMAL", choices=["NORMAL", "UNUSED_ALPHA0"])
+    p_fg.add_argument("--normal-completed", type=int, default=0)
+    p_fg.add_argument("--threshold", type=int, default=4500)
+    p_fg.add_argument("--threads", type=int, default=2)
+    p_fg.add_argument("--stage", default="STAGE_3")
+    p_fg.add_argument("--mode", default="FULL", choices=["QUICK", "FULL"])
+    p_fg.add_argument("--expr", default=None)
+    p_fg.add_argument("--db", type=Path, default=Path("data/wq_v2_ledger.db"))
+    p_fg.add_argument("--date", default=None)
+    p_fg.add_argument("--target-track", default="RA", choices=["RA", "PPA"])
+    p_fg.add_argument("--goal", default="执行 Route ④ 锻造闭环巡检、失败归因与单轴推进")
+    p_fg.add_argument("--evidence", default="", help="Comma-separated read-only evidence paths")
+    p_fg.add_argument("--interactive", action="store_true")
+    p_fg.add_argument("--effort", default="high", choices=["low", "medium", "high", "xhigh", "max"])
+    p_fg.add_argument("--model", default=None)
+    p_fg.add_argument("--input", type=Path, default=None, help="JSON candidate list for 3+1 roster")
+    p_fg.add_argument("--json", dest="as_json", action="store_true")
+
     return p
 
 
@@ -238,6 +282,113 @@ def main(argv: Optional[list[str]] = None) -> int:
                 limit=args.top,
             )
             print(json.dumps(rows, indent=2, ensure_ascii=False))
+            return 0
+
+    if args.cmd == "forge":
+        reuser = ExperienceReuser()
+        if args.action == "experience":
+            pkt = reuser.retrieve(
+                region=args.region,
+                universe=args.universe,
+                dataset_id=args.dataset,
+                neutralization=args.neut,
+                failure_code=args.failure,
+                operators=_parse_csv(args.ops) if args.ops else [],
+            )
+            if args.as_json:
+                print(json.dumps(pkt.to_dict(), indent=2, ensure_ascii=False))
+            else:
+                print(pkt.render_compact_markdown())
+            return 0
+        if args.action == "preflight":
+            settings = (
+                {
+                    "region": args.region.upper(),
+                    "universe": args.universe.upper(),
+                    "delay": 1,
+                    "neutralization": (args.neut or "SUBINDUSTRY").upper(),
+                    "visualization": False,
+                }
+                if args.expr
+                else None
+            )
+            res = evaluate_dispatch_preflight(
+                region=args.region,
+                queue_type=args.queue,
+                normal_completed_today=args.normal_completed,
+                alpha0_switch_threshold=args.threshold,
+                requested_threads=args.threads,
+                expression=args.expr,
+                settings=settings,
+                stage=args.stage,
+                simulation_mode=args.mode,
+                db_path=args.db,
+            )
+            print(json.dumps(res.to_dict(), indent=2, ensure_ascii=False))
+            return 0 if res.allowed else 2
+        if args.action == "funnel":
+            rep = build_platform_day_funnel(args.db, est_platform_date=args.date)
+            print(json.dumps(rep, indent=2, ensure_ascii=False))
+            return 0
+        if args.action == "ppa-check":
+            if not args.expr:
+                raise SystemExit("--expr is required for forge ppa-check")
+            rep = attribute_ppa_first_routing(args.expr, target_track=args.target_track)
+            print(json.dumps(rep, indent=2, ensure_ascii=False))
+            return 0
+        if args.action == "dsh-brief":
+            brief = build_dsh_subagent_brief(
+                task_goal=args.goal,
+                region=args.region,
+                universe=args.universe,
+                dataset_id=args.dataset or "UNSPECIFIED",
+                readonly_evidence=_parse_csv(args.evidence) if args.evidence else [],
+                acceptance_criteria=[
+                    "独立核对母版、设置、数值指标与历史经验适用边界",
+                    "返回 [V]/[R]/[C]/[U] 分级证据与最多 1 条单轴可证伪假设",
+                ],
+                failure_code=args.failure,
+                neutralization=args.neut,
+                operators=_parse_csv(args.ops) if args.ops else [],
+                reuser=reuser,
+            )
+            print(brief)
+            return 0
+        if args.action == "agy-cmd":
+            prompt = build_agy_main_prompt(
+                region=args.region,
+                universe=args.universe,
+                dataset_id=args.dataset,
+                goal=args.goal,
+                failure_code=args.failure,
+                reuser=reuser,
+            )
+            cmd = build_agy_cli_command(
+                prompt,
+                interactive=bool(args.interactive),
+                effort=args.effort,
+                model=args.model,
+            )
+            print(
+                json.dumps(
+                    {
+                        "agy_executable_detected": locate_agy_executable(),
+                        "argv": cmd,
+                        "prompt_bytes": len(prompt.encode("utf-8")),
+                    },
+                    indent=2,
+                    ensure_ascii=False,
+                )
+            )
+            return 0
+        if args.action == "roster":
+            if not args.input or not args.input.exists():
+                raise SystemExit("--input <candidates.json> is required for forge roster")
+            cands = json.loads(args.input.read_text(encoding="utf-8"))
+            if not isinstance(cands, list):
+                raise SystemExit("--input JSON must be a list of candidate dicts")
+            out = select_three_plus_one_roster(cands)
+            print(json.dumps(out, indent=2, ensure_ascii=False))
             return 0
 
     # Live read-only / authenticated commands
