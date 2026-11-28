@@ -4,7 +4,8 @@
   "track_registry": {
     "baseline_v1": "基础优化路径 (Baseline v1.0 · EUR/USA 双区单模板冻结版)",
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × 5地区轮巡 × 3模板族配对 × >=4500自动切免额)",
-    "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · 独立文档/台账/标签，不接入主调度器)"
+    "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · 独立文档/台账/标签，不接入主调度器)",
+    "alphaforge_agy_dsh_v4": "锻造闭环路径 (AlphaForge AGY-DSH v4.0 · 基于基础路线 + AlphaForge P0/P1/P2 逻辑，Antigravity CLI 主控 + DSH 子代理 + 历史经验复用)"
   },
   "updated_at": "2026-11-27T15:24:00+08:00",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
@@ -17,6 +18,11 @@
   "schedule_and_redundancy": {
     "check_interval_hours": "3-4",
     "cron_expression": "0 */3 * * *",
+    "review_models": {
+      "codex": {"model": "gpt-6.2-sol", "reasoning_effort": "high"},
+      "antigravity": {"model": "gemini-4-neon-high", "reasoning_effort": "high"},
+      "dsh_desktop": {"model": "deepseek-v4-pro"}
+    },
     "task_windows": {
       "min_planned_hours": 3,
       "max_planned_hours": 24,
@@ -36,6 +42,15 @@
     "below_threshold_mode": "NORMAL_ONLY（不要同步混跑！先跑满 4,500 个常规额度，略微超出无妨）",
     "at_or_above_threshold_mode": "ALPHA0_EXEMPT_ONLY（跑满 4,500 常规额度后，再自动切入运行 Alphas=0 豁免字段队列）",
     "alpha0_free_until": "2026-12-06",
+    "inspection": {
+      "mcp_server": "guangzhou-ssh",
+      "mcp_tool": "mcp__guangzhou_ssh__run_command",
+      "profile": "guangzhou-rw",
+      "ledger_uri": "file:/root/worldquont/data/wq_v2_ledger.db?mode=ro",
+      "platform_timezone": "America/New_York",
+      "response_source": "按 est_platform_date 查 ratelimit_events 中 /simulations 最新有效的 limit_val、remaining_val、reset_val，附 HTTP 状态和观测时间；当日无额度响应头则标未观测。",
+      "completed_source": "同平台日按 sim_tasks 的 queue_type 分列 NORMAL 与 UNUSED_ALPHA0，分别汇总 COMPLETED_FULL、COMPLETED_QUICK；排队、在途与待对账单列。"
+    },
     "asi_isolated_experiment_config": "docs/asi_d0_d1_isolated/asi_isolated_config.json（路线 ③ 亚太孤岛实验线：完全隔离，不接入主线调度器）"
   },
   "universal_turnover_policy": {
@@ -85,8 +100,14 @@
   "subagent_profile": {
     "default_provider": "dsh-opencode-go",
     "default_model": "deepseek-v4.1-flash",
-    "dispatch_tool": "dsh_run_worker / dsh_spawn_worker (tier=flash, effort=high)",
-    "probe_first": "每次启用前先 dsh_worker_probe(provider=dsh-opencode-go, model=deepseek-v4.1-flash)；探测一次 no-op 工具调用，实际权限以任务结果为准",
+    "mcp_server": "dsh_crew",
+    "dispatch_tool": "dsh_run_worker",
+    "dispatch_tier": "flash",
+    "dispatch_effort": "high",
+    "required_on_every_scheduled_review": true,
+    "hub_binding": "每轮用 dsh_worker_config 设置 enabled=true、mode=hub、escalate_on_failure=false。用 default_provider/default_model 绑定 flash_provider/flash_model，并核对实际 flash 绑定。",
+    "probe_first": "每次启用前调用 dsh_crew 的 dsh_worker_probe(tier=flash, provider=dsh-opencode-go, model=deepseek-v4.1-flash)。返回 tool_call_verified=true 后派单，实际权限以任务结果为准。",
+    "dispatch_receipt": "保存真实任务的 job ID、实际 provider/model、最终状态和可用的 token 用量；失败时保存失败步骤与工具错误。",
     "max_dialogue_rounds_per_subagent": 4,
     "discard_after_max_rounds": false,
     "retain_session_history": true,

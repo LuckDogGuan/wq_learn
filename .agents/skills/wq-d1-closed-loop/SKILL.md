@@ -19,14 +19,22 @@ description: "WorldQuant BRAIN D1-Only RA 跨 AI 工具通用闭环技能（主 
 
 ## 2. 主 Agent + 子 Agent 闭环四步法
 
+### 每轮定时巡检 · DSH 派单
+
+1. 加载 `goal/run_config.json` 的 `subagent_profile`。本轮先用 `dsh_worker_config` 将会话绑定到指定 Hub 路由，设置 `mode=hub`、`enabled=true`、`escalate_on_failure=false`，确认 flash 绑定是 `default_provider/default_model`。调用 `dsh_worker_probe` 验证同一模型的工具调用。
+2. 探测通过后，每轮至少调用一次 `dsh_run_worker`（`tier=flash`、`effort=high`），按[子代理简报模板](../../../docs/agents/SUBAGENT_BRIEF_TEMPLATE.md)派发真实的只读核验。轻量检查可委托核对当前批次设置、计数或指纹；没有新批次时取首个可推进的 `pending` 项。广州或平台不可用时派发本地只读任务。
+3. 主 Agent 独立核对回执和证据，再汇报并在巡检记录保存 DSH job ID、实际 provider/model、最终状态和返回的 token 用量。只有真实任务回执可记作已执行。若绑定、探测或派单失败，记录失败步骤和具体工具错误，由主 Agent 继续其他可核验事项，本轮分开标明 DSH 状态。
+
 ### 任务时长与长任务轻量检查
+
+创建或更新定时巡检时，按 `goal/run_config.json` 的 `schedule_and_redundancy.review_models` 设置调度器的主模型和思考强度。
 
 - 结合工作量和运行强度，为每个常规任务安排 **3–24 小时**。开工时记录开始时间、计划结束时间、批次范围、预期运行方式和本轮通过条件。
 - 预计超过 **6 小时**时，开工后的首次检查和相邻检查的间隔均不得超过 **4 小时**。优先复用已有巡检。检查持续到任务完成。
-- 轻量检查只读核对批次及设置是否与计划一致、已完成数量、满足本轮条件的数量。待判定单列。发现停滞、设置偏离或数量异常时记录具体差异，避免重复派发。完整归因和终检按下面的闭环步骤执行。
+- 轻量检查只读核对批次及设置是否与计划一致、已完成数量、满足本轮条件的数量。查广州台账和配额时按 `goal/run_config.json` 的 `quota_alpha0_switch.inspection` 调用广州 SSH MCP。待判定单列。发现停滞、设置偏离或数量异常时记录具体差异，避免重复派发。完整归因和终检按下面的闭环步骤执行。
 
 ### Step A · 主 Agent 验真上轮结果并输出「有效 / 无效」归因
-1. 查询 SQLite 台账（本地 `data/wq_v2_ledger.db` 或广州 `/root/worldquont/data/wq_v2_ledger.db`）最新完成批次。
+1. 按 `goal/run_config.json` 的 `quota_alpha0_switch.inspection` 通过广州 SSH MCP 只读查询最新完成批次和配额。本地 `data/wq_v2_ledger.db` 可用于核对已同步的历史批次。
 2. 与母版基线（Parent Baseline）对比，必须明确归纳并追加写入 `docs/agents/OPTIMIZATION_LEDGER.json`：
    - **`[有效] xxx 的情况是有效的`**：写明在什么 Region/Dataset/母版上，单改了哪 1–2 个参数，使 Sharpe / 2Y / Fitness / Margin / PC 改善了多少；
    - **`[无效] yyy 的情况是无效的`**：写明什么改动导致指标劣化或超时，提取禁止重演规则。
@@ -50,14 +58,14 @@ description: "WorldQuant BRAIN D1-Only RA 跨 AI 工具通用闭环技能（主 
 
 ### Step C · 主 Agent 派发子 Agent 执行 Stage 3 控制变量优化（强制 `FULL` 模式）
 1. 进入 Stage 3（`POOL_A` 种子 `Sh >= 1.25` 冲刺 `0-FAIL`）**严禁使用 `FAST/QUICK` 模式，强制锁定 `simulationMode="FULL"`**。
-2. 主 Agent 向子 Agent（`invoke_subagent` 或同会话模块化调用）下达明确指令：
+2. 主 Agent 按 `goal/run_config.json` 的 `subagent_profile` 通过 DSH Crew MCP 完成探测，再向子 Agent 下达明确指令：
    - 冻结母版核心字段，**每轮只允许修改 1–2 个参数（控制变量法）**；
    - **标准参数轮询序列**：
      - 轴 1（Decay 轮询）：固定母版表达式与中性化，轮询 **`decay ∈ {0, 5, 20}`**（默认 `0` 起步，胜出点邻域再细扫 `{2, 4, 6}`）；
      - 轴 2（Neutralization 轮询）：固定最优 Decay，轮询 `SUBINDUSTRY` → `INDUSTRY` / `REVERSION_AND_MOMENTUM` / `CROWDING` / `STATISTICAL`；
      - 轴 3（单一短板手术 & **通用降换手规则**）：按 8:2 优先级（80% 王哥 + Top100 顾问 + 管理员/课堂53课）针对唯一 FAIL 项做单步改造；**所有流程必须检查换手率（`evaluate_turnover_action`）**：若 `TO > 18%` 则执行单变量降换手梯队（`decay ∈ {0, 5, 20}` → 前置/后置 `ts_decay_linear(10/22)`/`ts_mean(5/10/22)` → `ts_target_tvr_decay(lambda_max<=0.9)` → 仅无 `tail(newval=0)` 外壳时试 `hump(0.01)`，永久禁 `trade_when`）；**若 `TO < 8%`（换手偏低）则跳过降换手步骤**，避免稀释 Sharpe 或触发 `LOW_TURNOVER`。
    - **2–3 轮止损休眠铁律（`should_shelve_stalled_seed`）**：若某种子连续专一优化 **2–3 轮** 仍无有效提升，立刻停止消耗额度，打上 `STALLED_DORMANT_AFTER_3_ROUNDS` 标签连同瓶颈原因归档，留待未来找到新优化方法再定向唤醒。
-    - **DSH 派单**：按 [子代理简报模板](../../../docs/agents/SUBAGENT_BRIEF_TEMPLATE.md) 使用 `dsh-opencode-go/deepseek-v4.1-flash`（`tier=flash`、`effort=high`），启用前跑 `dsh_worker_probe`。同一个子代理负责诊断、只读核验和最终回报，默认只回传结果。确需文件时，只能新建派单明确指定的路径。每个子代理最多 4 轮，达到上限后停止派发并保留会话与对话。主 Agent 复核证据、决定方向、修改现有文件并落账。
+    - **DSH 派单**：按 [子代理简报模板](../../../docs/agents/SUBAGENT_BRIEF_TEMPLATE.md) 执行。同一个子代理负责诊断、只读核验和最终回报，默认只回传结果。确需文件时，只能新建派单明确指定的路径。每个子代理最多 4 轮，达到上限后停止派发并保留会话与对话。主 Agent 复核证据、决定方向、修改现有文件并落账。探测失败时记录 MCP 返回的具体错误，由主 Agent 继续能独立验真的工作。
     - **证据分级**：结论一律标 `[V]` 已验证 / `[R]` 有报告未复核 / `[C]` 条件成立 / `[U]` 未验证，写账本时必须带标与适用坐标（见 `docs/agents/TODO_20261127.md` §0）。
     - **无新指令时**：按 `docs/agents/TODO_20261127.md` 自上而下执行第一个 `pending` 项，做完立即标记。
 3. **嵌套层数治理**：

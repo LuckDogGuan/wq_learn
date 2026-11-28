@@ -1,6 +1,6 @@
 # 子代理简报模板（DSH flash）
 
-使用 `dsh-opencode-go/deepseek-v4.1-flash`、`tier=flash`、`effort=high`。启用前执行 `dsh_worker_probe`。同一任务由同一个子代理完成诊断、核验和回报。最多 4 轮，停止派单后保留 DSH 会话及对话。
+按 [运行配置](../../goal/run_config.json) 的 `subagent_profile` 通过 `dsh_crew` MCP 探测并派单。同一任务由同一个子代理完成诊断、核验和回报。最多 4 轮，停止派单后保留 DSH 会话及对话。
 
 ```text
 【任务】<一句话目标>
