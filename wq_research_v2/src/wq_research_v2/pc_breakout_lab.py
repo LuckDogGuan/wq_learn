@@ -1237,7 +1237,102 @@ S3_ALPHA0_VERIFIED_FIELDS: dict[str, int] = {
     "mean_revisioncluster_revision_pct_quarterly_eps_long": 0,
     "oth496_returns60_t": 0,
     "oth496_returns252_t": 0,
+    "buzz_trend_metric_3": 0,
+    "buzz_trend_metric_4": 0,
+    "cashflow_trend_analysis_101": 0,
+    "snt21_4neg_conf_low_171": 0,
+    "snt21_4neut_median_179": 0,
+    "asset_impairment_risk_score_4": 0,
+    "asset_impairment_risk_score_41": 0,
+    "balance_sheet_trend_metric_31": 0,
+    "balance_sheet_trend_metric_4": 0,
 }
+
+
+def build_s3r37_asi_usa_aieq_alpha0_exact_full_specs() -> list[dict[str, Any]]:
+    """S3-r37 (16 FULL, 100% UNUSED_ALPHA0 FREE): ASI/ai_equity_alpha (4x PC_PASS_STRICT < 0.62, SC < 0.18) Exact-Setting FULL Verification + USA/ai_equity_alpha (O06mao7b Sh=1.67, Fit=1.13, PC ge070=1) x sentiment21 (np6zVvLw PC=0.5551) Exact-Setting RAM FULL!
+
+    Triggered by 2-hour Audit #29 (2026-11-28 10:15 CST) after official daily simulations reached
+    6,268 / 4,500 (139.3% daily target, 4,504 NORMAL + 1,628 UNUSED_ALPHA0 = 6,132 in SQLite, 0 429s):
+      - Pack A (8 FULL UNUSED_ALPHA0 FREE, ASI/MINVOL1M/ai_equity_alpha, COUNTRY d=0 tr=0.04 maxTrade=ON nanHandling=ON):
+        Live 100-OS SC & remote PC histogram verification (`EFF-30`) proved that ALL FOUR top seeds from
+        `ASI_AIEQ_VEC_FREE` pass BOTH `100-OS SC < 0.18` vs `OS #99` `akR2rQr9` AND strict remote PC
+        (`PC < 0.62, alphas_ge_070 = 0, alphas_ge_080 = 0, PC_PASS_STRICT!`):
+          1) `omPzepln` (`imp4 x bs31 d10 subindustry`, `QUICK Sh=1.59, Fit=0.81, TO=5.68%, 11.41bp, 100-OS SC=-0.0973, PC=0.5968 ge070=0!`)
+          2) `2rGZzJnP` (`imp4 m22 subindustry`, `QUICK Sh=1.50, Fit=0.87, TO=1.60%, 52.56bp, 100-OS SC=0.1747, PC=0.5372 ge070=0!`)
+          3) `Jj3XEbgl` (`imp4 raw industry`, `QUICK Sh=1.46, Fit=0.90, 2Y=1.51, TO=2.81%, 33.51bp, 100-OS SC=0.0966, PC=0.4979 ge070=0!`)
+          4) `E5maYx81` (`reverse(imp41) industry`, `QUICK Sh=1.53, Fit=1.10, 10.29bp, 100-OS SC=-0.0523, PC=0.6196 ge070=0!`)
+        Since ASI `QUICK` omits `LOW_ASI_JPN_SHARPE` and `ROBUST_UNIVERSE`, Pack A promotes them to `FULL`
+        with 100% identical `COUNTRY d=0, tr=0.04, maxTrade=ON, nanHandling=ON` settings plus 1-axis L6 `tail25`
+        and complementary dual/3-way fusions (`imp4 x rev(imp41) / bs4`).
+      - Pack B (8 FULL UNUSED_ALPHA0 FREE, USA/TOP3000/ai_equity_alpha, REVERSION_AND_MOMENTUM d=0 tr=0.04 nanHandling=ON):
+        Live PC verification (`EFF-30`) proved that switching `buzz_trend_metric_3` from `SUBINDUSTRY`
+        (`N1KjM87p`: `ge070=1,080, PC=0.8041`) to `REVERSION_AND_MOMENTUM` (`O06mao7b`: `Sh=1.67, Fit=1.13,
+        TO=9.11%, 12.51bp, 100-OS SC=0.3466, PC=0.7793, ge070=1, ge080=0`) cuts `>=0.70` collisions by 99.91%
+        (`1,080 -> 1`), while `np6zVvLw` (`sentiment21 neg171 x neut179`, `RAM d=0, tr=0.04, Sh=1.45`) has
+        `100-OS SC=0.1819` and `Remote PC=0.5551 (ge070=0, PC_PASS_STRICT!)`. Pack B keeps `REVERSION_AND_MOMENTUM,
+        d=0, tr=0.04, nanHandling=ON` 100% fixed and tests exact `O06mao7b`, exact `np6zVvLw`, `d22+tail25`,
+        and dual-branch fusions with high-2Y `buzz4` (`2Y=1.15, PC=0.7214`), `cf101` (`2Y=1.24, 16.31bp`),
+        `epsl ts_rank 252` (`FULL 2Y=2.23`), and `snt21_4neg_conf_low_171` (`PC=0.5551`).
+    """
+    imp4 = "ts_backfill(vec_avg(asset_impairment_risk_score_4), 21)"
+    imp41 = "ts_backfill(vec_avg(asset_impairment_risk_score_41), 21)"
+    bs31 = "ts_backfill(vec_avg(balance_sheet_trend_metric_31), 21)"
+    bs4 = "ts_backfill(vec_avg(balance_sheet_trend_metric_4), 21)"
+
+    asi_aieq_exprs: list[tuple[str, str, str, str]] = [
+        ("PC37-A1-ompz-imp4-bs31-exact", "ADMIN_ORIGINAL", "WL13229", f"group_rank(min(rank(ts_decay_linear({imp4}, 10)), rank(ts_decay_linear({bs31}, 10))), subindustry)"),
+        ("PC37-A2-2rgz-imp4-m22-exact", "ADMIN_ORIGINAL", "WL13229", f"group_zscore(ts_mean({imp4}, 22), subindustry)"),
+        ("PC37-A3-jj3x-imp4-ind-exact", "ADMIN_ORIGINAL", "KH94146", f"group_zscore({imp4}, industry)"),
+        ("PC37-A4-e5ma-imp41-rev-ind", "ADMIN_ORIGINAL", "KH94146", f"reverse(group_zscore({imp41}, industry))"),
+        ("PC37-A5-ompz-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(min(rank(ts_decay_linear({imp4}, 10)), rank(ts_decay_linear({bs31}, 10))), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC37-A6-imp4-revimp41-d10-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank({imp4}), rank(reverse({imp41}))), 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC37-A7-imp4-bs4-d10-tail25", "TOP100_2026Q4", "SZ83096", f"tail(group_rank(ts_decay_linear(min(rank({imp4}), rank({bs4})), 10), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC37-A8-3way-imp4-bs31-revimp41", "TOP100_2026Q4", "LD22811", f"group_rank(min(rank(ts_decay_linear({imp4}, 10)), min(rank(ts_decay_linear({bs31}, 10)), rank(reverse(ts_decay_linear({imp41}, 10))))), subindustry)"),
+    ]
+
+    bz3 = "ts_backfill(vec_avg(buzz_trend_metric_3), 21)"
+    bz4 = "ts_backfill(vec_avg(buzz_trend_metric_4), 21)"
+    cf101 = "ts_backfill(vec_avg(cashflow_trend_analysis_101), 21)"
+    neg171 = "ts_backfill(snt21_4neg_conf_low_171, 21)"
+    neut179 = "ts_backfill(snt21_4neut_median_179, 21)"
+    epsl_r252 = "ts_rank(ts_backfill(mean_revisioncluster_revision_pct_quarterly_eps_long, 21), 252)"
+
+    usa_ram_exprs: list[tuple[str, str, str, str]] = [
+        ("PC37-B1-o06m-buzz3-d10-exact", "ADMIN_ORIGINAL", "WL13229", f"group_rank(ts_decay_linear({bz3}, 10), subindustry)"),
+        ("PC37-B2-np6z-snt21-dual-exact", "ADMIN_ORIGINAL", "WL13229", f"group_rank(min(rank(ts_decay_linear({neg171}, 10)), rank(ts_decay_linear({neut179}, 10))), subindustry)"),
+        ("PC37-B3-buzz3-d22-tail25", "ADMIN_ORIGINAL", "KH94146", f"tail(group_rank(ts_decay_linear({bz3}, 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC37-B4-snt21-d22-tail25", "ADMIN_ORIGINAL", "KH94146", f"tail(group_rank(ts_decay_linear(min(rank({neg171}), rank({neut179})), 22), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC37-B5-buzz3-x-buzz4-d15-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank({bz3}), rank({bz4})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC37-B6-buzz3-x-cf101-d15-tail25", "TOP100_2026Q4", "ZS59763", f"tail(group_rank(ts_decay_linear(min(rank({bz3}), rank({cf101})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC37-B7-buzz3-x-epsl252-d15-tail25", "TOP100_2026Q4", "SZ83096", f"tail(group_rank(ts_decay_linear(min(rank({bz3}), rank({epsl_r252})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+        ("PC37-B8-buzz3-x-snt21-d15-tail25", "TOP100_2026Q4", "LD22811", f"tail(group_rank(ts_decay_linear(min(rank({bz3}), rank({neg171})), 15), subindustry), lower=0.25, upper=0.75, newval=0.5)"),
+    ]
+
+    return [
+        _pack(
+            batch_id="S3-r37-ASI-AIEQ-EXACT-FULL-cty_d0_t04",
+            campaign_id="S3_ASI_AIEQ_ALPHA0_EXACT_FULL",
+            hypothesis_id="HYP-S3R37-ASI-AIEQ-4X-PCPASS-SC017-CTY-D0-TR04-NANON-EXACT-FULL",
+            region="ASI",
+            universe="MINVOL1M",
+            dataset_id="ai_equity_alpha",
+            queue_type="UNUSED_ALPHA0",
+            settings=_make_settings("ASI", "MINVOL1M", "COUNTRY", decay=0, truncation=0.04, max_trade="ON", nan_handling="ON"),
+            items=_build_items(asi_aieq_exprs, dataset_id="ai_equity_alpha", primary_field_id="asset_impairment_risk_score_4", tag_suffix="cty_d0_t04"),
+        ),
+        _pack(
+            batch_id="S3-r37-USA-AIEQ-SNT21-RAM-FREE-ram_d0_t04",
+            campaign_id="S3_USA_AIEQ_SNT21_RAM_EXACT_FULL",
+            hypothesis_id="HYP-S3R37-USA-O06MAO7B-SH167-PCGE1-X-SNT21-PC055-RAM-D0-TR04-NANON",
+            region="USA",
+            universe="TOP3000",
+            dataset_id="ai_equity_alpha",
+            queue_type="UNUSED_ALPHA0",
+            settings=_make_settings("USA", "TOP3000", "REVERSION_AND_MOMENTUM", decay=0, truncation=0.04, nan_handling="ON"),
+            items=_build_items(usa_ram_exprs, dataset_id="ai_equity_alpha", primary_field_id="buzz_trend_metric_3", tag_suffix="ram_d0_t04"),
+        ),
+    ]
 
 
 def build_s3r36_usa_alpha0_exact_full_specs() -> list[dict[str, Any]]:
@@ -2701,9 +2796,10 @@ def build_s3r20_free_and_eur_margin_specs() -> list[dict[str, Any]]:
 
 
 def build_pc_breakout_lab_s3r10_specs() -> list[dict[str, Any]]:
-    """Return ordered S3-r36 (16 FULL FREE exact) -> S3-r35 -> S3-r34 (16 FULL NORMAL exact) -> ..."""
+    """Return ordered S3-r37 (16 FULL FREE exact) -> S3-r36 -> S3-r35 -> S3-r34 (16 FULL NORMAL exact) -> ..."""
     return (
-        build_s3r36_usa_alpha0_exact_full_specs()
+        build_s3r37_asi_usa_aieq_alpha0_exact_full_specs()
+        + build_s3r36_usa_alpha0_exact_full_specs()
         + build_s3r35_usa_asi_alpha0_free_full_specs()
         + build_s3r34_asi_anlcons_usa_aieq_specs()
         + build_s3r33_asi_q5str2_eur_opeff_si6_specs()

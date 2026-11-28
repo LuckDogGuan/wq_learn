@@ -208,3 +208,6 @@
   - `EUR_AINEWS_NLP_FREE` 完成 `64 QUICK`（`0/64 >= 0.80, maxSh=0.48`），已按早停规则下线（`INEFF-32`）。
 
 - **2026-11-28 06:28 Codex 巡检 [V]**。新免额队列中，`EUR_M77_PMM_FREE` 已完成 16 条 D1 QUICK，0 条正向 Sharpe≥0.80，另有 16 条在途。`EUR_AINEWS_NLP_FREE` 有 16 条排队。累计 `EUR_AIFACT_TRANSFER_NORM` 已完成 360 条，19 条≥0.80，2 条≥1.25。
+- **2026-11-28 10:18 CST（2小时定时复盘 #29：`EUR_M77_PMM_FREE` 316/316 完结收口 + 换装 `EUR_AIEQ_VEC_FREE` 6 个未触达 `alphaCount == 0` 免额字段）**：
+  - `EUR_M77_PMM_FREE` 累计完成 `316/316` 条零额度 `QUICK`：对最高种子 `1YGLr8Ak`（`mdl77_eur_pmmm_relpricestrength_`, `SUBINDUSTRY d=0`, `Sh=1.02, Fit=0.65, TO=4.27%, 24.10bp`）执行 `100-OS` SC 与远程 PC 直方图核验，虽 `100-OS SC = 0.4580 (< 0.65)`，但远程 **`PC = 0.8854, >=0.70 碰撞高达 1,077 条（>=0.80 达 58 条，PC_ABANDON_CROWDED_OR_FAR）`**，且增补的 `88` 条 `admin_ts_regime` 模板 `0/88 >= 0.80`（`maxSh = 0.64`），已正式收口下线（`INEFF-34`）；
+  - 为 `EUR:2` 免额队列换入实盘 API 核验的 **`EUR_AIEQ_VEC_FREE`（`EUR/TOP2500/ai_equity_alpha`，6 个未触达 `alphaCount == 0` `VECTOR` 字段 `cov=0.860, dCov=0.951`，默认 `REVERSION_AND_MOMENTUM` 中性化）**！

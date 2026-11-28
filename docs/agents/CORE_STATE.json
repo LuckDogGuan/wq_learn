@@ -4,9 +4,10 @@
   "track_registry": {
     "baseline_v1": "基础优化路径 (Baseline v1.0 · 冻结于 d1_ra_baseline_v1_frozen.json)",
     "current_main_v2": "多域星阵路径 (Multi-Region Matrix v2.0 · 严控种子 × EUR/USA/GLB/ASI/KOR 5区 × 3模板族 × >=4500切Alphas=0)",
-    "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)"
+    "asi_isolated": "亚太孤岛实验线 (ASI Isolated Track · docs/asi_d0_d1_isolated/ 完全隔离)",
+    "alphaforge_agy_dsh_v4": "锻造闭环路径 (AlphaForge AGY-DSH v4.0 · 基于基础路线扩展，Antigravity CLI 主控 + DSH 子代理 + 自动历史经验复用 · docs/alphaforge_v4/)"
   },
-  "updated_at": "2026-11-28T08:15:00+08:00",
+  "updated_at": "2026-11-28T10:18:00+08:00",
   "mainline_policy": "主线=点塔(Pyramid)：某 category 已有>5个可点(可交付)因子即转其他 categories；docs/agents/TODO_20261127.md 为顺手/空闲项，核心是验证模板与操作符(T17，额度500-1000 FULL，PC仅记录不设门槛)。",
   "tracks_and_logs_guide": "docs/TRACKS_AND_LOGS_GUIDE.md",
   "context_compaction_rule": "任何 AI 工具（Antigravity / Claude Code / Codex / Cursor）启动或上下文超长重置（/compact）后，只读本文件 + docs/agents/OPTIMIZATION_LEDGER.json + AGENTS.md（总计 < 8KB），绝不重读数万行历史聊天记录！",
@@ -74,7 +75,7 @@
         "[V] 同步广州 os_pnl_cache.db 至 100/100 OS 后，实测 USA/model31 既有 0-FAIL SC_PASS 候选对 e71w5Qrl / E5mWLW0J 的 100-OS SC 均升至 0.7115-0.9876 (SC_READY_HIGH)，确认 model31 (ass_tvr/acc) 全簇饱和（INEFF-26）。",
         "[V] USA_FND72_PIT_NORM (1/64, max=0.83) 与 USA_INST6_OWNERSHIP_NORM (0/72, max=0.76) 已触发自动早停并下线（INEFF-26）。",
         "[V][U] USA/ai_equity_alpha 已完成 224 条 NORMAL QUICK（32 S1, 11 S2）。三轴单变量对照证实 SUBINDUSTRY (O06kqe1b: ge070=439) 与 CROWDING (RR5Y7Mwd: Sh=1.29, 34.03bp, SC=0.5596, ge070=457；sent5 d59mjbM2 ge070=1,608) 均高度拥挤，唯有 REVERSION_AND_MOMENTUM (LL86Rx8e: Sh=1.45, Fit=0.90, TO=6.81%, 14.25bp, SC=0.4754, ge070=2) 砍掉 99.5% 碰撞（EFF-26/EFF-27）；已下线 0/200 S2 的 USA_AIFACT_TRANSFER_NORM（INEFF-29）。",
-        "[V][U] EST 2026-11-27 官方日回测已达 5,364 条（SQLite 4,504 NORMAL + 756 UNUSED_ALPHA0 = 5,260 条完成，0 次 429）！针对 S3-r35 (INEFF-30) 同时修改 decay/truncation/nanHandling 造成的混杂，已上线严格 1:1 保持 QUICK 母版设置 (decay=0, truncation=0.04, nanHandling=ON) 的零额度 S3-r36-USA-ALPHA0-EXACT-FULL (16 FULL UNUSED_ALPHA0: SUBINDUSTRY + CROWDING 含 WjYKKQgQ PC ge070=0!)，并同步将常规队列首位的 S3-r34 对齐为 decay=0, truncation=0.04, nanHandling=ON（EFF-28）；Stage 1-2 免额线已下线 0/48 的 USA_EARNCALL_EMBED_FREE（INEFF-32），换入满覆盖 USA_SNT21_MATRIX_FREE (sentiment21 cov=1.00, 1.5x 塔) 与 USA_AIEQ_VEC_FREE (ai_equity_alpha VECTOR cov=0.88)！"
+        "[V][U] EST 2026-11-27 官方日回测已达 6,268 条（SQLite 4,504 NORMAL + 1,628 UNUSED_ALPHA0 = 6,132 条完成，0 次 429）！S3-r36 (16/16 FULL UNUSED_ALPHA0) 证实 USA 同参 QUICK->FULL 15 组指标完全一致（INEFF-33）。同时 USA_AIEQ_VEC_FREE 单轴对照证实 buzz_trend_metric_3 从 SUBINDUSTRY (N1KjM87p: Sh=1.60, Fit=1.09, 22.31bp, SC=0.4453, PC=0.8041, ge070=1,080) 切至 REVERSION_AND_MOMENTUM (O06mao7b: Sh=1.67, Fit=1.13, 12.51bp, SC=0.3466, PC=0.7793, ge070=1, ge080=0) 砍掉 99.91% 生产碰撞，且 USA_SNT21_MATRIX_FREE 产出 np6zVvLw (Sh=1.45, 100-OS SC=0.1819, PC=0.5551 ge070=0 PC_PASS_STRICT!)（EFF-29/EFF-30）！已上线严格锁定 RAM d=0 tr=0.04 nanHandling=ON 的 S3-r37-USA-AIEQ-SNT21-RAM-FREE (8 FULL UNUSED_ALPHA0) 及全新免额矿 USA_ANL10_SURP_FREE (analyst10 MATRIX) 与 USA_SNT23_MATRIX_FREE (sentiment23 MATRIX 1.5x)！"
       ]
     },
     {
@@ -127,11 +128,11 @@
       ],
       "current_seed_campaigns": [
         "[V] EUR_ANL10_SMARTEST_NORM (1/64, max=0.83) 与 EUR_INST6_OWNERSHIP_NORM (1/80, max=0.80) 已触发自动早停并下线（INEFF-26）。",
-        "[V][U] EUR_M77_PMM_FREE (model77 4 个免额 MATRIX 字段) 已完成 228 条零额度 QUICK，产出 8 条 S1 种子（1YGLr8Ak Sh=1.02, Fit=0.65, TO=4.27%, 24.10bp；6XG1kNVK Sh=1.00, 24.25bp；qM5dQapO Sh=0.89, 23.58bp；EFF-28），已为其增补 admin_ts_regime 模板族继续深挖，并下线 0/64 的 EUR_AINEWS_NLP_FREE（INEFF-32）！"
+        "[V][U] EUR_M77_PMM_FREE (316/316 QUICK 全部跑完)：代表 1YGLr8Ak (Sh=1.02, 24.10bp, 100-OS SC=0.4580) 远程 PC=0.8854 (ge070=1,077, ge080=58)，且增补的 88 条 admin_ts_regime 0/88 >= 0.80 (max=0.64)，已下线完结（INEFF-34）并换入 6 个未触达免额字段 EUR_AIEQ_VEC_FREE (EUR/TOP2500/ai_equity_alpha VECTOR cov=0.86)！"
       ]
     },
     {
-      "region": "ASI+KOR (ASI:1 + KOR:1，Phase-2 运行 ASI_AIEQ_VEC_FREE + KOR_M138_QUALITY_FREE + KOR_AIEQ_VEC_FREE；常规队列首位 S3-r34 FULL)",
+      "region": "ASI+KOR (ASI:1 + KOR:1，Phase-2 运行 S3-r37-ASI-AIEQ-EXACT-FULL + ASI_AIEQ_VEC_V2_FREE + KOR_AIEQ_VEC_FREE；常规队列首位 S3-r34 FULL)",
       "universe": "ASI:MINVOL1M / KOR:TOP600",
       "slots": 1,
       "active_useful_champions": [
@@ -155,15 +156,15 @@
       "current_seed_campaigns": [
         "[V] S3-r32-ASI-PSD-D59-FULL (8/8 FULL)、S3-r32-ASI-ANL-PSD-GENTLE (8/8 FULL) 与 S3-r31-ASI-ANL120-RAW-FULL (8/8 FULL) 全部完成（INEFF-25）：实证 price_signal_dl 在 FULL 下 Sh=0.15-0.78 属 QUICK 假象，且 anl_120 任何 adv20>0.15..0.38 门控均伤日本中盘（JPN=0.73-0.78），果断收口。",
         "[V] S3-r33-ASI-MF120-Q5STR2-GATE 8/8 NORMAL FULL，1 条同时通过两项 Robust，8 条日本子检全失败（EFF-25、INEFF-27）。",
-        "[V][U] S3-r35-ASI-MF120-CONFGATE-FREE 8 条单次对账后落 RESULTS_UNOBSERVED（INEFF-31，严禁重发）；ASI_OTH496_RET_FREE 0/64 自动早停下线（INEFF-32）。已为 ASI:1 与 KOR:1 热部署未触达免额高覆盖活动 ASI_AIEQ_VEC_FREE (cov=0.97)、KOR_M138_QUALITY_FREE (cov=0.86, 0-OS KOR 空白塔) 与 KOR_AIEQ_VEC_FREE (cov=1.00)，且常规队列首位的 S3-r34-ASI-ANLCONS-E71-FULL 已对齐 nanHandling=ON（EFF-28）！"
+        "[V][U] ASI_AIEQ_VEC_FREE (184 QUICK -> 24 S1, 5 S2, 1 S3) 取得重大突破（EFF-30）：前 4 条高夏普免额种子对 OS #99 akR2rQr9 的 100-OS SC 均 < 0.18 且远程 PC 全部严格 0 碰撞 (PC_PASS_STRICT < 0.62, ge070=0!) —— omPzepln (imp4 x bs31: Sh=1.59, Fit=0.81, TO=5.68%, 11.41bp, SC=-0.0973, PC=0.5968)、E5maYx81 (rev imp41: Sh=1.53, Fit=1.10, 10.29bp, SC=-0.0523, PC=0.6196)、2rGZzJnP (imp4 m22: Sh=1.50, Fit=0.87, TO=1.60%, 52.56bp, SC=0.1747, PC=0.5372)、Jj3XEbgl (imp4 raw: Sh=1.46, Fit=0.90, 2Y=1.51, 33.51bp, SC=0.0966, PC=0.4979)！已上线严格锁定 COUNTRY d=0 tr=0.04 maxTrade=ON nanHandling=ON 的零额度 S3-r37-ASI-AIEQ-EXACT-FULL (8 FULL UNUSED_ALPHA0) 实测日本子市场与 Robust，并增补 ASI_AIEQ_VEC_V2_FREE (8 个未触达免额字段)，同时下线 1/56 早停的 KOR_M138_QUALITY_FREE（INEFF-34）！"
       ]
     }
   ],
   "quota_and_isolated_experiments": {
     "est_2026_11_26_official_sims_final": 10020,
-    "today_est_2026_11_27_official_sims": 5364,
+    "today_est_2026_11_27_official_sims": 6268,
     "today_normal_completed_est": 4504,
-    "today_alpha0_completed_est": 756,
+    "today_alpha0_completed_est": 1628,
     "phase2_alpha0_active": true,
     "alpha0_auto_switch_threshold": 4500,
     "concurrency_limits": {
@@ -186,74 +187,76 @@
     }
   },
   "codex_latest_inspection": {
-    "observed_at": "2026-11-28T06:28:43+08:00",
+    "observed_at": "2026-11-28T09:20:00+08:00",
     "platform_date": "2026-11-27",
     "platform_activity_simulations": null,
-    "platform_activity_note": "活动 MCP 只返回目录。审计 #27 报告活动 4,952 条 [R]；本轮独立核对广州完成量和配额响应头。平台按创建日期列出 4,855 条 IS 与 1 条 OS，口径为当前 Alpha 记录。",
-    "guangzhou_completed": {
+    "platform_activity_note": "BRAIN 活动 MCP 返回活动目录。按纽约日创建时间查到 5,875 条 IS 与 1 条 OS，是 Alpha 记录口径。08:10–09:20 北京时间的 616 条 IS 全量分页去重，含 600 QUICK、16 FULL。",
+    "guangzhou_log_estimate": {
+      "completed": 5876,
       "normal": 4504,
-      "alpha0": 392,
-      "full": 216,
-      "quick": 4680
+      "alpha0_inferred": 1372
     },
-    "latest_simulation_quota_remaining": 5000,
-    "quota_note": "守护日志确认 NORMAL 完成 4,504 后切 ALPHA0_EXEMPT_ONLY。最后常规 /simulations HTTP 201 为 04:13:52、457/5000。最近免额 /simulations HTTP 201 为 06:28:02、5000/5000。额度头分队列保留原始观测。",
-    "active_service": "11-28 06:24:33 +08:00 由现有维护流程重启。4 总槽、EUR:2/USA:2/ASI:1/KOR:1，MemoryMax=512 MiB，切换阈值 4500。",
-    "followup_window": {
-      "start": "2026-11-28T06:24:37+08:00",
-      "planned_review_by": "2026-11-28T09:24:37+08:00",
-      "mode": "沿现有 Alpha0 守护队列推进 ASI 与 USA。窗口涵盖两批 r35 D1 FULL、ASI_OTH496_RET_FREE 和 USA_EARNCALL_EMBED_FREE D1 QUICK。两批 r35 已结案，核对未观测指纹的去重保护。QUICK 统计正向 Sharpe≥0.80 和 ≥1.25，达到样本条件按既有早停规则判断。跟踪免额响应头。r34 在常规队列计划中等待，按实际设置验真。"
-    },
-    "active_wave": [
+    "latest_simulation_quota_remaining": null,
+    "quota_note": "广州日志确认达到 4,504 常规后运行 ALPHA0_EXEMPT_ONLY。日志 api_rem=?。SSH MCP Python SQLite 查询与完整导出 SFTP 被审批拒绝，配额头、待提交/在途/待对账精确数及未观测指纹未取得。",
+    "active_service": "08:17:09 +08:00 已有守护流程重启，运行中。4 总槽，EUR:2/USA:2/ASI:1/KOR:1，MemoryMax=512 MiB，启动日志记 2,114 个 specs（含未物化计划）。",
+    "closed_wave": [
       {
-        "campaign": "S3-r35-USA-MF120-ANLREV-FREE-sub_d4_t06",
+        "campaign": "S3-r36-USA-ALPHA0-EXACT-FULL",
         "mode": "D1 FULL UNUSED_ALPHA0",
-        "planned": 8,
-        "completed": 8,
+        "planned": 16,
+        "completed": 16,
+        "results_unobserved": 0,
         "met_condition": 0,
-        "pending": 0,
-        "condition": "RA 硬检通过"
-      },
-      {
-        "campaign": "S3-r35-ASI-MF120-CONFGATE-FREE-cty_d4_t08",
-        "mode": "D1 FULL UNUSED_ALPHA0",
-        "planned": 8,
-        "completed": 0,
-        "met_condition": 0,
-        "pending": 0,
-        "results_unobserved": 8,
-        "condition": "RA 硬检通过"
+        "pending_official": 7,
+        "hard_fail": 9,
+        "condition": "RA 硬检通过",
+        "evidence": "INEFF-33，15 条可与平台 QUICK 母版对照，B8 待找精确母版。"
       },
       {
         "campaign": "USA_EARNCALL_EMBED_FREE",
         "mode": "D1 QUICK UNUSED_ALPHA0",
-        "planned": 48,
-        "completed": 24,
+        "completed": 48,
         "met_condition": 0,
-        "pending": 24,
-        "condition": "正向 Sharpe≥1.25"
+        "pending": 0,
+        "condition": "正向 Sharpe≥0.80，守护日志早停"
       },
       {
-        "campaign": "ASI_OTH496_RET_FREE（当前已物化批次）",
+        "campaign": "ASI_OTH496_RET_FREE",
         "mode": "D1 QUICK UNUSED_ALPHA0",
-        "planned": 16,
-        "completed": 0,
+        "completed": 64,
         "met_condition": 0,
-        "pending": 16,
-        "condition": "正向 Sharpe≥1.25"
+        "pending": 0,
+        "condition": "正向 Sharpe≥0.80，守护日志早停"
+      },
+      {
+        "campaign": "EUR_AINEWS_NLP_FREE",
+        "mode": "D1 QUICK UNUSED_ALPHA0",
+        "completed": 64,
+        "met_condition": 0,
+        "pending": 0,
+        "condition": "正向 Sharpe≥0.80，守护日志早停"
+      },
+      {
+        "campaign": "KOR_M138_QUALITY_FREE",
+        "mode": "D1 QUICK UNUSED_ALPHA0",
+        "completed": 56,
+        "met_condition": 1,
+        "pending": null,
+        "condition": "正向 Sharpe≥0.80，已触发早停（1/56，最高 0.81）"
       }
     ],
-    "r34_settings": "已于 Audit #28 (08:15 CST) 在 S3-r34 入库前完成 1:1 对齐：S3-r34-ASI-ANLCONS-E71-FULL-cty_d0_t04 设为 COUNTRY, decay=0, truncation=0.04, nanHandling=ON, maxTrade=ON；S3-r34-USA-AIEQ-LL8-LOWPC-ram_d4_t06 设为 REVERSION_AND_MOMENTUM, decay=0, truncation=0.04, nanHandling=ON, maxTrade=OFF（与 QUICK 母版 e71Kn6Wg/9qGKw1k1/LL86Rx8e 除 simulationMode 外完全一致！）。",
-    "r28_stage4": "既有 r28 已验真的 akR2rQr9 在 OS；同簇备选 SC/PC 0.9996、0.9993，按上轮状态保留现有标签。",
-    "queue": "本平台日 Alpha0 已完成 756 条（8 FULL + 748 QUICK）。新增 S3-r36 (16 FULL UNUSED_ALPHA0 严格同参 QUICK->FULL) 与 5 个未触达免额活动（USA_SNT21_MATRIX_FREE, USA_AIEQ_VEC_FREE, ASI_AIEQ_VEC_FREE, KOR_M138_QUALITY_FREE, KOR_AIEQ_VEC_FREE）及 EUR_M77_PMM_FREE (admin_ts_regime)。",
-    "prior_window_result": "常规 QUICK 累计 USA/ai_equity_alpha 224 条（32 条≥0.80、11 条≥1.25），ASI/analyst_consensus 120 条（22、6），ASI/analyst39 136 条（17、4），EUR/ai_factor_transfer 360 条（19、2）。EUR_M77_PMM_FREE 228 条免额 QUICK 产出 8 条≥0.80（1YGLr8Ak Sh=1.02/24.10bp、6XG1kNVK Sh=1.00/24.25bp）。r35-USA 8/8 FULL、0 条过线（因同改 d=4/tr=0.06/nan=OFF，已由 S3-r36 做严格 d=0/tr=0.04/nan=ON 单改模式对照）。r35-ASI 8 条已对账一次后记 RESULTS_UNOBSERVED。",
-    "reconcile_violation": "历史 S3-r31 首次 8 条已对账并未观测，00:35:47 守护重发同一组指纹。审计 #26 记录修复，审计 #27/#28 后未见当日仍标未观测的指纹有新提交记录。",
+    "followup_window": {
+      "start": "2026-11-28T09:20:00+08:00",
+      "planned_review_by": "2026-11-28T12:20:00+08:00",
+      "mode": "沿现有守护队列观察 USA_AIEQ_VEC_FREE 和 ASI_AIEQ_VEC_FREE 的 D1 QUICK。范围以实际记录为准，核对完成数、正向 Sharpe≥0.80 / ≥1.25 与待判定。纽约日于北京时间 13:00 切换，S3-r34 只在常规队列实际启动后复盘。"
+    },
+    "r34_settings": "当前守护日志无 S3-r34 的完成记录。计划 ASI COUNTRY d=0/tr=0.04/nan=ON/maxTrade=ON，USA RAM d=0/tr=0.04/nan=ON/maxTrade=OFF。待实际台账与母版复核。",
+    "reconcile_note": "既有 S3-r35-ASI 8 条缺子 Alpha ID 已单次对账。巡检未发起再次对账。当前日志另有 EUR、ASI 各一批 8 条未观测，精确批次 ID 与指纹材料待恢复 SQLite 后核对。",
     "effects": {
       "new_simulations_dispatched": 0,
       "alpha_patches": 0,
       "alpha_submits": 0
-    },
-    "workflow_blocker": "已于 Audit #28 (08:15 CST) 修复 T03 与 T04：① sim_runner.extract_sharpe_2y_from_checks 严格仅从 LOW_2Y_SHARPE 提取 sharpe_2y（绝不误取 IS_LADDER_SHARPE，且不回写既有 COMPLETED_FULL 行）；② batch_audit_logger.classify_checks_state 实现 VERIFIED_ZERO_FAIL / HAS_FAIL / UNVERIFIED 三态并按 simulation_mode 拆分 completed_full 与 completed_quick（55 passed 全绿）。"
+    }
   },
   "stage_settings_contract": {
     "stage_1_and_2": {

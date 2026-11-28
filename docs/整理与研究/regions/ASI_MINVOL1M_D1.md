@@ -168,3 +168,14 @@
 
 - **2026-11-28 Codex 复核 [V][U]**。r34 无已发任务。计划 A1/A2 与 `e71Kn6Wg`、`9qGKw1k1` 表达式相同，计划 `nanHandling=OFF`，平台两条 QUICK 母版均为 ON。仅切 FULL 的验真待做。既有 `analyst_consensus` DUAL COUNTRY 00 有 8 条在单次对账后仍无子 ID，标记 `RESULTS_UNOBSERVED`。
 - **r35-ASI [V][U]**。06:24:41 由原守护进程提交 8 条 D1 FULL Alpha0。191.8 秒后仍无子 ID，8 个唯一指纹均对账一次，状态 `RESULTS_UNOBSERVED`，门控与融合效果待验（INEFF-31）。沿已有 `ASI_OTH496_RET_FREE` 队列核对正向命中率。
+
+- **2026-11-28 09:20 Codex 巡检 [V][U]**。`ASI_OTH496_RET_FREE` 64 条均未达正向 Sharpe 0.80，最高 0.56，守护已早停。`ASI_AIEQ_VEC_FREE` 新 D1 QUICK `2rGZzJnP` 为 Sh 1.50、Fit 0.87、Margin 52.56bp、换手 1.60%，原始 2Y 0.57。`Jj3XEbgl` 为 1.46/0.90/33.51bp、2Y 1.51，均需继续观察已有队列。S3-r34 本轮日志未见完成记录。既有 r35 单次对账记录保留。
+- **2026-11-28 10:18 CST（2小时定时复盘 #29：`ASI_AIEQ_VEC_FREE` 4 条头部种子全员实测 `100-OS SC < 0.18` 且远程 `PC < 0.62 (ge070 = 0, PC_PASS_STRICT!)` → 秒发 100% 同参 `S3-r37-ASI-AIEQ-EXACT-FULL` `8 FULL` 核验日本子市场与 `ASI_AIEQ_VEC_V2_FREE`！）**：
+  - **重大双正交发现（`EFF-30`）**：`ASI_AIEQ_VEC_FREE` 已完成 `184 QUICK`（`24` S1, `5` S2, `1` S3），对前 4 条高夏普免额种子执行 `100-OS` 本地 SC 与远程 PC 直方图实测，**4/4 全部同时通过 `100-OS SC < 0.18`（与 `OS #99` `akR2rQr9` 完全正交）与严格远程 `PC < 0.62 (>=0.70 碰撞 = 0 条, PC_PASS_STRICT!)`**：
+    1. **`omPzepln`**（`imp4 × bs31 d10 subindustry`, `COUNTRY d=0, tr=0.04, maxTrade=ON`）：`QUICK Sh=1.59, Fit=0.81, TO=5.68%, Margin=11.41bp` | **`100-OS SC = -0.0973`** | **`Remote PC = 0.5968 (ge070 = 0!)`**；
+    2. **`E5maYx81`**（`reverse(imp41) industry`, `RAM d=0, tr=0.04, maxTrade=ON`）：`QUICK Sh=1.53, Fit=1.10, TO=14.83%, Margin=10.29bp` | **`100-OS SC = -0.0523`** | **`Remote PC = 0.6196 (ge070 = 0!)`**；
+    3. **`2rGZzJnP`**（`imp4 m22 subindustry`, `COUNTRY d=0, tr=0.04, maxTrade=ON`）：`QUICK Sh=1.50, Fit=0.87, TO=1.60%, Margin=52.56bp` | **`100-OS SC = 0.1747`** | **`Remote PC = 0.5372 (ge070 = 0!)`**；
+    4. **`Jj3XEbgl`**（`imp4 raw industry`, `COUNTRY d=0, tr=0.04, maxTrade=ON`）：`QUICK Sh=1.46, Fit=0.90, 2Y=1.51, TO=2.81%, Margin=33.51bp` | **`100-OS SC = 0.0966`** | **`Remote PC = 0.4979 (ge070 = 0!)`**！
+  - **立即热部署 `S3-r37-ASI-AIEQ-EXACT-FULL-cty_d0_t04`（8 FULL `UNUSED_ALPHA0`）与 `ASI_AIEQ_VEC_V2_FREE`**：
+    - 因 ASI `QUICK` 模式不跑 `LOW_ASI_JPN_SHARPE` 与 `ROBUST_UNIVERSE`，`S3-r37-ASI` 100% 锁定 `COUNTRY, decay=0, truncation=0.04, maxTrade="ON", nanHandling="ON"`（与 `QUICK` 母版完全一致，零每日额度消耗！），对 `omPzepln`、`2rGZzJnP`、`Jj3XEbgl`、`E5maYx81` 及王哥 L6 `tail25`、`imp4 × rev(imp41) / bs4` 互补双/三支执行 `FULL` 实盘检验！
+    - 同步上线 **`ASI_AIEQ_VEC_V2_FREE`（`ASI/MINVOL1M/ai_equity_alpha` 下一批 8 个未触达 `alphaCount == 0` `VECTOR` 字段 `cov=0.970, dCov=0.951, maxTrade=ON`）**，并下线 `1/56` 自动早停的 `KOR_M138_QUALITY_FREE`（`INEFF-34`）。

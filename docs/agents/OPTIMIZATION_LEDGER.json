@@ -1,6 +1,6 @@
 {
   "schema_version": "wq_d1_optimization_attribution_ledger_v1",
-  "updated_at": "2026-11-28T08:15:00+08:00",
+  "updated_at": "2026-11-28T10:18:00+08:00",
   "protocol_description": "主 Agent + 子 Agent 控制变量归因闭环账本：子 Agent 每完成一轮单轴/双参（1-2变量）定向优化，下次启动必先对照基线验真，将结果归类写入 effective_cases（什么情况有效）或 ineffective_cases（什么情况无效），主 Agent 据此决定下一轮优化方向。",
   "effective_cases": [
     {
@@ -227,6 +227,22 @@
       "verdict": "[有效] 1) EUR_M77_PMM_FREE 产出 8 条 S1 种子（1YGLr8Ak Sh=1.02/24.10bp/TO=4.27%、6XG1kNVK Sh=1.00/24.25bp/TO=3.98%）；2) S3-r36 与 S3-r34 实现 100% 单变量（仅改 simulationMode: QUICK->FULL）严格对齐；3) T03/T04 全部通过 55 项单测！",
       "metric_delta": "1) EUR_M77_PMM_FREE: 1YGLr8Ak (rev sp1.5 ind gz SUBINDUSTRY) Sh=1.02, Fit=0.65, TO=4.27%, Margin=24.10bp；6XG1kNVK (rev ind gz) Sh=1.00, Fit=0.62, TO=3.98%, Margin=24.25bp；qM5dQapO Sh=0.89, 23.58bp；kq8mxrVl (rationalalpha) Sh=0.87, 15.74bp；2) 官方日回测数从 4,952 推进至 5,364 条（+412 条零额度 Alphas=0 回测，SQLite 累计 4,504 NORMAL + 756 UNUSED_ALPHA0 = 5,260 条完成，0 次 429）。",
       "reusable_rule": "Stage-2 QUICK 种子晋级 Stage-3 FULL 的首轮验证必须保持 decay=0, truncation=0.04, nanHandling=ON 与 QUICK 母版 1:1 完全一致（仅改 simulationMode: QUICK->FULL），严禁首轮同改多项设置。"
+    },
+    {
+      "case_id": "EFF-29",
+      "region_dataset": "[V][C] USA/TOP3000/ai_equity_alpha · USA_AIEQ_VEC_FREE · D1 QUICK",
+      "controlled_change": "固定 group_rank(ts_decay_linear(ts_backfill(vec_avg(buzz_trend_metric_3), 21), 10), subindustry)、decay=0、truncation=0.04、nanHandling=ON、maxTrade=OFF，仅对照 SUBINDUSTRY 与 REVERSION_AND_MOMENTUM。",
+      "verdict": "[有效] RAM 在这条 QUICK 表达式上提高总体 Sharpe 和 Fitness，缩短到 2Y 后表现更弱。",
+      "metric_delta": "N1KjM87p（SUBINDUSTRY）→O06mao7b（RAM）：Sharpe 1.60→1.67、Fitness 1.09→1.13、原始 LOW_2Y_SHARPE 0.77→0.55、Margin 22.31→12.51bp、换手 5.17%→9.11%。",
+      "reusable_rule": "同式保留两项中性化证据。两条都未达到 2Y 门槛，FULL 与 SC/PC 待验证。"
+    },
+    {
+      "case_id": "EFF-30",
+      "region_dataset": "[V][C] ASI/MINVOL1M/ai_equity_alpha (4x PC_PASS_STRICT < 0.62, 100-OS SC < 0.18) + USA/TOP3000/ai_equity_alpha (N1KjM87p vs O06mao7b 单轴降 PC 碰撞 -99.91%) + USA/sentiment21 (np6zVvLw PC=0.5551 ge070=0)",
+      "controlled_change": "1) 对 ASI_AIEQ_VEC_FREE 产出的 4 条头部免额种子 omPzepln (Sh=1.59)、E5maYx81 (Sh=1.53, Fit=1.10)、2rGZzJnP (Sh=1.50, 52.56bp)、Jj3XEbgl (Sh=1.46, 2Y=1.51, 33.51bp) 执行 100-OS SC 与远程 PC 直方图检验；2) 对 EFF-29 的同式单轴对照对 N1KjM87p (SUBINDUSTRY) vs O06mao7b (REVERSION_AND_MOMENTUM) 及 YPlkq0lA (buzz4 RAM) 执行 100-OS SC 与远程 PC 直方图检验；3) 对 USA_SNT21_MATRIX_FREE 头部双支 np6zVvLw (Sh=1.45) 执行 100-OS SC 与远程 PC 直方图检验。",
+      "verdict": "[有效] 1) ASI/ai_equity_alpha 4 条头部种子全部满足 100-OS SC < 0.18 且远程 PC < 0.62 (ge070=0, PC_PASS_STRICT!)；2) USA/ai_equity_alpha 单改 SUBINDUSTRY->RAM 将 >=0.70 生产碰撞从 1,080 条砍至 1 条 (-99.91%!)；3) USA/sentiment21 np6zVvLw 实测 100-OS SC=0.1819、远程 PC=0.5551 (ge070=0, PC_PASS_STRICT!)。",
+      "metric_delta": "1) ASI: omPzepln (SC=-0.0973, PC=0.5968 ge070=0), E5maYx81 (SC=-0.0523, PC=0.6196 ge070=0), 2rGZzJnP (SC=0.1747, PC=0.5372 ge070=0, 52.56bp), Jj3XEbgl (SC=0.0966, PC=0.4979 ge070=0, 33.51bp)；2) USA buzz_trend_metric_3: N1KjM87p (SUBINDUSTRY: SC=0.4453, PC=0.8041, ge070=1,080, ge080=2) -> O06mao7b (RAM: SC=0.3466, PC=0.7793, ge070=1, ge080=0)；YPlkq0lA (buzz4 RAM: SC=0.4005, PC=0.7214, ge070=2, ge080=0)；3) USA sentiment21 np6zVvLw (RAM: Sh=1.45, TO=27.68%, SC=0.1819, PC=0.5551 ge070=0)。",
+      "reusable_rule": "1) 因 ASI QUICK 不含日本子检与 Robust，立即按 100% 相同设置 (COUNTRY, d=0, tr=0.04, maxTrade=ON, nanHandling=ON) 将上述 4 条 PC<0.62 的 ASI 免额种子晋级零额度 S3-r37-ASI-AIEQ-EXACT-FULL (8 FULL UNUSED_ALPHA0) 并增补 ASI_AIEQ_VEC_V2_FREE；2) 按 100% 相同设置 (RAM, d=0, tr=0.04, nanHandling=ON) 将 O06mao7b 与 np6zVvLw 晋级 S3-r37-USA-AIEQ-SNT21-RAM-FREE (8 FULL UNUSED_ALPHA0)，配 d22+tail25 与高 2Y 分支补强 LOW_2Y_SHARPE。"
     }
   ],
   "ineffective_cases": [
@@ -484,6 +500,22 @@
       "verdict": "[无效] 三个数据集在完成 48-64 条 QUICK 后正向 Sharpe>=0.80 均为 0 条（maxSh=0.40-0.56），触发自动早停。",
       "metric_delta": "EUR/ai_news_scores 0/64 >= 0.80 (maxSh=0.48, maxMgn=2.01bp)；USA/earningscall_embed 0/48 >= 0.80 (maxSh=0.40, maxMgn=1.32bp)；ASI/other496 0/64 >= 0.80 (maxSh=0.56, maxMgn=1.50bp)。",
       "root_cause_and_ban": "立即从 CURATED_RA_D1_CAMPAIGNS 下线上述 3 个零命中免额集；换入实盘核验高覆盖未触达 alphaCount==0 活动 USA_SNT21_MATRIX_FREE (sentiment21 MATRIX cov=1.00, sentiment 1.5x)、USA_AIEQ_VEC_FREE (ai_equity_alpha VECTOR cov=0.88)、ASI_AIEQ_VEC_FREE (ai_equity_alpha VECTOR cov=0.97) 与 KOR_M138_QUALITY_FREE / KOR_AIEQ_VEC_FREE (0-OS KOR 空白塔)，并为已出 24.25bp 种子的 EUR_M77_PMM_FREE 增补 admin_ts_regime 模板族。"
+    },
+    {
+      "case_id": "INEFF-33",
+      "region_dataset": "[V][C][U] USA/TOP3000/multifactor_return_pred（含一条 analyst_revision_horizons EPS long）· S3-r36 两批 16/16 D1 FULL UNUSED_ALPHA0",
+      "controlled_change": "逐条对照 BRAIN 结果，固定精确表达式、样本区间及全量 settings，仅对 15 个可匹配 QUICK 母版改 simulationMode。SUB 8 组、CROWDING 7 组。B8 akRPZKLR 缺精确 QUICK 母版，单列。",
+      "verdict": "[无效] 15 组的 Sharpe、Fitness、原始 LOW_2Y_SHARPE、Margin、换手在平台回传精度内全相同。16 条均未过数值 Fitness 1.00，9 条有明确 FAIL，7 条无 FAIL 但有 PENDING 且 Fitness 为 WARNING。0 条已确认 RA 硬检合格。",
+      "metric_delta": "15 组 ΔSharpe/ΔFitness/Δ2Y/ΔMargin/Δ换手均为 0。示例 RR5X05Yj→blxPZN5m（1.59/0.46/1.43/1.71bp），WjYKKQgQ→58G60EQ6（1.53/0.47/1.39/1.86bp），RR5nb5oj→QPWlknX5（1.41/0.74/2.23/8.96bp）。全批 Sh 1.12–1.59、Fitness 0.37–0.77、Margin 1.32–8.96bp。B8 Sh=1.12、Fitness=0.53、2Y=0.76、Margin=5.61bp。 7 条待判定的 BRAIN SC/PC 非空实数为 78GXbx98 0.3087/0.8223（≥0.70 桶 1）、QPWlknX5 0.5555/0.7756（≥0.70 桶 64）、E5maWqJK 0.3218/0.7649（≥0.70 桶 2）、MPg8Rbmr 0.3094/0.7191（≥0.70 桶 1）、d597VWjK 0.3302/0.6958（≥0.70 桶 0）、6XGqVdrP 0.2987/0.7429（≥0.70 桶 1）、np6zRvKd 0.3262/0.6805（≥0.70 桶 0）。d597VWjK、np6zRvKd 的 SC/PC 均低于项目阈值，Fitness 分别 0.41、0.40，平台 REGULAR_SUBMISSION 仍为 PENDING。",
+      "root_cause_and_ban": "用该批限定结论：FULL 增加风险中性等输出，未改变这 15 组可比回测数值。不得用 WARNING/PENDING 转化推断 RA 通关；前置计划也未携带机器可读母版 ID。结案这 16 条，避免再次派发。"
+    },
+    {
+      "case_id": "INEFF-34",
+      "region_dataset": "[V][C] EUR/TOP2500/model77 (EUR_M77_PMM_FREE 316/316 QUICK · 1YGLr8Ak PC 拥挤 + admin_ts_regime 0/88) & KOR/TOP600/model138 (KOR_M138_QUALITY_FREE 1/56 早停)",
+      "controlled_change": "1) 对 EUR_M77_PMM_FREE 头部种子 1YGLr8Ak (Sh=1.02, 24.10bp, SUBINDUSTRY) 执行 100-OS SC 与远程 PC 直方图检验，并核查新增 88 条 admin_ts_regime 免额 QUICK 结果；2) 核查 KOR_M138_QUALITY_FREE 56 条免额 QUICK 初筛结果。",
+      "verdict": "[无效] 1) 1YGLr8Ak 虽 100-OS SC=0.4580，但远程 PC=0.8854 (>=0.70 碰撞达 1,077 条，>=0.80 达 58 条，PC_ABANDON_CROWDED_OR_FAR)，且新增 88 条 admin_ts_regime 0/88 >= 0.80 (maxSh=0.64)；2) KOR_M138_QUALITY_FREE 56 条 QUICK 仅 1 条 >=0.80 (6XGqboq5 Sh=0.81)，已触发守护进程自动早停。",
+      "metric_delta": "EUR_M77_PMM_FREE 累计 316 QUICK 仅 8 条 >=0.80、0 条 >=1.25 (maxSh=1.02, 1YGLr8Ak PC ge070=1,077)；KOR_M138_QUALITY_FREE 1/56 >= 0.80 (maxSh=0.81, 21.83bp)。",
+      "root_cause_and_ban": "立即从 CURATED_RA_D1_CAMPAIGNS 下线已完结的 EUR_M77_PMM_FREE 与已早停的 KOR_M138_QUALITY_FREE；换入实盘核验未触达 alphaCount==0 活动 EUR_AIEQ_VEC_FREE (EUR/ai_equity_alpha 6 个 VECTOR 字段 cov=0.86)、USA_ANL10_SURP_FREE (USA/analyst10 8 个 MATRIX 字段)、USA_SNT23_MATRIX_FREE (USA/sentiment23 7 个 MATRIX 字段) 与 ASI_AIEQ_VEC_V2_FREE (ASI/ai_equity_alpha 下一批 8 个 VECTOR 字段 cov=0.97)。"
     }
   ]
 }
